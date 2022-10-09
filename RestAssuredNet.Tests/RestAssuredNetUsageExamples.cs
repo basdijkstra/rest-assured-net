@@ -54,6 +54,20 @@ namespace RestAssuredNet.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a response status code when performing an HTTP PUT.
+        /// </summary>
+        [Test]
+        public void PutPost1_CheckHttpStatusCode_ShouldBe200()
+        {
+            Given()
+            .When()
+            .Put("https://jsonplaceholder.typicode.com/posts")
+            .Then()
+            .StatusCode(404);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
         /// a response status code when performing an HTTP PATCH.
         /// </summary>
         [Test]

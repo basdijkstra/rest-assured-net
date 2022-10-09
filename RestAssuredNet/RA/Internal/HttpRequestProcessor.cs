@@ -14,7 +14,6 @@
 // limitations under the License.
 // </copyright>
 using RestAssuredNet.RA.Exceptions;
-using System.Net.Http.Json;
 
 namespace RestAssuredNet.RA.Internal
 {
@@ -55,6 +54,25 @@ namespace RestAssuredNet.RA.Internal
             try
             {
                 HttpResponseMessage response = await Client.PostAsync(endpoint, null);
+                return new Response((int)response.StatusCode);
+            }
+            catch (HttpRequestException hre)
+            {
+                throw new HttpRequestProcessorException(hre.Message);
+            }
+        }
+
+        /// <summary>
+        /// Performs an HTTP PUT to the specified endpoint.
+        /// </summary>
+        /// <param name="endpoint">The endpoint to invoke in the PUT request.</param>
+        /// <returns>The HTTP response.</returns>
+        /// <exception cref="HttpRequestProcessorException">Thrown whenever the HTTP request fails.</exception>
+        public static async Task<Response> Put(string endpoint)
+        {
+            try
+            {
+                HttpResponseMessage response = await Client.PutAsync(endpoint, null);
                 return new Response((int)response.StatusCode);
             }
             catch (HttpRequestException hre)

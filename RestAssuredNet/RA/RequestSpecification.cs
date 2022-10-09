@@ -61,6 +61,17 @@ namespace RestAssuredNet.RA
         }
 
         /// <summary>
+        /// Performs an HTTP POST.
+        /// </summary>
+        /// <param name="endpoint">The endpoint to invoke in the HTTP POST request.</param>
+        /// <returns>The HTTP response object.</returns>
+        public Response Put(string endpoint)
+        {
+            Task<Response> task = HttpRequestProcessor.Put(endpoint);
+            return task.Result;
+        }
+
+        /// <summary>
         /// Performs an HTTP PATCH.
         /// </summary>
         /// <param name="endpoint">The endpoint to invoke in the HTTP PATCH request.</param>
