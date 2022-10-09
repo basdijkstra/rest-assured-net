@@ -14,6 +14,9 @@
 // limitations under the License.
 // </copyright>
 using NUnit.Framework;
+using WireMock.RequestBuilders;
+using WireMock.ResponseBuilders;
+using WireMock.Server;
 using static RestAssuredNet.RestAssuredNet;
 
 namespace RestAssuredNet.Tests
@@ -24,16 +27,29 @@ namespace RestAssuredNet.Tests
     [TestFixture]
     public class HttpVerbUsageExamples
     {
+        private WireMockServer server;
+
+        /// <summary>
+        /// Starts the WireMock server before every test.
+        /// </summary>
+        [SetUp]
+        public void StartServer()
+        {
+            this.server = WireMockServer.Start(9876);
+        }
+
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
         /// a response status code when performing an HTTP GET.
         /// </summary>
         [Test]
-        public void GetDataForUsPost1_CheckHttpStatusCode_ShouldBe200()
+        public void HttpGetCanBeUsed()
         {
+            this.CreateStubForHttpGet();
+
             Given()
             .When()
-            .Get("https://jsonplaceholder.typicode.com/posts/1")
+            .Get("http://localhost:9876/http-get")
             .Then()
             .StatusCode(200);
         }
@@ -43,11 +59,13 @@ namespace RestAssuredNet.Tests
         /// a response status code when performing an HTTP POST.
         /// </summary>
         [Test]
-        public void PostANewPost_CheckHttpStatusCode_ShouldBe201()
+        public void HttpPostCanBeUsed()
         {
+            this.CreateStubForHttpPost();
+
             Given()
             .When()
-            .Post("https://jsonplaceholder.typicode.com/posts")
+            .Post("http://localhost:9876/http-post")
             .Then()
             .StatusCode(201);
         }
@@ -57,13 +75,15 @@ namespace RestAssuredNet.Tests
         /// a response status code when performing an HTTP PUT.
         /// </summary>
         [Test]
-        public void PutPost1_CheckHttpStatusCode_ShouldBe200()
+        public void HttpPutCanBeUsed()
         {
+            this.CreateStubForHttpPut();
+
             Given()
             .When()
-            .Put("https://jsonplaceholder.typicode.com/posts")
+            .Put("http://localhost:9876/http-put")
             .Then()
-            .StatusCode(404);
+            .StatusCode(200);
         }
 
         /// <summary>
@@ -71,13 +91,15 @@ namespace RestAssuredNet.Tests
         /// a response status code when performing an HTTP PATCH.
         /// </summary>
         [Test]
-        public void PatchPost1_CheckHttpStatusCode_ShouldBe200()
+        public void HttpPatchCanBeUsed()
         {
+            this.CreateStubForHttpPatch();
+
             Given()
             .When()
-            .Patch("https://jsonplaceholder.typicode.com/posts")
+            .Patch("http://localhost:9876/http-patch")
             .Then()
-            .StatusCode(404);
+            .StatusCode(200);
         }
 
         /// <summary>
@@ -85,13 +107,74 @@ namespace RestAssuredNet.Tests
         /// a response status code when performing an HTTP DELETE.
         /// </summary>
         [Test]
-        public void DeleteDataForPost1_CheckHttpStatusCode_ShouldBe200()
+        public void HttpDeleteCanBeUsed()
         {
+            this.CreateStubForHttpDelete();
+
             Given()
             .When()
-            .Delete("https://jsonplaceholder.typicode.com/posts/1")
+            .Delete("http://localhost:9876/http-delete")
             .Then()
-            .StatusCode(200);
+            .StatusCode(204);
+        }
+
+        /// <summary>
+        /// Stops the WireMock server after every test.
+        /// </summary>
+        [TearDown]
+        public void StopServer()
+        {
+            this.server.Stop();
+        }
+
+        /// <summary>
+        /// Creates the stub response for the HTTP GET example.
+        /// </summary>
+        private void CreateStubForHttpGet()
+        {
+            this.server.Given(Request.Create().WithPath("/http-get").UsingGet())
+                .RespondWith(Response.Create()
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the HTTP POST example.
+        /// </summary>
+        private void CreateStubForHttpPost()
+        {
+            this.server.Given(Request.Create().WithPath("/http-post").UsingPost())
+                .RespondWith(Response.Create()
+                .WithStatusCode(201));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the HTTP PUT example.
+        /// </summary>
+        private void CreateStubForHttpPut()
+        {
+            this.server.Given(Request.Create().WithPath("/http-put").UsingPut())
+                .RespondWith(Response.Create()
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the HTTP PATCH example.
+        /// </summary>
+        private void CreateStubForHttpPatch()
+        {
+            this.server.Given(Request.Create().WithPath("/http-patch").UsingPatch())
+                .RespondWith(Response.Create()
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the HTTP DELETE example.
+        /// </summary>
+        private void CreateStubForHttpDelete()
+        {
+            this.server.Given(Request.Create().WithPath("/http-delete").UsingDelete())
+                .RespondWith(Response.Create()
+                .WithStatusCode(204));
         }
     }
 }
