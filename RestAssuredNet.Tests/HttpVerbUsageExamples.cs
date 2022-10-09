@@ -51,6 +51,7 @@ namespace RestAssuredNet.Tests
             .When()
             .Get("http://localhost:9876/http-get")
             .Then()
+            .AssertThat() // example of using the AssertThat() syntactic sugar method.
             .StatusCode(200);
         }
 

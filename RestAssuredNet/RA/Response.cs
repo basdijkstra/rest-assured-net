@@ -43,6 +43,15 @@ namespace RestAssuredNet.RA
         }
 
         /// <summary>
+        /// Syntactic sugar that makes tests read more like natural language.
+        /// </summary>
+        /// <returns>The current <see cref="Response"/> object.</returns>
+        public Response AssertThat()
+        {
+            return this;
+        }
+
+        /// <summary>
         /// A method to verify that the actual status code is equal to an expected value.
         /// </summary>
         /// <param name="expectedStatusCode">The expected status code.</param>
