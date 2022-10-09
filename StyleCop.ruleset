@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="Microsoft Managed Recommended Rules" Description="These rules focus on the most critical problems in your code, including potential security holes, application crashes, and other important logic and design errors. It is recommended to include this rule set in any custom rule set you create for your projects." ToolsVersion="10.0">
+  <Localization ResourceAssembly="Microsoft.VisualStudio.CodeAnalysis.RuleSets.Strings.dll" ResourceBaseName="Microsoft.VisualStudio.CodeAnalysis.RuleSets.Strings.Localized">
+    <Name Resource="MinimumRecommendedRules_Name" />
+    <Description Resource="MinimumRecommendedRules_Description" />
+  </Localization>
+  <Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
+    <Rule Id="CA1001" Action="Error" />
+    <Rule Id="CA1009" Action="Error" />
+    <Rule Id="CA1016" Action="Error" />
+    <Rule Id="CA1033" Action="Error" />
+    <Rule Id="CA1049" Action="Error" />
+    <Rule Id="CA1060" Action="Error" />
+    <Rule Id="CA1061" Action="Error" />
+    <Rule Id="CA1063" Action="Error" />
+    <Rule Id="CA1065" Action="Error" />
+    <Rule Id="CA1301" Action="Error" />
+    <Rule Id="CA1400" Action="Error" />
+    <Rule Id="CA1401" Action="Error" />
+    <Rule Id="CA1403" Action="Error" />
+    <Rule Id="CA1404" Action="Error" />
+    <Rule Id="CA1405" Action="Error" />
+    <Rule Id="CA1410" Action="Error" />
+    <Rule Id="CA1415" Action="Error" />
+    <Rule Id="CA1821" Action="Error" />
+    <Rule Id="CA1900" Action="Error" />
+    <Rule Id="CA1901" Action="Error" />
+    <Rule Id="CA2002" Action="Error" />
+    <Rule Id="CA2100" Action="Error" />
+    <Rule Id="CA2101" Action="Error" />
+    <Rule Id="CA2108" Action="Error" />
+    <Rule Id="CA2111" Action="Error" />
+    <Rule Id="CA2112" Action="Error" />
+    <Rule Id="CA2114" Action="Error" />
+    <Rule Id="CA2116" Action="Error" />
+    <Rule Id="CA2117" Action="Error" />
+    <Rule Id="CA2122" Action="Error" />
+    <Rule Id="CA2123" Action="Error" />
+    <Rule Id="CA2124" Action="Error" />
+    <Rule Id="CA2126" Action="Error" />
+    <Rule Id="CA2131" Action="Error" />
+    <Rule Id="CA2132" Action="Error" />
+    <Rule Id="CA2133" Action="Error" />
+    <Rule Id="CA2134" Action="Error" />
+    <Rule Id="CA2137" Action="Error" />
+    <Rule Id="CA2138" Action="Error" />
+    <Rule Id="CA2140" Action="Error" />
+    <Rule Id="CA2141" Action="Error" />
+    <Rule Id="CA2146" Action="Error" />
+    <Rule Id="CA2147" Action="Error" />
+    <Rule Id="CA2149" Action="Error" />
+    <Rule Id="CA2200" Action="Error" />
+    <Rule Id="CA2202" Action="Error" />
+    <Rule Id="CA2207" Action="Error" />
+    <Rule Id="CA2212" Action="Error" />
+    <Rule Id="CA2213" Action="Error" />
+    <Rule Id="CA2214" Action="Error" />
+    <Rule Id="CA2216" Action="Error" />
+    <Rule Id="CA2220" Action="Error" />
+    <Rule Id="CA2229" Action="Error" />
+    <Rule Id="CA2231" Action="Error" />
+    <Rule Id="CA2232" Action="Error" />
+    <Rule Id="CA2235" Action="Error" />
+    <Rule Id="CA2236" Action="Error" />
+    <Rule Id="CA2237" Action="Error" />
+    <Rule Id="CA2238" Action="Error" />
+    <Rule Id="CA2240" Action="Error" />
+    <Rule Id="CA2241" Action="Error" />
+    <Rule Id="CA2242" Action="Error" />
+  </Rules>
+  <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers">
+    <Rule Id="SA1600" Action="Error" /> <!-- Elements should be documented -->
+    <Rule Id="SA1633" Action="Error" /> <!-- File should have header -->
+    <Rule Id="SA1101" Action="Error" /> <!-- Prefix local calls with this -->
+    <Rule Id="SA1407" Action="Error" /> <!-- Arithmetic expressions should declare precedence -->
+    <Rule Id="SA1116" Action="Error" /> <!-- Split parameters should start on line after declaration -->
+    <Rule Id="SA1309" Action="Error" /> <!-- Field names should not begin with underscore -->
+    <Rule Id="SA1402" Action="Error" /> <!-- File may only contain a single type -->
+    <Rule Id="SA1204" Action="Error" /> <!-- Static elements should appear before instance elements -->
+    <Rule Id="SA1604" Action="Error" /> <!-- Element documentation should have summary -->
+    <Rule Id="SA1516" Action="Error" /> <!-- Elements should be separated by blank line -->
+    <Rule Id="SA1649" Action="Error" /> <!-- File name should match first type name -->
+    <Rule Id="SA1128" Action="Error" /> <!-- Put constructor initializers on their own line -->
+    <Rule Id="SA1122" Action="Error" /> <!-- Use string.Empty for empty strings -->
+    <Rule Id="SA1413" Action="Error" /> <!-- Use trailing comma in multi-line initializers -->
+    <Rule Id="SA1117" Action="Error" /> <!-- Parameters should be on same line or separate lines -->
+    <Rule Id="SA1602" Action="Error" /> <!-- Enumeration items should be documented -->
+    <Rule Id="SA1108" Action="Error" /> <!-- Block statements should not contain embedded comments -->
+    <Rule Id="SA1601" Action="Error" /> <!-- Partial elements should be documented -->
+    <Rule Id="SA1401" Action="Error" /> <!-- Fields should be private -->
+    <Rule Id="SA1404" Action="Error" /> <!-- Code analysis suppression should have justification -->
+    <Rule Id="SA1515" Action="Error" /> <!-- Single-line comment should be preceded by blank line -->
+    <Rule Id="SA1512" Action="Error" /> <!-- Single-line comments should not be followed by blank line -->
+    <Rule Id="SA1118" Action="Error" /> <!-- Parameter should not span multiple lines -->
+    <Rule Id="SA1127" Action="Error" /> <!-- Generic type constraints should be on their own line -->
+    <Rule Id="SA1132" Action="Error" /> <!-- Do not combine fields -->
+    <Rule Id="SA1501" Action="Error" /> <!-- Statement should not be on a single line -->
+    <Rule Id="SA1502" Action="Error" /> <!-- Element should not be on a single line -->
+    <Rule Id="SA1203" Action="Error" /> <!-- Constants should appear before fields -->
+    <Rule Id="SA1214" Action="Error" /> <!-- Readonly fields should appear before non-readonly fields -->
+    <Rule Id="SA1133" Action="Error" /> <!-- Do not combine attributes -->
+    <Rule Id="SA1202" Action="Error" /> <!-- Elements should be ordered by access -->
+    <!-- Ignored Rules -->
+    <Rule Id="SA0001" Action="None" /> <!-- Disabled to skip checking auto-generated XML comments in .csproj files -->
+    <Rule Id="SA1200" Action="None" /> <!-- Disabled because I think using directives should be able to reside outside namespaces -->
+    <Rule Id="SA1201" Action="None" /> <!-- Disabled to allow elements to appear in the order we see fit -->
+  	<Rule Id="SA1310" Action="None" /> <!-- Disabled to allow naming constants using underscores -->
+    <Rule Id="SA1623" Action="None" /> <!-- Disabled to allow documenting class properties without starting with 'Gets' -->
+    <Rule Id="SA1636" Action="None" /> <!-- Disabled to allow custom copyright text -->
+  </Rules>
+</RuleSet>
