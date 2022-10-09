@@ -61,6 +61,17 @@ namespace RestAssuredNet.RA
         }
 
         /// <summary>
+        /// Performs an HTTP PATCH.
+        /// </summary>
+        /// <param name="endpoint">The endpoint to invoke in the HTTP PATCH request.</param>
+        /// <returns>The HTTP response object.</returns>
+        public Response Patch(string endpoint)
+        {
+            Task<Response> task = HttpRequestProcessor.Patch(endpoint);
+            return task.Result;
+        }
+
+        /// <summary>
         /// Performs an HTTP DELETE.
         /// </summary>
         /// <param name="endpoint">The endpoint to invoke in the HTTP DELETE request.</param>

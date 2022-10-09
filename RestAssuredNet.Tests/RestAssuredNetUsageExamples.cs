@@ -29,11 +29,11 @@ namespace RestAssuredNet.Tests
         /// a response status code when performing an HTTP GET.
         /// </summary>
         [Test]
-        public void GetDataForUsZipCode90210_CheckHttpStatusCode_ShouldBe200()
+        public void GetDataForUsPost1_CheckHttpStatusCode_ShouldBe200()
         {
             Given()
             .When()
-            .Get("http://api.zippopotam.us/us/90210")
+            .Get("https://jsonplaceholder.typicode.com/posts/1")
             .Then()
             .StatusCode(200);
         }
@@ -50,6 +50,20 @@ namespace RestAssuredNet.Tests
             .Post("https://jsonplaceholder.typicode.com/posts")
             .Then()
             .StatusCode(201);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a response status code when performing an HTTP PATCH.
+        /// </summary>
+        [Test]
+        public void PatchPost1_CheckHttpStatusCode_ShouldBe200()
+        {
+            Given()
+            .When()
+            .Patch("https://jsonplaceholder.typicode.com/posts")
+            .Then()
+            .StatusCode(404);
         }
 
         /// <summary>
