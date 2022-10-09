@@ -44,6 +44,30 @@ namespace RestAssuredNet.RA
         }
 
         /// <summary>
+        /// Adds a request header and the associated value to the request object to be sent.
+        /// </summary>
+        /// <param name="key">The header key that is to be added to the request.</param>
+        /// <param name="value">The associated header value that is to be added to the request.</param>
+        /// <returns>The current <see cref="RequestSpecification"/>.</returns>
+        public RequestSpecification Header(string key, object value)
+        {
+            this.request.Headers.Add(key, value.ToString());
+            return this;
+        }
+
+        /// <summary>
+        /// Add a request header and the associated values to the request object to be sent.
+        /// </summary>
+        /// <param name="key">The header key that is to be added to the request.</param>
+        /// <param name="values">The associated header values that are to be added to the request.</param>
+        /// <returns>The current <see cref="RequestSpecification"/>.</returns>
+        public RequestSpecification Header(string key, IEnumerable<string> values)
+        {
+            this.request.Headers.Add(key, values);
+            return this;
+        }
+
+        /// <summary>
         /// Syntactic sugar (for now) to help indicate the start of the 'Act' part of a test.
         /// </summary>
         /// <returns>The current <see cref="RequestSpecification"/>.</returns>
