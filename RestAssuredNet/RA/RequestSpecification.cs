@@ -50,6 +50,17 @@ namespace RestAssuredNet.RA
         }
 
         /// <summary>
+        /// Performs an HTTP POST.
+        /// </summary>
+        /// <param name="endpoint">The endpoint to invoke in the HTTP POST request.</param>
+        /// <returns>The HTTP response object.</returns>
+        public Response Post(string endpoint)
+        {
+            Task<Response> task = HttpRequestProcessor.Post(endpoint);
+            return task.Result;
+        }
+
+        /// <summary>
         /// Performs an HTTP DELETE.
         /// </summary>
         /// <param name="endpoint">The endpoint to invoke in the HTTP DELETE request.</param>

@@ -40,6 +40,20 @@ namespace RestAssuredNet.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a response status code when performing an HTTP POST.
+        /// </summary>
+        [Test]
+        public void PostANewPost_CheckHttpStatusCode_ShouldBe201()
+        {
+            Given()
+            .When()
+            .Post("https://jsonplaceholder.typicode.com/posts")
+            .Then()
+            .StatusCode(201);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
         /// a response status code when performing an HTTP DELETE.
         /// </summary>
         [Test]
