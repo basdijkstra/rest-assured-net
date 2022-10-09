@@ -25,16 +25,31 @@ namespace RestAssuredNet.Tests
     public class Examples
     {
         /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for verifying a response status code.
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a response status code when performing an HTTP GET.
         /// </summary>
         [Test]
         public void GetDataForUsZipCode90210_CheckHttpStatusCode_ShouldBe200()
         {
-                Given()
-                .When()
-                .Get("http://api.zippopotam.us/us/90210")
-                .Then()
-                .StatusCode(200);
+            Given()
+            .When()
+            .Get("http://api.zippopotam.us/us/90210")
+            .Then()
+            .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a response status code when performing an HTTP DELETE.
+        /// </summary>
+        [Test]
+        public void DeleteDataForPost1_CheckHttpStatusCode_ShouldBe200()
+        {
+            Given()
+            .When()
+            .Delete("https://jsonplaceholder.typicode.com/posts/1")
+            .Then()
+            .StatusCode(200);
         }
     }
 }
