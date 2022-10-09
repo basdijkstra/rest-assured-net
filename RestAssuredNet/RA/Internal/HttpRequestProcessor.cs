@@ -25,92 +25,16 @@ namespace RestAssuredNet.RA.Internal
         private static readonly HttpClient Client = new HttpClient();
 
         /// <summary>
-        /// Performs an HTTP GET to the specified endpoint.
+        /// Sends an HTTP request message object and returns the response.
         /// </summary>
-        /// <param name="endpoint">The endpoint to invoke in the GET request.</param>
+        /// <param name="request">The HTTP request message object to be sent.</param>
         /// <returns>The HTTP response.</returns>
         /// <exception cref="HttpRequestProcessorException">Thrown whenever the HTTP request fails.</exception>
-        public static async Task<Response> Get(string endpoint)
+        public static async Task<Response> Send(HttpRequestMessage request)
         {
             try
             {
-                HttpResponseMessage response = await Client.GetAsync(endpoint);
-                return new Response((int)response.StatusCode);
-            }
-            catch (HttpRequestException hre)
-            {
-                throw new HttpRequestProcessorException(hre.Message);
-            }
-        }
-
-        /// <summary>
-        /// Performs an HTTP POST to the specified endpoint.
-        /// </summary>
-        /// <param name="endpoint">The endpoint to invoke in the POST request.</param>
-        /// <returns>The HTTP response.</returns>
-        /// <exception cref="HttpRequestProcessorException">Thrown whenever the HTTP request fails.</exception>
-        public static async Task<Response> Post(string endpoint)
-        {
-            try
-            {
-                HttpResponseMessage response = await Client.PostAsync(endpoint, null);
-                return new Response((int)response.StatusCode);
-            }
-            catch (HttpRequestException hre)
-            {
-                throw new HttpRequestProcessorException(hre.Message);
-            }
-        }
-
-        /// <summary>
-        /// Performs an HTTP PUT to the specified endpoint.
-        /// </summary>
-        /// <param name="endpoint">The endpoint to invoke in the PUT request.</param>
-        /// <returns>The HTTP response.</returns>
-        /// <exception cref="HttpRequestProcessorException">Thrown whenever the HTTP request fails.</exception>
-        public static async Task<Response> Put(string endpoint)
-        {
-            try
-            {
-                HttpResponseMessage response = await Client.PutAsync(endpoint, null);
-                return new Response((int)response.StatusCode);
-            }
-            catch (HttpRequestException hre)
-            {
-                throw new HttpRequestProcessorException(hre.Message);
-            }
-        }
-
-        /// <summary>
-        /// Performs an HTTP PATCH to the specified endpoint.
-        /// </summary>
-        /// <param name="endpoint">The endpoint to invoke in the PATCH request.</param>
-        /// <returns>The HTTP response.</returns>
-        /// <exception cref="HttpRequestProcessorException">Thrown whenever the HTTP request fails.</exception>
-        public static async Task<Response> Patch(string endpoint)
-        {
-            try
-            {
-                HttpResponseMessage response = await Client.PatchAsync(endpoint, null);
-                return new Response((int)response.StatusCode);
-            }
-            catch (HttpRequestException hre)
-            {
-                throw new HttpRequestProcessorException(hre.Message);
-            }
-        }
-
-        /// <summary>
-        /// Performs an HTTP DELETE to the specified endpoint.
-        /// </summary>
-        /// <param name="endpoint">The endpoint to invoke in the DELETE request.</param>
-        /// <returns>The HTTP response.</returns>
-        /// <exception cref="HttpRequestProcessorException">Thrown whenever the HTTP request fails.</exception>
-        public static async Task<Response> Delete(string endpoint)
-        {
-            try
-            {
-                HttpResponseMessage response = await Client.DeleteAsync(endpoint);
+                HttpResponseMessage response = await Client.SendAsync(request);
                 return new Response((int)response.StatusCode);
             }
             catch (HttpRequestException hre)

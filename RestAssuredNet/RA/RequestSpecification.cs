@@ -20,13 +20,27 @@ namespace RestAssuredNet.RA
     /// <summary>
     /// The request to be sent.
     /// </summary>
-    public class RequestSpecification
+    public class RequestSpecification : IDisposable
     {
+        private HttpRequestMessage request = new HttpRequestMessage();
+        private bool disposed = false;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestSpecification"/> class.
         /// </summary>
         public RequestSpecification()
         {
+        }
+
+        /// <summary>
+        /// Adds a request body to the request object to be sent.
+        /// </summary>
+        /// <param name="body">The (plaintext) body that is to be sent with the request.</param>
+        /// <returns>The current <see cref="RequestSpecification"/>.</returns>
+        public RequestSpecification Body(string body)
+        {
+            this.request.Content = new StringContent(body);
+            return this;
         }
 
         /// <summary>
@@ -45,7 +59,10 @@ namespace RestAssuredNet.RA
         /// <returns>The HTTP response object.</returns>
         public Response Get(string endpoint)
         {
-            Task<Response> task = HttpRequestProcessor.Get(endpoint);
+            this.request.Method = HttpMethod.Get;
+            this.request.RequestUri = new Uri(endpoint);
+
+            Task<Response> task = HttpRequestProcessor.Send(this.request);
             return task.Result;
         }
 
@@ -56,18 +73,24 @@ namespace RestAssuredNet.RA
         /// <returns>The HTTP response object.</returns>
         public Response Post(string endpoint)
         {
-            Task<Response> task = HttpRequestProcessor.Post(endpoint);
+            this.request.Method = HttpMethod.Post;
+            this.request.RequestUri = new Uri(endpoint);
+
+            Task<Response> task = HttpRequestProcessor.Send(this.request);
             return task.Result;
         }
 
         /// <summary>
-        /// Performs an HTTP POST.
+        /// Performs an HTTP PUT.
         /// </summary>
-        /// <param name="endpoint">The endpoint to invoke in the HTTP POST request.</param>
+        /// <param name="endpoint">The endpoint to invoke in the HTTP PUT request.</param>
         /// <returns>The HTTP response object.</returns>
         public Response Put(string endpoint)
         {
-            Task<Response> task = HttpRequestProcessor.Put(endpoint);
+            this.request.Method = HttpMethod.Put;
+            this.request.RequestUri = new Uri(endpoint);
+
+            Task<Response> task = HttpRequestProcessor.Send(this.request);
             return task.Result;
         }
 
@@ -78,7 +101,10 @@ namespace RestAssuredNet.RA
         /// <returns>The HTTP response object.</returns>
         public Response Patch(string endpoint)
         {
-            Task<Response> task = HttpRequestProcessor.Patch(endpoint);
+            this.request.Method = HttpMethod.Patch;
+            this.request.RequestUri = new Uri(endpoint);
+
+            Task<Response> task = HttpRequestProcessor.Send(this.request);
             return task.Result;
         }
 
@@ -89,8 +115,38 @@ namespace RestAssuredNet.RA
         /// <returns>The HTTP response object.</returns>
         public Response Delete(string endpoint)
         {
-            Task<Response> task = HttpRequestProcessor.Delete(endpoint);
+            this.request.Method = HttpMethod.Delete;
+            this.request.RequestUri = new Uri(endpoint);
+
+            Task<Response> task = HttpRequestProcessor.Send(this.request);
             return task.Result;
+        }
+
+        /// <summary>
+        /// Implements Dispose() method of IDisposable interface.
+        /// </summary>
+        public void Dispose()
+        {
+            // Dispose of unmanaged resources.
+            this.Dispose(true);
+
+            // Suppress finalization.
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Implements Dispose(bool) method of IDisposable interface.
+        /// </summary>
+        /// <param name="disposing">Flag indicating whether objects should be disposed.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (this.disposed)
+            {
+                return;
+            }
+
+            this.request.Dispose();
+            this.disposed = true;
         }
     }
 }
