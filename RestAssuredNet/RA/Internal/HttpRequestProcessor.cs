@@ -42,5 +42,24 @@ namespace RestAssuredNet.RA.Internal
                 throw new HttpRequestProcessorException(hre.Message);
             }
         }
+
+        /// <summary>
+        /// Performs an HTTP DELETE to the specified endpoint.
+        /// </summary>
+        /// <param name="endpoint">The endpoint to invoke in the DELETE request.</param>
+        /// <returns>The HTTP response.</returns>
+        /// <exception cref="HttpRequestProcessorException">Thrown whenever the HTTP request fails.</exception>
+        public static async Task<Response> Delete(string endpoint)
+        {
+            try
+            {
+                HttpResponseMessage response = await Client.DeleteAsync(endpoint);
+                return new Response((int)response.StatusCode);
+            }
+            catch (HttpRequestException hre)
+            {
+                throw new HttpRequestProcessorException(hre.Message);
+            }
+        }
     }
 }

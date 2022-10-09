@@ -48,5 +48,16 @@ namespace RestAssuredNet.RA
             Task<Response> task = HttpRequestProcessor.Get(endpoint);
             return task.Result;
         }
+
+        /// <summary>
+        /// Performs an HTTP DELETE.
+        /// </summary>
+        /// <param name="endpoint">The endpoint to invoke in the HTTP DELETE request.</param>
+        /// <returns>The HTTP response object.</returns>
+        public Response Delete(string endpoint)
+        {
+            Task<Response> task = HttpRequestProcessor.Delete(endpoint);
+            return task.Result;
+        }
     }
 }
