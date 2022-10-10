@@ -15,6 +15,9 @@
 // </copyright>
 using System.Collections.Generic;
 using NUnit.Framework;
+using WireMock.RequestBuilders;
+using WireMock.ResponseBuilders;
+using WireMock.Server;
 using static RestAssuredNet.RestAssuredNet;
 
 namespace RestAssuredNet.Tests
@@ -25,17 +28,30 @@ namespace RestAssuredNet.Tests
     [TestFixture]
     public class RequestHeaderUsageExamples
     {
+        private WireMockServer server;
+
+        /// <summary>
+        /// Starts the WireMock server before every test.
+        /// </summary>
+        [SetUp]
+        public void StartServer()
+        {
+            this.server = WireMockServer.Start(9876);
+        }
+
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for including
         /// a header with a single value when sending an HTTP request.
         /// </summary>
         [Test]
-        public void AddHeaderWithASingleValue()
+        public void HeaderWithASingleValueCanBeSupplied()
         {
+            this.CreateStubForSingleHeaderValue();
+
             Given()
             .Header("my_header", "my_header_value")
             .When()
-            .Get("https://jsonplaceholder.typicode.com/posts")
+            .Get("http://localhost:9876/single-header-value")
             .Then()
             .StatusCode(200);
         }
@@ -45,14 +61,47 @@ namespace RestAssuredNet.Tests
         /// a header with multiple values when sending an HTTP request.
         /// </summary>
         [Test]
-        public void AddHeaderWithMultipleValues()
+        public void HeaderWithMultipleValuesCanbeSupplied()
         {
+            this.CreateStubForMultipleHeaderValues();
+
             Given()
             .Header("my_header", new List<string>() { "my_header_value_1", "my_header_value_2" })
             .When()
-            .Get("https://jsonplaceholder.typicode.com/posts")
+            .Get("http://localhost:9876/multiple-header-values")
             .Then()
             .StatusCode(200);
+        }
+
+        /// <summary>
+        /// Stops the WireMock server after every test.
+        /// </summary>
+        [TearDown]
+        public void StopServer()
+        {
+            this.server.Stop();
+        }
+
+        /// <summary>
+        /// Creates the stub response for the single header value example.
+        /// </summary>
+        private void CreateStubForSingleHeaderValue()
+        {
+            this.server.Given(Request.Create().WithPath("/single-header-value").UsingGet()
+                .WithHeader("my_header", "my_header_value"))
+                .RespondWith(Response.Create()
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the multiple header values example.
+        /// </summary>
+        private void CreateStubForMultipleHeaderValues()
+        {
+            this.server.Given(Request.Create().WithPath("/multiple-header-values").UsingGet()
+                .WithHeader("my_header", "my_header_value_1, my_header_value_2"))
+                .RespondWith(Response.Create()
+                .WithStatusCode(200));
         }
     }
 }

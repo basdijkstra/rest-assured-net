@@ -14,6 +14,10 @@
 // limitations under the License.
 // </copyright>
 using NUnit.Framework;
+using WireMock.Matchers;
+using WireMock.RequestBuilders;
+using WireMock.ResponseBuilders;
+using WireMock.Server;
 using static RestAssuredNet.RestAssuredNet;
 
 namespace RestAssuredNet.Tests
@@ -24,19 +28,84 @@ namespace RestAssuredNet.Tests
     [TestFixture]
     public class RequestBodyUsageExamples
     {
+        private readonly string plaintextRequestBody = "Here's a plaintext request body.";
+
+        private readonly string jsonStringRequestBody = "{\"id\": 1, \"user\": \"John Doe\"}";
+
+        private WireMockServer server;
+
+        /// <summary>
+        /// Starts the WireMock server before every test.
+        /// </summary>
+        [SetUp]
+        public void StartServer()
+        {
+            this.server = WireMockServer.Start(9876);
+        }
+
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for sending
-        /// a request body as a string when performing an HTTP POST.
+        /// a plaintext request body when performing an HTTP POST.
         /// </summary>
         [Test]
-        public void PostANewPost_CheckHttpStatusCode_ShouldBe201()
+        public void PlaintextRequestBodyCanBeSupplied()
         {
+            this.CreateStubForPlaintextRequestBody();
+
             Given()
-            .Body("{\"userId\": 1, \"title\": \"My post title\", \"body\": \"My post body\"}")
+            .Body(this.plaintextRequestBody)
             .When()
-            .Post("https://jsonplaceholder.typicode.com/posts")
+            .Post("http://localhost:9876/plaintext-request-body")
             .Then()
             .StatusCode(201);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for sending
+        /// a JSON string request body when performing an HTTP POST.
+        /// </summary>
+        [Test]
+        public void JsonStringRequestBodyCanBeSupplied()
+        {
+            this.CreateStubForJsonStringRequestBody();
+
+            Given()
+            .Body(this.jsonStringRequestBody)
+            .When()
+            .Post("http://localhost:9876/json-string-request-body")
+            .Then()
+            .StatusCode(201);
+        }
+
+        /// <summary>
+        /// Stops the WireMock server after every test.
+        /// </summary>
+        [TearDown]
+        public void StopServer()
+        {
+            this.server.Stop();
+        }
+
+        /// <summary>
+        /// Creates the stub response for the JSON string request body example.
+        /// </summary>
+        private void CreateStubForPlaintextRequestBody()
+        {
+            this.server.Given(Request.Create().WithPath("/plaintext-request-body").UsingPost()
+                .WithBody(new ExactMatcher(this.plaintextRequestBody)))
+                .RespondWith(Response.Create()
+                .WithStatusCode(201));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the JSON string request body example.
+        /// </summary>
+        private void CreateStubForJsonStringRequestBody()
+        {
+            this.server.Given(Request.Create().WithPath("/json-string-request-body").UsingPost()
+                .WithBody(new JsonMatcher(this.jsonStringRequestBody)))
+                .RespondWith(Response.Create()
+                .WithStatusCode(201));
         }
     }
 }

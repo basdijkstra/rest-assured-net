@@ -35,7 +35,7 @@ namespace RestAssuredNet.RA
         /// <summary>
         /// Adds a request body to the request object to be sent.
         /// </summary>
-        /// <param name="body">The (plaintext) body that is to be sent with the request.</param>
+        /// <param name="body">The body that is to be sent with the request as a string.</param>
         /// <returns>The current <see cref="RequestSpecification"/>.</returns>
         public RequestSpecification Body(string body)
         {
