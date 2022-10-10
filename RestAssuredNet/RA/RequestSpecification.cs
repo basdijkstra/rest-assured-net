@@ -119,7 +119,7 @@ namespace RestAssuredNet.RA
         /// </summary>
         /// <param name="endpoint">The endpoint to invoke in the HTTP GET request.</param>
         /// <returns>The HTTP response object.</returns>
-        public Response Get(string endpoint)
+        public VerifiableResponse Get(string endpoint)
         {
             return this.Send(HttpMethod.Get, endpoint);
         }
@@ -129,7 +129,7 @@ namespace RestAssuredNet.RA
         /// </summary>
         /// <param name="endpoint">The endpoint to invoke in the HTTP POST request.</param>
         /// <returns>The HTTP response object.</returns>
-        public Response Post(string endpoint)
+        public VerifiableResponse Post(string endpoint)
         {
             return this.Send(HttpMethod.Post, endpoint);
         }
@@ -139,7 +139,7 @@ namespace RestAssuredNet.RA
         /// </summary>
         /// <param name="endpoint">The endpoint to invoke in the HTTP PUT request.</param>
         /// <returns>The HTTP response object.</returns>
-        public Response Put(string endpoint)
+        public VerifiableResponse Put(string endpoint)
         {
             return this.Send(HttpMethod.Put, endpoint);
         }
@@ -149,7 +149,7 @@ namespace RestAssuredNet.RA
         /// </summary>
         /// <param name="endpoint">The endpoint to invoke in the HTTP PATCH request.</param>
         /// <returns>The HTTP response object.</returns>
-        public Response Patch(string endpoint)
+        public VerifiableResponse Patch(string endpoint)
         {
             return this.Send(HttpMethod.Patch, endpoint);
         }
@@ -159,7 +159,7 @@ namespace RestAssuredNet.RA
         /// </summary>
         /// <param name="endpoint">The endpoint to invoke in the HTTP DELETE request.</param>
         /// <returns>The HTTP response object.</returns>
-        public Response Delete(string endpoint)
+        public VerifiableResponse Delete(string endpoint)
         {
             return this.Send(HttpMethod.Delete, endpoint);
         }
@@ -197,13 +197,13 @@ namespace RestAssuredNet.RA
         /// <param name="httpMethod">The HTTP method to use in the request.</param>
         /// <param name="endpoint">The endpoint to be used in the request.</param>
         /// <returns>An object representing the HTTP response corresponding to the request.</returns>
-        private Response Send(HttpMethod httpMethod, string endpoint)
+        private VerifiableResponse Send(HttpMethod httpMethod, string endpoint)
         {
             this.request.Method = httpMethod;
             this.request.RequestUri = new Uri(endpoint);
             this.request.Content = new StringContent(this.requestBody, this.contentEncoding, this.contentTypeHeader);
 
-            Task<Response> task = HttpRequestProcessor.Send(this.request);
+            Task<VerifiableResponse> task = HttpRequestProcessor.Send(this.request);
             return task.Result;
         }
     }

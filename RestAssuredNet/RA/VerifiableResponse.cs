@@ -20,15 +20,15 @@ namespace RestAssuredNet.RA
     /// <summary>
     /// A class representing the response of an HTTP call.
     /// </summary>
-    public class Response
+    public class VerifiableResponse
     {
         private readonly int statusCode;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Response"/> class.
+        /// Initializes a new instance of the <see cref="VerifiableResponse"/> class.
         /// </summary>
         /// <param name="statusCode">The HTTP status code that is associated with this response.</param>
-        public Response(int statusCode)
+        public VerifiableResponse(int statusCode)
         {
             this.statusCode = statusCode;
         }
@@ -36,8 +36,8 @@ namespace RestAssuredNet.RA
         /// <summary>
         /// Syntactic sugar (for now) that indicates the start of the 'Assert' part of a test.
         /// </summary>
-        /// <returns>The current <see cref="Response"/> object.</returns>
-        public Response Then()
+        /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        public VerifiableResponse Then()
         {
             return this;
         }
@@ -45,8 +45,8 @@ namespace RestAssuredNet.RA
         /// <summary>
         /// Syntactic sugar that makes tests read more like natural language.
         /// </summary>
-        /// <returns>The current <see cref="Response"/> object.</returns>
-        public Response AssertThat()
+        /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        public VerifiableResponse AssertThat()
         {
             return this;
         }
@@ -55,9 +55,9 @@ namespace RestAssuredNet.RA
         /// A method to verify that the actual status code is equal to an expected value.
         /// </summary>
         /// <param name="expectedStatusCode">The expected status code.</param>
-        /// <returns>The current <see cref="Response"/> object.</returns>
+        /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         /// <exception cref="AssertionException">Thrown when the actual status code does not match the expected one.</exception>
-        public Response StatusCode(int expectedStatusCode)
+        public VerifiableResponse StatusCode(int expectedStatusCode)
         {
             if (!(expectedStatusCode == this.statusCode))
             {

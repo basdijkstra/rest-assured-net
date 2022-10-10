@@ -30,12 +30,12 @@ namespace RestAssuredNet.RA.Internal
         /// <param name="request">The HTTP request message object to be sent.</param>
         /// <returns>The HTTP response.</returns>
         /// <exception cref="HttpRequestProcessorException">Thrown whenever the HTTP request fails.</exception>
-        public static async Task<Response> Send(HttpRequestMessage request)
+        public static async Task<VerifiableResponse> Send(HttpRequestMessage request)
         {
             try
             {
                 HttpResponseMessage response = await Client.SendAsync(request);
-                return new Response((int)response.StatusCode);
+                return new VerifiableResponse((int)response.StatusCode);
             }
             catch (HttpRequestException hre)
             {
