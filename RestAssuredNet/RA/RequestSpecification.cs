@@ -72,6 +72,17 @@ namespace RestAssuredNet.RA
         }
 
         /// <summary>
+        /// Set the content character encoding for the request object to be sent.
+        /// </summary>
+        /// <param name="encoding">The value for the character encoding to be added.</param>
+        /// <returns>The current <see cref="RequestSpecification"/> object.</returns>
+        public RequestSpecification ContentEncoding(Encoding encoding)
+        {
+            this.contentEncoding = encoding;
+            return this;
+        }
+
+        /// <summary>
         /// Adds a request body to the request object to be sent.
         /// </summary>
         /// <param name="body">The body that is to be sent with the request as a string.</param>

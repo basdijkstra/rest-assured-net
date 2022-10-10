@@ -14,6 +14,7 @@
 // limitations under the License.
 // </copyright>
 using System.Collections.Generic;
+using System.Text;
 using NUnit.Framework;
 using WireMock.Matchers;
 using WireMock.RequestBuilders;
@@ -63,7 +64,7 @@ namespace RestAssuredNet.Tests
         }
 
         /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for including
+        /// A test demonstrating RestAssuredNet syntax for setting
         /// a Content-Type header with a text value.
         /// </summary>
         [Test]
@@ -76,7 +77,25 @@ namespace RestAssuredNet.Tests
             .When()
             .Post("http://localhost:9876/content-type-as-string")
             .Then()
-            .StatusCode(200);
+            .StatusCode(201);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for setting
+        /// the content character encoding.
+        /// </summary>
+        [Test]
+        public void EncodingCanBeSupplied()
+        {
+            this.CreateStubForEncoding();
+
+            Given()
+            .ContentType("application/xml")
+            .ContentEncoding(Encoding.ASCII)
+            .When()
+            .Post("http://localhost:9876/content-type-with-encoding")
+            .Then()
+            .StatusCode(201);
         }
 
         /// <summary>
@@ -107,9 +126,20 @@ namespace RestAssuredNet.Tests
         private void CreateStubForContentTypeHeaderAsString()
         {
             this.Server.Given(Request.Create().WithPath("/content-type-as-string").UsingPost()
-                .WithHeader("Content-Type", new RegexMatcher("application/xml.*")))
+                .WithHeader("Content-Type", new ExactMatcher("application/xml; charset=utf-8")))
                 .RespondWith(Response.Create()
-                .WithStatusCode(200));
+                .WithStatusCode(201));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the multiple header values example.
+        /// </summary>
+        private void CreateStubForEncoding()
+        {
+            this.Server.Given(Request.Create().WithPath("/content-type-with-encoding").UsingPost()
+                .WithHeader("Content-Type", new ExactMatcher("application/xml; charset=us-ascii")))
+                .RespondWith(Response.Create()
+                .WithStatusCode(201));
         }
     }
 }
