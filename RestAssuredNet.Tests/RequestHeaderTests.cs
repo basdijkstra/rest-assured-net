@@ -15,6 +15,7 @@
 // </copyright>
 using System.Collections.Generic;
 using NUnit.Framework;
+using WireMock.Matchers;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using static RestAssuredNet.RestAssuredNet;
@@ -62,6 +63,23 @@ namespace RestAssuredNet.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for including
+        /// a Content-Type header with a text value.
+        /// </summary>
+        [Test]
+        public void ContentTypeHeaderCanBeSuppliedAsText()
+        {
+            this.CreateStubForContentTypeHeaderAsString();
+
+            Given()
+            .ContentType("application/xml")
+            .When()
+            .Post("http://localhost:9876/content-type-as-string")
+            .Then()
+            .StatusCode(200);
+        }
+
+        /// <summary>
         /// Creates the stub response for the single header value example.
         /// </summary>
         private void CreateStubForSingleHeaderValue()
@@ -79,6 +97,17 @@ namespace RestAssuredNet.Tests
         {
             this.Server.Given(Request.Create().WithPath("/multiple-header-values").UsingGet()
                 .WithHeader("my_header", "my_header_value_1, my_header_value_2"))
+                .RespondWith(Response.Create()
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the multiple header values example.
+        /// </summary>
+        private void CreateStubForContentTypeHeaderAsString()
+        {
+            this.Server.Given(Request.Create().WithPath("/content-type-as-string").UsingPost()
+                .WithHeader("Content-Type", new RegexMatcher("application/xml.*")))
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
         }
