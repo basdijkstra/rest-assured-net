@@ -1,4 +1,4 @@
-﻿// <copyright file="Response.cs" company="On Test Automation">
+﻿// <copyright file="VerifiableResponse.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,15 +22,15 @@ namespace RestAssuredNet.RA
     /// </summary>
     public class VerifiableResponse
     {
-        private readonly int statusCode;
+        private readonly HttpResponseMessage response;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VerifiableResponse"/> class.
         /// </summary>
-        /// <param name="statusCode">The HTTP status code that is associated with this response.</param>
-        public VerifiableResponse(int statusCode)
+        /// <param name="response">The <see cref="HttpResponseMessage"/> returned by the HTTP client.</param>
+        public VerifiableResponse(HttpResponseMessage response)
         {
-            this.statusCode = statusCode;
+            this.response = response;
         }
 
         /// <summary>
@@ -59,9 +59,9 @@ namespace RestAssuredNet.RA
         /// <exception cref="AssertionException">Thrown when the actual status code does not match the expected one.</exception>
         public VerifiableResponse StatusCode(int expectedStatusCode)
         {
-            if (!(expectedStatusCode == this.statusCode))
+            if (!(expectedStatusCode == (int)this.response.StatusCode))
             {
-                throw new AssertionException($"Expected status code to be {expectedStatusCode}, but was {this.statusCode}");
+                throw new AssertionException($"Expected status code to be {expectedStatusCode}, but was {this.response.StatusCode}");
             }
 
             return this;

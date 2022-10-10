@@ -35,7 +35,7 @@ namespace RestAssuredNet.RA.Internal
             try
             {
                 HttpResponseMessage response = await Client.SendAsync(request);
-                return new VerifiableResponse((int)response.StatusCode);
+                return new VerifiableResponse(response);
             }
             catch (HttpRequestException hre)
             {
