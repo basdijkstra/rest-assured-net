@@ -1,4 +1,4 @@
-// <copyright file="HttpVerbUsageExamples.cs" company="On Test Automation">
+// <copyright file="HttpVerbTests.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,6 @@
 using NUnit.Framework;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
-using WireMock.Server;
 using static RestAssuredNet.RestAssuredNet;
 
 namespace RestAssuredNet.Tests
@@ -25,19 +24,8 @@ namespace RestAssuredNet.Tests
     /// Examples of RestAssuredNet usage.
     /// </summary>
     [TestFixture]
-    public class HttpVerbTests
+    public class HttpVerbTests : TestBase
     {
-        private WireMockServer server;
-
-        /// <summary>
-        /// Starts the WireMock server before every test.
-        /// </summary>
-        [SetUp]
-        public void StartServer()
-        {
-            this.server = WireMockServer.Start(9876);
-        }
-
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
         /// a response status code when performing an HTTP GET.
@@ -120,20 +108,11 @@ namespace RestAssuredNet.Tests
         }
 
         /// <summary>
-        /// Stops the WireMock server after every test.
-        /// </summary>
-        [TearDown]
-        public void StopServer()
-        {
-            this.server.Stop();
-        }
-
-        /// <summary>
         /// Creates the stub response for the HTTP GET example.
         /// </summary>
         private void CreateStubForHttpGet()
         {
-            this.server.Given(Request.Create().WithPath("/http-get").UsingGet())
+            this.Server.Given(Request.Create().WithPath("/http-get").UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
         }
@@ -143,7 +122,7 @@ namespace RestAssuredNet.Tests
         /// </summary>
         private void CreateStubForHttpPost()
         {
-            this.server.Given(Request.Create().WithPath("/http-post").UsingPost())
+            this.Server.Given(Request.Create().WithPath("/http-post").UsingPost())
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));
         }
@@ -153,7 +132,7 @@ namespace RestAssuredNet.Tests
         /// </summary>
         private void CreateStubForHttpPut()
         {
-            this.server.Given(Request.Create().WithPath("/http-put").UsingPut())
+            this.Server.Given(Request.Create().WithPath("/http-put").UsingPut())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
         }
@@ -163,7 +142,7 @@ namespace RestAssuredNet.Tests
         /// </summary>
         private void CreateStubForHttpPatch()
         {
-            this.server.Given(Request.Create().WithPath("/http-patch").UsingPatch())
+            this.Server.Given(Request.Create().WithPath("/http-patch").UsingPatch())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
         }
@@ -173,7 +152,7 @@ namespace RestAssuredNet.Tests
         /// </summary>
         private void CreateStubForHttpDelete()
         {
-            this.server.Given(Request.Create().WithPath("/http-delete").UsingDelete())
+            this.Server.Given(Request.Create().WithPath("/http-delete").UsingDelete())
                 .RespondWith(Response.Create()
                 .WithStatusCode(204));
         }

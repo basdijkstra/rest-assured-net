@@ -1,4 +1,4 @@
-// <copyright file="RequestBodyUsageExamples.cs" company="On Test Automation">
+// <copyright file="RequestBodyTests.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,6 @@ using NUnit.Framework;
 using WireMock.Matchers;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
-using WireMock.Server;
 using static RestAssuredNet.RestAssuredNet;
 
 namespace RestAssuredNet.Tests
@@ -26,22 +25,11 @@ namespace RestAssuredNet.Tests
     /// Examples of RestAssuredNet usage.
     /// </summary>
     [TestFixture]
-    public class RequestBodyTests
+    public class RequestBodyTests : TestBase
     {
         private readonly string plaintextRequestBody = "Here's a plaintext request body.";
 
         private readonly string jsonStringRequestBody = "{\"id\": 1, \"user\": \"John Doe\"}";
-
-        private WireMockServer server;
-
-        /// <summary>
-        /// Starts the WireMock server before every test.
-        /// </summary>
-        [SetUp]
-        public void StartServer()
-        {
-            this.server = WireMockServer.Start(9876);
-        }
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for sending
@@ -78,20 +66,11 @@ namespace RestAssuredNet.Tests
         }
 
         /// <summary>
-        /// Stops the WireMock server after every test.
-        /// </summary>
-        [TearDown]
-        public void StopServer()
-        {
-            this.server.Stop();
-        }
-
-        /// <summary>
         /// Creates the stub response for the JSON string request body example.
         /// </summary>
         private void CreateStubForPlaintextRequestBody()
         {
-            this.server.Given(Request.Create().WithPath("/plaintext-request-body").UsingPost()
+            this.Server.Given(Request.Create().WithPath("/plaintext-request-body").UsingPost()
                 .WithBody(new ExactMatcher(this.plaintextRequestBody)))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));
@@ -102,7 +81,7 @@ namespace RestAssuredNet.Tests
         /// </summary>
         private void CreateStubForJsonStringRequestBody()
         {
-            this.server.Given(Request.Create().WithPath("/json-string-request-body").UsingPost()
+            this.Server.Given(Request.Create().WithPath("/json-string-request-body").UsingPost()
                 .WithBody(new JsonMatcher(this.jsonStringRequestBody)))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));

@@ -1,4 +1,4 @@
-// <copyright file="RequestHeaderUsageExamples.cs" company="On Test Automation">
+// <copyright file="RequestHeaderTests.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,6 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
-using WireMock.Server;
 using static RestAssuredNet.RestAssuredNet;
 
 namespace RestAssuredNet.Tests
@@ -26,19 +25,8 @@ namespace RestAssuredNet.Tests
     /// Examples of RestAssuredNet usage.
     /// </summary>
     [TestFixture]
-    public class RequestHeaderTests
+    public class RequestHeaderTests : TestBase
     {
-        private WireMockServer server;
-
-        /// <summary>
-        /// Starts the WireMock server before every test.
-        /// </summary>
-        [SetUp]
-        public void StartServer()
-        {
-            this.server = WireMockServer.Start(9876);
-        }
-
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for including
         /// a header with a single value when sending an HTTP request.
@@ -74,20 +62,11 @@ namespace RestAssuredNet.Tests
         }
 
         /// <summary>
-        /// Stops the WireMock server after every test.
-        /// </summary>
-        [TearDown]
-        public void StopServer()
-        {
-            this.server.Stop();
-        }
-
-        /// <summary>
         /// Creates the stub response for the single header value example.
         /// </summary>
         private void CreateStubForSingleHeaderValue()
         {
-            this.server.Given(Request.Create().WithPath("/single-header-value").UsingGet()
+            this.Server.Given(Request.Create().WithPath("/single-header-value").UsingGet()
                 .WithHeader("my_header", "my_header_value"))
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
@@ -98,7 +77,7 @@ namespace RestAssuredNet.Tests
         /// </summary>
         private void CreateStubForMultipleHeaderValues()
         {
-            this.server.Given(Request.Create().WithPath("/multiple-header-values").UsingGet()
+            this.Server.Given(Request.Create().WithPath("/multiple-header-values").UsingGet()
                 .WithHeader("my_header", "my_header_value_1, my_header_value_2"))
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
