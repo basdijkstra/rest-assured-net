@@ -26,7 +26,7 @@ namespace RestAssuredNet.Tests
     /// Examples of RestAssuredNet usage.
     /// </summary>
     [TestFixture]
-    public class RequestBodyUsageExamples
+    public class RequestBodyTests
     {
         private readonly string plaintextRequestBody = "Here's a plaintext request body.";
 

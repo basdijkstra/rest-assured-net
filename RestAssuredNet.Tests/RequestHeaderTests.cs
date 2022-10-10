@@ -26,7 +26,7 @@ namespace RestAssuredNet.Tests
     /// Examples of RestAssuredNet usage.
     /// </summary>
     [TestFixture]
-    public class RequestHeaderUsageExamples
+    public class RequestHeaderTests
     {
         private WireMockServer server;
 
