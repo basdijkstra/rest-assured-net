@@ -65,10 +65,10 @@ namespace RestAssuredNet.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for setting
-        /// a Content-Type header with a text value.
+        /// a Content-Type header with a string value.
         /// </summary>
         [Test]
-        public void ContentTypeHeaderCanBeSuppliedAsText()
+        public void ContentTypeHeaderCanBeSuppliedAsString()
         {
             this.CreateStubForContentTypeHeaderAsString();
 
@@ -99,6 +99,23 @@ namespace RestAssuredNet.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for setting
+        /// the Accept header.
+        /// </summary>
+        [Test]
+        public void AcceptHeaderCanBeSuppliedAsString()
+        {
+            this.CreateStubForAcceptHeaderAsString();
+
+            Given()
+            .Accept("application/xml")
+            .When()
+            .Post("http://localhost:9876/accept-header-as-string")
+            .Then()
+            .StatusCode(201);
+        }
+
+        /// <summary>
         /// Creates the stub response for the single header value example.
         /// </summary>
         private void CreateStubForSingleHeaderValue()
@@ -121,7 +138,7 @@ namespace RestAssuredNet.Tests
         }
 
         /// <summary>
-        /// Creates the stub response for the multiple header values example.
+        /// Creates the stub response for the example setting the content type as a string.
         /// </summary>
         private void CreateStubForContentTypeHeaderAsString()
         {
@@ -132,12 +149,23 @@ namespace RestAssuredNet.Tests
         }
 
         /// <summary>
-        /// Creates the stub response for the multiple header values example.
+        /// Creates the stub response for the example setting the content encoding.
         /// </summary>
         private void CreateStubForEncoding()
         {
             this.Server.Given(Request.Create().WithPath("/content-type-with-encoding").UsingPost()
                 .WithHeader("Content-Type", new ExactMatcher("application/xml; charset=us-ascii")))
+                .RespondWith(Response.Create()
+                .WithStatusCode(201));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the example setting the accept header as a string.
+        /// </summary>
+        private void CreateStubForAcceptHeaderAsString()
+        {
+            this.Server.Given(Request.Create().WithPath("/accept-header-as-string").UsingPost()
+                .WithHeader("Accept", new ExactMatcher("application/xml")))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));
         }

@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
+using System.Net.Http.Headers;
 using System.Text;
 using RestAssuredNet.RA.Internal;
 
@@ -79,6 +80,17 @@ namespace RestAssuredNet.RA
         public RequestSpecification ContentEncoding(Encoding encoding)
         {
             this.contentEncoding = encoding;
+            return this;
+        }
+
+        /// <summary>
+        /// Set the value for the Accept header for the request object to be sent.
+        /// </summary>
+        /// <param name="accept">The value for the Accept header to be added.</param>
+        /// <returns>The current <see cref="RequestSpecification"/> object.</returns>
+        public RequestSpecification Accept(string accept)
+        {
+            this.request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(accept));
             return this;
         }
 
