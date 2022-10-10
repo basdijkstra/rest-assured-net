@@ -61,7 +61,7 @@ namespace RestAssuredNet.RA
         {
             if (!(expectedStatusCode == (int)this.response.StatusCode))
             {
-                throw new AssertionException($"Expected status code to be {expectedStatusCode}, but was {this.response.StatusCode}");
+                throw new AssertionException($"Expected status code to be {expectedStatusCode}, but was {(int)this.response.StatusCode}");
             }
 
             return this;

@@ -15,6 +15,7 @@
 // </copyright>
 using System.Net.Http.Headers;
 using System.Text;
+using Microsoft.AspNetCore.WebUtilities;
 using RestAssuredNet.RA.Internal;
 
 namespace RestAssuredNet.RA
@@ -28,6 +29,7 @@ namespace RestAssuredNet.RA
         private string requestBody = string.Empty;
         private string contentTypeHeader = "application/json";
         private Encoding contentEncoding = Encoding.UTF8;
+        private Dictionary<string, string> queryParams = new Dictionary<string, string>();
         private bool disposed = false;
 
         /// <summary>
@@ -91,6 +93,18 @@ namespace RestAssuredNet.RA
         public RequestSpecification Accept(string accept)
         {
             this.request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(accept));
+            return this;
+        }
+
+        /// <summary>
+        /// Add a query parameter to be appended to the endpoint when the request is sent.
+        /// </summary>
+        /// <param name="key">The query parameter name.</param>
+        /// <param name="value">The associated query parameter value.</param>
+        /// <returns>The current <see cref="RequestSpecification"/> object.</returns>
+        public RequestSpecification QueryParam(string key, object value)
+        {
+            this.queryParams.Add(key, value.ToString());
             return this;
         }
 
@@ -199,10 +213,17 @@ namespace RestAssuredNet.RA
         /// <returns>An object representing the HTTP response corresponding to the request.</returns>
         private VerifiableResponse Send(HttpMethod httpMethod, string endpoint)
         {
+            // Set the HTTP method for the request
             this.request.Method = httpMethod;
+
+            // Add any query parameters that have been specified and create the endpoint
+            endpoint = QueryHelpers.AddQueryString(endpoint, this.queryParams);
             this.request.RequestUri = new Uri(endpoint);
+
+            // Set the request body using the content, encoding and content type specified
             this.request.Content = new StringContent(this.requestBody, this.contentEncoding, this.contentTypeHeader);
 
+            // Send the request and return the result
             Task<VerifiableResponse> task = HttpRequestProcessor.Send(this.request);
             return task.Result;
         }
