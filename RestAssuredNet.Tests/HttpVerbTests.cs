@@ -37,10 +37,7 @@ namespace RestAssuredNet.Tests
 
             Given()
             .When()
-            .Get("http://localhost:9876/http-get")
-            .Then()
-            .AssertThat() // example of using the AssertThat() syntactic sugar method.
-            .StatusCode(200);
+            .Get("http://localhost:9876/http-get");
         }
 
         /// <summary>
@@ -54,9 +51,7 @@ namespace RestAssuredNet.Tests
 
             Given()
             .When()
-            .Post("http://localhost:9876/http-post")
-            .Then()
-            .StatusCode(201);
+            .Post("http://localhost:9876/http-post");
         }
 
         /// <summary>
@@ -70,9 +65,7 @@ namespace RestAssuredNet.Tests
 
             Given()
             .When()
-            .Put("http://localhost:9876/http-put")
-            .Then()
-            .StatusCode(200);
+            .Put("http://localhost:9876/http-put");
         }
 
         /// <summary>
@@ -86,9 +79,7 @@ namespace RestAssuredNet.Tests
 
             Given()
             .When()
-            .Patch("http://localhost:9876/http-patch")
-            .Then()
-            .StatusCode(200);
+            .Patch("http://localhost:9876/http-patch");
         }
 
         /// <summary>
@@ -102,9 +93,7 @@ namespace RestAssuredNet.Tests
 
             Given()
             .When()
-            .Delete("http://localhost:9876/http-delete")
-            .Then()
-            .StatusCode(204);
+            .Delete("http://localhost:9876/http-delete");
         }
 
         /// <summary>
