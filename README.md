@@ -8,13 +8,25 @@ This library is currently in a very initial stage. Expect more features to be ad
 ### Checking response status codes
 ```csharp
 [Test]
-public void HttpGetCanBeUsed()
+public void StatusCodeIndicatingSuccessCanBeVerifiedAsInteger()
 {
     Given()
     .When()
-    .Get("http://api.zippopotam.us/us/90210")
+    .Get("http://localhost:9876/http-status-code-ok")
     .Then()
     .StatusCode(200);
+}
+```
+
+```csharp
+[Test]
+public void StatusCodeIndicatingSuccessCanBeVerifiedAsHttpStatusCode()
+{
+    Given()
+    .When()
+    .Get("http://localhost:9876/http-status-code-ok")
+    .Then()
+    .StatusCode(HttpStatusCode.OK);
 }
 ```
 
