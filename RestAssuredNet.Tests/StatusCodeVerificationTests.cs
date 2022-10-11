@@ -89,7 +89,7 @@ namespace RestAssuredNet.Tests
             .When()
             .Get("http://localhost:9876/http-status-code-ok")
             .Then()
-            .StatusCode(HttpStatusCode.NotFound);
+            .StatusCode(HttpStatusCode.OK);
         }
 
         /// <summary>
