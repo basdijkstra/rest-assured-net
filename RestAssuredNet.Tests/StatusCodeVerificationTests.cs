@@ -93,6 +93,45 @@ namespace RestAssuredNet.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a response status code using an NHamcrest matcher.
+        /// </summary>
+        [Test]
+        public void StatusCodeIndicatingSuccessCanBeVerifiedUsingNHamcrestEqualToMatcher()
+        {
+            this.CreateStubForHttpOK();
+
+            Given()
+            .When()
+            .Get("http://localhost:9876/http-status-code-ok")
+            .Then()
+            .StatusCode(NHamcrest.Is.EqualTo(200));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a response status code using an NHamcrest matcher, test that
+        /// it is throwing the expected exception with the right message.
+        /// </summary>
+        [Test]
+        public void StatusCodeVerificationWithMismatchingNHamcrestMatcherThrowsTheExpectedException()
+        {
+            this.CreateStubForHttpOK();
+
+            RA.Exceptions.AssertionException ae = Assert.Throws<RA.Exceptions.AssertionException>(() =>
+
+            {
+                Given()
+                .When()
+                .Get("http://localhost:9876/http-status-code-ok")
+                .Then()
+                .StatusCode(NHamcrest.Is.GreaterThan(300));
+            });
+
+            Assert.That(ae.Message, Is.EqualTo("Expected response status code to match 'greater than 300', but was 200"));
+        }
+
+        /// <summary>
         /// Creates the stub response for the HTTP OK example.
         /// </summary>
         private void CreateStubForHttpOK()

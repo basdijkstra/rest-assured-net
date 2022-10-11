@@ -13,6 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
+using NHamcrest;
+using NHamcrest.Core;
 using RestAssuredNet.RA.Exceptions;
 using System.Net;
 using System.Net.Http.Headers;
@@ -89,6 +91,22 @@ namespace RestAssuredNet.RA
             if (!expectedStatusCode.Equals(this.response.StatusCode))
             {
                 throw new AssertionException($"Expected status code to be {expectedStatusCode}, but was {this.response.StatusCode}");
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// A method to verify that the actual status code is equal to an expected value.
+        /// </summary>
+        /// <param name="matcher">The NHamcrest matcher to evaluate.</param>
+        /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        /// <exception cref="AssertionException">Thrown when the actual status code does not match the expected one.</exception>
+        public VerifiableResponse StatusCode(IMatcher<int> matcher)
+        {
+            if (!matcher.Matches((int)this.response.StatusCode))
+            {
+                throw new AssertionException($"Expected response status code to match '{matcher}', but was {(int)this.response.StatusCode}");
             }
 
             return this;

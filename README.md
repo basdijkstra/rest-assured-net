@@ -30,6 +30,18 @@ public void StatusCodeIndicatingSuccessCanBeVerifiedAsHttpStatusCode()
 }
 ```
 
+```csharp
+[Test]
+public void StatusCodeIndicatingSuccessCanBeVerifiedUsingNHamcrestEqualToMatcher()
+{
+    Given()
+    .When()
+    .Get("http://localhost:9876/http-status-code-ok")
+    .Then()
+    .StatusCode(NHamcrest.Is.EqualTo(200));
+}
+```
+
 ### Checking response headers
 ```csharp
 [Test]
