@@ -91,6 +91,7 @@ namespace RestAssuredNet.Tests
 
             Given()
             .ContentType("application/xml")
+            .And() // Example of using the And() syntactic sugar method in request building.
             .ContentEncoding(Encoding.ASCII)
             .When()
             .Post("http://localhost:9876/content-type-with-encoding")

@@ -52,6 +52,15 @@ namespace RestAssuredNet.RA
         }
 
         /// <summary>
+        /// Syntactic sugar that makes tests read more like natural language.
+        /// </summary>
+        /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        public VerifiableResponse And()
+        {
+            return this;
+        }
+
+        /// <summary>
         /// A method to verify that the actual status code is equal to an expected value.
         /// </summary>
         /// <param name="expectedStatusCode">The expected status code.</param>
@@ -62,6 +71,32 @@ namespace RestAssuredNet.RA
             if (!(expectedStatusCode == (int)this.response.StatusCode))
             {
                 throw new AssertionException($"Expected status code to be {expectedStatusCode}, but was {(int)this.response.StatusCode}");
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// A method to verify that a header exists in the response, with the expected value.
+        /// </summary>
+        /// <param name="name">The expected response header name.</param>
+        /// <param name="expectedValue">The corresponding expected response header value.</param>
+        /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        /// <exception cref="AssertionException">Thrown when the header does not exist, or when the header value does not equal the supplied expected value.</exception>
+        public VerifiableResponse Header(string name, string expectedValue)
+        {
+            IEnumerable<string> values;
+
+            if (this.response.Headers.TryGetValues(name, out values))
+            {
+                if (!values.First().Equals(expectedValue))
+                {
+                    throw new AssertionException($"Expected value for header with name '{name}' to be '{expectedValue}', but was '{values.First()}'.");
+                }
+            }
+            else
+            {
+                throw new AssertionException($"Expected header with name '{name}' to be in the response, but it could not be found.");
             }
 
             return this;

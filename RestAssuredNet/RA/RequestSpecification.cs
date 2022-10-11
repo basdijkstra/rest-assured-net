@@ -131,6 +131,15 @@ namespace RestAssuredNet.RA
         }
 
         /// <summary>
+        /// Syntactic sugar that makes tests read more like natural language.
+        /// </summary>
+        /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        public RequestSpecification And()
+        {
+            return this;
+        }
+
+        /// <summary>
         /// Syntactic sugar (for now) to help indicate the start of the 'Act' part of a test.
         /// </summary>
         /// <returns>The current <see cref="RequestSpecification"/>.</returns>
