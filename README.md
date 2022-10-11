@@ -18,6 +18,23 @@ public void HttpGetCanBeUsed()
 }
 ```
 
+### Checking response headers
+```csharp
+[Test]
+public void MultipleResponseHeadersCanBeVerified()
+{
+    Given()
+    .When()
+    .Get("http://localhost:9876/custom-multiple-response-headers")
+    .Then()
+    .StatusCode(200)
+	.And() // Example of using the And() syntactic sugar method in response verification.
+    .Header("custom_header_name", "custom_header_value")
+	.And()
+    .Header("another_header", "another_value");
+}
+```
+
 ### Adding query parameters
 Adding a single query parameter:
 ```csharp
