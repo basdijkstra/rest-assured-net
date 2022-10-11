@@ -91,6 +91,24 @@ namespace RestAssuredNet.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a single response header and its value.
+        /// </summary>
+        [Test]
+        public void MultipleResponseHeadersCanBeVerified()
+        {
+            this.CreateStubForCustomMultipleResponseHeaders();
+
+            Given()
+            .When()
+            .Get("http://localhost:9876/custom-multiple-response-headers")
+            .Then()
+            .StatusCode(200)
+            .Header("custom_header_name", "custom_header_value")
+            .Header("another_header", "another_value");
+        }
+
+        /// <summary>
         /// Creates the stub response for the JSON string request body example.
         /// </summary>
         private void CreateStubForCustomSingleResponseHeader()
@@ -98,6 +116,18 @@ namespace RestAssuredNet.Tests
             this.Server.Given(Request.Create().WithPath("/custom-response-header").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("custom_header_name", "custom_header_value")
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the JSON string request body example.
+        /// </summary>
+        private void CreateStubForCustomMultipleResponseHeaders()
+        {
+            this.Server.Given(Request.Create().WithPath("/custom-multiple-response-headers").UsingGet())
+                .RespondWith(Response.Create()
+                .WithHeader("custom_header_name", "custom_header_value")
+                .WithHeader("another_header", "another_value")
                 .WithStatusCode(200));
         }
     }
