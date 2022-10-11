@@ -28,9 +28,9 @@ public void MultipleResponseHeadersCanBeVerified()
     .Get("http://localhost:9876/custom-multiple-response-headers")
     .Then()
     .StatusCode(200)
-	.And() // Example of using the And() syntactic sugar method in response verification.
+    .And() // Example of using the And() syntactic sugar method in response verification.
     .Header("custom_header_name", "custom_header_value")
-	.And()
+    .And()
     .Header("another_header", "another_value");
 }
 ```
