@@ -14,6 +14,7 @@
 // limitations under the License.
 // </copyright>
 using NUnit.Framework;
+using System.Collections.Generic;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using static RestAssuredNet.RestAssuredNet;
@@ -55,6 +56,67 @@ namespace RestAssuredNet.Tests
             Given()
             .QueryParam("name", "john")
             .QueryParam("id", 12345)
+            .When()
+            .Get("http://localhost:9876/multiple-query-params")
+            .Then()
+            .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test to verify that when a query parameter is specified more than once,
+        /// the last value specified will be used.
+        /// </summary>
+        [Test]
+        public void SpecifyingTheSameSingleQueryParameterMoreThanOnceIsNotAProblem()
+        {
+            this.CreateStubForSingleQueryParameter();
+
+            Given()
+            .QueryParam("name", "susan")
+            .QueryParam("name", "john")
+            .When()
+            .Get("http://localhost:9876/single-query-param")
+            .Then()
+            .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test to verify that when a query parameter is specified more than once,
+        /// the last value specified will be used.
+        /// </summary>
+        [Test]
+        public void MultipleQueryParametersCanBeSpecifiedUsingADictionary()
+        {
+            Dictionary<string, object> queryParams = new Dictionary<string, object>();
+            queryParams.Add("name", "john");
+            queryParams.Add("id", 12345);
+
+            this.CreateStubForMultipleQueryParameters();
+
+            Given()
+            .QueryParams(queryParams)
+            .When()
+            .Get("http://localhost:9876/multiple-query-params")
+            .Then()
+            .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test to verify that when a query parameter is specified more than once,
+        /// the last value specified will be used.
+        /// </summary>
+        [Test]
+        public void SpecifyingTheSameQueryParametersMoreThanOnceUsingADictionaryIsNotAProblem()
+        {
+            Dictionary<string, object> queryParams = new Dictionary<string, object>();
+            queryParams.Add("name", "susan"); // This parameter value will be overwritten
+            queryParams.Add("id", 12345);
+
+            this.CreateStubForMultipleQueryParameters();
+
+            Given()
+            .QueryParams(queryParams)
+            .QueryParam("name", "john") // This parameter value will be used
             .When()
             .Get("http://localhost:9876/multiple-query-params")
             .Then()

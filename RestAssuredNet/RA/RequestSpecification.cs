@@ -97,14 +97,25 @@ namespace RestAssuredNet.RA
         }
 
         /// <summary>
-        /// Add a query parameter to be appended to the endpoint when the request is sent.
+        /// Add a query parameter to the endpoint when the request is sent.
         /// </summary>
         /// <param name="key">The query parameter name.</param>
         /// <param name="value">The associated query parameter value.</param>
         /// <returns>The current <see cref="RequestSpecification"/> object.</returns>
         public RequestSpecification QueryParam(string key, object value)
         {
-            this.queryParams.Add(key, value.ToString());
+            this.queryParams[key] = value.ToString();
+            return this;
+        }
+
+        /// <summary>
+        /// Adds the specified query parameters to the endpoint when the request is sent.
+        /// </summary>
+        /// <param name="queryParams">A <see cref="Dictionary{TKey, TValue}"/> containing the query parameters to be added.</param>
+        /// <returns>The current <see cref="RequestSpecification"/> object.</returns>
+        public RequestSpecification QueryParams(Dictionary<string, object> queryParams)
+        {
+            queryParams.ToList().ForEach(param => this.queryParams[param.Key] = param.Value.ToString());
             return this;
         }
 
