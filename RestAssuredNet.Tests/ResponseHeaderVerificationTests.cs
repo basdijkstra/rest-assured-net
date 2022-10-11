@@ -87,12 +87,12 @@ namespace RestAssuredNet.Tests
                 .Header("custom_header_name", "value_does_not_match");
             });
 
-            Assert.That(ae.Message, Is.EqualTo("Expected value for header with name 'custom_header_name' to be 'value_does_not_match', but was 'custom_header_value'."));
+            Assert.That(ae.Message, Is.EqualTo("Expected value for response header with name 'custom_header_name' to be 'value_does_not_match', but was 'custom_header_value'."));
         }
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
-        /// a single response header and its value.
+        /// multiple response headers and their values.
         /// </summary>
         [Test]
         public void MultipleResponseHeadersCanBeVerified()
@@ -109,7 +109,47 @@ namespace RestAssuredNet.Tests
         }
 
         /// <summary>
-        /// Creates the stub response for the JSON string request body example.
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// the response Content-Type header.
+        /// </summary>
+        [Test]
+        public void ResponseContentTypeHeaderCanBeVerified()
+        {
+            this.CreateStubForCustomResponseContentTypeHeader();
+
+            Given()
+            .When()
+            .Get("http://localhost:9876/custom-response-content-type-header")
+            .Then()
+            .StatusCode(200)
+            .ContentType("application/something");
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for sending
+        /// a plaintext request body when performing an HTTP POST.
+        /// </summary>
+        [Test]
+        public void IncorrectContentTypeHeaderValueThrowsTheExpectedException()
+        {
+            this.CreateStubForCustomResponseContentTypeHeader();
+
+            RA.Exceptions.AssertionException ae = Assert.Throws<RA.Exceptions.AssertionException>(() =>
+
+            {
+                Given()
+                .When()
+                .Get("http://localhost:9876/custom-response-content-type-header")
+                .Then()
+                .StatusCode(200)
+                .ContentType("application/something_else");
+            });
+
+            Assert.That(ae.Message, Is.EqualTo("Expected value for response Content-Type header to be 'application/something_else', but was 'application/something'."));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the single response header example.
         /// </summary>
         private void CreateStubForCustomSingleResponseHeader()
         {
@@ -120,7 +160,18 @@ namespace RestAssuredNet.Tests
         }
 
         /// <summary>
-        /// Creates the stub response for the JSON string request body example.
+        /// Creates the stub response for the custom response content type example.
+        /// </summary>
+        private void CreateStubForCustomResponseContentTypeHeader()
+        {
+            this.Server.Given(Request.Create().WithPath("/custom-response-content-type-header").UsingGet())
+                .RespondWith(Response.Create()
+                .WithHeader("Content-Type", "application/something")
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the multiple response headers example.
         /// </summary>
         private void CreateStubForCustomMultipleResponseHeaders()
         {

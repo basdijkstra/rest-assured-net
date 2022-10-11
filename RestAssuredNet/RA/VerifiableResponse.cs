@@ -14,6 +14,7 @@
 // limitations under the License.
 // </copyright>
 using RestAssuredNet.RA.Exceptions;
+using System.Net.Http.Headers;
 
 namespace RestAssuredNet.RA
 {
@@ -91,12 +92,34 @@ namespace RestAssuredNet.RA
             {
                 if (!values.First().Equals(expectedValue))
                 {
-                    throw new AssertionException($"Expected value for header with name '{name}' to be '{expectedValue}', but was '{values.First()}'.");
+                    throw new AssertionException($"Expected value for response header with name '{name}' to be '{expectedValue}', but was '{values.First()}'.");
                 }
             }
             else
             {
                 throw new AssertionException($"Expected header with name '{name}' to be in the response, but it could not be found.");
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// A method to verify that the response Content-Type header has the expected value.
+        /// </summary>
+        /// <param name="expectedContentType">The expected value for the response Content-Type header.</param>
+        /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        public VerifiableResponse ContentType(string expectedContentType)
+        {
+            MediaTypeHeaderValue? actualContentType = this.response.Content.Headers.ContentType;
+
+            if (actualContentType == null)
+            {
+                throw new AssertionException("Response Content-Type header could not be found.");
+            }
+
+            if (!actualContentType.ToString().Equals(expectedContentType))
+            {
+                throw new AssertionException($"Expected value for response Content-Type header to be '{expectedContentType}', but was '{actualContentType}'.");
             }
 
             return this;
