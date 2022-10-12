@@ -86,6 +86,19 @@ public void ResponseContentTypeHeaderCanBeVerified()
 }
 ```
 
+```csharp
+[Test]
+public void ResponseContentTypeHeaderCanBeVerifiedUsingNHamcrestMatcher()
+{
+    Given()
+    .When()
+    .Get("http://localhost:9876/custom-response-content-type-header")
+    .Then()
+    .StatusCode(200)
+    .ContentType(NHamcrest.Contains.String("something"));
+}
+```
+
 ### Adding query parameters
 Adding a single query parameter:
 ```csharp

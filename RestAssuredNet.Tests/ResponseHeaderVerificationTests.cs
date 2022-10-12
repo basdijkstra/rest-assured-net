@@ -166,8 +166,25 @@ namespace RestAssuredNet.Tests
         }
 
         /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for sending
-        /// a plaintext request body when performing an HTTP POST.
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// the response Content-Type header using an NHamcrest matcher.
+        /// </summary>
+        [Test]
+        public void ResponseContentTypeHeaderCanBeVerifiedUsingNHamcrestMatcher()
+        {
+            this.CreateStubForCustomResponseContentTypeHeader();
+
+            Given()
+            .When()
+            .Get("http://localhost:9876/custom-response-content-type-header")
+            .Then()
+            .StatusCode(200)
+            .ContentType(NHamcrest.Contains.String("something"));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// that the correct exception is thrown when the response content type does not equal the specified value.
         /// </summary>
         [Test]
         public void IncorrectContentTypeHeaderValueThrowsTheExpectedException()
@@ -186,6 +203,29 @@ namespace RestAssuredNet.Tests
             });
 
             Assert.That(ae.Message, Is.EqualTo("Expected value for response Content-Type header to be 'application/something_else', but was 'application/something'."));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// that the correct exception is thrown when the response content type does not equal the specified value.
+        /// </summary>
+        [Test]
+        public void ContentTypeHeaderValueNotMatchingNHamcrestMatcherThrowsTheExpectedException()
+        {
+            this.CreateStubForCustomResponseContentTypeHeader();
+
+            RA.Exceptions.AssertionException ae = Assert.Throws<RA.Exceptions.AssertionException>(() =>
+
+            {
+                Given()
+                .When()
+                .Get("http://localhost:9876/custom-response-content-type-header")
+                .Then()
+                .StatusCode(200)
+                .ContentType(NHamcrest.Contains.String("not_found"));
+            });
+
+            Assert.That(ae.Message, Is.EqualTo("Expected value for response Content-Type header to match 'a string containing \"not_found\"', but was 'application/something'."));
         }
 
         /// <summary>

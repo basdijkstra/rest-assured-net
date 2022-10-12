@@ -184,5 +184,27 @@ namespace RestAssuredNet.RA
 
             return this;
         }
+
+        /// <summary>
+        /// A method to verify that the response Content-Type header value matches a given NHamcrest matcher.
+        /// </summary>
+        /// <param name="matcher">The NHamcrest matcher to evaluate.</param>
+        /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        public VerifiableResponse ContentType(IMatcher<string> matcher)
+        {
+            MediaTypeHeaderValue? actualContentType = this.response.Content.Headers.ContentType;
+
+            if (actualContentType == null)
+            {
+                throw new AssertionException("Response Content-Type header could not be found.");
+            }
+
+            if (!matcher.Matches(actualContentType.ToString()))
+            {
+                throw new AssertionException($"Expected value for response Content-Type header to match '{matcher}', but was '{actualContentType}'.");
+            }
+
+            return this;
+        }
     }
 }
