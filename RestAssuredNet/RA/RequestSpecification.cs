@@ -17,6 +17,8 @@ using System.Net.Http.Headers;
 using System.Text;
 using Microsoft.AspNetCore.WebUtilities;
 using RestAssuredNet.RA.Internal;
+using Stubble.Core;
+using Stubble.Core.Builders;
 
 namespace RestAssuredNet.RA
 {
@@ -30,6 +32,7 @@ namespace RestAssuredNet.RA
         private string contentTypeHeader = "application/json";
         private Encoding contentEncoding = Encoding.UTF8;
         private Dictionary<string, string> queryParams = new Dictionary<string, string>();
+        private Dictionary<string, string> pathParams = new Dictionary<string, string>();
         private bool disposed = false;
 
         /// <summary>
@@ -116,6 +119,29 @@ namespace RestAssuredNet.RA
         public RequestSpecification QueryParams(Dictionary<string, object> queryParams)
         {
             queryParams.ToList().ForEach(param => this.queryParams[param.Key] = param.Value.ToString());
+            return this;
+        }
+
+        /// <summary>
+        /// Add a path parameter to the endpoint when the request is sent.
+        /// </summary>
+        /// <param name="key">The path parameter name.</param>
+        /// <param name="value">The associated path parameter value.</param>
+        /// <returns>The current <see cref="RequestSpecification"/> object.</returns>
+        public RequestSpecification PathParam(string key, object value)
+        {
+            this.pathParams[key] = value.ToString();
+            return this;
+        }
+
+        /// <summary>
+        /// Adds the specified path parameters to the endpoint when the request is sent.
+        /// </summary>
+        /// <param name="pathParams">A <see cref="Dictionary{TKey, TValue}"/> containing the path parameters to be added.</param>
+        /// <returns>The current <see cref="RequestSpecification"/> object.</returns>
+        public RequestSpecification PathParams(Dictionary<string, object> pathParams)
+        {
+            pathParams.ToList().ForEach(param => this.pathParams[param.Key] = param.Value.ToString());
             return this;
         }
 
@@ -260,8 +286,16 @@ namespace RestAssuredNet.RA
             // Set the HTTP method for the request
             this.request.Method = httpMethod;
 
+            // Replace any path parameter placeholders that have been specified with their values
+            if (this.pathParams.Count > 0)
+            {
+                StubbleVisitorRenderer renderer = new StubbleBuilder().Build();
+                endpoint = renderer.Render(endpoint, this.pathParams);
+            }
+
             // Add any query parameters that have been specified and create the endpoint
             endpoint = QueryHelpers.AddQueryString(endpoint, this.queryParams);
+
             this.request.RequestUri = new Uri(endpoint);
 
             // Set the request body using the content, encoding and content type specified

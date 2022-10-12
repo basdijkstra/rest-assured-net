@@ -133,6 +133,42 @@ public void MultipleQueryParametersCanBeSpecifiedUsingADictionary()
 }
 ```
 
+### Adding path parameters
+RestSharp.NET uses [Stubble](https://github.com/StubbleOrg/Stubble) as a templating engine for path parameters. Path parameters can be added by defining placeholders in the endpoint using double handlebar notation `{{ }}`.
+
+Adding a single path parameter:
+```csharp
+[Test]
+public void SinglePathParameterCanBeSpecified()
+{
+    Given()
+    .PathParam("userid", 1)
+    .When()
+    .Get("http://localhost:9876/user/{{userid}}")
+    .Then()
+    .StatusCode(200);
+}
+```
+You can add multiple query parameters by repeated use of `PathParam()`.
+
+Adding multiple path parameters can also be done using a Dictionary:
+```csharp
+[Test]
+public void MultiplePathParameterCanBeSpecifiedUsingADictionary()
+{
+    Dictionary<string, object> pathParams = new Dictionary<string, object>();
+    pathParams.Add("userid", 1);
+    pathParams.Add("accountid", "NL1234");
+
+    Given()
+    .PathParams(pathParams)
+    .When()
+    .Get("http://localhost:9876/user/{{userid}}/account/{{accountid}}")
+    .Then()
+    .StatusCode(200);
+}
+```
+
 ### Adding headers (including Content-Type and Accept)
 ```csharp
 [Test]
