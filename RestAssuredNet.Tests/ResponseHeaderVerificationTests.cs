@@ -71,7 +71,6 @@ namespace RestAssuredNet.Tests
             this.CreateStubForCustomSingleResponseHeader();
 
             RA.Exceptions.AssertionException ae = Assert.Throws<RA.Exceptions.AssertionException>(() =>
-
             {
                 Given()
                 .When()
@@ -94,7 +93,6 @@ namespace RestAssuredNet.Tests
             this.CreateStubForCustomSingleResponseHeader();
 
             RA.Exceptions.AssertionException ae = Assert.Throws<RA.Exceptions.AssertionException>(() =>
-
             {
                 Given()
                 .When()
@@ -117,7 +115,6 @@ namespace RestAssuredNet.Tests
             this.CreateStubForCustomSingleResponseHeader();
 
             RA.Exceptions.AssertionException ae = Assert.Throws<RA.Exceptions.AssertionException>(() =>
-
             {
                 Given()
                 .When()
@@ -192,7 +189,6 @@ namespace RestAssuredNet.Tests
             this.CreateStubForCustomResponseContentTypeHeader();
 
             RA.Exceptions.AssertionException ae = Assert.Throws<RA.Exceptions.AssertionException>(() =>
-
             {
                 Given()
                 .When()
@@ -215,7 +211,6 @@ namespace RestAssuredNet.Tests
             this.CreateStubForCustomResponseContentTypeHeader();
 
             RA.Exceptions.AssertionException ae = Assert.Throws<RA.Exceptions.AssertionException>(() =>
-
             {
                 Given()
                 .When()

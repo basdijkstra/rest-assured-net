@@ -13,8 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-using NUnit.Framework;
 using System.Net;
+using NUnit.Framework;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using static RestAssuredNet.RestAssuredNet;
@@ -119,7 +119,6 @@ namespace RestAssuredNet.Tests
             this.CreateStubForHttpOK();
 
             RA.Exceptions.AssertionException ae = Assert.Throws<RA.Exceptions.AssertionException>(() =>
-
             {
                 Given()
                 .When()
