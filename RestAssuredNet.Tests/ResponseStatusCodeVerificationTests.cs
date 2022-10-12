@@ -1,4 +1,4 @@
-// <copyright file="StatusCodeVerificationTests.cs" company="On Test Automation">
+// <copyright file="ResponseStatusCodeVerificationTests.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +25,7 @@ namespace RestAssuredNet.Tests
     /// Examples of RestAssuredNet usage.
     /// </summary>
     [TestFixture]
-    public class StatusCodeVerificationTests : TestBase
+    public class ResponseStatusCodeVerificationTests : TestBase
     {
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
