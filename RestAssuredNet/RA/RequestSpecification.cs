@@ -133,6 +133,17 @@ namespace RestAssuredNet.RA
         }
 
         /// <summary>
+        /// Adds an OAuth2 authorization token to the request.
+        /// </summary>
+        /// <param name="token">The OAuth2 token to be added to the request.</param>
+        /// <returns>The current <see cref="RequestSpecification"/> object.</returns>
+        public RequestSpecification OAuth2(string token)
+        {
+            this.request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            return this;
+        }
+
+        /// <summary>
         /// Adds a request body to the request object to be sent.
         /// </summary>
         /// <param name="body">The body that is to be sent with the request as a string.</param>

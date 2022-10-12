@@ -29,10 +29,10 @@ namespace RestAssuredNet.Tests
     {
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for including
-        /// a header with a single value when sending an HTTP request.
+        /// Basic authorization details with the request.
         /// </summary>
         [Test]
-        public void HeaderWithASingleValueCanBeSupplied()
+        public void BasicAuthorizationDetailsCanBeSupplied()
         {
             this.CreateStubForBasicAuthorizationVerification();
 
@@ -45,12 +45,40 @@ namespace RestAssuredNet.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for including
+        /// an OAuth2 authorization token with the request.
+        /// </summary>
+        [Test]
+        public void OAuth2TokenCanBeSupplied()
+        {
+            this.CreateStubForOAuth2TokenAuthorizationVerification();
+
+            Given()
+            .OAuth2("this_is_my_token")
+            .When()
+            .Get("http://localhost:9876/oauth2")
+            .Then()
+            .StatusCode(200);
+        }
+
+        /// <summary>
         /// Creates the stub response for the example using Basic authorization.
         /// </summary>
         private void CreateStubForBasicAuthorizationVerification()
         {
             this.Server.Given(Request.Create().WithPath("/basic-auth").UsingGet()
                 .WithHeader("Authorization", new ExactMatcher("Basic dXNlcm5hbWU6cGFzc3dvcmQ=")))
+                .RespondWith(Response.Create()
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the example using an OAuth2 token.
+        /// </summary>
+        private void CreateStubForOAuth2TokenAuthorizationVerification()
+        {
+            this.Server.Given(Request.Create().WithPath("/oauth2").UsingGet()
+                .WithHeader("Authorization", new ExactMatcher("Bearer this_is_my_token")))
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
         }

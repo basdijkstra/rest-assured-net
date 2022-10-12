@@ -188,6 +188,19 @@ public void HeaderWithASingleValueCanBeSupplied()
 }
 ```
 
+```csharp
+[Test]
+public void OAuth2TokenCanBeSupplied()
+{
+    Given()
+    .OAuth2("this_is_my_token")
+    .When()
+    .Get("http://localhost:9876/oauth2")
+    .Then()
+    .StatusCode(200);
+}
+```
+
 ### Adding a request body (for now only as a string, serialization to come)
 ```csharp
 [Test]
