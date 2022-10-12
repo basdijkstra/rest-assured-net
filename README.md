@@ -99,6 +99,35 @@ public void ResponseContentTypeHeaderCanBeVerifiedUsingNHamcrestMatcher()
 }
 ```
 
+### Checking response body
+You can check the entire response body as a plaintext string (JSON string work as well):
+
+```csharp
+[Test]
+public void JsonStringResponseBodyCanBeVerified()
+{
+    Given()
+    .When()
+    .Get("http://localhost:9876/plaintext-response-body")
+    .Then()
+    .StatusCode(200)
+    .Body("{\"id\": 1, \"user\": \"John Doe\"}");
+}
+```
+
+```csharp
+[Test]
+public void JsonStringResponseBodyCanBeVerifiedUsingNHamcrestMatcher()
+{
+    Given()
+    .When()
+    .Get("http://localhost:9876/json-string-response-body")
+    .Then()
+    .StatusCode(200)
+    .Body(NHamcrest.Contains.String("John Doe"));
+}
+```
+
 ### Adding query parameters
 Adding a single query parameter:
 ```csharp

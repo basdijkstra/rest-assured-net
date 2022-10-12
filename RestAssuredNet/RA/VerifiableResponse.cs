@@ -206,5 +206,39 @@ namespace RestAssuredNet.RA
 
             return this;
         }
+
+        /// <summary>
+        /// Verifies that the response body is equal to the specified expected body.
+        /// </summary>
+        /// <param name="body">The expected response body.</param>
+        /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        public VerifiableResponse Body(string body)
+        {
+            string actualResponseBody = this.response.Content.ReadAsStringAsync().Result;
+
+            if (!actualResponseBody.Equals(body))
+            {
+                throw new AssertionException($"Actual response body did not match expected response body.\nExpected: {body}\nActual: {actualResponseBody}");
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Verifies that the response body matches the specified NHamcrest matcher.
+        /// </summary>
+        /// <param name="matcher">The NHamcrest matcher to evaluate.</param>
+        /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        public VerifiableResponse Body(IMatcher<string> matcher)
+        {
+            string actualResponseBody = this.response.Content.ReadAsStringAsync().Result;
+
+            if (!matcher.Matches(actualResponseBody))
+            {
+                throw new AssertionException($"Actual response body expected to match '{matcher}' but didn't.\nActual: {actualResponseBody}");
+            }
+
+            return this;
+        }
     }
 }
