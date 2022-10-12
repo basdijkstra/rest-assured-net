@@ -59,6 +59,19 @@ public void MultipleResponseHeadersCanBeVerified()
 }
 ```
 
+```csharp
+[Test]
+public void SingleResponseHeaderCanBeVerifiedUsingNHamcrestMatcher()
+{
+    Given()
+    .When()
+    .Get("http://localhost:9876/custom-response-header")
+    .Then()
+    .StatusCode(200)
+    .Header("custom_header_name", NHamcrest.Contains.String("tom_header_val"));
+}
+```
+
 ### Checking response Content-Type
 ```csharp
 [Test]

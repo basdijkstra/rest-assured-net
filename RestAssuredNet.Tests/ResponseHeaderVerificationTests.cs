@@ -45,8 +45,25 @@ namespace RestAssuredNet.Tests
         }
 
         /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for sending
-        /// a plaintext request body when performing an HTTP POST.
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a single response header and whether its value matches an NHamcrest matcher.
+        /// </summary>
+        [Test]
+        public void SingleResponseHeaderCanBeVerifiedUsingNHamcrestMatcher()
+        {
+            this.CreateStubForCustomSingleResponseHeader();
+
+            Given()
+            .When()
+            .Get("http://localhost:9876/custom-response-header")
+            .Then()
+            .StatusCode(200)
+            .Header("custom_header_name", NHamcrest.Contains.String("tom_header_val"));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// that the correct exception is thrown when an expected header is not found.
         /// </summary>
         [Test]
         public void NotFoundHeaderThrowsTheExpectedException()
@@ -68,8 +85,8 @@ namespace RestAssuredNet.Tests
         }
 
         /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for sending
-        /// a plaintext request body when performing an HTTP POST.
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// that the correct exception is thrown when a header does not have the expected value.
         /// </summary>
         [Test]
         public void HeaderWithIncorrectValueThrowsTheExpectedException()
@@ -88,6 +105,29 @@ namespace RestAssuredNet.Tests
             });
 
             Assert.That(ae.Message, Is.EqualTo("Expected value for response header with name 'custom_header_name' to be 'value_does_not_match', but was 'custom_header_value'."));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// that the correct exception is thrown when a header value does not match the given NHamcrest matcher.
+        /// </summary>
+        [Test]
+        public void HeaderValueNotMatchingTheSpecifiedNHamcrestMatcherThrowsTheExpectedException()
+        {
+            this.CreateStubForCustomSingleResponseHeader();
+
+            RA.Exceptions.AssertionException ae = Assert.Throws<RA.Exceptions.AssertionException>(() =>
+
+            {
+                Given()
+                .When()
+                .Get("http://localhost:9876/custom-response-header")
+                .Then()
+                .StatusCode(200)
+                .Header("custom_header_name", NHamcrest.Contains.String("not_found"));
+            });
+
+            Assert.That(ae.Message, Is.EqualTo("Expected value for response header with name 'custom_header_name' to match 'a string containing \"not_found\"', but was 'custom_header_value'."));
         }
 
         /// <summary>

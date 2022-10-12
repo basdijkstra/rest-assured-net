@@ -13,11 +13,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-using NHamcrest;
-using NHamcrest.Core;
-using RestAssuredNet.RA.Exceptions;
 using System.Net;
 using System.Net.Http.Headers;
+using NHamcrest;
+using RestAssuredNet.RA.Exceptions;
 
 namespace RestAssuredNet.RA
 {
@@ -128,6 +127,32 @@ namespace RestAssuredNet.RA
                 if (!values.First().Equals(expectedValue))
                 {
                     throw new AssertionException($"Expected value for response header with name '{name}' to be '{expectedValue}', but was '{values.First()}'.");
+                }
+            }
+            else
+            {
+                throw new AssertionException($"Expected header with name '{name}' to be in the response, but it could not be found.");
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// A method to verify that a header exists in the response, with the expected value.
+        /// </summary>
+        /// <param name="name">The expected response header name.</param>
+        /// <param name="matcher">The NHamcrest matcher to evaluate.</param>
+        /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        /// <exception cref="AssertionException">Thrown when the header does not exist, or when the header value does not equal the supplied expected value.</exception>
+        public VerifiableResponse Header(string name, IMatcher<string> matcher)
+        {
+            IEnumerable<string> values;
+
+            if (this.response.Headers.TryGetValues(name, out values))
+            {
+                if (!matcher.Matches(values.First()))
+                {
+                    throw new AssertionException($"Expected value for response header with name '{name}' to match '{matcher}', but was '{values.First()}'.");
                 }
             }
             else
