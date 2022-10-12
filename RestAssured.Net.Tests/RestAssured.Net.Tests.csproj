@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RestAssuredNet\RestAssuredNet.csproj" />
+    <ProjectReference Include="..\RestAssured.Net\RestAssured.Net.csproj" />
   </ItemGroup>
 
 </Project>

@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestAssuredNet", "RestAssuredNet\RestAssuredNet.csproj", "{096D0212-8B81-4D1A-A547-F5B59A40788B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestAssured.Net", "RestAssured.Net\RestAssured.Net.csproj", "{096D0212-8B81-4D1A-A547-F5B59A40788B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestAssuredNet.Tests", "RestAssuredNet.Tests\RestAssuredNet.Tests.csproj", "{1F99FD38-A8CD-4985-8947-BBEEA1AB522B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestAssured.Net.Tests", "RestAssured.Net.Tests\RestAssured.Net.Tests.csproj", "{1F99FD38-A8CD-4985-8947-BBEEA1AB522B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
