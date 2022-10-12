@@ -120,6 +120,19 @@ namespace RestAssuredNet.RA
         }
 
         /// <summary>
+        /// Adds a basic authorization header to the request.
+        /// </summary>
+        /// <param name="username">The username to be used for authorization.</param>
+        /// <param name="password">The password to be used for authorization.</param>
+        /// <returns>The current <see cref="RequestSpecification"/> object.</returns>
+        public RequestSpecification BasicAuth(string username, string password)
+        {
+            string base64EncodedBasicAuthDetails = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+            this.request.Headers.Authorization = new AuthenticationHeaderValue("Basic", base64EncodedBasicAuthDetails);
+            return this;
+        }
+
+        /// <summary>
         /// Adds a request body to the request object to be sent.
         /// </summary>
         /// <param name="body">The body that is to be sent with the request as a string.</param>

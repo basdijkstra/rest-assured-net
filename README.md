@@ -174,6 +174,20 @@ public void AcceptHeaderCanBeSuppliedAsString()
 }
 ```
 
+### Adding Authorization details
+```csharp
+[Test]
+public void HeaderWithASingleValueCanBeSupplied()
+{
+    Given()
+    .BasicAuth("username", "password")
+    .When()
+    .Get("http://localhost:9876/basic-auth")
+    .Then()
+    .StatusCode(200);
+}
+```
+
 ### Adding a request body (for now only as a string, serialization to come)
 ```csharp
 [Test]
