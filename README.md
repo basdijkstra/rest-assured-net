@@ -128,6 +128,26 @@ public void JsonStringResponseBodyCanBeVerifiedUsingNHamcrestMatcher()
 }
 ```
 
+You can also select individual elements using a JsonPath expression. RestAssured.NET uses [Json.NET](https://www.newtonsoft.com/json/help/html/QueryJsonSelectTokenJsonPath.htm) to evaluate these expressions.
+
+When the expected value is supplied as a string, the value of the first element occurrence matching the JsonPath expression will be compared to it.
+```csharp
+[Test]
+public void JsonResponseBodyElementCanBeVerified()
+{
+    Given()
+    .When()
+    .Get("http://localhost:9876/json-response-body")
+    .Then()
+    .StatusCode(200)
+    .Body("$.Places[0].Name", "Sun City");
+}
+```
+
+When the expected value is supplied as an NHamcrest matcher, ...
+
+MORE EXAMPLES AND EXPLANATION WILL BE ADDED HERE SOON.
+
 ### Adding query parameters
 Adding a single query parameter:
 ```csharp

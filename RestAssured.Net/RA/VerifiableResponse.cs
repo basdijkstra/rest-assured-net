@@ -15,6 +15,7 @@
 // </copyright>
 using System.Net;
 using System.Net.Http.Headers;
+using Newtonsoft.Json.Linq;
 using NHamcrest;
 using RestAssuredNet.RA.Exceptions;
 
@@ -210,15 +211,15 @@ namespace RestAssuredNet.RA
         /// <summary>
         /// Verifies that the response body is equal to the specified expected body.
         /// </summary>
-        /// <param name="body">The expected response body.</param>
+        /// <param name="expectedResponseBody">The expected response body.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
-        public VerifiableResponse Body(string body)
+        public VerifiableResponse Body(string expectedResponseBody)
         {
             string actualResponseBody = this.response.Content.ReadAsStringAsync().Result;
 
-            if (!actualResponseBody.Equals(body))
+            if (!actualResponseBody.Equals(expectedResponseBody))
             {
-                throw new AssertionException($"Actual response body did not match expected response body.\nExpected: {body}\nActual: {actualResponseBody}");
+                throw new AssertionException($"Actual response body did not match expected response body.\nExpected: {expectedResponseBody}\nActual: {actualResponseBody}");
             }
 
             return this;
@@ -236,6 +237,32 @@ namespace RestAssuredNet.RA
             if (!matcher.Matches(actualResponseBody))
             {
                 throw new AssertionException($"Actual response body expected to match '{matcher}' but didn't.\nActual: {actualResponseBody}");
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Verifies that the response body matches the specified NHamcrest matcher.
+        /// </summary>
+        /// <param name="jsonPath">The JsonPath expression to evaluate.</param>
+        /// <param name="expectedValue">The expected value of the JSON response body element.</param>
+        /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        public VerifiableResponse Body(string jsonPath, string expectedValue)
+        {
+            // TODO: Write more tests to see what might happen
+            string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
+            JObject responseBodyAsJObject = JObject.Parse(responseBodyAsString);
+            JToken? resultingElement = responseBodyAsJObject.SelectToken(jsonPath);
+
+            if (resultingElement == null)
+            {
+                throw new AssertionException($"JsonPath expression '{jsonPath}' did not yield any elements.");
+            }
+
+            if (!resultingElement.ToString().Equals(expectedValue))
+            {
+                throw new AssertionException($"Expected JsonPath expression '{jsonPath}' to yield an element with value '{expectedValue}', but was '{resultingElement}'");
             }
 
             return this;
