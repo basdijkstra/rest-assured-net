@@ -129,10 +129,10 @@ namespace RestAssuredNet.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
-        /// a JSON response body element value 1-on-1.
+        /// a JSON response body element string value 1-on-1.
         /// </summary>
         [Test]
-        public void JsonResponseBodyElementCanBeVerified()
+        public void JsonResponseBodyElementStringValueCanBeVerified()
         {
             this.CreateStubForJsonResponseBody();
 
@@ -142,6 +142,40 @@ namespace RestAssuredNet.Tests
             .Then()
             .StatusCode(200)
             .Body("$.Places[0].Name", "Sun City");
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a JSON response body element integer value 1-on-1.
+        /// </summary>
+        [Test]
+        public void JsonResponseBodyElementIntegerValueCanBeVerified()
+        {
+            this.CreateStubForJsonResponseBody();
+
+            Given()
+            .When()
+            .Get("http://localhost:9876/json-response-body")
+            .Then()
+            .StatusCode(200)
+            .Body("$.Places[0].Inhabitants", 100000);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a JSON response body element boolean value 1-on-1.
+        /// </summary>
+        [Test]
+        public void JsonResponseBodyElementBooleanValueCanBeVerified()
+        {
+            this.CreateStubForJsonResponseBody();
+
+            Given()
+            .When()
+            .Get("http://localhost:9876/json-response-body")
+            .Then()
+            .StatusCode(200)
+            .Body("$.Places[1].IsCapital", false);
         }
 
         /// <summary>
@@ -163,7 +197,7 @@ namespace RestAssuredNet.Tests
                 .Body("$.Places[0].Name", "Sin City");
             });
 
-            Assert.That(ae.Message, Is.EqualTo($"Expected JsonPath expression '$.Places[0].Name' to yield an element with value 'Sin City', but was 'Sun City'"));
+            Assert.That(ae.Message, Is.EqualTo($"Expected JsonPath expression '$.Places[0].Name' to yield an element with value Sin City, but was Sun City"));
         }
 
         /// <summary>
@@ -219,12 +253,14 @@ namespace RestAssuredNet.Tests
             {
                 Name = "Sun City",
                 Inhabitants = 100000,
+                IsCapital = true,
             };
 
             Place secondPlace = new Place
             {
                 Name = "Pleasure Meadow",
                 Inhabitants = 50000,
+                IsCapital = false,
             };
 
             Location location = new Location

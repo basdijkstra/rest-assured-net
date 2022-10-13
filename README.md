@@ -130,10 +130,10 @@ public void JsonStringResponseBodyCanBeVerifiedUsingNHamcrestMatcher()
 
 You can also select individual elements using a JsonPath expression. RestAssured.NET uses [Json.NET](https://www.newtonsoft.com/json/help/html/QueryJsonSelectTokenJsonPath.htm) to evaluate these expressions.
 
-When the expected value is supplied as a string, the value of the first element occurrence matching the JsonPath expression will be compared to it.
+When the expected value is supplied as a string, integer or boolean, the value of the first element occurrence matching the JsonPath expression will be compared to it.
 ```csharp
 [Test]
-public void JsonResponseBodyElementCanBeVerified()
+public void JsonResponseBodyElementStringValueCanBeVerified()
 {
     Given()
     .When()
@@ -141,6 +141,19 @@ public void JsonResponseBodyElementCanBeVerified()
     .Then()
     .StatusCode(200)
     .Body("$.Places[0].Name", "Sun City");
+}
+```
+
+```csharp
+[Test]
+public void JsonResponseBodyElementIntegerValueCanBeVerified()
+{
+    Given()
+    .When()
+    .Get("http://localhost:9876/json-response-body")
+    .Then()
+    .StatusCode(200)
+    .Body("$.Places[0].Inhabitants", 100000);
 }
 ```
 

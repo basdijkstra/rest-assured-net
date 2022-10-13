@@ -29,5 +29,10 @@ namespace RestAssured.Net.Tests.Models
         /// The number of inhabitants of the place.
         /// </summary>
         public int Inhabitants { get; set; }
+
+        /// <summary>
+        /// Indication whether or not the place is the capital of a region.
+        /// </summary>
+        public bool IsCapital { get; set; }
     }
 }

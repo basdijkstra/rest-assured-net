@@ -248,7 +248,7 @@ namespace RestAssuredNet.RA
         /// <param name="jsonPath">The JsonPath expression to evaluate.</param>
         /// <param name="expectedValue">The expected value of the JSON response body element.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
-        public VerifiableResponse Body(string jsonPath, string expectedValue)
+        public VerifiableResponse Body(string jsonPath, object expectedValue)
         {
             // TODO: Write more tests to see what might happen
             string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
@@ -260,9 +260,9 @@ namespace RestAssuredNet.RA
                 throw new AssertionException($"JsonPath expression '{jsonPath}' did not yield any elements.");
             }
 
-            if (!resultingElement.ToString().Equals(expectedValue))
+            if (!resultingElement.ToString().Equals(expectedValue.ToString()))
             {
-                throw new AssertionException($"Expected JsonPath expression '{jsonPath}' to yield an element with value '{expectedValue}', but was '{resultingElement}'");
+                throw new AssertionException($"Expected JsonPath expression '{jsonPath}' to yield an element with value {expectedValue}, but was {resultingElement}");
             }
 
             return this;
