@@ -100,7 +100,7 @@ public void ResponseContentTypeHeaderCanBeVerifiedUsingNHamcrestMatcher()
 ```
 
 ### Checking response body
-You can check the entire response body as a plaintext string (JSON string work as well):
+You can check the entire response body as a plaintext string (JSON strings work as well):
 
 ```csharp
 [Test]
@@ -130,7 +130,7 @@ public void JsonStringResponseBodyCanBeVerifiedUsingNHamcrestMatcher()
 
 You can also select individual elements using a JsonPath expression. RestAssured.NET uses [Json.NET](https://www.newtonsoft.com/json/help/html/QueryJsonSelectTokenJsonPath.htm) to evaluate these expressions.
 
-When the expected value is supplied as a string, integer or boolean, the value of the first element occurrence matching the JsonPath expression will be compared to it.
+When the expected value is supplied as a string, integer or boolean, the value of the first element occurrence matching the JsonPath expression will be compared to it. An exception of type `RestAssuredNet.RA.Exceptions.AssertionException` will be thrown when evaluating the JsonPath expression does not yield any results.
 ```csharp
 [Test]
 public void JsonResponseBodyElementStringValueCanBeVerified()
