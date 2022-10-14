@@ -16,6 +16,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using Microsoft.AspNetCore.WebUtilities;
+using Newtonsoft.Json;
 using RestAssuredNet.RA.Internal;
 using Stubble.Core;
 using Stubble.Core.Builders;
@@ -28,7 +29,7 @@ namespace RestAssuredNet.RA
     public class RequestSpecification : IDisposable
     {
         private HttpRequestMessage request = new HttpRequestMessage();
-        private string requestBody = string.Empty;
+        private object requestBody = string.Empty;
         private string contentTypeHeader = "application/json";
         private Encoding contentEncoding = Encoding.UTF8;
         private Dictionary<string, string> queryParams = new Dictionary<string, string>();
@@ -172,9 +173,9 @@ namespace RestAssuredNet.RA
         /// <summary>
         /// Adds a request body to the request object to be sent.
         /// </summary>
-        /// <param name="body">The body that is to be sent with the request as a string.</param>
+        /// <param name="body">The body that is to be sent with the request.</param>
         /// <returns>The current <see cref="RequestSpecification"/>.</returns>
-        public RequestSpecification Body(string body)
+        public RequestSpecification Body(object body)
         {
             this.requestBody = body;
             return this;
@@ -299,11 +300,30 @@ namespace RestAssuredNet.RA
             this.request.RequestUri = new Uri(endpoint);
 
             // Set the request body using the content, encoding and content type specified
-            this.request.Content = new StringContent(this.requestBody, this.contentEncoding, this.contentTypeHeader);
+            string requestBodyAsString = this.Serialize(this.requestBody);
+
+            this.request.Content = new StringContent(requestBodyAsString, this.contentEncoding, this.contentTypeHeader);
 
             // Send the request and return the result
             Task<VerifiableResponse> task = HttpRequestProcessor.Send(this.request);
             return task.Result;
+        }
+
+        /// <summary>
+        /// Serializes the request body set for the request object to JSON, if necessary.
+        /// </summary>
+        /// <param name="body">The request body object.</param>
+        /// <returns>Either the body itself (if the body is a string), or a serialized version of the body.</returns>
+        private string Serialize(object body)
+        {
+            if (body.GetType() == typeof(string))
+            {
+                return (string)body;
+            }
+            else
+            {
+                return JsonConvert.SerializeObject(body);
+            }
         }
     }
 }

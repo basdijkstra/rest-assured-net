@@ -15,6 +15,7 @@
 // </copyright>
 using System.Net;
 using System.Net.Http.Headers;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NHamcrest;
 using RestAssuredNet.RA.Exceptions;
@@ -245,27 +246,72 @@ namespace RestAssuredNet.RA
         /// <summary>
         /// Verifies that the response body matches the specified NHamcrest matcher.
         /// </summary>
+        /// <typeparam name="T">The type of object that the matcher operates on.</typeparam>
         /// <param name="jsonPath">The JsonPath expression to evaluate.</param>
-        /// <param name="expectedValue">The expected value of the JSON response body element.</param>
+        /// <param name="matcher">The NHamcrest matcher to evaluate.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
-        public VerifiableResponse Body(string jsonPath, object expectedValue)
+        public VerifiableResponse Body<T>(string jsonPath, IMatcher<T> matcher)
         {
-            // TODO: Write more tests to see what might happen
             string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
             JObject responseBodyAsJObject = JObject.Parse(responseBodyAsString);
             JToken? resultingElement = responseBodyAsJObject.SelectToken(jsonPath);
 
             if (resultingElement == null)
             {
-                throw new AssertionException($"JsonPath expression '{jsonPath}' did not yield any elements.");
+                throw new AssertionException($"JsonPath expression '{jsonPath}' did not yield any results.");
             }
 
-            if (!resultingElement.ToString().Equals(expectedValue.ToString()))
+            if (!matcher.Matches(resultingElement.ToObject<T>()))
             {
-                throw new AssertionException($"Expected JsonPath expression '{jsonPath}' to yield an element with value {expectedValue}, but was {resultingElement}");
+                throw new AssertionException($"Expected element selected by '{jsonPath}' to match '{matcher}' but was {resultingElement}");
             }
 
             return this;
+        }
+
+        /// <summary>
+        /// Verifies that the response body matches the specified NHamcrest matcher.
+        /// </summary>
+        /// <typeparam name="T">The type of object that the matcher operates on.</typeparam>
+        /// <param name="jsonPath">The JsonPath expression to evaluate.</param>
+        /// <param name="matcher">The NHamcrest matcher to evaluate.</param>
+        /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        public VerifiableResponse Body<T>(string jsonPath, IMatcher<IEnumerable<T>> matcher)
+        {
+            string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
+            JObject responseBodyAsJObject = JObject.Parse(responseBodyAsString);
+            IEnumerable<JToken>? resultingElements = responseBodyAsJObject.SelectTokens(jsonPath);
+
+            List<T> elementValues = new List<T>();
+
+            foreach (JToken element in resultingElements)
+            {
+                elementValues.Add(element.ToObject<T>());
+            }
+
+            if (!matcher.Matches(elementValues))
+            {
+                throw new AssertionException($"Expected elements selected by '{jsonPath}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Deserializes the response content into the specified type and returns it.
+        /// </summary>
+        /// <param name="type">The object type to deserialize into.</param>
+        /// <returns>The deserialized response object.</returns>
+        public object As(Type type)
+        {
+            string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
+
+            if (responseBodyAsString == null)
+            {
+                throw new JsonSerializationException("Response content null or empty.");
+            }
+
+            return JsonConvert.DeserializeObject(this.response.Content.ReadAsStringAsync().Result, type);
         }
     }
 }

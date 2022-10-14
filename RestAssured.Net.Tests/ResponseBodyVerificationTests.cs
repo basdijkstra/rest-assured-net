@@ -14,6 +14,7 @@
 // limitations under the License.
 // </copyright>
 using System.Collections.Generic;
+using NHamcrest;
 using NUnit.Framework;
 using RestAssured.Net.Tests.Models;
 using WireMock.RequestBuilders;
@@ -102,7 +103,7 @@ namespace RestAssuredNet.Tests
                 .Body("This is a different plaintext response body.");
             });
 
-            Assert.That(ae.Message, Is.EqualTo("Actual response body did not match expected response body.\nExpected: This is a different plaintext response body.\nActual: Here's a plaintext response body."));
+            Assert.That(ae.Message, NUnit.Framework.Is.EqualTo("Actual response body did not match expected response body.\nExpected: This is a different plaintext response body.\nActual: Here's a plaintext response body."));
         }
 
         /// <summary>
@@ -124,15 +125,15 @@ namespace RestAssuredNet.Tests
                 .Body(NHamcrest.Contains.String("Jane Doe"));
             });
 
-            Assert.That(ae.Message, Is.EqualTo($"Actual response body expected to match 'a string containing \"Jane Doe\"' but didn't.\nActual: {this.jsonStringResponseBody}"));
+            Assert.That(ae.Message, NUnit.Framework.Is.EqualTo($"Actual response body expected to match 'a string containing \"Jane Doe\"' but didn't.\nActual: {this.jsonStringResponseBody}"));
         }
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
-        /// a JSON response body element string value 1-on-1.
+        /// a JSON response body string element using an NHamcrest matcher.
         /// </summary>
         [Test]
-        public void JsonResponseBodyElementStringValueCanBeVerified()
+        public void JsonResponseBodyElementStringValueCanBeVerifiedUsingNHamcrestMatcher()
         {
             this.CreateStubForJsonResponseBody();
 
@@ -141,49 +142,15 @@ namespace RestAssuredNet.Tests
             .Get("http://localhost:9876/json-response-body")
             .Then()
             .StatusCode(200)
-            .Body("$.Places[0].Name", "Sun City");
+            .Body("$.Places[0].Name", NHamcrest.Contains.String("City"));
         }
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
-        /// a JSON response body element integer value 1-on-1.
+        /// that an NHamcrest string matcher mismatch throws the expected exception.
         /// </summary>
         [Test]
-        public void JsonResponseBodyElementIntegerValueCanBeVerified()
-        {
-            this.CreateStubForJsonResponseBody();
-
-            Given()
-            .When()
-            .Get("http://localhost:9876/json-response-body")
-            .Then()
-            .StatusCode(200)
-            .Body("$.Places[0].Inhabitants", 100000);
-        }
-
-        /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for verifying
-        /// a JSON response body element boolean value 1-on-1.
-        /// </summary>
-        [Test]
-        public void JsonResponseBodyElementBooleanValueCanBeVerified()
-        {
-            this.CreateStubForJsonResponseBody();
-
-            Given()
-            .When()
-            .Get("http://localhost:9876/json-response-body")
-            .Then()
-            .StatusCode(200)
-            .Body("$.Places[1].IsCapital", false);
-        }
-
-        /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for verifying
-        /// a JSON response body element value 1-on-1.
-        /// </summary>
-        [Test]
-        public void JsonResponseBodyElementValueMismatchThrowsTheExpectedException()
+        public void StringElementNHamcrestMatcherMismatchThrowsTheExpectedException()
         {
             this.CreateStubForJsonResponseBody();
 
@@ -194,18 +161,35 @@ namespace RestAssuredNet.Tests
                 .Get("http://localhost:9876/json-response-body")
                 .Then()
                 .StatusCode(200)
-                .Body("$.Places[0].Name", "Sin City");
+                .Body("$.Places[0].Name", NHamcrest.Contains.String("Sin"));
             });
 
-            Assert.That(ae.Message, Is.EqualTo($"Expected JsonPath expression '$.Places[0].Name' to yield an element with value Sin City, but was Sun City"));
+            Assert.That(ae.Message, NUnit.Framework.Is.EqualTo("Expected element selected by '$.Places[0].Name' to match 'a string containing \"Sin\"' but was Sun City"));
         }
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
-        /// a JSON response body element value 1-on-1.
+        /// a JSON response body integer element using an NHamcrest matcher.
         /// </summary>
         [Test]
-        public void JsonResponseBodyElementNotFoundThrowsTheExpectedException()
+        public void JsonResponseBodyElementIntegerValueCanBeVerifiedUsingNHamcrestMatcher()
+        {
+            this.CreateStubForJsonResponseBody();
+
+            Given()
+            .When()
+            .Get("http://localhost:9876/json-response-body")
+            .Then()
+            .StatusCode(200)
+            .Body("$.Places[0].Inhabitants", NHamcrest.Is.GreaterThan(75000));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// that an NHamcrest integer matcher mismatch throws the expected exception.
+        /// </summary>
+        [Test]
+        public void IntegerElementNHamcrestMatcherMismatchThrowsTheExpectedException()
         {
             this.CreateStubForJsonResponseBody();
 
@@ -216,15 +200,90 @@ namespace RestAssuredNet.Tests
                 .Get("http://localhost:9876/json-response-body")
                 .Then()
                 .StatusCode(200)
-                .Body("$.Places[0].NonExistingElement", "Sun City");
+                .Body("$.Places[0].Inhabitants", NHamcrest.Is.GreaterThan(200000));
             });
 
-            Assert.That(ae.Message, Is.EqualTo($"JsonPath expression '$.Places[0].NonExistingElement' did not yield any elements."));
+            Assert.That(ae.Message, NUnit.Framework.Is.EqualTo("Expected element selected by '$.Places[0].Inhabitants' to match 'greater than 200000' but was 100000"));
         }
 
         /// <summary>
-        /// Creates the stub response for the plaintext response body example.
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a JSON response body boolean element using an NHamcrest matcher.
         /// </summary>
+        [Test]
+        public void JsonResponseBodyElementBooleanValueCanBeVerifiedUsingNHamcrestMatcher()
+        {
+            this.CreateStubForJsonResponseBody();
+
+            Given()
+            .When()
+            .Get("http://localhost:9876/json-response-body")
+            .Then()
+            .StatusCode(200)
+            .Body("$.Places[0].IsCapital", NHamcrest.Is.True());
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// that an NHamcrest boolean matcher mismatch throws the expected exception.
+        /// </summary>
+        [Test]
+        public void BooleanElementNHamcrestMatcherMismatchThrowsTheExpectedException()
+        {
+            this.CreateStubForJsonResponseBody();
+
+            RA.Exceptions.AssertionException ae = Assert.Throws<RA.Exceptions.AssertionException>(() =>
+            {
+                Given()
+                .When()
+                .Get("http://localhost:9876/json-response-body")
+                .Then()
+                .StatusCode(200)
+                .Body("$.Places[0].IsCapital", NHamcrest.Is.False());
+            });
+
+            Assert.That(ae.Message, NUnit.Framework.Is.EqualTo("Expected element selected by '$.Places[0].IsCapital' to match 'False' but was True"));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a JSON response body element collection using an NHamcrest matcher.
+        /// </summary>
+        [Test]
+        public void JsonResponseBodyElementCollectionCanBeVerifiedUsingNHamcrestMatcher()
+        {
+            this.CreateStubForJsonResponseBody();
+
+            Given()
+            .When()
+            .Get("http://localhost:9876/json-response-body")
+            .Then()
+            .StatusCode(200)
+            .Body("$.Places[0:].Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Sun City")));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a JSON response body element collection using an NHamcrest matcher.
+        /// </summary>
+        [Test]
+        public void JsonResponseBodyElementCollectionNHamcrestMatcherMisMatchThrowsTheExpectedException()
+        {
+            this.CreateStubForJsonResponseBody();
+
+            RA.Exceptions.AssertionException ae = Assert.Throws<RA.Exceptions.AssertionException>(() =>
+            { 
+                Given()
+                .When()
+                .Get("http://localhost:9876/json-response-body")
+                .Then()
+                .StatusCode(200)
+                .Body("$.Places[0:].Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Atlantis")));
+            });
+
+            Assert.That(ae.Message, NUnit.Framework.Is.EqualTo($"Expected elements selected by '$.Places[0:].Name' to match 'a collection containing \"Atlantis\"', but was [Sun City, Pleasure Meadow]"));
+        }
+
         private void CreateStubForPlaintextResponseBody()
         {
             this.Server.Given(Request.Create().WithPath("/plaintext-response-body").UsingGet())
