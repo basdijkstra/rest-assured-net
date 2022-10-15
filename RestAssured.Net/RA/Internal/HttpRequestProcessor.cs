@@ -13,6 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
+using System.Net.Http;
+using System.Threading.Tasks;
 using RestAssuredNet.RA.Exceptions;
 
 namespace RestAssuredNet.RA.Internal
