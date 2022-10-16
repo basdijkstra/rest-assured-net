@@ -58,6 +58,9 @@ namespace RestAssuredNet.Tests
         {
             this.CreateStubForJsonResponseBody();
 
+            // For now, you'll need to store number values in an object of
+            // type 'long', because Json.NET by default deserializes numbers
+            // into Int64 (=long), not Int32 (= int).
             long numberOfInhabitants = (long)Given()
             .When()
             .Get("http://localhost:9876/json-response-body")
