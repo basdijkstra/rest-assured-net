@@ -317,5 +317,25 @@ namespace RestAssuredNet.RA
 
             return JsonConvert.DeserializeObject(this.response.Content.ReadAsStringAsync().Result, type);
         }
+
+        /// <summary>
+        /// Extracts a response body element value from the response based on a JsonPath expression.
+        /// </summary>
+        /// <param name="jsonPath">The JsonPath expression pointing to the object to extract.</param>
+        /// <returns>The element value or values extracted from the response using the JsonPath expression.</returns>
+        /// <exception cref="AssertionException">Throws an AssertionException when evaluating the JsonPath did not yield any results.</exception>
+        public object Extract(string jsonPath)
+        {
+            string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
+            JObject responseBodyAsJObject = JObject.Parse(responseBodyAsString);
+            JToken? resultingElement = responseBodyAsJObject.SelectToken(jsonPath);
+
+            if (resultingElement == null)
+            {
+                throw new AssertionException($"JsonPath expression '{jsonPath}' did not yield any results.");
+            }
+
+            return resultingElement.ToObject<object>();
+        }
     }
 }

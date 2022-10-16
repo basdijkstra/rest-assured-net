@@ -247,6 +247,28 @@ namespace RestAssuredNet.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
+        /// that the expected exception is thrown when the JsonPath does not return results.
+        /// </summary>
+        [Test]
+        public void NoJsonPathResultsThrowsTheExpectedException()
+        {
+            this.CreateStubForJsonResponseBody();
+
+            RA.Exceptions.AssertionException ae = Assert.Throws<RA.Exceptions.AssertionException>(() =>
+            {
+                Given()
+                .When()
+                .Get("http://localhost:9876/json-response-body")
+                .Then()
+                .StatusCode(200)
+                .Body("$.Places[0].DoesNotExist", NHamcrest.Is.False());
+            });
+
+            Assert.That(ae.Message, NUnit.Framework.Is.EqualTo("JsonPath expression '$.Places[0].DoesNotExist' did not yield any results."));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
         /// a JSON response body element collection using an NHamcrest matcher.
         /// </summary>
         [Test]
