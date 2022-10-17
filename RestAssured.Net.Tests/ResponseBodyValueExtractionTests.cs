@@ -93,6 +93,25 @@ namespace RestAssuredNet.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for extracting a
+        /// string element value from a JSON response body.
+        /// </summary>
+        [Test]
+        public void JsonResponseBodyMultipleElementsCanBeExtracted()
+        {
+            this.CreateStubForJsonResponseBody();
+
+            List<object> placeNames = (List<object>)Given()
+            .When()
+            .Get("http://localhost:9876/json-response-body")
+            .Then()
+            .StatusCode(200)
+            .Extract("$.Places[0:].IsCapital");
+
+            Assert.That(placeNames.Count, NUnit.Framework.Is.EqualTo(2));
+        }
+
+        /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
         /// that the expected exception is thrown when the JsonPath does not return results.
         /// </summary>

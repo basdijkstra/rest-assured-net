@@ -328,14 +328,26 @@ namespace RestAssuredNet.RA
         {
             string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
             JObject responseBodyAsJObject = JObject.Parse(responseBodyAsString);
-            JToken? resultingElement = responseBodyAsJObject.SelectToken(jsonPath);
+            IEnumerable<JToken>? resultingElements = responseBodyAsJObject.SelectTokens(jsonPath);
 
-            if (resultingElement == null)
+            List<object> elementValues = new List<object>();
+
+            foreach (JToken element in resultingElements)
+            {
+                elementValues.Add(element.ToObject<object>());
+            }
+
+            if (elementValues.Count == 0)
             {
                 throw new AssertionException($"JsonPath expression '{jsonPath}' did not yield any results.");
             }
 
-            return resultingElement.ToObject<object>();
+            if (elementValues.Count == 1)
+            {
+                return elementValues.First();
+            }
+
+            return elementValues;
         }
     }
 }
