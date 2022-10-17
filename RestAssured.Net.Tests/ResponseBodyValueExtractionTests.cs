@@ -101,6 +101,9 @@ namespace RestAssuredNet.Tests
         {
             this.CreateStubForJsonResponseBody();
 
+            // At least for now, if you want to retrieve multiple
+            // JSON response body objects, they will have to be
+            // stored in an object of type List<object>.
             List<object> placeNames = (List<object>)Given()
             .When()
             .Get("http://localhost:9876/json-response-body")
