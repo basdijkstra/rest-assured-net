@@ -44,7 +44,7 @@ namespace RestAssuredNet.Tests
             .Get("http://localhost:9876/json-response-body")
             .Then()
             .StatusCode(200)
-            .Extract("$.Places[0].Name");
+            .Extract().Body("$.Places[0].Name");
 
             Assert.That(placeName, NUnit.Framework.Is.EqualTo("Sun City"));
         }
@@ -66,7 +66,7 @@ namespace RestAssuredNet.Tests
             .Get("http://localhost:9876/json-response-body")
             .Then()
             .StatusCode(200)
-            .Extract("$.Places[0].Inhabitants");
+            .Extract().Body("$.Places[0].Inhabitants");
 
             int numberOfInhabitantsInt = Convert.ToInt32(numberOfInhabitants);
 
@@ -87,7 +87,7 @@ namespace RestAssuredNet.Tests
             .Get("http://localhost:9876/json-response-body")
             .Then()
             .StatusCode(200)
-            .Extract("$.Places[0].IsCapital");
+            .Extract().Body("$.Places[0].IsCapital");
 
             Assert.That(isCapital, NUnit.Framework.Is.True);
         }
@@ -109,7 +109,7 @@ namespace RestAssuredNet.Tests
             .Get("http://localhost:9876/json-response-body")
             .Then()
             .StatusCode(200)
-            .Extract("$.Places[0:].IsCapital");
+            .Extract().Body("$.Places[0:].IsCapital");
 
             Assert.That(placeNames.Count, NUnit.Framework.Is.EqualTo(2));
         }
@@ -130,7 +130,7 @@ namespace RestAssuredNet.Tests
                 .Get("http://localhost:9876/json-response-body")
                 .Then()
                 .StatusCode(200)
-                .Extract("$.Places[0].DoesNotExist");
+                .Extract().Body("$.Places[0].DoesNotExist");
             });
 
             Assert.That(ae.Message, NUnit.Framework.Is.EqualTo("JsonPath expression '$.Places[0].DoesNotExist' did not yield any results."));
@@ -165,6 +165,7 @@ namespace RestAssuredNet.Tests
 
             this.Server.Given(Request.Create().WithPath("/json-response-body").UsingGet())
                 .RespondWith(Response.Create()
+                .WithHeader("custom_header", "custom_header_value")
                 .WithBodyAsJson(location)
                 .WithStatusCode(200));
         }

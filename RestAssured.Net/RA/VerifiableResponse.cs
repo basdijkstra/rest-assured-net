@@ -22,6 +22,7 @@ using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NHamcrest;
+using RestAssured.Net.RA;
 using RestAssuredNet.RA.Exceptions;
 
 namespace RestAssuredNet.RA
@@ -319,35 +320,12 @@ namespace RestAssuredNet.RA
         }
 
         /// <summary>
-        /// Extracts a response body element value from the response based on a JsonPath expression.
+        /// Gives access to various methods to extract values from this response object.
         /// </summary>
-        /// <param name="jsonPath">The JsonPath expression pointing to the object to extract.</param>
-        /// <returns>The element value or values extracted from the response using the JsonPath expression.</returns>
-        /// <exception cref="AssertionException">Throws an AssertionException when evaluating the JsonPath did not yield any results.</exception>
-        public object Extract(string jsonPath)
+        /// <returns>An <see cref="ExtractableResponse"/> object from which values can then be extracted.</returns>
+        public ExtractableResponse Extract()
         {
-            string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
-            JObject responseBodyAsJObject = JObject.Parse(responseBodyAsString);
-            IEnumerable<JToken>? resultingElements = responseBodyAsJObject.SelectTokens(jsonPath);
-
-            List<object> elementValues = new List<object>();
-
-            foreach (JToken element in resultingElements)
-            {
-                elementValues.Add(element.ToObject<object>());
-            }
-
-            if (elementValues.Count == 0)
-            {
-                throw new AssertionException($"JsonPath expression '{jsonPath}' did not yield any results.");
-            }
-
-            if (elementValues.Count == 1)
-            {
-                return elementValues.First();
-            }
-
-            return elementValues;
+            return new ExtractableResponse(this.response);
         }
     }
 }
