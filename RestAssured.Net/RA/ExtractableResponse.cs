@@ -88,5 +88,14 @@ namespace RestAssured.Net.RA
                 throw new ExtractionException($"Header with name '{name}' could not be found in the response.");
             }
         }
+
+        /// <summary>
+        /// Returns the entire HttpResponseMessage.
+        /// </summary>
+        /// <returns>The current <see cref="HttpResponseMessage"/> response object.</returns>
+        public HttpResponseMessage Response()
+        {
+            return this.response;
+        }
     }
 }

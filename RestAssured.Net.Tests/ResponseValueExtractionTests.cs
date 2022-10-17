@@ -15,8 +15,12 @@
 // </copyright>
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
 using NHamcrest;
 using NUnit.Framework;
+using RestAssured.Net.RA;
 using RestAssured.Net.Tests.Models;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
@@ -141,7 +145,7 @@ namespace RestAssuredNet.Tests
         /// response header value.
         /// </summary>
         [Test]
-        public void JsonResponseHeaderCanBeExtracted()
+        public void ResponseHeaderCanBeExtracted()
         {
             this.CreateStubForJsonResponseWithBodyAndHeaders();
 
@@ -175,6 +179,26 @@ namespace RestAssuredNet.Tests
             });
 
             Assert.That(ee.Message, NUnit.Framework.Is.EqualTo("Header with name 'does_not_exist' could not be found in the response."));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for extracting
+        /// the entire response as an HttpResponseMessage object.
+        /// </summary>
+        [Test]
+        public void EntireResponseCanBeExtracted()
+        {
+            this.CreateStubForJsonResponseWithBodyAndHeaders();
+
+            HttpResponseMessage response = Given()
+            .When()
+            .Get("http://localhost:9876/json-response-body")
+            .Then()
+            .StatusCode(200)
+            .Extract().Response();
+
+            Assert.That(response.StatusCode, NUnit.Framework.Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(response.Headers.GetValues("custom_header").First(), NUnit.Framework.Is.EqualTo("custom_header_value"));
         }
 
         /// <summary>
