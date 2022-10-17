@@ -68,5 +68,25 @@ namespace RestAssured.Net.RA
 
             return elementValues;
         }
+
+        /// <summary>
+        /// Returns the value for the specified header name from the response.
+        /// </summary>
+        /// <param name="name">The header to return.</param>
+        /// <returns>The associated header value.</returns>
+        /// <exception cref="ExtractionException">Thrown when the specified header name could not be located in the response.</exception>
+        public string Header(string name)
+        {
+            IEnumerable<string> values;
+
+            if (this.response.Headers.TryGetValues(name, out values))
+            {
+                return values.First();
+            }
+            else
+            {
+                throw new ExtractionException($"Header with name '{name}' could not be found in the response.");
+            }
+        }
     }
 }

@@ -37,7 +37,7 @@ namespace RestAssuredNet.Tests
         [Test]
         public void JsonResponseBodyElementStringValueCanBeExtracted()
         {
-            this.CreateStubForJsonResponseBody();
+            this.CreateStubForJsonResponseWithBodyAndHeaders();
 
             string placeName = (string)Given()
             .When()
@@ -56,7 +56,7 @@ namespace RestAssuredNet.Tests
         [Test]
         public void JsonResponseBodyElementIntegerValueCanBeExtracted()
         {
-            this.CreateStubForJsonResponseBody();
+            this.CreateStubForJsonResponseWithBodyAndHeaders();
 
             // For now, you'll need to store number values in an object of
             // type 'long', because Json.NET by default deserializes numbers
@@ -80,7 +80,7 @@ namespace RestAssuredNet.Tests
         [Test]
         public void JsonResponseBodyElementBooleanValueCanBeExtracted()
         {
-            this.CreateStubForJsonResponseBody();
+            this.CreateStubForJsonResponseWithBodyAndHeaders();
 
             bool isCapital = (bool)Given()
             .When()
@@ -99,7 +99,7 @@ namespace RestAssuredNet.Tests
         [Test]
         public void JsonResponseBodyMultipleElementsCanBeExtracted()
         {
-            this.CreateStubForJsonResponseBody();
+            this.CreateStubForJsonResponseWithBodyAndHeaders();
 
             // At least for now, if you want to retrieve multiple
             // JSON response body objects, they will have to be
@@ -121,7 +121,7 @@ namespace RestAssuredNet.Tests
         [Test]
         public void NoJsonPathResultsThrowsTheExpectedException()
         {
-            this.CreateStubForJsonResponseBody();
+            this.CreateStubForJsonResponseWithBodyAndHeaders();
 
             RA.Exceptions.AssertionException ae = Assert.Throws<RA.Exceptions.AssertionException>(() =>
             {
@@ -137,9 +137,50 @@ namespace RestAssuredNet.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for extracting a
+        /// response header value.
+        /// </summary>
+        [Test]
+        public void JsonResponseHeaderCanBeExtracted()
+        {
+            this.CreateStubForJsonResponseWithBodyAndHeaders();
+
+            string responseHeaderValue = Given()
+            .When()
+            .Get("http://localhost:9876/json-response-body")
+            .Then()
+            .StatusCode(200)
+            .Extract().Header("custom_header");
+
+            Assert.That(responseHeaderValue, NUnit.Framework.Is.EqualTo("custom_header_value"));
+        }
+
+        /// <summary>
+        /// A test for verifying that the expected exception is thrown
+        /// when the header value to be extracted does not exist in the response.
+        /// </summary>
+        [Test]
+        public void HeaderNotFoundInResponseThrowsTheExpectedException()
+        {
+            this.CreateStubForJsonResponseWithBodyAndHeaders();
+
+            RA.Exceptions.ExtractionException ee = Assert.Throws<RA.Exceptions.ExtractionException>(() =>
+            {
+                string responseHeaderValue = Given()
+                .When()
+                .Get("http://localhost:9876/json-response-body")
+                .Then()
+                .StatusCode(200)
+                .Extract().Header("does_not_exist");
+            });
+
+            Assert.That(ee.Message, NUnit.Framework.Is.EqualTo("Header with name 'does_not_exist' could not be found in the response."));
+        }
+
+        /// <summary>
         /// Creates the stub response for the JSON response body extraction examples.
         /// </summary>
-        private void CreateStubForJsonResponseBody()
+        private void CreateStubForJsonResponseWithBodyAndHeaders()
         {
             Place firstPlace = new Place
             {
