@@ -1,4 +1,4 @@
-﻿// <copyright file="RequestSpecification.cs" company="On Test Automation">
+﻿// <copyright file="ExecutableRequest.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,7 +31,7 @@ namespace RestAssuredNet.RA
     /// <summary>
     /// The request to be sent.
     /// </summary>
-    public class RequestSpecification : IDisposable
+    public class ExecutableRequest : IDisposable
     {
         private HttpRequestMessage request = new HttpRequestMessage();
         private object requestBody = string.Empty;
@@ -42,9 +42,9 @@ namespace RestAssuredNet.RA
         private bool disposed = false;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RequestSpecification"/> class.
+        /// Initializes a new instance of the <see cref="ExecutableRequest"/> class.
         /// </summary>
-        public RequestSpecification()
+        public ExecutableRequest()
         {
         }
 
@@ -53,8 +53,8 @@ namespace RestAssuredNet.RA
         /// </summary>
         /// <param name="key">The header key that is to be added to the request.</param>
         /// <param name="value">The associated header value that is to be added to the request.</param>
-        /// <returns>The current <see cref="RequestSpecification"/>.</returns>
-        public RequestSpecification Header(string key, object value)
+        /// <returns>The current <see cref="ExecutableRequest"/>.</returns>
+        public ExecutableRequest Header(string key, object value)
         {
             this.request.Headers.Add(key, value.ToString());
             return this;
@@ -65,8 +65,8 @@ namespace RestAssuredNet.RA
         /// </summary>
         /// <param name="key">The header key that is to be added to the request.</param>
         /// <param name="values">The associated header values that are to be added to the request.</param>
-        /// <returns>The current <see cref="RequestSpecification"/>.</returns>
-        public RequestSpecification Header(string key, IEnumerable<string> values)
+        /// <returns>The current <see cref="ExecutableRequest"/>.</returns>
+        public ExecutableRequest Header(string key, IEnumerable<string> values)
         {
             this.request.Headers.Add(key, values);
             return this;
@@ -76,8 +76,8 @@ namespace RestAssuredNet.RA
         /// Add a Content-Type header and the specified value to the request object to be sent.
         /// </summary>
         /// <param name="contentType">The value for the Content-Type header to be added.</param>
-        /// <returns>The current <see cref="RequestSpecification"/> object.</returns>
-        public RequestSpecification ContentType(string contentType)
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest ContentType(string contentType)
         {
             this.contentTypeHeader = contentType;
             return this;
@@ -87,8 +87,8 @@ namespace RestAssuredNet.RA
         /// Set the content character encoding for the request object to be sent.
         /// </summary>
         /// <param name="encoding">The value for the character encoding to be added.</param>
-        /// <returns>The current <see cref="RequestSpecification"/> object.</returns>
-        public RequestSpecification ContentEncoding(Encoding encoding)
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest ContentEncoding(Encoding encoding)
         {
             this.contentEncoding = encoding;
             return this;
@@ -98,8 +98,8 @@ namespace RestAssuredNet.RA
         /// Set the value for the Accept header for the request object to be sent.
         /// </summary>
         /// <param name="accept">The value for the Accept header to be added.</param>
-        /// <returns>The current <see cref="RequestSpecification"/> object.</returns>
-        public RequestSpecification Accept(string accept)
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest Accept(string accept)
         {
             this.request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(accept));
             return this;
@@ -110,8 +110,8 @@ namespace RestAssuredNet.RA
         /// </summary>
         /// <param name="key">The query parameter name.</param>
         /// <param name="value">The associated query parameter value.</param>
-        /// <returns>The current <see cref="RequestSpecification"/> object.</returns>
-        public RequestSpecification QueryParam(string key, object value)
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest QueryParam(string key, object value)
         {
             this.queryParams[key] = value.ToString();
             return this;
@@ -121,8 +121,8 @@ namespace RestAssuredNet.RA
         /// Adds the specified query parameters to the endpoint when the request is sent.
         /// </summary>
         /// <param name="queryParams">A <see cref="Dictionary{TKey, TValue}"/> containing the query parameters to be added.</param>
-        /// <returns>The current <see cref="RequestSpecification"/> object.</returns>
-        public RequestSpecification QueryParams(Dictionary<string, object> queryParams)
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest QueryParams(Dictionary<string, object> queryParams)
         {
             queryParams.ToList().ForEach(param => this.queryParams[param.Key] = param.Value.ToString());
             return this;
@@ -133,8 +133,8 @@ namespace RestAssuredNet.RA
         /// </summary>
         /// <param name="key">The path parameter name.</param>
         /// <param name="value">The associated path parameter value.</param>
-        /// <returns>The current <see cref="RequestSpecification"/> object.</returns>
-        public RequestSpecification PathParam(string key, object value)
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest PathParam(string key, object value)
         {
             this.pathParams[key] = value.ToString();
             return this;
@@ -144,8 +144,8 @@ namespace RestAssuredNet.RA
         /// Adds the specified path parameters to the endpoint when the request is sent.
         /// </summary>
         /// <param name="pathParams">A <see cref="Dictionary{TKey, TValue}"/> containing the path parameters to be added.</param>
-        /// <returns>The current <see cref="RequestSpecification"/> object.</returns>
-        public RequestSpecification PathParams(Dictionary<string, object> pathParams)
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest PathParams(Dictionary<string, object> pathParams)
         {
             pathParams.ToList().ForEach(param => this.pathParams[param.Key] = param.Value.ToString());
             return this;
@@ -156,8 +156,8 @@ namespace RestAssuredNet.RA
         /// </summary>
         /// <param name="username">The username to be used for authorization.</param>
         /// <param name="password">The password to be used for authorization.</param>
-        /// <returns>The current <see cref="RequestSpecification"/> object.</returns>
-        public RequestSpecification BasicAuth(string username, string password)
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest BasicAuth(string username, string password)
         {
             string base64EncodedBasicAuthDetails = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
             this.request.Headers.Authorization = new AuthenticationHeaderValue("Basic", base64EncodedBasicAuthDetails);
@@ -168,8 +168,8 @@ namespace RestAssuredNet.RA
         /// Adds an OAuth2 authorization token to the request.
         /// </summary>
         /// <param name="token">The OAuth2 token to be added to the request.</param>
-        /// <returns>The current <see cref="RequestSpecification"/> object.</returns>
-        public RequestSpecification OAuth2(string token)
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest OAuth2(string token)
         {
             this.request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             return this;
@@ -179,8 +179,8 @@ namespace RestAssuredNet.RA
         /// Adds a request body to the request object to be sent.
         /// </summary>
         /// <param name="body">The body that is to be sent with the request.</param>
-        /// <returns>The current <see cref="RequestSpecification"/>.</returns>
-        public RequestSpecification Body(object body)
+        /// <returns>The current <see cref="ExecutableRequest"/>.</returns>
+        public ExecutableRequest Body(object body)
         {
             this.requestBody = body;
             return this;
@@ -190,7 +190,7 @@ namespace RestAssuredNet.RA
         /// Syntactic sugar that makes tests read more like natural language.
         /// </summary>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
-        public RequestSpecification And()
+        public ExecutableRequest And()
         {
             return this;
         }
@@ -198,8 +198,8 @@ namespace RestAssuredNet.RA
         /// <summary>
         /// Syntactic sugar (for now) to help indicate the start of the 'Act' part of a test.
         /// </summary>
-        /// <returns>The current <see cref="RequestSpecification"/>.</returns>
-        public RequestSpecification When()
+        /// <returns>The current <see cref="ExecutableRequest"/>.</returns>
+        public ExecutableRequest When()
         {
             return this;
         }

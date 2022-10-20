@@ -25,10 +25,10 @@ namespace RestAssuredNet
         /// <summary>
         /// Used to start writing a new test.
         /// </summary>
-        /// <returns>A <see cref="RequestSpecification"/> object containing all relevant request properties.</returns>
-        public static RequestSpecification Given()
+        /// <returns>A <see cref="ExecutableRequest"/> object containing all relevant request properties.</returns>
+        public static ExecutableRequest Given()
         {
-            return new RequestSpecification();
+            return new ExecutableRequest();
         }
     }
 }
