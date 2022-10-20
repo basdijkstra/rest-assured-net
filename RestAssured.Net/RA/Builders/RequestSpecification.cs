@@ -23,7 +23,7 @@ namespace RestAssured.Net.RA.Builders
         /// <summary>
         /// The base URI to be used when constructing the request.
         /// </summary>
-        public string BaseUri { get; set; }
+        public string? BaseUri { get; set; }
 
         /// <summary>
         /// The port number to be used when constructing the request.
