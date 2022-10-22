@@ -27,35 +27,87 @@ namespace RestAssuredNet.Tests
     [TestFixture]
     public class RequestSpecificationTests : TestBase
     {
-        private RequestSpecification? requestSpecification;
+        private RequestSpecification? fullRequestSpecification;
+        private RequestSpecification? applyDefaultsRequestSpecification;
+        private RequestSpecification? incorrectHostNameSpecification;
 
         /// <summary>
-        /// Creates a new <see cref="RequestSpecification"/> to be used in the tests in this class.
+        /// Creates the <see cref="RequestSpecification"/> instances to be used in the tests in this class.
         /// </summary>
         [SetUp]
-        public void CreateRequestSpecification()
+        public void CreateRequestSpecifications()
         {
-            this.requestSpecification = new RequestSpecBuilder()
+            this.fullRequestSpecification = new RequestSpecBuilder()
+                .WithScheme("http")
                 .WithHostName("localhost")
+                .WithPort(9876)
+                .Build();
+
+            this.applyDefaultsRequestSpecification = new RequestSpecBuilder()
+                .WithPort(9876) // We need to set this because the default is 80
+                .Build();
+
+            this.incorrectHostNameSpecification = new RequestSpecBuilder()
+                .WithHostName("http://localhost")
                 .WithPort(9876)
                 .Build();
         }
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for including
-        /// a header with a single value when sending an HTTP request.
+        /// a request specification with all values set.
         /// </summary>
         [Test]
-        public void RequestSpecificationCanBeUsed()
+        public void FullRequestSpecificationCanBeUsed()
         {
             this.CreateStubForRequestSpecification();
 
             Given()
-            .Spec(this.requestSpecification)
+            .Spec(this.fullRequestSpecification)
             .When()
             .Get("/request-specification")
             .Then()
             .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for including
+        /// a request specification with default values applied.
+        /// </summary>
+        [Test]
+        public void DefaultValuesAppliedRequestSpecificationCanBeUsed()
+        {
+            this.CreateStubForRequestSpecification();
+
+            Given()
+            .Spec(this.applyDefaultsRequestSpecification)
+            .When()
+            .Get("/request-specification")
+            .Then()
+            .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax showing that
+        /// using a hostname in the request specification including the scheme
+        /// throws the expected exception.
+        /// </summary>
+        [Test]
+        public void UsingSchemeInHostNameThrowsTheExpectedException()
+        {
+            this.CreateStubForRequestSpecification();
+
+            RA.Exceptions.RequestCreationException rce = Assert.Throws<RA.Exceptions.RequestCreationException>(() =>
+            {
+                Given()
+                .Spec(this.incorrectHostNameSpecification)
+                .When()
+                .Get("/request-specification")
+                .Then()
+                .StatusCode(200);
+            });
+
+            Assert.That(rce.Message, Is.EqualTo("Supplied base URI 'http://http://localhost:9876' is invalid."));
         }
 
         /// <summary>

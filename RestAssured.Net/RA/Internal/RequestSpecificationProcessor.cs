@@ -47,6 +47,7 @@ namespace RestAssured.Net.RA.Internal
                 try
                 {
                     UriBuilder uri = new UriBuilder();
+                    uri.Scheme = requestSpec.Scheme;
                     uri.Host = requestSpec.HostName;
                     uri.Port = requestSpec.Port;
                     uri.Path = endpoint;
@@ -54,7 +55,7 @@ namespace RestAssured.Net.RA.Internal
                 }
                 catch (UriFormatException)
                 {
-                    throw new RequestCreationException("No valid base URI supplied.");
+                    throw new RequestCreationException($"Supplied base URI '{requestSpec.Scheme}://{requestSpec.HostName}:{requestSpec.Port}' is invalid.");
                 }
             }
 
