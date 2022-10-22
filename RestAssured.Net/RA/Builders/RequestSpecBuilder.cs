@@ -20,23 +20,39 @@ namespace RestAssured.Net.RA.Builders
     /// </summary>
     public class RequestSpecBuilder
     {
-        private readonly RequestSpecification requestSpecification = new RequestSpecification();
+        private readonly RequestSpecification requestSpecification;
+
+        private readonly string scheme = "http";
+        private readonly string host = "localhost";
+        private readonly int port = 80;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestSpecBuilder"/> class.
         /// </summary>
         public RequestSpecBuilder()
         {
+            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port);
         }
 
         /// <summary>
-        /// Sets the base URI on the <see cref="RequestSpecification"/> to build.
+        /// Sets the scheme (http, https, ...) on the <see cref="RequestSpecification"/> to build.
         /// </summary>
-        /// <param name="baseUri">The base URI to use in the requests.</param>
+        /// <param name="scheme">The scheme to use in the request.</param>
         /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
-        public RequestSpecBuilder WithBaseUri(string baseUri)
+        public RequestSpecBuilder WithScheme(string scheme)
         {
-            this.requestSpecification.BaseUri = baseUri;
+            this.requestSpecification.Scheme = scheme;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the host name on the <see cref="RequestSpecification"/> to build.
+        /// </summary>
+        /// <param name="host">The host name to use in the requests.</param>
+        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
+        public RequestSpecBuilder WithHostName(string host)
+        {
+            this.requestSpecification.HostName = host;
             return this;
         }
 

@@ -21,9 +21,14 @@ namespace RestAssured.Net.RA.Builders
     public class RequestSpecification
     {
         /// <summary>
+        /// The scheme (http, https, ...) to be used when constructing the request.
+        /// </summary>
+        public string? Scheme { get; set; }
+
+        /// <summary>
         /// The base URI to be used when constructing the request.
         /// </summary>
-        public string? BaseUri { get; set; }
+        public string? HostName { get; set; }
 
         /// <summary>
         /// The port number to be used when constructing the request.
@@ -33,8 +38,14 @@ namespace RestAssured.Net.RA.Builders
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestSpecification"/> class.
         /// </summary>
-        public RequestSpecification()
+        /// <param name="scheme">The scheme (http, https, ....) to use in this request.</param>
+        /// <param name="host">The host name to use in this request.</param>
+        /// <param name="port">The port number to use in this request.</param>
+        public RequestSpecification(string scheme, string host, int port)
         {
+            this.Scheme = scheme;
+            this.HostName = host;
+            this.Port = port;
         }
     }
 }

@@ -22,6 +22,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
+using RestAssured.Net.RA.Builders;
+using RestAssured.Net.RA.Internal;
 using RestAssuredNet.RA.Internal;
 using Stubble.Core;
 using Stubble.Core.Builders;
@@ -34,6 +36,7 @@ namespace RestAssuredNet.RA
     public class ExecutableRequest : IDisposable
     {
         private HttpRequestMessage request = new HttpRequestMessage();
+        private RequestSpecification? requestSpecification;
         private object requestBody = string.Empty;
         private string contentTypeHeader = "application/json";
         private Encoding contentEncoding = Encoding.UTF8;
@@ -46,6 +49,17 @@ namespace RestAssuredNet.RA
         /// </summary>
         public ExecutableRequest()
         {
+        }
+
+        /// <summary>
+        /// Add a <see cref="RequestSpecification"/> to the request properties.
+        /// </summary>
+        /// <param name="requestSpecification">The <see cref="RequestSpecification"/> to use when building the request.</param>
+        /// <returns>The current <see cref="ExecutableRequest"/>.</returns>
+        public ExecutableRequest Spec(RequestSpecification requestSpecification)
+        {
+            this.requestSpecification = requestSpecification;
+            return this;
         }
 
         /// <summary>
@@ -302,7 +316,8 @@ namespace RestAssuredNet.RA
             // Add any query parameters that have been specified and create the endpoint
             endpoint = QueryHelpers.AddQueryString(endpoint, this.queryParams);
 
-            this.request.RequestUri = new Uri(endpoint);
+            // Apply the request specification to the request message
+            this.request = RequestSpecificationProcessor.Apply(this.requestSpecification, this.request, endpoint);
 
             // Set the request body using the content, encoding and content type specified
             string requestBodyAsString = this.Serialize(this.requestBody);
