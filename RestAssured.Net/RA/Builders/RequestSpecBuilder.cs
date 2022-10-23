@@ -25,13 +25,14 @@ namespace RestAssured.Net.RA.Builders
         private readonly string scheme = "http";
         private readonly string host = "localhost";
         private readonly int port = 80;
+        private readonly string basePath = string.Empty;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestSpecBuilder"/> class.
         /// </summary>
         public RequestSpecBuilder()
         {
-            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port);
+            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.basePath);
         }
 
         /// <summary>
@@ -64,6 +65,17 @@ namespace RestAssured.Net.RA.Builders
         public RequestSpecBuilder WithPort(int port)
         {
             this.requestSpecification.Port = port;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the base path on the <see cref="RequestSpecification"/> to build.
+        /// </summary>
+        /// <param name="basePath">The base path to use in the requests.</param>
+        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
+        public RequestSpecBuilder WithBasePath(string basePath)
+        {
+            this.requestSpecification.BasePath = basePath;
             return this;
         }
 

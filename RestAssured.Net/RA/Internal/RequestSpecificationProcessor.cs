@@ -50,7 +50,7 @@ namespace RestAssured.Net.RA.Internal
                     uri.Scheme = requestSpec.Scheme;
                     uri.Host = requestSpec.HostName;
                     uri.Port = requestSpec.Port;
-                    uri.Path = endpoint;
+                    uri.Path = BuildPath(requestSpec.BasePath, endpoint);
                     request.RequestUri = uri.Uri;
                 }
                 catch (UriFormatException)
@@ -60,6 +60,20 @@ namespace RestAssured.Net.RA.Internal
             }
 
             return request;
+        }
+
+        /// <summary>
+        /// Builds the path to the resource to target in the request. Should have no leading / and all double // removed.
+        /// </summary>
+        /// <param name="basePath">The base path as supplied in the request specification (can be an empty string).</param>
+        /// <param name="originalEndpoint">The original endpoint as supplied in the request.</param>
+        /// <returns>A correctly formatted path to the resource to target in the request.</returns>
+        private static string BuildPath(string basePath, string originalEndpoint)
+        {
+            string trimmedBasePath = basePath.TrimStart('/').TrimEnd('/');
+            string trimmedOriginalEndpoint = originalEndpoint.TrimStart('/').TrimEnd('/');
+
+            return $"{trimmedBasePath}/{trimmedOriginalEndpoint}";
         }
     }
 }

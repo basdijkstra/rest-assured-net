@@ -40,6 +40,7 @@ namespace RestAssuredNet.Tests
             this.fullRequestSpecification = new RequestSpecBuilder()
                 .WithScheme("http")
                 .WithHostName("localhost")
+                .WithBasePath("api")
                 .WithPort(9876)
                 .Build();
 
@@ -57,15 +58,17 @@ namespace RestAssuredNet.Tests
         /// A test demonstrating RestAssuredNet syntax for including
         /// a request specification with all values set.
         /// </summary>
-        [Test]
-        public void FullRequestSpecificationCanBeUsed()
+        /// <param name="endpoint">The endpoint to use in the HTTP call.</param>
+        [TestCase("/request-specification", TestName = "With base path in request specification, works with a leading /")]
+        [TestCase("request-specification", TestName = "With base path in request specification, works without a leading /")]
+        public void FullRequestSpecificationCanBeUsed(string endpoint)
         {
             this.CreateStubForRequestSpecification();
 
             Given()
             .Spec(this.fullRequestSpecification)
             .When()
-            .Get("/request-specification")
+            .Get(endpoint)
             .Then()
             .StatusCode(200);
         }
@@ -74,15 +77,17 @@ namespace RestAssuredNet.Tests
         /// A test demonstrating RestAssuredNet syntax for including
         /// a request specification with default values applied.
         /// </summary>
-        [Test]
-        public void DefaultValuesAppliedRequestSpecificationCanBeUsed()
+        /// <param name="endpoint">The endpoint to use in the HTTP call.</param>
+        [TestCase("/api/request-specification", TestName = "Works with a leading / in the endpoint")]
+        [TestCase("api/request-specification", TestName = "Works without a leading / in the endpoint")]
+        public void DefaultValuesAppliedRequestSpecificationCanBeUsed(string endpoint)
         {
             this.CreateStubForRequestSpecification();
 
             Given()
             .Spec(this.applyDefaultsRequestSpecification)
             .When()
-            .Get("/request-specification")
+            .Get(endpoint)
             .Then()
             .StatusCode(200);
         }
@@ -102,7 +107,7 @@ namespace RestAssuredNet.Tests
                 Given()
                 .Spec(this.incorrectHostNameSpecification)
                 .When()
-                .Get("/request-specification")
+                .Get("/api/request-specification")
                 .Then()
                 .StatusCode(200);
             });
@@ -115,7 +120,7 @@ namespace RestAssuredNet.Tests
         /// </summary>
         private void CreateStubForRequestSpecification()
         {
-            this.Server.Given(Request.Create().WithPath("/request-specification").UsingGet())
+            this.Server.Given(Request.Create().WithPath("/api/request-specification").UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
         }

@@ -36,16 +36,23 @@ namespace RestAssured.Net.RA.Builders
         public int Port { get; set; }
 
         /// <summary>
+        /// The base path to be used when constructing the request.
+        /// </summary>
+        public string BasePath { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="RequestSpecification"/> class.
         /// </summary>
         /// <param name="scheme">The scheme (http, https, ....) to use in this request.</param>
         /// <param name="host">The host name to use in this request.</param>
         /// <param name="port">The port number to use in this request.</param>
-        public RequestSpecification(string scheme, string host, int port)
+        /// <param name="basePath">The base path to use in this request.</param>
+        public RequestSpecification(string scheme, string host, int port, string basePath)
         {
             this.Scheme = scheme;
             this.HostName = host;
             this.Port = port;
+            this.BasePath = basePath;
         }
     }
 }
