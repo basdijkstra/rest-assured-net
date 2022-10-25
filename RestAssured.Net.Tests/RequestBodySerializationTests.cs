@@ -31,15 +31,14 @@ namespace RestAssuredNet.Tests
     {
         private readonly string expectedSerializedRequestBody = "{\"Country\":\"United States\",\"State\":\"California\",\"ZipCode\":90210,\"Places\":[{\"Name\":\"Sun City\",\"Inhabitants\":100000,\"IsCapital\":true},{\"Name\":\"Pleasure Meadow\",\"Inhabitants\":50000,\"IsCapital\":false}]}";
 
-        /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for serializing
-        /// and sending a JSON request body when performing an HTTP POST.
-        /// </summary>
-        [Test]
-        public void ObjectCanBeSerializedToJson()
-        {
-            this.CreateStubForJsonRequestBody();
+        private Location location;
 
+        /// <summary>
+        /// Creates the <see cref="Location"/> object to be serialized.
+        /// </summary>
+        [SetUp]
+        public void SetUpLocation()
+        {
             Place firstPlace = new Place
             {
                 Name = "Sun City",
@@ -54,16 +53,26 @@ namespace RestAssuredNet.Tests
                 IsCapital = false,
             };
 
-            Location location = new Location
+            this.location = new Location
             {
                 Country = "United States",
                 State = "California",
                 ZipCode = 90210,
                 Places = new List<Place>() { firstPlace, secondPlace },
             };
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for serializing
+        /// and sending a JSON request body when performing an HTTP POST.
+        /// </summary>
+        [Test]
+        public void ObjectCanBeSerializedToJson()
+        {
+            this.CreateStubForJsonRequestBody();
 
             Given()
-            .Body(location)
+            .Body(this.location)
             .When()
             .Post("http://localhost:9876/json-serialization")
             .Then()
@@ -104,31 +113,9 @@ namespace RestAssuredNet.Tests
         /// </summary>
         private void CreateStubForJsonResponseBody()
         {
-            Place firstPlace = new Place
-            {
-                Name = "Sun City",
-                Inhabitants = 100000,
-                IsCapital = true,
-            };
-
-            Place secondPlace = new Place
-            {
-                Name = "Pleasure Meadow",
-                Inhabitants = 50000,
-                IsCapital = false,
-            };
-
-            Location location = new Location
-            {
-                Country = "United States",
-                State = "California",
-                ZipCode = 90210,
-                Places = new List<Place>() { firstPlace, secondPlace },
-            };
-
             this.Server.Given(Request.Create().WithPath("/json-deserialization").UsingGet())
                 .RespondWith(Response.Create()
-                .WithBodyAsJson(location)
+                .WithBodyAsJson(this.location)
                 .WithStatusCode(200));
         }
     }
