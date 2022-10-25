@@ -15,15 +15,18 @@
 // </copyright>
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
 using RestAssured.Net.RA.Builders;
 using RestAssured.Net.RA.Internal;
+using RestAssuredNet.RA.Exceptions;
 using RestAssuredNet.RA.Internal;
 using Stubble.Core;
 using Stubble.Core.Builders;
@@ -320,7 +323,7 @@ namespace RestAssuredNet.RA
             this.request = RequestSpecificationProcessor.Apply(this.requestSpecification, this.request, endpoint);
 
             // Set the request body using the content, encoding and content type specified
-            string requestBodyAsString = this.Serialize(this.requestBody);
+            string requestBodyAsString = this.Serialize(this.requestBody, this.contentTypeHeader);
 
             this.request.Content = new StringContent(requestBodyAsString, this.contentEncoding, this.contentTypeHeader);
 
@@ -333,8 +336,9 @@ namespace RestAssuredNet.RA
         /// Serializes the request body set for the request object to JSON, if necessary.
         /// </summary>
         /// <param name="body">The request body object.</param>
+        /// <param name="contentType">The request Content-Type header value.</param>
         /// <returns>Either the body itself (if the body is a string), or a serialized version of the body.</returns>
-        private string Serialize(object body)
+        private string Serialize(object body, string contentType)
         {
             if (body.GetType() == typeof(string))
             {
@@ -342,7 +346,23 @@ namespace RestAssuredNet.RA
             }
             else
             {
-                return JsonConvert.SerializeObject(body);
+                if (contentType.Contains("json"))
+                {
+                    return JsonConvert.SerializeObject(body);
+                }
+                else if (contentType.Contains("xml"))
+                {
+                    using (StringWriter sw = new StringWriter())
+                    {
+                        XmlSerializer xmlSerializer = new XmlSerializer(body.GetType());
+                        xmlSerializer.Serialize(sw, body);
+                        return sw.ToString();
+                    }
+                }
+                else
+                {
+                    throw new RequestCreationException($"Could not determine how to serialize request based on specified content type '{contentType}'");
+                }
             }
         }
     }

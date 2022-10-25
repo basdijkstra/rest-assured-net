@@ -16,6 +16,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using RestAssured.Net.Tests.Models;
+using RestAssuredNet.RA.Exceptions;
 using WireMock.Matchers;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
@@ -29,7 +30,8 @@ namespace RestAssuredNet.Tests
     [TestFixture]
     public class RequestBodySerializationTests : TestBase
     {
-        private readonly string expectedSerializedRequestBody = "{\"Country\":\"United States\",\"State\":\"California\",\"ZipCode\":90210,\"Places\":[{\"Name\":\"Sun City\",\"Inhabitants\":100000,\"IsCapital\":true},{\"Name\":\"Pleasure Meadow\",\"Inhabitants\":50000,\"IsCapital\":false}]}";
+        private readonly string expectedSerializedJsonRequestBody = "{\"Country\":\"United States\",\"State\":\"California\",\"ZipCode\":90210,\"Places\":[{\"Name\":\"Sun City\",\"Inhabitants\":100000,\"IsCapital\":true},{\"Name\":\"Pleasure Meadow\",\"Inhabitants\":50000,\"IsCapital\":false}]}";
+        private readonly string expectedSerializedXmlRequestBody = "<?xml version=\"1.0\" encoding=\"utf-16\"?><Location xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><Country>United States</Country><State>California</State><ZipCode>90210</ZipCode><Places><Place><Name>Sun City</Name><Inhabitants>100000</Inhabitants><IsCapital>true</IsCapital></Place><Place><Name>Pleasure Meadow</Name><Inhabitants>50000</Inhabitants><IsCapital>false</IsCapital></Place></Places></Location>";
 
         private Location location;
 
@@ -80,6 +82,47 @@ namespace RestAssuredNet.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for serializing
+        /// and sending an XML request body when performing an HTTP POST.
+        /// </summary>
+        [Test]
+        public void ObjectCanBeSerializedToXml()
+        {
+            this.CreateStubForXmlRequestBody();
+
+            Given()
+            .ContentType("application/xml")
+            .Body(this.location)
+            .When()
+            .Post("http://localhost:9876/xml-serialization")
+            .Then()
+            .StatusCode(201);
+        }
+
+        /// <summary>
+        /// Verifies that the correct exception is thrown when the request body
+        /// cannot be serialized based on the Content-Type header value.
+        /// </summary>
+        [Test]
+        public void UnableToSerializeThrowsTheExpectedException()
+        {
+            this.CreateStubForXmlRequestBody();
+
+            RequestCreationException rce = Assert.Throws<RequestCreationException>(() =>
+            {
+                Given()
+                .ContentType("application/something")
+                .Body(this.location)
+                .When()
+                .Post("http://localhost:9876/xml-serialization")
+                .Then()
+                .StatusCode(201);
+            });
+
+            Assert.That(rce.Message, Is.EqualTo($"Could not determine how to serialize request based on specified content type 'application/something'"));
+        }
+
+        /// <summary>
         /// A test demonstrating RestAssuredNet syntax for deserializing
         /// a JSON response into an object when performing an HTTP GET.
         /// </summary>
@@ -103,7 +146,18 @@ namespace RestAssuredNet.Tests
         private void CreateStubForJsonRequestBody()
         {
             this.Server.Given(Request.Create().WithPath("/json-serialization").UsingPost()
-                .WithBody(new JsonMatcher(this.expectedSerializedRequestBody)))
+                .WithBody(new JsonMatcher(this.expectedSerializedJsonRequestBody)))
+                .RespondWith(Response.Create()
+                .WithStatusCode(201));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the XML request body example.
+        /// </summary>
+        private void CreateStubForXmlRequestBody()
+        {
+            this.Server.Given(Request.Create().WithPath("/xml-serialization").UsingPost()
+                .WithBody(new ExactMatcher(this.expectedSerializedXmlRequestBody)))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));
         }
