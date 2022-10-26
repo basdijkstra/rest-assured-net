@@ -31,7 +31,7 @@ namespace RestAssuredNet.Tests
     public class RequestBodySerializationTests : TestBase
     {
         private readonly string expectedSerializedJsonRequestBody = "{\"Country\":\"United States\",\"State\":\"California\",\"ZipCode\":90210,\"Places\":[{\"Name\":\"Sun City\",\"Inhabitants\":100000,\"IsCapital\":true},{\"Name\":\"Pleasure Meadow\",\"Inhabitants\":50000,\"IsCapital\":false}]}";
-        private readonly string expectedSerializedXmlRequestBody = "<?xml version=\"1.0\" encoding=\"utf-16\"?><Location xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><Country>United States</Country><State>California</State><ZipCode>90210</ZipCode><Places><Place><Name>Sun City</Name><Inhabitants>100000</Inhabitants><IsCapital>true</IsCapital></Place><Place><Name>Pleasure Meadow</Name><Inhabitants>50000</Inhabitants><IsCapital>false</IsCapital></Place></Places></Location>";
+        private readonly string xmlBody = "<?xml version=\"1.0\" encoding=\"utf-16\"?><Location xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><Country>United States</Country><State>California</State><ZipCode>90210</ZipCode><Places><Place><Name>Sun City</Name><Inhabitants>100000</Inhabitants><IsCapital>true</IsCapital></Place><Place><Name>Pleasure Meadow</Name><Inhabitants>50000</Inhabitants><IsCapital>false</IsCapital></Place></Places></Location>";
 
         private Location location;
 
@@ -141,6 +141,24 @@ namespace RestAssuredNet.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for deserializing
+        /// a XML response into an object when performing an HTTP GET.
+        /// </summary>
+        [Test]
+        public void ObjectCanBeDeserializedFromXml()
+        {
+            this.CreateStubForXmlResponseBody();
+
+            Location responseLocation = (Location)Given()
+            .When()
+            .Get("http://localhost:9876/xml-deserialization")
+            .As(typeof(Location));
+
+            Assert.That(responseLocation.Country, Is.EqualTo("United States"));
+            Assert.That(responseLocation.Places.Count, Is.EqualTo(2));
+        }
+
+        /// <summary>
         /// Creates the stub response for the JSON string request body example.
         /// </summary>
         private void CreateStubForJsonRequestBody()
@@ -157,7 +175,7 @@ namespace RestAssuredNet.Tests
         private void CreateStubForXmlRequestBody()
         {
             this.Server.Given(Request.Create().WithPath("/xml-serialization").UsingPost()
-                .WithBody(new ExactMatcher(this.expectedSerializedXmlRequestBody)))
+                .WithBody(new ExactMatcher(this.xmlBody)))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));
         }
@@ -169,7 +187,20 @@ namespace RestAssuredNet.Tests
         {
             this.Server.Given(Request.Create().WithPath("/json-deserialization").UsingGet())
                 .RespondWith(Response.Create()
+                .WithHeader("Content-Type", "application/json")
                 .WithBodyAsJson(this.location)
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the XML response body example.
+        /// </summary>
+        private void CreateStubForXmlResponseBody()
+        {
+            this.Server.Given(Request.Create().WithPath("/xml-deserialization").UsingGet())
+                .RespondWith(Response.Create()
+                .WithHeader("Content-Type", "application/xml")
+                .WithBody(this.xmlBody)
                 .WithStatusCode(200));
         }
     }

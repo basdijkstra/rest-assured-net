@@ -15,10 +15,12 @@
 // </copyright>
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Xml.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NHamcrest;
@@ -316,7 +318,25 @@ namespace RestAssuredNet.RA
                 throw new JsonSerializationException("Response content null or empty.");
             }
 
-            return JsonConvert.DeserializeObject(this.response.Content.ReadAsStringAsync().Result, type);
+            // Look at the response Content-Type header to determine how to deserialize
+            string responseMediaType = this.response.Content.Headers.ContentType.MediaType;
+
+            if (responseMediaType == null || responseMediaType.Contains("json"))
+            {
+                return JsonConvert.DeserializeObject(this.response.Content.ReadAsStringAsync().Result, type);
+            }
+            else if (responseMediaType.Contains("xml"))
+            {
+                XmlSerializer xmlSerializer = new XmlSerializer(type);
+                using (TextReader reader = new StringReader(this.response.Content.ReadAsStringAsync().Result))
+                {
+                    return xmlSerializer.Deserialize(reader);
+                }
+            }
+            else
+            {
+                throw new DeserializationException($"Unable to deserialize response with Content-Type '{responseMediaType}'");
+            }
         }
 
         /// <summary>
