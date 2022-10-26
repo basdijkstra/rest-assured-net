@@ -119,43 +119,7 @@ namespace RestAssuredNet.Tests
                 .StatusCode(201);
             });
 
-            Assert.That(rce.Message, Is.EqualTo($"Could not determine how to serialize request based on specified content type 'application/something'"));
-        }
-
-        /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for deserializing
-        /// a JSON response into an object when performing an HTTP GET.
-        /// </summary>
-        [Test]
-        public void ObjectCanBeDeserializedFromJson()
-        {
-            this.CreateStubForJsonResponseBody();
-
-            Location responseLocation = (Location)Given()
-            .When()
-            .Get("http://localhost:9876/json-deserialization")
-            .As(typeof(Location));
-
-            Assert.That(responseLocation.Country, Is.EqualTo("United States"));
-            Assert.That(responseLocation.Places.Count, Is.EqualTo(2));
-        }
-
-        /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for deserializing
-        /// a XML response into an object when performing an HTTP GET.
-        /// </summary>
-        [Test]
-        public void ObjectCanBeDeserializedFromXml()
-        {
-            this.CreateStubForXmlResponseBody();
-
-            Location responseLocation = (Location)Given()
-            .When()
-            .Get("http://localhost:9876/xml-deserialization")
-            .As(typeof(Location));
-
-            Assert.That(responseLocation.Country, Is.EqualTo("United States"));
-            Assert.That(responseLocation.Places.Count, Is.EqualTo(2));
+            Assert.That(rce.Message, Is.EqualTo("Could not determine how to serialize request based on specified content type 'application/something'"));
         }
 
         /// <summary>
@@ -178,30 +142,6 @@ namespace RestAssuredNet.Tests
                 .WithBody(new ExactMatcher(this.xmlBody)))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));
-        }
-
-        /// <summary>
-        /// Creates the stub response for the JSON response body example.
-        /// </summary>
-        private void CreateStubForJsonResponseBody()
-        {
-            this.Server.Given(Request.Create().WithPath("/json-deserialization").UsingGet())
-                .RespondWith(Response.Create()
-                .WithHeader("Content-Type", "application/json")
-                .WithBodyAsJson(this.location)
-                .WithStatusCode(200));
-        }
-
-        /// <summary>
-        /// Creates the stub response for the XML response body example.
-        /// </summary>
-        private void CreateStubForXmlResponseBody()
-        {
-            this.Server.Given(Request.Create().WithPath("/xml-deserialization").UsingGet())
-                .RespondWith(Response.Create()
-                .WithHeader("Content-Type", "application/xml")
-                .WithBody(this.xmlBody)
-                .WithStatusCode(200));
         }
     }
 }
