@@ -78,7 +78,7 @@ namespace RestAssuredNet.Tests
             .When()
             .Post("http://localhost:9876/json-serialization")
             .Then()
-            .StatusCode(200);
+            .StatusCode(201);
         }
 
         /// <summary>
