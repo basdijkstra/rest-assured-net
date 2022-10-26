@@ -4,8 +4,7 @@ version: 2.1
 
 # Load the CircleCI Windows orb
 orbs:
-  newman: circleci/windows@5.0.0
-
+  win: circleci/windows@5.0.0
 
 jobs:
   run-all-tests:
@@ -18,7 +17,8 @@ jobs:
           command: dotnet.exe restore
       - run:
           name: "Run tests"
-          command: dotnet.exe test          
+          command: dotnet.exe test  
+          
 workflows:
   run-rest-assured-net-tests:
     jobs:
