@@ -1,5 +1,5 @@
 # RestAssured.NET
-Current CircleCI build status: [![basdijkstra](https://circleci.com/gh/basdijkstra/rest-assured-net.svg?style=svg)](https://app.circleci.com/pipelines/github/basdijkstra/rest-assured-net)
+[![basdijkstra](https://circleci.com/gh/basdijkstra/rest-assured-net.svg?style=shield)](https://app.circleci.com/pipelines/github/basdijkstra/rest-assured-net)
 
 This is a C# .NET version of the original [REST Assured](https://rest-assured.io/).
 
