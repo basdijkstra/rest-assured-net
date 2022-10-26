@@ -1,5 +1,5 @@
 # RestAssured.NET
-[![basdijkstra](https://circleci.com/gh/basdijkstra/rest-assured-net.svg?style=shield)](https://app.circleci.com/pipelines/github/basdijkstra/rest-assured-net)
+[![basdijkstra](https://circleci.com/gh/basdijkstra/rest-assured-net.svg?style=shield)](https://app.circleci.com/pipelines/github/basdijkstra/rest-assured-net) https://img.shields.io/nuget/v/RestAssured.Net?color=blue https://img.shields.io/nuget/dt/RestAssured.Net
 
 This is a C# .NET version of the original [REST Assured](https://rest-assured.io/).
 
