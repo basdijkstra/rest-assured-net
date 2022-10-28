@@ -193,6 +193,18 @@ namespace RestAssuredNet.RA
         }
 
         /// <summary>
+        /// Adds a cookie to the request.
+        /// </summary>
+        /// <param name="cookieName">The cookie name to add to the request.</param>
+        /// <param name="cookieValue">The associated cookie value to add to the request.</param>
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest Cookie(string cookieName, string cookieValue)
+        {
+            this.request.Headers.Add("Cookie", $"{cookieName}={cookieValue}");
+            return this;
+        }
+
+        /// <summary>
         /// Adds a request body to the request object to be sent.
         /// </summary>
         /// <param name="body">The body that is to be sent with the request.</param>
