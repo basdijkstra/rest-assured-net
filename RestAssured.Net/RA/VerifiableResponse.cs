@@ -20,6 +20,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Xml;
 using System.Xml.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -254,23 +255,47 @@ namespace RestAssuredNet.RA
         /// Verifies that the response body matches the specified NHamcrest matcher.
         /// </summary>
         /// <typeparam name="T">The type of object that the matcher operates on.</typeparam>
-        /// <param name="jsonPath">The JsonPath expression to evaluate.</param>
+        /// <param name="path">The JsonPath or XPath expression to evaluate.</param>
         /// <param name="matcher">The NHamcrest matcher to evaluate.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
-        public VerifiableResponse Body<T>(string jsonPath, IMatcher<T> matcher)
+        public VerifiableResponse Body<T>(string path, IMatcher<T> matcher)
         {
             string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
-            JObject responseBodyAsJObject = JObject.Parse(responseBodyAsString);
-            JToken? resultingElement = responseBodyAsJObject.SelectToken(jsonPath);
 
-            if (resultingElement == null)
+            // Look at the response Content-Type header to determine how to deserialize
+            string responseMediaType = this.response.Content.Headers.ContentType.MediaType;
+
+            if (responseMediaType == null || responseMediaType.Contains("json"))
             {
-                throw new AssertionException($"JsonPath expression '{jsonPath}' did not yield any results.");
+                JObject responseBodyAsJObject = JObject.Parse(responseBodyAsString);
+                JToken? resultingElement = responseBodyAsJObject.SelectToken(path);
+
+                if (resultingElement == null)
+                {
+                    throw new AssertionException($"JsonPath expression '{path}' did not yield any results.");
+                }
+
+                if (!matcher.Matches(resultingElement.ToObject<T>()))
+                {
+                    throw new AssertionException($"Expected element selected by '{path}' to match '{matcher}' but was {resultingElement}");
+                }
             }
-
-            if (!matcher.Matches(resultingElement.ToObject<T>()))
+            else if (responseMediaType.Contains("xml"))
             {
-                throw new AssertionException($"Expected element selected by '{jsonPath}' to match '{matcher}' but was {resultingElement}");
+                XmlDocument xmlDoc = new XmlDocument();
+                xmlDoc.LoadXml(responseBodyAsString);
+                XmlNode? xmlElement = xmlDoc.SelectSingleNode(path);
+
+                if (xmlElement == null)
+                {
+                    throw new AssertionException($"XPath expression '{path}' did not yield any results.");
+                }
+
+                // TODO: Implement element verification based on XmlNode result and NHamcrest matcher.
+            }
+            else
+            {
+                throw new ResponseVerificationException($"Unable to extract elements from response with Content-Type '{responseMediaType}'");
             }
 
             return this;

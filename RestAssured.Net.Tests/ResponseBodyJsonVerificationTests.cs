@@ -235,6 +235,7 @@ namespace RestAssuredNet.Tests
 
             this.Server.Given(Request.Create().WithPath("/json-response-body").UsingGet())
                 .RespondWith(Response.Create()
+                .WithHeader("Content-Type", "application/json")
                 .WithBodyAsJson(location)
                 .WithStatusCode(200));
         }

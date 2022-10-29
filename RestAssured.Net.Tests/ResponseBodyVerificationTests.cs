@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using NHamcrest;
 using NUnit.Framework;
 using RestAssured.Net.Tests.Models;
+using RestAssuredNet.RA.Exceptions;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using static RestAssuredNet.RestAssuredNet;
@@ -128,6 +129,28 @@ namespace RestAssuredNet.Tests
             Assert.That(ae.Message, NUnit.Framework.Is.EqualTo($"Actual response body expected to match 'a string containing \"Jane Doe\"' but didn't.\nActual: {this.jsonStringResponseBody}"));
         }
 
+        /// <summary>
+        /// Verifies that the correct exception is thrown when the response body
+        /// does not match the given NHamcrest matcher.
+        /// </summary>
+        [Test]
+        public void CannotHandleResponseContentTypeThrowsTheExpectedException()
+        {
+            this.CreateStubForUnknownContentType();
+
+            ResponseVerificationException rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                .When()
+                .Get("http://localhost:9876/content-type-cannot-be-processed")
+                .Then()
+                .StatusCode(200)
+                .Body("$.Places[0].Name", NHamcrest.Contains.String("City"));
+            });
+
+            Assert.That(rve.Message, NUnit.Framework.Is.EqualTo($"Unable to extract elements from response with Content-Type 'application/unknown'"));
+        }
+
         private void CreateStubForPlaintextResponseBody()
         {
             this.Server.Given(Request.Create().WithPath("/plaintext-response-body").UsingGet())
@@ -143,6 +166,18 @@ namespace RestAssuredNet.Tests
         {
             this.Server.Given(Request.Create().WithPath("/json-string-response-body").UsingGet())
                 .RespondWith(Response.Create()
+                .WithBody(this.jsonStringResponseBody)
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the example with a Content-Type that cannot be processed.
+        /// </summary>
+        private void CreateStubForUnknownContentType()
+        {
+            this.Server.Given(Request.Create().WithPath("/content-type-cannot-be-processed").UsingGet())
+                .RespondWith(Response.Create()
+                .WithHeader("Content-Type", "application/unknown")
                 .WithBody(this.jsonStringResponseBody)
                 .WithStatusCode(200));
         }
