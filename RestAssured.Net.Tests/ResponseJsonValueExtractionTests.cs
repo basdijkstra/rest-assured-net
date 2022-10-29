@@ -1,4 +1,4 @@
-// <copyright file="ResponseValueExtractionTests.cs" company="On Test Automation">
+// <copyright file="ResponseJsonValueExtractionTests.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,9 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using NHamcrest;
 using NUnit.Framework;
-using RestAssured.Net.RA;
 using RestAssured.Net.Tests.Models;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
@@ -32,7 +30,7 @@ namespace RestAssuredNet.Tests
     /// Examples of RestAssuredNet usage.
     /// </summary>
     [TestFixture]
-    public class ResponseValueExtractionTests : TestBase
+    public class ResponseJsonValueExtractionTests : TestBase
     {
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for extracting a
@@ -231,6 +229,7 @@ namespace RestAssuredNet.Tests
             this.Server.Given(Request.Create().WithPath("/json-response-body").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("custom_header", "custom_header_value")
+                .WithHeader("Content-Type", "application/json")
                 .WithBodyAsJson(location)
                 .WithStatusCode(200));
         }

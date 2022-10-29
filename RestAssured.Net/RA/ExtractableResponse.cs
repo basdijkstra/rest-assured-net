@@ -16,6 +16,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Xml;
 using Newtonsoft.Json.Linq;
 using RestAssuredNet.RA.Exceptions;
 
@@ -40,33 +41,68 @@ namespace RestAssured.Net.RA
         /// <summary>
         /// Extracts a response body element value from the response based on a JsonPath expression.
         /// </summary>
-        /// <param name="jsonPath">The JsonPath expression pointing to the object to extract.</param>
+        /// <param name="path">The JsonPath or XPath expression pointing to the object to extract.</param>
         /// <returns>The element value or values extracted from the response using the JsonPath expression.</returns>
         /// <exception cref="AssertionException">Throws an AssertionException when evaluating the JsonPath did not yield any results.</exception>
-        public object Body(string jsonPath)
+        public object Body(string path)
         {
             string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
-            JObject responseBodyAsJObject = JObject.Parse(responseBodyAsString);
-            IEnumerable<JToken>? resultingElements = responseBodyAsJObject.SelectTokens(jsonPath);
 
-            List<object> elementValues = new List<object>();
+            // Look at the response Content-Type header to determine how to deserialize
+            string responseMediaType = this.response.Content.Headers.ContentType.MediaType;
 
-            foreach (JToken element in resultingElements)
+            if (responseMediaType == null || responseMediaType.Contains("json"))
             {
-                elementValues.Add(element.ToObject<object>());
-            }
+                JObject responseBodyAsJObject = JObject.Parse(responseBodyAsString);
+                IEnumerable<JToken>? resultingElements = responseBodyAsJObject.SelectTokens(path);
 
-            if (elementValues.Count == 0)
+                List<object> elementValues = new List<object>();
+
+                foreach (JToken element in resultingElements)
+                {
+                    elementValues.Add(element.ToObject<object>());
+                }
+
+                if (elementValues.Count == 0)
+                {
+                    throw new AssertionException($"JsonPath expression '{path}' did not yield any results.");
+                }
+
+                if (elementValues.Count == 1)
+                {
+                    return elementValues.First();
+                }
+
+                return elementValues;
+            }
+            else if (responseMediaType.Contains("xml"))
             {
-                throw new AssertionException($"JsonPath expression '{jsonPath}' did not yield any results.");
-            }
+                XmlDocument xmlDoc = new XmlDocument();
+                xmlDoc.LoadXml(responseBodyAsString);
+                XmlNodeList? xmlElements = xmlDoc.SelectNodes(path);
 
-            if (elementValues.Count == 1)
+                if (xmlElements == null || xmlElements.Count == 0)
+                {
+                    throw new ExtractionException($"XPath expression '{path}' did not yield any results.");
+                }
+
+                if (xmlElements.Count == 1)
+                {
+                    return xmlElements.Item(0).InnerText;
+                }
+
+                List<string> elementValues = new List<string>();
+                foreach (XmlNode xmlElement in xmlElements)
+                {
+                    elementValues.Add(xmlElement.InnerText);
+                }
+
+                return elementValues;
+            }
+            else
             {
-                return elementValues.First();
+                throw new ExtractionException($"Unable to extract elements from response with Content-Type '{responseMediaType}'");
             }
-
-            return elementValues;
         }
 
         /// <summary>
