@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -39,6 +40,7 @@ namespace RestAssuredNet.RA
     public class ExecutableRequest : IDisposable
     {
         private HttpRequestMessage request = new HttpRequestMessage();
+        private CookieCollection cookieCollection = new CookieCollection();
         private RequestSpecification? requestSpecification;
         private object requestBody = string.Empty;
         private string contentTypeHeader = "application/json";
@@ -200,7 +202,29 @@ namespace RestAssuredNet.RA
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
         public ExecutableRequest Cookie(string cookieName, string cookieValue)
         {
-            this.request.Headers.Add("Cookie", $"{cookieName}={cookieValue}");
+            this.cookieCollection.Add(new Cookie(cookieName, cookieValue));
+            return this;
+        }
+
+        /// <summary>
+        /// Adds a <see cref="Cookie(System.Net.Cookie)"/> to the request.
+        /// </summary>
+        /// <param name="cookie">The cookie to add to the request.</param>
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest Cookie(Cookie cookie)
+        {
+            this.cookieCollection.Add(cookie);
+            return this;
+        }
+
+        /// <summary>
+        /// Adds a <see cref="CookieCollection"/> to the request.
+        /// </summary>
+        /// <param name="cookieCollection">The <see cref="CookieCollection"/> to add to the request.</param>
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest Cookie(CookieCollection cookieCollection)
+        {
+            this.cookieCollection.Add(cookieCollection);
             return this;
         }
 
@@ -340,7 +364,7 @@ namespace RestAssuredNet.RA
             this.request.Content = new StringContent(requestBodyAsString, this.contentEncoding, this.contentTypeHeader);
 
             // Send the request and return the result
-            Task<VerifiableResponse> task = HttpRequestProcessor.Send(this.request);
+            Task<VerifiableResponse> task = new HttpRequestProcessor().Send(this.request, this.cookieCollection);
             return task.Result;
         }
 
