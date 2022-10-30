@@ -14,6 +14,7 @@
 // limitations under the License.
 // </copyright>
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
 using NUnit.Framework;
 using WireMock.Matchers;
@@ -34,12 +35,49 @@ namespace RestAssuredNet.Tests
         /// a cookie with a single value when sending an HTTP request.
         /// </summary>
         [Test]
-        public void CookieWithASingleValueCanBeSupplied()
+        public void CookieAsStringWithASingleValueCanBeSupplied()
         {
             this.CreateStubForSingleCookieValue();
 
             Given()
             .Cookie("my_cookie", "my_cookie_value")
+            .When()
+            .Get("http://localhost:9876/single-cookie-value")
+            .Then()
+            .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for including
+        /// a <see cref="Cookie"/> with a single value when sending an HTTP request.
+        /// </summary>
+        [Test]
+        public void CookieObjectWithASingleValueCanBeSupplied()
+        {
+            this.CreateStubForSingleCookieValue();
+
+            Given()
+            .Cookie(new Cookie("my_cookie", "my_cookie_value"))
+            .When()
+            .Get("http://localhost:9876/single-cookie-value")
+            .Then()
+            .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for including
+        /// a <see cref="Cookie"/> with a single value when sending an HTTP request.
+        /// </summary>
+        [Test]
+        public void CookieCollectionWithASingleCookieCanBeSupplied()
+        {
+            this.CreateStubForSingleCookieValue();
+
+            CookieCollection cookies = new CookieCollection();
+            cookies.Add(new Cookie("my_cookie", "my_cookie_value"));
+
+            Given()
+            .Cookie(cookies)
             .When()
             .Get("http://localhost:9876/single-cookie-value")
             .Then()
