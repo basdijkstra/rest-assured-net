@@ -132,7 +132,7 @@ namespace RestAssuredNet.RA
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
         public ExecutableRequest QueryParam(string key, object value)
         {
-            this.queryParams[key] = value.ToString();
+            this.queryParams[key] = value.ToString() ?? string.Empty;
             return this;
         }
 
@@ -143,7 +143,7 @@ namespace RestAssuredNet.RA
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
         public ExecutableRequest QueryParams(Dictionary<string, object> queryParams)
         {
-            queryParams.ToList().ForEach(param => this.queryParams[param.Key] = param.Value.ToString());
+            queryParams.ToList().ForEach(param => this.queryParams[param.Key] = param.Value.ToString() ?? string.Empty);
             return this;
         }
 
@@ -155,7 +155,7 @@ namespace RestAssuredNet.RA
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
         public ExecutableRequest PathParam(string key, object value)
         {
-            this.pathParams[key] = value.ToString();
+            this.pathParams[key] = value.ToString() ?? string.Empty;
             return this;
         }
 
@@ -166,7 +166,7 @@ namespace RestAssuredNet.RA
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
         public ExecutableRequest PathParams(Dictionary<string, object> pathParams)
         {
-            pathParams.ToList().ForEach(param => this.pathParams[param.Key] = param.Value.ToString());
+            pathParams.ToList().ForEach(param => this.pathParams[param.Key] = param.Value.ToString() ?? string.Empty);
             return this;
         }
 
