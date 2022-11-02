@@ -194,7 +194,7 @@ namespace RestAssuredNet.Tests
             this.CreateStubForJsonResponseBody();
 
             RA.Exceptions.AssertionException ae = Assert.Throws<RA.Exceptions.AssertionException>(() =>
-            { 
+            {
                 Given()
                 .When()
                 .Get("http://localhost:9876/json-response-body")
