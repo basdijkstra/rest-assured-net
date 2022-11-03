@@ -129,7 +129,6 @@ namespace RestAssuredNet.Tests
         /// a JSON response body element collection using an NHamcrest matcher.
         /// </summary>
         [Test]
-        [Ignore("Reactivate when XML element verification is properly implemented")]
         public void XmlResponseBodyElementCollectionCanBeVerifiedUsingNHamcrestMatcher()
         {
             this.CreateStubForXmlResponseBody();
@@ -147,7 +146,6 @@ namespace RestAssuredNet.Tests
         /// an XML response body element collection using an NHamcrest matcher.
         /// </summary>
         [Test]
-        [Ignore("Reactivate when XML element verification is properly implemented")]
         public void XmlResponseBodyElementCollectionNHamcrestMatcherMisMatchThrowsTheExpectedException()
         {
             this.CreateStubForXmlResponseBody();

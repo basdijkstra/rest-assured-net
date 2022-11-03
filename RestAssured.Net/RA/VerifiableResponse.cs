@@ -263,9 +263,9 @@ namespace RestAssuredNet.RA
             string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
 
             // Look at the response Content-Type header to determine how to deserialize
-            string responseMediaType = this.response.Content.Headers.ContentType.MediaType;
+            string responseMediaType = this.response.Content.Headers.ContentType.MediaType ?? string.Empty;
 
-            if (responseMediaType == null || responseMediaType.Contains("json"))
+            if (responseMediaType.Equals(string.Empty) || responseMediaType.Contains("json"))
             {
                 JObject responseBodyAsJObject = JObject.Parse(responseBodyAsString);
                 JToken? resultingElement = responseBodyAsJObject.SelectToken(path);
@@ -295,15 +295,14 @@ namespace RestAssuredNet.RA
                 try
                 {
                     T objectFromElementValue = (T)Convert.ChangeType(xmlElement.InnerText, typeof(T));
+                    if (!matcher.Matches((T)Convert.ChangeType(xmlElement.InnerText, typeof(T))))
+                    {
+                        throw new AssertionException($"Expected element selected by '{path}' to match '{matcher}' but was {xmlElement.InnerText}");
+                    }
                 }
                 catch (FormatException)
                 {
                     throw new ResponseVerificationException($"Response element value {xmlElement.InnerText} cannot be converted to object of type {typeof(T)}");
-                }
-
-                if (!matcher.Matches((T)Convert.ChangeType(xmlElement.InnerText, typeof(T))))
-                {
-                    throw new AssertionException($"Expected element selected by '{path}' to match '{matcher}' but was {xmlElement.InnerText}");
                 }
             }
             else
@@ -318,25 +317,61 @@ namespace RestAssuredNet.RA
         /// Verifies that the response body matches the specified NHamcrest matcher.
         /// </summary>
         /// <typeparam name="T">The type of object that the matcher operates on.</typeparam>
-        /// <param name="jsonPath">The JsonPath expression to evaluate.</param>
+        /// <param name="path">The JsonPath expression to evaluate.</param>
         /// <param name="matcher">The NHamcrest matcher to evaluate.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
-        public VerifiableResponse Body<T>(string jsonPath, IMatcher<IEnumerable<T>> matcher)
+        public VerifiableResponse Body<T>(string path, IMatcher<IEnumerable<T>> matcher)
         {
-            string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
-            JObject responseBodyAsJObject = JObject.Parse(responseBodyAsString);
-            IEnumerable<JToken>? resultingElements = responseBodyAsJObject.SelectTokens(jsonPath);
-
             List<T> elementValues = new List<T>();
 
-            foreach (JToken element in resultingElements)
-            {
-                elementValues.Add(element.ToObject<T>());
-            }
+            string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
 
-            if (!matcher.Matches(elementValues))
+            // Look at the response Content-Type header to determine how to deserialize
+            string responseMediaType = this.response.Content.Headers.ContentType.MediaType ?? string.Empty;
+
+            if (responseMediaType.Equals(string.Empty) || responseMediaType.Contains("json"))
             {
-                throw new AssertionException($"Expected elements selected by '{jsonPath}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
+                JObject responseBodyAsJObject = JObject.Parse(responseBodyAsString);
+                IEnumerable<JToken>? resultingElements = responseBodyAsJObject.SelectTokens(path);
+
+                foreach (JToken element in resultingElements)
+                {
+                    elementValues.Add(element.ToObject<T>());
+                }
+
+                if (!matcher.Matches(elementValues))
+                {
+                    throw new AssertionException($"Expected elements selected by '{path}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
+                }
+            }
+            else if (responseMediaType.Contains("xml"))
+            {
+                XmlDocument xmlDoc = new XmlDocument();
+                xmlDoc.LoadXml(responseBodyAsString);
+                XmlNodeList? xmlElements = xmlDoc.SelectNodes(path);
+
+                // Try and cast the element values to an object of the type used in the matcher
+                foreach (XmlNode xmlElement in xmlElements)
+                {
+                    try
+                    {
+                        T objectFromElementValue = (T)Convert.ChangeType(xmlElement.InnerText, typeof(T));
+                        elementValues.Add(objectFromElementValue);
+                    }
+                    catch (FormatException)
+                    {
+                        throw new ResponseVerificationException($"Response element value {xmlElement.InnerText} cannot be converted to object of type {typeof(T)}");
+                    }
+                }
+
+                if (!matcher.Matches(elementValues))
+                {
+                    throw new AssertionException($"Expected elements selected by '{path}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
+                }
+            }
+            else
+            {
+                throw new ResponseVerificationException($"Unable to extract elements from response with Content-Type '{responseMediaType}'");
             }
 
             return this;
