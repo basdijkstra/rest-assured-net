@@ -26,6 +26,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NHamcrest;
 using RestAssured.Net.RA;
+using RestAssured.Net.RA.Internal;
 using RestAssuredNet.RA.Exceptions;
 
 namespace RestAssuredNet.RA
@@ -410,6 +411,15 @@ namespace RestAssuredNet.RA
             {
                 throw new DeserializationException($"Unable to deserialize response with Content-Type '{responseMediaType}'");
             }
+        }
+
+        /// <summary>
+        /// Log response details to the standard output.
+        /// </summary>
+        /// <returns>A <see cref="ResponseLogger"/> object, which can be used to log response details.</returns>
+        public ResponseLogger Log()
+        {
+            return new ResponseLogger(this.response);
         }
 
         /// <summary>
