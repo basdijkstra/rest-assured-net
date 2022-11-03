@@ -21,6 +21,7 @@ public void DemonstrateRestAssuredNetEaseOfUse()
 
 All features of the library are described and demonstrated in the [RestAssured.Net Usage Guide](https://github.com/basdijkstra/rest-assured-net/wiki/Usage-Guide).
 
-This library is currently under heavy development. Expect more features to be added on a very regular basis.
+### Want to contribute?
+While I'm working on creating the first proper release for RestAssured.Net, I'm mostly looking for people who want to give the library a spin and let me know what they think, what issues they found and what they're still missing.
 
-First proper NuGet release expected before the end of 2022.
+Feel free to submit an issue on this repo if you see any room for improvement.
