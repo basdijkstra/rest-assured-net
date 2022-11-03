@@ -47,6 +47,40 @@ namespace RestAssuredNet.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
+        /// an XML response body element using an NHamcrest matcher.
+        /// </summary>
+        [Test]
+        public void XmlResponseBodyElementIntegerValueCanBeVerifiedUsingNHamcrestMatcher()
+        {
+            this.CreateStubForXmlResponseBody();
+
+            Given()
+            .When()
+            .Get("http://localhost:9876/xml-response-body")
+            .Then()
+            .StatusCode(200)
+            .Body("//Place[1]/Inhabitants", NHamcrest.Is.GreaterThan(75000));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// an XML response body element using an NHamcrest matcher.
+        /// </summary>
+        [Test]
+        public void XmlResponseBodyElementBooleanValueCanBeVerifiedUsingNHamcrestMatcher()
+        {
+            this.CreateStubForXmlResponseBody();
+
+            Given()
+            .When()
+            .Get("http://localhost:9876/xml-response-body")
+            .Then()
+            .StatusCode(200)
+            .Body("//Place[1]/IsCapital", NHamcrest.Is.True());
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
         /// that the expected exception is thrown when the XPath does not return results.
         /// </summary>
         [Test]
