@@ -291,7 +291,13 @@ namespace RestAssuredNet.RA
                     throw new AssertionException($"XPath expression '{path}' did not yield any results.");
                 }
 
-                // TODO: Implement element verification based on XmlNode result and NHamcrest matcher.
+                // Try and cast the element value to an object of the type used in the matcher
+                T objectFromElementValue = (T)Convert.ChangeType(xmlElement.InnerText, typeof(T));
+
+                if (!matcher.Matches((T)Convert.ChangeType(xmlElement.InnerText, typeof(T))))
+                {
+                    throw new AssertionException($"Expected element selected by '{path}' to match '{matcher}' but was {xmlElement.InnerText}");
+                }
             }
             else
             {
@@ -348,7 +354,7 @@ namespace RestAssuredNet.RA
 
             if (responseMediaType == null || responseMediaType.Contains("json"))
             {
-                return JsonConvert.DeserializeObject(this.response.Content.ReadAsStringAsync().Result, type);
+                return JsonConvert.DeserializeObject(this.response.Content.ReadAsStringAsync().Result, type) ?? string.Empty;
             }
             else if (responseMediaType.Contains("xml"))
             {

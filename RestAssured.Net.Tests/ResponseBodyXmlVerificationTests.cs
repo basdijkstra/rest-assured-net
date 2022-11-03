@@ -33,7 +33,6 @@ namespace RestAssuredNet.Tests
         /// an XML response body element using an NHamcrest matcher.
         /// </summary>
         [Test]
-        [Ignore("Reactivate when XML element verification is properly implemented")]
         public void XmlResponseBodyElementStringValueCanBeVerifiedUsingNHamcrestMatcher()
         {
             this.CreateStubForXmlResponseBody();
@@ -43,7 +42,7 @@ namespace RestAssuredNet.Tests
             .Get("http://localhost:9876/xml-response-body")
             .Then()
             .StatusCode(200)
-            .Body("//Place[0]/Name", NHamcrest.Is.EqualTo("Sun City"));
+            .Body("//Place[1]/Name", NHamcrest.Is.EqualTo("Sun City"));
         }
 
         /// <summary>
@@ -97,7 +96,7 @@ namespace RestAssuredNet.Tests
             this.CreateStubForXmlResponseBody();
 
             RA.Exceptions.AssertionException ae = Assert.Throws<RA.Exceptions.AssertionException>(() =>
-            { 
+            {
                 Given()
                 .When()
                 .Get("http://localhost:9876/xml-response-body")
