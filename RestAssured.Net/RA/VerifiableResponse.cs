@@ -292,7 +292,14 @@ namespace RestAssuredNet.RA
                 }
 
                 // Try and cast the element value to an object of the type used in the matcher
-                T objectFromElementValue = (T)Convert.ChangeType(xmlElement.InnerText, typeof(T));
+                try
+                {
+                    T objectFromElementValue = (T)Convert.ChangeType(xmlElement.InnerText, typeof(T));
+                }
+                catch (FormatException)
+                {
+                    throw new ResponseVerificationException($"Response element value {xmlElement.InnerText} cannot be converted to object of type {typeof(T)}");
+                }
 
                 if (!matcher.Matches((T)Convert.ChangeType(xmlElement.InnerText, typeof(T))))
                 {

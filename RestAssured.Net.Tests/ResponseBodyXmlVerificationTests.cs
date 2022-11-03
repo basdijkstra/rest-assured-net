@@ -103,6 +103,29 @@ namespace RestAssuredNet.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
+        /// that the expected exception is thrown when the element value returned
+        /// by the XPath does not match the matcher type.
+        /// </summary>
+        [Test]
+        public void ElementValueNotMatchingMatcherTypeThrowsTheExpectedException()
+        {
+            this.CreateStubForXmlResponseBody();
+
+            RA.Exceptions.ResponseVerificationException rve = Assert.Throws<RA.Exceptions.ResponseVerificationException>(() =>
+            {
+                Given()
+                .When()
+                .Get("http://localhost:9876/xml-response-body")
+                .Then()
+                .StatusCode(200)
+                .Body("//Place[1]/Inhabitants", NHamcrest.Is.True());
+            });
+
+            Assert.That(rve.Message, Is.EqualTo("Response element value 100000 cannot be converted to object of type System.Boolean"));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
         /// a JSON response body element collection using an NHamcrest matcher.
         /// </summary>
         [Test]
