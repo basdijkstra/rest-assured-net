@@ -6,6 +6,8 @@ This is a C# .NET version of the original [REST Assured](https://rest-assured.io
 With RestAssured.Net, writing tests for your HTTP APIs is as simple as
 
 ```csharp
+using static RestAssuredNet.RestAssuredNet;
+
 [Test]
 public void DemonstrateRestAssuredNetEaseOfUse()
 {
@@ -22,6 +24,6 @@ public void DemonstrateRestAssuredNetEaseOfUse()
 All features of the library are described and demonstrated in the [RestAssured.Net Usage Guide](https://github.com/basdijkstra/rest-assured-net/wiki/Usage-Guide).
 
 ### Want to contribute?
-While I'm working on creating the first proper release for RestAssured.Net, I'm mostly looking for people who want to give the library a spin and let me know what they think, what issues they found and what they're still missing.
+I'm mostly looking for people who want to give the library a spin and let me know what they think, what issues they found and what they're still missing.
 
 Feel free to submit an issue on this repo if you see any room for improvement.
