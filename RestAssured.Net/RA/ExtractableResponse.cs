@@ -49,9 +49,9 @@ namespace RestAssured.Net.RA
             string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
 
             // Look at the response Content-Type header to determine how to deserialize
-            string responseMediaType = this.response.Content.Headers.ContentType.MediaType;
+            string responseMediaType = this.response.Content.Headers.ContentType.MediaType ?? string.Empty;
 
-            if (responseMediaType == null || responseMediaType.Contains("json"))
+            if (responseMediaType == string.Empty || responseMediaType.Contains("json"))
             {
                 JObject responseBodyAsJObject = JObject.Parse(responseBodyAsString);
                 IEnumerable<JToken>? resultingElements = responseBodyAsJObject.SelectTokens(path);
