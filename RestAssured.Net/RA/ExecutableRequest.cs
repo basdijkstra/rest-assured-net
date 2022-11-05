@@ -47,6 +47,7 @@ namespace RestAssuredNet.RA
         private Encoding contentEncoding = Encoding.UTF8;
         private Dictionary<string, string> queryParams = new Dictionary<string, string>();
         private Dictionary<string, string> pathParams = new Dictionary<string, string>();
+        private IEnumerable<KeyValuePair<string, string>>? formData = null;
         private bool disposed = false;
 
         /// <summary>
@@ -229,6 +230,17 @@ namespace RestAssuredNet.RA
         }
 
         /// <summary>
+        /// Adds form data (x-www-form-urlencoded) to the request.
+        /// </summary>
+        /// <param name="formData">The form data to add to the request.</param>
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest FormData(IEnumerable<KeyValuePair<string, string>> formData)
+        {
+            this.formData = formData;
+            return this;
+        }
+
+        /// <summary>
         /// Adds a request body to the request object to be sent.
         /// </summary>
         /// <param name="body">The body that is to be sent with the request.</param>
@@ -358,10 +370,18 @@ namespace RestAssuredNet.RA
             // Apply the request specification to the request message
             this.request = RequestSpecificationProcessor.Apply(this.requestSpecification, this.request, endpoint);
 
-            // Set the request body using the content, encoding and content type specified
-            string requestBodyAsString = this.Serialize(this.requestBody, this.contentTypeHeader);
+            if (this.formData != null)
+            {
+                // Set the request body using the form data specified (will set the Content-Type header automatically)
+                this.request.Content = new FormUrlEncodedContent(this.formData);
+            }
+            else
+            {
+                // Set the request body using the content, encoding and content type specified
+                string requestBodyAsString = this.Serialize(this.requestBody, this.contentTypeHeader);
 
-            this.request.Content = new StringContent(requestBodyAsString, this.contentEncoding, this.contentTypeHeader);
+                this.request.Content = new StringContent(requestBodyAsString, this.contentEncoding, this.contentTypeHeader);
+            }
 
             // Send the request and return the result
             Task<VerifiableResponse> task = new HttpRequestProcessor().Send(this.request, this.cookieCollection);
