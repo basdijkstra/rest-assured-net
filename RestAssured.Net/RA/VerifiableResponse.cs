@@ -386,7 +386,17 @@ namespace RestAssuredNet.RA
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse MatchesJsonSchema(string jsonSchema)
         {
-            JSchema parsedSchema = JSchema.Parse(jsonSchema);
+            JSchema parsedSchema;
+
+            try
+            {
+                parsedSchema = JSchema.Parse(jsonSchema);
+            }
+            catch (JsonReaderException jre)
+            {
+                throw new ResponseVerificationException($"Could not parse supplied JSON schema: {jre.Message}");
+            }
+
             JObject response = JObject.Parse(this.response.Content.ReadAsStringAsync().Result);
 
             if (!response.IsValid(parsedSchema, out IList<string> messages))

@@ -27,6 +27,7 @@ namespace RestAssuredNet.Tests
     public class JsonSchemaValidationTests : TestBase
     {
         private readonly string jsonSchema = @"{ 'type': 'object', 'properties': { 'name': { 'type':'string'}, 'hobbies': { 'type': 'array', 'items': { 'type': 'string' } } } }";
+        private readonly string invalidJsonSchema = @"{ 'object', 'properties': { 'name': { 'type':'string'}, 'hobbies': { 'type': 'array', 'items': { 'type': 'string' } } } }";
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for validating a response
@@ -50,7 +51,7 @@ namespace RestAssuredNet.Tests
         /// A test checking that a JSON schema mismatch throws the expected exception.
         /// </summary>
         [Test]
-        public void MismatchWithJsonSchemaThrowsTheExpectedExecption()
+        public void MismatchWithJsonSchemaThrowsTheExpectedException()
         {
             this.CreateStubForJsonSchemaValidationMismatch();
 
@@ -66,6 +67,28 @@ namespace RestAssuredNet.Tests
             });
 
             Assert.That(ae.Message, Does.Contain("Response body did not match JSON schema supplied: Invalid type. Expected String but got Integer."));
+        }
+
+        /// <summary>
+        /// A test checking that supplying an invalid JSON schema throws the expected exception.
+        /// </summary>
+        [Test]
+        public void SupplyingInvalidJsonSchemaThrowsTheExpectedException()
+        {
+            this.CreateStubForJsonSchemaValidationMismatch();
+
+            RA.Exceptions.ResponseVerificationException rve = Assert.Throws<RA.Exceptions.ResponseVerificationException>(() =>
+            {
+                Given()
+                .When()
+                .Post("http://localhost:9876/json-schema-validation-mismatch")
+                .Then()
+                .StatusCode(201)
+                .And()
+                .MatchesJsonSchema(this.invalidJsonSchema);
+            });
+
+            Assert.That(rve.Message, Does.Contain("Could not parse supplied JSON schema:"));
         }
 
         /// <summary>
