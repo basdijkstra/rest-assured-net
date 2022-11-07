@@ -24,6 +24,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
 using NHamcrest;
 using RestAssured.Net.RA;
 using RestAssured.Net.RA.Internal;
@@ -373,6 +374,24 @@ namespace RestAssuredNet.RA
             else
             {
                 throw new ResponseVerificationException($"Unable to extract elements from response with Content-Type '{responseMediaType}'");
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Verifies that the JSON response body matches the supplied JSON schema.
+        /// </summary>
+        /// <param name="jsonSchema">The JSON schema to verify the response against.</param>
+        /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        public VerifiableResponse MatchesJsonSchema(string jsonSchema)
+        {
+            JSchema parsedSchema = JSchema.Parse(jsonSchema);
+            JObject response = JObject.Parse(this.response.Content.ReadAsStringAsync().Result);
+
+            if (!response.IsValid(parsedSchema, out IList<string> messages))
+            {
+                throw new AssertionException($"Response body did not match JSON schema supplied: {messages.First()}");
             }
 
             return this;
