@@ -48,6 +48,7 @@ namespace RestAssuredNet.RA
         private Dictionary<string, string> queryParams = new Dictionary<string, string>();
         private Dictionary<string, string> pathParams = new Dictionary<string, string>();
         private IEnumerable<KeyValuePair<string, string>>? formData = null;
+        private TimeSpan? timeout = null;
         private bool disposed = false;
 
         /// <summary>
@@ -241,6 +242,17 @@ namespace RestAssuredNet.RA
         }
 
         /// <summary>
+        /// Used to set a custom timeout for the request.
+        /// </summary>
+        /// <param name="timeout">The duration of the custom timeout as a <see cref="TimeSpan"/>.</param>
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest Timeout(TimeSpan timeout)
+        {
+            this.timeout = timeout;
+            return this;
+        }
+
+        /// <summary>
         /// Adds a request body to the request object to be sent.
         /// </summary>
         /// <param name="body">The body that is to be sent with the request.</param>
@@ -384,8 +396,23 @@ namespace RestAssuredNet.RA
             }
 
             // Send the request and return the result
-            Task<VerifiableResponse> task = new HttpRequestProcessor().Send(this.request, this.cookieCollection);
-            return task.Result;
+            HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor();
+
+            httpRequestProcessor.SetTimeout(this.timeout);
+
+            try
+            {
+                Task<VerifiableResponse> task = httpRequestProcessor.Send(this.request, this.cookieCollection);
+                return task.Result;
+            }
+            catch (AggregateException ae)
+            {
+                if (ae.InnerException.GetType() == typeof(TaskCanceledException))
+                {
+                    throw new HttpRequestProcessorException($"Request timeout of {this.timeout} exceeded.");
+                }
+                throw new HttpRequestProcessorException($"Unhandled exception {ae.Message}");
+            }
         }
 
         /// <summary>

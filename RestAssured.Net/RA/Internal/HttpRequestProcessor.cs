@@ -44,6 +44,18 @@ namespace RestAssuredNet.RA.Internal
         }
 
         /// <summary>
+        /// Sets the timeout on the HTTP client to the specified value.
+        /// </summary>
+        /// <param name="timeout">The timeout to set on the HTTP client.</param>
+        public void SetTimeout(TimeSpan? timeout)
+        {
+            if (timeout != null)
+            {
+                this.client.Timeout = (TimeSpan)timeout;
+            }
+        }
+
+        /// <summary>
         /// Sends an HTTP request message object and returns the response.
         /// </summary>
         /// <param name="request">The HTTP request message object to be sent.</param>
