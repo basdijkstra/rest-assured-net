@@ -404,9 +404,12 @@ namespace RestAssuredNet.RA
             {
                 httpRequestProcessor.SetTimeout((TimeSpan)this.timeout);
             }
-            else if (this.requestSpecification.Timeout != null)
+            else if (this.requestSpecification != null)
             {
-                httpRequestProcessor.SetTimeout((TimeSpan)this.requestSpecification.Timeout);
+                if (this.requestSpecification.Timeout != null)
+                {
+                    httpRequestProcessor.SetTimeout((TimeSpan)this.requestSpecification.Timeout);
+                }
             }
 
             try
