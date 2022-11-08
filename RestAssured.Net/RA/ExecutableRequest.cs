@@ -395,10 +395,19 @@ namespace RestAssuredNet.RA
                 this.request.Content = new StringContent(requestBodyAsString, this.contentEncoding, this.contentTypeHeader);
             }
 
-            // Send the request and return the result
+            // Create the HTTP request processor that sends the request and set its properties
             HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor();
 
-            httpRequestProcessor.SetTimeout(this.timeout);
+            // Timeout set in test has precedence over timeout set in request specification
+            // If both are null, use default timeout for HttpClient (= 100.000 milliseconds).
+            if (this.timeout != null)
+            {
+                httpRequestProcessor.SetTimeout((TimeSpan)this.timeout);
+            }
+            else if (this.requestSpecification.Timeout != null)
+            {
+                httpRequestProcessor.SetTimeout((TimeSpan)this.requestSpecification.Timeout);
+            }
 
             try
             {
@@ -409,8 +418,9 @@ namespace RestAssuredNet.RA
             {
                 if (ae.InnerException.GetType() == typeof(TaskCanceledException))
                 {
-                    throw new HttpRequestProcessorException($"Request timeout of {this.timeout} exceeded.");
+                    throw new HttpRequestProcessorException($"Request timeout of {this.timeout ?? this.requestSpecification.Timeout ?? TimeSpan.FromSeconds(100)} exceeded.");
                 }
+
                 throw new HttpRequestProcessorException($"Unhandled exception {ae.Message}");
             }
         }

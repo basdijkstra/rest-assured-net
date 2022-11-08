@@ -14,11 +14,8 @@
 // limitations under the License.
 // </copyright>
 using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Text;
 using NUnit.Framework;
-using WireMock.Matchers;
+using RestAssured.Net.RA.Builders;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using static RestAssuredNet.RestAssuredNet;
@@ -31,12 +28,28 @@ namespace RestAssuredNet.Tests
     [TestFixture]
     public class TimeoutTests : TestBase
     {
+        private RequestSpecification? requestSpecification;
+
+        /// <summary>
+        /// Creates the <see cref="RequestSpecification"/> instances to be used in the tests in this class.
+        /// </summary>
+        [SetUp]
+        public void CreateRequestSpecifications()
+        {
+            this.requestSpecification = new RequestSpecBuilder()
+                .WithScheme("http")
+                .WithHostName("localhost")
+                .WithPort(9876)
+                .WithTimeout(TimeSpan.FromSeconds(2))
+                .Build();
+        }
+
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for specifying
-        /// a custom timeout when sending an HTTP request.
+        /// a custom timeout for a specific request when sending an HTTP request.
         /// </summary>
         [Test]
-        public void CustomTimeoutCanBeSupplied()
+        public void CustomTimeoutCanBeSuppliedInTest()
         {
             this.CreateStubForTimeoutOk();
 
@@ -50,10 +63,27 @@ namespace RestAssuredNet.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for specifying
-        /// a custom timeout when sending an HTTP request.
+        /// a custom timeout in a request specification when sending an HTTP request.
         /// </summary>
         [Test]
-        public void TimeoutExceededThrowsTheExpectedException()
+        public void CustomTimeoutCanBeSuppliedInRequestSpecification()
+        {
+            this.CreateStubForTimeoutOk();
+
+            Given()
+            .Spec(this.requestSpecification)
+            .When()
+            .Get("http://localhost:9876/timeout-ok")
+            .Then()
+            .StatusCode(200);
+        }
+
+        /// <summary>
+        /// Test that exceeding a timeout specified in a test
+        /// throws the expected exception.
+        /// </summary>
+        [Test]
+        public void TimeoutInTestExceededThrowsTheExpectedException()
         {
             this.CreateStubForTimeoutNok();
 
@@ -61,6 +91,28 @@ namespace RestAssuredNet.Tests
             {
                 Given()
                 .Timeout(TimeSpan.FromSeconds(2))
+                .When()
+                .Get("http://localhost:9876/timeout-nok")
+                .Then()
+                .StatusCode(200);
+            });
+
+            Assert.That(hrpe.Message, Is.EqualTo("Request timeout of 00:00:02 exceeded."));
+        }
+
+        /// <summary>
+        /// Test that exceeding a timeout specified in a request specification
+        /// throws the expected exception.
+        /// </summary>
+        [Test]
+        public void TimeoutInRequestSpecificationExceededThrowsTheExpectedException()
+        {
+            this.CreateStubForTimeoutNok();
+
+            RA.Exceptions.HttpRequestProcessorException hrpe = Assert.Throws<RA.Exceptions.HttpRequestProcessorException>(() =>
+            {
+                Given()
+                .Spec(this.requestSpecification)
                 .When()
                 .Get("http://localhost:9876/timeout-nok")
                 .Then()

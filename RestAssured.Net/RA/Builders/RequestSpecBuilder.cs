@@ -13,6 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
+using System;
+
 namespace RestAssured.Net.RA.Builders
 {
     /// <summary>
@@ -26,13 +28,14 @@ namespace RestAssured.Net.RA.Builders
         private readonly string host = "localhost";
         private readonly int port = 80;
         private readonly string basePath = string.Empty;
+        private readonly TimeSpan? timeout;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestSpecBuilder"/> class.
         /// </summary>
         public RequestSpecBuilder()
         {
-            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.basePath);
+            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.basePath, this.timeout);
         }
 
         /// <summary>
@@ -76,6 +79,17 @@ namespace RestAssured.Net.RA.Builders
         public RequestSpecBuilder WithBasePath(string basePath)
         {
             this.requestSpecification.BasePath = basePath;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the timeout on the <see cref="RequestSpecification"/> to build.
+        /// </summary>
+        /// <param name="timeout">The timeout to use for the requests.</param>
+        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
+        public RequestSpecBuilder WithTimeout(TimeSpan timeout)
+        {
+            this.requestSpecification.Timeout = timeout;
             return this;
         }
 

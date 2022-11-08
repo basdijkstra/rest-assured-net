@@ -13,6 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
+using System;
+
 namespace RestAssured.Net.RA.Builders
 {
     /// <summary>
@@ -41,18 +43,25 @@ namespace RestAssured.Net.RA.Builders
         public string BasePath { get; set; }
 
         /// <summary>
+        /// The timeout to be used when sending the request.
+        /// </summary>
+        public TimeSpan? Timeout { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="RequestSpecification"/> class.
         /// </summary>
         /// <param name="scheme">The scheme (http, https, ....) to use in this request.</param>
         /// <param name="host">The host name to use in this request.</param>
         /// <param name="port">The port number to use in this request.</param>
         /// <param name="basePath">The base path to use in this request.</param>
-        public RequestSpecification(string scheme, string host, int port, string basePath)
+        /// <param name="timeout">The timeout to use for this request.</param>
+        public RequestSpecification(string scheme, string host, int port, string basePath, TimeSpan? timeout)
         {
             this.Scheme = scheme;
             this.HostName = host;
             this.Port = port;
             this.BasePath = basePath;
+            this.Timeout = timeout;
         }
     }
 }
