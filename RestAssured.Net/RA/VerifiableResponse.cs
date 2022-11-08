@@ -397,6 +397,16 @@ namespace RestAssuredNet.RA
                 throw new ResponseVerificationException($"Could not parse supplied JSON schema: {jre.Message}");
             }
 
+            return this.MatchesJsonSchema(parsedSchema);
+        }
+
+        /// <summary>
+        /// Verifies that the JSON response body matches the supplied JSON schema.
+        /// </summary>
+        /// <param name="jsonSchema">The JSON schema to verify the response against.</param>
+        /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        public VerifiableResponse MatchesJsonSchema(JSchema jsonSchema)
+        {
             string responseMediaType = this.response.Content.Headers.ContentType.MediaType ?? string.Empty;
 
             if (!responseMediaType.Contains("json"))
@@ -406,7 +416,7 @@ namespace RestAssuredNet.RA
 
             JObject response = JObject.Parse(this.response.Content.ReadAsStringAsync().Result);
 
-            if (!response.IsValid(parsedSchema, out IList<string> messages))
+            if (!response.IsValid(jsonSchema, out IList<string> messages))
             {
                 throw new AssertionException($"Response body did not match JSON schema supplied: {messages.First()}");
             }

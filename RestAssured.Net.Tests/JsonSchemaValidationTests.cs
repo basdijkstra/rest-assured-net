@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
+using Newtonsoft.Json.Schema;
 using NUnit.Framework;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
@@ -45,6 +46,26 @@ namespace RestAssuredNet.Tests
             .StatusCode(200)
             .And()
             .MatchesJsonSchema(this.jsonSchema);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for validating a response
+        /// against a JSON schema supplied as a JSchema.
+        /// </summary>
+        [Test]
+        public void JsonSchemaCanBeSuppliedAndVerifiedAsJSchema()
+        {
+            this.CreateStubForJsonSchemaValidation();
+
+            JSchema parsedSchema = JSchema.Parse(this.jsonSchema);
+
+            Given()
+            .When()
+            .Get("http://localhost:9876/json-schema-validation")
+            .Then()
+            .StatusCode(200)
+            .And()
+            .MatchesJsonSchema(parsedSchema);
         }
 
         /// <summary>
