@@ -59,6 +59,11 @@ namespace RestAssured.Net.RA.Internal
                 }
             }
 
+            if (requestSpec.UserAgent != null)
+            {
+                request.Headers.UserAgent.Add(requestSpec.UserAgent);
+            }
+
             return request;
         }
 

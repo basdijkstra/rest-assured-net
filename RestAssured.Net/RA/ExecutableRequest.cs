@@ -253,6 +253,29 @@ namespace RestAssuredNet.RA
         }
 
         /// <summary>
+        /// User to set a custom User Agent value for the request.
+        /// </summary>
+        /// <param name="product">The <see cref="ProductInfoHeaderValue"/> for the user agent to add to the request.</param>
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest UserAgent(ProductInfoHeaderValue product)
+        {
+            this.request.Headers.UserAgent.Add(product);
+            return this;
+        }
+
+        /// <summary>
+        /// User to set a custom User Agent value for the request.
+        /// </summary>
+        /// <param name="productName">The value for the user agent product name to add to the request.</param>
+        /// <param name="productVersion">the value for the user agent product version to add to the request.</param>
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest UserAgent(string productName, string productVersion)
+        {
+            this.UserAgent(new ProductInfoHeaderValue(productName, productVersion));
+            return this;
+        }
+
+        /// <summary>
         /// Adds a request body to the request object to be sent.
         /// </summary>
         /// <param name="body">The body that is to be sent with the request.</param>
