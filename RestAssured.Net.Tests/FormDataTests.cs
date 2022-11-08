@@ -35,7 +35,7 @@ namespace RestAssuredNet.Tests
         /// x-www-form-urlencoded form data when sending an HTTP request.
         /// </summary>
         [Test]
-        public void TestSomething()
+        public void FormDataCanBeSupplied()
         {
             this.CreateStubForFormData();
 
