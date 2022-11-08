@@ -14,6 +14,7 @@
 // limitations under the License.
 // </copyright>
 using System;
+using System.Net.Http.Headers;
 
 namespace RestAssured.Net.RA.Builders
 {
@@ -48,6 +49,11 @@ namespace RestAssured.Net.RA.Builders
         public TimeSpan? Timeout { get; set; }
 
         /// <summary>
+        /// The user agent to be used when sending the request.
+        /// </summary>
+        public ProductInfoHeaderValue? UserAgent { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="RequestSpecification"/> class.
         /// </summary>
         /// <param name="scheme">The scheme (http, https, ....) to use in this request.</param>
@@ -55,13 +61,15 @@ namespace RestAssured.Net.RA.Builders
         /// <param name="port">The port number to use in this request.</param>
         /// <param name="basePath">The base path to use in this request.</param>
         /// <param name="timeout">The timeout to use for this request.</param>
-        public RequestSpecification(string scheme, string host, int port, string basePath, TimeSpan? timeout)
+        /// <param name="userAgent">The user agent to use for this request.</param>
+        public RequestSpecification(string scheme, string host, int port, string basePath, TimeSpan? timeout, ProductInfoHeaderValue? userAgent)
         {
             this.Scheme = scheme;
             this.HostName = host;
             this.Port = port;
             this.BasePath = basePath;
             this.Timeout = timeout;
+            this.UserAgent = userAgent;
         }
     }
 }

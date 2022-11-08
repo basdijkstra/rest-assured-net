@@ -14,6 +14,7 @@
 // limitations under the License.
 // </copyright>
 using System;
+using System.Net.Http.Headers;
 
 namespace RestAssured.Net.RA.Builders
 {
@@ -29,13 +30,14 @@ namespace RestAssured.Net.RA.Builders
         private readonly int port = 80;
         private readonly string basePath = string.Empty;
         private readonly TimeSpan? timeout;
+        private readonly ProductInfoHeaderValue? userAgent;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestSpecBuilder"/> class.
         /// </summary>
         public RequestSpecBuilder()
         {
-            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.basePath, this.timeout);
+            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.basePath, this.timeout, this.userAgent);
         }
 
         /// <summary>
@@ -90,6 +92,29 @@ namespace RestAssured.Net.RA.Builders
         public RequestSpecBuilder WithTimeout(TimeSpan timeout)
         {
             this.requestSpecification.Timeout = timeout;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the user agent on the <see cref="RequestSpecification"/> to build.
+        /// </summary>
+        /// <param name="userAgent">The user agent to use for the requests.</param>
+        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
+        public RequestSpecBuilder WithUserAgent(ProductInfoHeaderValue userAgent)
+        {
+            this.requestSpecification.UserAgent = userAgent;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the user agent on the <see cref="RequestSpecification"/> to build.
+        /// </summary>
+        /// <param name="productName">The user agent product name to use for the requests.</param>
+        /// <param name="productVersion">The user agent product version to use for the requests.</param>
+        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
+        public RequestSpecBuilder WithUserAgent(string productName, string productVersion)
+        {
+            this.requestSpecification.UserAgent = new ProductInfoHeaderValue(productName, productVersion);
             return this;
         }
 
