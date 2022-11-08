@@ -397,6 +397,13 @@ namespace RestAssuredNet.RA
                 throw new ResponseVerificationException($"Could not parse supplied JSON schema: {jre.Message}");
             }
 
+            string responseMediaType = this.response.Content.Headers.ContentType.MediaType ?? string.Empty;
+
+            if (!responseMediaType.Contains("json"))
+            {
+                throw new ResponseVerificationException($"Expected response Content-Type header to contain 'json', but was '{responseMediaType}'");
+            }
+
             JObject response = JObject.Parse(this.response.Content.ReadAsStringAsync().Result);
 
             if (!response.IsValid(parsedSchema, out IList<string> messages))

@@ -40,9 +40,9 @@ namespace RestAssuredNet.Tests
 
             Given()
             .When()
-            .Post("http://localhost:9876/json-schema-validation")
+            .Get("http://localhost:9876/json-schema-validation")
             .Then()
-            .StatusCode(201)
+            .StatusCode(200)
             .And()
             .MatchesJsonSchema(this.jsonSchema);
         }
@@ -59,9 +59,9 @@ namespace RestAssuredNet.Tests
             {
                 Given()
                 .When()
-                .Post("http://localhost:9876/json-schema-validation-mismatch")
+                .Get("http://localhost:9876/json-schema-validation-mismatch")
                 .Then()
-                .StatusCode(201)
+                .StatusCode(200)
                 .And()
                 .MatchesJsonSchema(this.jsonSchema);
             });
@@ -81,14 +81,36 @@ namespace RestAssuredNet.Tests
             {
                 Given()
                 .When()
-                .Post("http://localhost:9876/json-schema-validation-mismatch")
+                .Get("http://localhost:9876/json-schema-validation-mismatch")
                 .Then()
-                .StatusCode(201)
+                .StatusCode(200)
                 .And()
                 .MatchesJsonSchema(this.invalidJsonSchema);
             });
 
             Assert.That(rve.Message, Does.Contain("Could not parse supplied JSON schema:"));
+        }
+
+        /// <summary>
+        /// A test checking that a response with an unexpected Content-Type throws the expected exception.
+        /// </summary>
+        [Test]
+        public void UnexpectedResponseContentTypeThrowsTheExpectedException()
+        {
+            this.CreateStubForJsonSchemaUnexpectedResponseContentType();
+
+            RA.Exceptions.ResponseVerificationException rve = Assert.Throws<RA.Exceptions.ResponseVerificationException>(() =>
+            {
+                Given()
+                .When()
+                .Get("http://localhost:9876/json-schema-unexpected-content-type")
+                .Then()
+                .StatusCode(200)
+                .And()
+                .MatchesJsonSchema(this.jsonSchema);
+            });
+
+            Assert.That(rve.Message, Is.EqualTo("Expected response Content-Type header to contain 'json', but was 'application/something'"));
         }
 
         /// <summary>
@@ -102,10 +124,11 @@ namespace RestAssuredNet.Tests
                 hobbies = new[] { "Running", "Reading", "C#", "Software testing" },
             };
 
-            this.Server.Given(Request.Create().WithPath("/json-schema-validation").UsingPost())
+            this.Server.Given(Request.Create().WithPath("/json-schema-validation").UsingGet())
                 .RespondWith(Response.Create()
+                .WithHeader("Content-Type", "application/json")
                 .WithBodyAsJson(responseData)
-                .WithStatusCode(201));
+                .WithStatusCode(200));
         }
 
         /// <summary>
@@ -119,10 +142,24 @@ namespace RestAssuredNet.Tests
                 hobbies = new[] { "Running", "Reading", "C#", "Software testing" },
             };
 
-            this.Server.Given(Request.Create().WithPath("/json-schema-validation-mismatch").UsingPost())
+            this.Server.Given(Request.Create().WithPath("/json-schema-validation-mismatch").UsingGet())
                 .RespondWith(Response.Create()
+                .WithHeader("Content-Type", "application/json")
                 .WithBodyAsJson(responseData)
-                .WithStatusCode(201));
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the JSON schema validation example
+        /// with an unexpected response Content-Type header value.
+        /// </summary>
+        private void CreateStubForJsonSchemaUnexpectedResponseContentType()
+        {
+            this.Server.Given(Request.Create().WithPath("/json-schema-unexpected-content-type").UsingGet())
+                .RespondWith(Response.Create()
+                .WithHeader("Content-Type", "application/something")
+                .WithBody("Something")
+                .WithStatusCode(200));
         }
     }
 }
