@@ -431,7 +431,7 @@ namespace RestAssuredNet.RA
             }
 
             // Create the HTTP request processor that sends the request and set its properties
-            HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor(this.proxy);
+            HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor(this.proxy ?? this.requestSpecification?.Proxy);
 
             // Timeout set in test has precedence over timeout set in request specification
             // If both are null, use default timeout for HttpClient (= 100.000 milliseconds).

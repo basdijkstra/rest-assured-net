@@ -14,6 +14,7 @@
 // limitations under the License.
 // </copyright>
 using System;
+using System.Net;
 using System.Net.Http.Headers;
 
 namespace RestAssured.Net.RA.Builders
@@ -54,6 +55,11 @@ namespace RestAssured.Net.RA.Builders
         public ProductInfoHeaderValue? UserAgent { get; set; }
 
         /// <summary>
+        /// The proxy to be used when sending the request.
+        /// </summary>
+        public IWebProxy? Proxy { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="RequestSpecification"/> class.
         /// </summary>
         /// <param name="scheme">The scheme (http, https, ....) to use in this request.</param>
@@ -62,7 +68,8 @@ namespace RestAssured.Net.RA.Builders
         /// <param name="basePath">The base path to use in this request.</param>
         /// <param name="timeout">The timeout to use for this request.</param>
         /// <param name="userAgent">The user agent to use for this request.</param>
-        public RequestSpecification(string scheme, string host, int port, string basePath, TimeSpan? timeout, ProductInfoHeaderValue? userAgent)
+        /// <param name="proxy">The proxy to use for this request.</param>
+        public RequestSpecification(string scheme, string host, int port, string basePath, TimeSpan? timeout, ProductInfoHeaderValue? userAgent, IWebProxy proxy)
         {
             this.Scheme = scheme;
             this.HostName = host;
@@ -70,6 +77,7 @@ namespace RestAssured.Net.RA.Builders
             this.BasePath = basePath;
             this.Timeout = timeout;
             this.UserAgent = userAgent;
+            this.Proxy = proxy;
         }
     }
 }
