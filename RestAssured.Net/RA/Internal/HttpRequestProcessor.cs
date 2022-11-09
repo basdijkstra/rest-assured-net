@@ -34,11 +34,13 @@ namespace RestAssuredNet.RA.Internal
         /// <summary>
         /// Initializes a new instance of the <see cref="HttpRequestProcessor"/> class.
         /// </summary>
-        public HttpRequestProcessor()
+        /// <param name="proxy">The <see cref="IWebProxy"/> to set on the <see cref="HttpClientHandler"/> used with the <see cref="HttpClient"/>.</param>
+        public HttpRequestProcessor(IWebProxy? proxy)
         {
             this.handler = new HttpClientHandler
             {
                 CookieContainer = this.cookieContainer,
+                Proxy = proxy,
             };
             this.client = new HttpClient(this.handler);
         }

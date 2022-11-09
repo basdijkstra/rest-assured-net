@@ -49,6 +49,7 @@ namespace RestAssuredNet.RA
         private Dictionary<string, string> pathParams = new Dictionary<string, string>();
         private IEnumerable<KeyValuePair<string, string>>? formData = null;
         private TimeSpan? timeout = null;
+        private IWebProxy? proxy = null;
         private bool disposed = false;
 
         /// <summary>
@@ -264,7 +265,7 @@ namespace RestAssuredNet.RA
         }
 
         /// <summary>
-        /// User to set a custom User Agent value for the request.
+        /// Used to set a custom User Agent value for the request.
         /// </summary>
         /// <param name="productName">The value for the user agent product name to add to the request.</param>
         /// <param name="productVersion">the value for the user agent product version to add to the request.</param>
@@ -272,6 +273,17 @@ namespace RestAssuredNet.RA
         public ExecutableRequest UserAgent(string productName, string productVersion)
         {
             this.UserAgent(new ProductInfoHeaderValue(productName, productVersion));
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the proxy to add to the <see cref="HttpClientHandler"/> used for this request.
+        /// </summary>
+        /// <param name="proxy">The <see cref="IWebProxy"/> to add to the <see cref="HttpClientHandler"/>.</param>
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest Proxy(IWebProxy proxy)
+        {
+            this.proxy = proxy;
             return this;
         }
 
@@ -419,7 +431,7 @@ namespace RestAssuredNet.RA
             }
 
             // Create the HTTP request processor that sends the request and set its properties
-            HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor();
+            HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor(this.proxy);
 
             // Timeout set in test has precedence over timeout set in request specification
             // If both are null, use default timeout for HttpClient (= 100.000 milliseconds).
