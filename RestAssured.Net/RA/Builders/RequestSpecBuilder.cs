@@ -14,6 +14,7 @@
 // limitations under the License.
 // </copyright>
 using System;
+using System.Net;
 using System.Net.Http.Headers;
 
 namespace RestAssured.Net.RA.Builders
@@ -31,13 +32,14 @@ namespace RestAssured.Net.RA.Builders
         private readonly string basePath = string.Empty;
         private readonly TimeSpan? timeout;
         private readonly ProductInfoHeaderValue? userAgent;
+        private readonly IWebProxy? proxy;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestSpecBuilder"/> class.
         /// </summary>
         public RequestSpecBuilder()
         {
-            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.basePath, this.timeout, this.userAgent);
+            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.basePath, this.timeout, this.userAgent, this.proxy);
         }
 
         /// <summary>
@@ -103,6 +105,17 @@ namespace RestAssured.Net.RA.Builders
         public RequestSpecBuilder WithUserAgent(ProductInfoHeaderValue userAgent)
         {
             this.requestSpecification.UserAgent = userAgent;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the <see cref="IWebProxy"/> on the <see cref="RequestSpecification"/> to build.
+        /// </summary>
+        /// <param name="proxy">The <see cref="IWebProxy"/> to use for the requests.</param>
+        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
+        public RequestSpecBuilder WithProxy(IWebProxy proxy)
+        {
+            this.requestSpecification.Proxy = proxy;
             return this;
         }
 
