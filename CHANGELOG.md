@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Added 
 
+- Added .NET 7 to the list of target frameworks ([#21](https://github.com/basdijkstra/rest-assured-net/issues/21))
 - Added support for specifying a user agent for individual requests as well as in a RequestSpecification ([#16](https://github.com/basdijkstra/rest-assured-net/issues/16) by [@bheemreddy181](https://github.com/bheemreddy181))
 - Added support for specifying custom timeouts for individual requests as well as in a RequestSpecification ([#15](https://github.com/basdijkstra/rest-assured-net/issues/15) by [@bheemreddy181](https://github.com/bheemreddy181))
 - Added support for sending x-www-form-urlencoded data in requests ([#6](https://github.com/basdijkstra/rest-assured-net/issues/6) by [@bheemreddy181](https://github.com/bheemreddy181))
