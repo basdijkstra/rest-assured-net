@@ -139,7 +139,7 @@ namespace RestAssuredNet.Tests
         private void CreateStubForXmlRequestBody()
         {
             this.Server.Given(Request.Create().WithPath("/xml-serialization").UsingPost()
-                .WithBody(new ExactMatcher(this.xmlBody)))
+                .WithBody(new XPathMatcher("//Places[count(Place) = 2]")))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));
         }
