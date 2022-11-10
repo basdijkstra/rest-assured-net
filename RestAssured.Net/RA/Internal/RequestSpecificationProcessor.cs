@@ -14,6 +14,7 @@
 // limitations under the License.
 // </copyright>
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using RestAssured.Net.RA.Builders;
 using RestAssuredNet.RA.Exceptions;
@@ -57,6 +58,11 @@ namespace RestAssured.Net.RA.Internal
                 {
                     throw new RequestCreationException($"Supplied base URI '{requestSpec.Scheme}://{requestSpec.HostName}:{requestSpec.Port}' is invalid.");
                 }
+            }
+
+            foreach (KeyValuePair<string, object> entry in requestSpec.Headers)
+            {
+                request.Headers.Add(entry.Key, entry.Value.ToString());
             }
 
             if (requestSpec.UserAgent != null)
