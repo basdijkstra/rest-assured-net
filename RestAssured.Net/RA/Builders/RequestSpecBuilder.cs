@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http.Headers;
+using System.Text;
 
 namespace RestAssured.Net.RA.Builders
 {
@@ -35,13 +36,14 @@ namespace RestAssured.Net.RA.Builders
         private readonly ProductInfoHeaderValue? userAgent;
         private readonly IWebProxy? proxy;
         private readonly Dictionary<string, object> headers = new Dictionary<string, object>();
+        private readonly AuthenticationHeaderValue? authenticationHeader;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestSpecBuilder"/> class.
         /// </summary>
         public RequestSpecBuilder()
         {
-            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.basePath, this.timeout, this.userAgent, this.proxy, this.headers);
+            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.basePath, this.timeout, this.userAgent, this.proxy, this.headers, this.authenticationHeader);
         }
 
         /// <summary>
@@ -142,6 +144,30 @@ namespace RestAssured.Net.RA.Builders
         public RequestSpecBuilder WithHeader(string key, object value)
         {
             this.requestSpecification.Headers[key] = value;
+            return this;
+        }
+
+        /// <summary>
+        /// Adds a basic authorization header to the request.
+        /// </summary>
+        /// <param name="username">The username to be used for authorization.</param>
+        /// <param name="password">The password to be used for authorization.</param>
+        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
+        public RequestSpecBuilder WithBasicAuth(string username, string password)
+        {
+            string base64EncodedBasicAuthDetails = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+            this.requestSpecification.AuthenticationHeader = new AuthenticationHeaderValue("Basic", base64EncodedBasicAuthDetails);
+            return this;
+        }
+
+        /// <summary>
+        /// Adds an OAuth2 authorization header to the request.
+        /// </summary>
+        /// <param name="token">The OAuth2 token to be used for authorization.</param>
+        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
+        public RequestSpecBuilder WithOAuth2(string token)
+        {
+            this.requestSpecification.AuthenticationHeader = new AuthenticationHeaderValue("Bearer", token);
             return this;
         }
 

@@ -66,6 +66,11 @@ namespace RestAssured.Net.RA.Builders
         public Dictionary<string, object> Headers { get; set; }
 
         /// <summary>
+        /// Authentication details to be added when sending the request.
+        /// </summary>
+        public AuthenticationHeaderValue AuthenticationHeader { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="RequestSpecification"/> class.
         /// </summary>
         /// <param name="scheme">The scheme (http, https, ....) to use in this request.</param>
@@ -76,7 +81,7 @@ namespace RestAssured.Net.RA.Builders
         /// <param name="userAgent">The user agent to use for this request.</param>
         /// <param name="proxy">The proxy to use for this request.</param>
         /// <param name="headers">The headers to add to this request.</param>
-        public RequestSpecification(string scheme, string host, int port, string basePath, TimeSpan? timeout, ProductInfoHeaderValue? userAgent, IWebProxy proxy, Dictionary<string, object> headers)
+        public RequestSpecification(string scheme, string host, int port, string basePath, TimeSpan? timeout, ProductInfoHeaderValue? userAgent, IWebProxy proxy, Dictionary<string, object> headers, AuthenticationHeaderValue authenticationHeader)
         {
             this.Scheme = scheme;
             this.HostName = host;
@@ -86,6 +91,7 @@ namespace RestAssured.Net.RA.Builders
             this.UserAgent = userAgent;
             this.Proxy = proxy;
             this.Headers = headers;
+            this.AuthenticationHeader = authenticationHeader;
         }
     }
 }

@@ -70,6 +70,11 @@ namespace RestAssured.Net.RA.Internal
                 request.Headers.UserAgent.Add(requestSpec.UserAgent);
             }
 
+            if (requestSpec.AuthenticationHeader != null)
+            {
+                request.Headers.Authorization = request.Headers.Authorization ?? requestSpec.AuthenticationHeader;
+            }
+
             return request;
         }
 
