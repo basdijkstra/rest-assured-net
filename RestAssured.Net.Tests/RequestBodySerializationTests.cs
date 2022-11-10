@@ -84,7 +84,7 @@ namespace RestAssuredNet.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for serializing
-        /// a Dictionary to JSON and sending itwhen performing an HTTP POST.
+        /// a Dictionary to JSON and sending it when performing an HTTP POST.
         /// </summary>
         [Test]
         public void DictionaryCanBeSerializedToJson()
@@ -96,6 +96,30 @@ namespace RestAssuredNet.Tests
                 { "Id", 1 },
                 { "Title", "My post title" },
                 { "Body", "My post body" },
+            };
+
+            Given()
+            .Body(post)
+            .When()
+            .Post("http://localhost:9876/object-serialization")
+            .Then()
+            .StatusCode(201);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for serializing
+        /// an anonymous type to JSON and sending it when performing an HTTP POST.
+        /// </summary>
+        [Test]
+        public void AnonymousObjectCanBeSerializedToJson()
+        {
+            this.CreateStubForObjectSerialization();
+
+            var post = new
+            {
+               Id = 1,
+               Title = "My post title",
+               Body = "My post body",
             };
 
             Given()
