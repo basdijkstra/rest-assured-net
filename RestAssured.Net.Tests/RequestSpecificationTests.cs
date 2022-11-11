@@ -15,6 +15,7 @@
 // </copyright>
 using NUnit.Framework;
 using RestAssured.Net.RA.Builders;
+using WireMock.Matchers;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using static RestAssuredNet.RestAssuredNet;
@@ -30,6 +31,8 @@ namespace RestAssuredNet.Tests
         private RequestSpecification? fullRequestSpecification;
         private RequestSpecification? applyDefaultsRequestSpecification;
         private RequestSpecification? incorrectHostNameSpecification;
+        private RequestSpecification? headersSpecification;
+        private RequestSpecification? oauthSpecification;
 
         /// <summary>
         /// Creates the <see cref="RequestSpecification"/> instances to be used in the tests in this class.
@@ -51,6 +54,21 @@ namespace RestAssuredNet.Tests
             this.incorrectHostNameSpecification = new RequestSpecBuilder()
                 .WithHostName("http://localhost")
                 .WithPort(9876)
+                .Build();
+
+            this.headersSpecification = new RequestSpecBuilder()
+                .WithScheme("http")
+                .WithHostName("localhost")
+                .WithPort(9876)
+                .WithBasicAuth("username", "password")
+                .WithHeader("custom_header", "custom_header_value")
+                .Build();
+
+            this.oauthSpecification = new RequestSpecBuilder()
+                .WithScheme("http")
+                .WithHostName("localhost")
+                .WithPort(9876)
+                .WithOAuth2("this_is_my_token")
                 .Build();
         }
 
@@ -93,6 +111,41 @@ namespace RestAssuredNet.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for including
+        /// a request specification with headers added.
+        /// </summary>
+        [Test]
+        public void RequestSpecificationWithHeadersCanBeUsed()
+        {
+            this.CreateStubForRequestSpecificationWithHeaders();
+
+            Given()
+            .Spec(this.headersSpecification)
+            .Header("another_header", "another_header_value")
+            .When()
+            .Get("/request-specification-with-headers")
+            .Then()
+            .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for including
+        /// a request specification with OAuth2 details added.
+        /// </summary>
+        [Test]
+        public void RequestSpecificationWithOAuth2CanBeUsed()
+        {
+            this.CreateStubForRequestSpecificationWithOAuth2();
+
+            Given()
+            .Spec(this.oauthSpecification)
+            .When()
+            .Get("/request-specification-with-oauth2")
+            .Then()
+            .StatusCode(200);
+        }
+
+        /// <summary>
         /// A test demonstrating RestAssuredNet syntax showing that
         /// using a hostname in the request specification including the scheme
         /// throws the expected exception.
@@ -116,11 +169,35 @@ namespace RestAssuredNet.Tests
         }
 
         /// <summary>
-        /// Creates the stub response for the example setting the accept header as a string.
+        /// Creates the stub response for the request specification tests.
         /// </summary>
         private void CreateStubForRequestSpecification()
         {
             this.Server.Given(Request.Create().WithPath("/api/request-specification").UsingGet())
+                .RespondWith(Response.Create()
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the request specification with headers tests.
+        /// </summary>
+        private void CreateStubForRequestSpecificationWithHeaders()
+        {
+            this.Server.Given(Request.Create().WithPath("/request-specification-with-headers").UsingGet()
+                .WithHeader("Authorization", new ExactMatcher("Basic dXNlcm5hbWU6cGFzc3dvcmQ="))
+                .WithHeader("custom_header", "custom_header_value")
+                .WithHeader("another_header", "another_header_value"))
+                .RespondWith(Response.Create()
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the request specification with an OAuth2 token tests.
+        /// </summary>
+        private void CreateStubForRequestSpecificationWithOAuth2()
+        {
+            this.Server.Given(Request.Create().WithPath("/request-specification-with-oauth2").UsingGet()
+                .WithHeader("Authorization", new ExactMatcher("Bearer this_is_my_token")))
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
         }
