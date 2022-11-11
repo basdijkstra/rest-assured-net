@@ -35,12 +35,14 @@ namespace RestAssuredNet.RA.Internal
         /// Initializes a new instance of the <see cref="HttpRequestProcessor"/> class.
         /// </summary>
         /// <param name="proxy">The <see cref="IWebProxy"/> to set on the <see cref="HttpClientHandler"/> used with the <see cref="HttpClient"/>.</param>
-        public HttpRequestProcessor(IWebProxy? proxy)
+        /// <param name="useRelaxedHttpsValidation">If set to true, SSL check is disabled.</param>
+        public HttpRequestProcessor(IWebProxy? proxy, bool useRelaxedHttpsValidation)
         {
             this.handler = new HttpClientHandler
             {
                 CookieContainer = this.cookieContainer,
                 Proxy = proxy,
+                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return useRelaxedHttpsValidation; },
             };
             this.client = new HttpClient(this.handler);
         }

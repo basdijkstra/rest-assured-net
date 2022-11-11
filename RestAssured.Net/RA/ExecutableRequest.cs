@@ -50,6 +50,7 @@ namespace RestAssuredNet.RA
         private IEnumerable<KeyValuePair<string, string>>? formData = null;
         private TimeSpan? timeout = null;
         private IWebProxy? proxy = null;
+        private bool relaxedHttpsValidation = false;
         private bool disposed = false;
 
         /// <summary>
@@ -288,6 +289,16 @@ namespace RestAssuredNet.RA
         }
 
         /// <summary>
+        /// Disables SSL checking for the request.
+        /// </summary>
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest RelaxedHttpsValidation()
+        {
+            this.relaxedHttpsValidation = true;
+            return this;
+        }
+
+        /// <summary>
         /// Adds a request body to the request object to be sent.
         /// </summary>
         /// <param name="body">The body that is to be sent with the request.</param>
@@ -431,7 +442,7 @@ namespace RestAssuredNet.RA
             }
 
             // Create the HTTP request processor that sends the request and set its properties
-            HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor(this.proxy ?? this.requestSpecification?.Proxy);
+            HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor(this.proxy ?? this.requestSpecification?.Proxy, this.relaxedHttpsValidation);
 
             // Timeout set in test has precedence over timeout set in request specification
             // If both are null, use default timeout for HttpClient (= 100.000 milliseconds).
