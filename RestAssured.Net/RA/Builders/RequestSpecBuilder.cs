@@ -37,13 +37,15 @@ namespace RestAssured.Net.RA.Builders
         private readonly IWebProxy? proxy;
         private readonly Dictionary<string, object> headers = new Dictionary<string, object>();
         private readonly AuthenticationHeaderValue? authenticationHeader;
+        private readonly string contentTypeHeader = null;
+        private readonly Encoding contentEncoding = null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestSpecBuilder"/> class.
         /// </summary>
         public RequestSpecBuilder()
         {
-            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.basePath, this.timeout, this.userAgent, this.proxy, this.headers, this.authenticationHeader);
+            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.basePath, this.timeout, this.userAgent, this.proxy, this.headers, this.authenticationHeader, this.contentTypeHeader, this.contentEncoding);
         }
 
         /// <summary>
@@ -168,6 +170,28 @@ namespace RestAssured.Net.RA.Builders
         public RequestSpecBuilder WithOAuth2(string token)
         {
             this.requestSpecification.AuthenticationHeader = new AuthenticationHeaderValue("Bearer", token);
+            return this;
+        }
+
+        /// <summary>
+        /// Adds the value for the Content-Type header to the request.
+        /// </summary>
+        /// <param name="contentType">The value for the Content-Type header.</param>
+        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
+        public RequestSpecBuilder WithContentType(string contentType)
+        {
+            this.requestSpecification.ContentType = contentType;
+            return this;
+        }
+
+        /// <summary>
+        /// Adds the value for the content encoding to the request.
+        /// </summary>
+        /// <param name="encoding">The value for the content encoding.</param>
+        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
+        public RequestSpecBuilder WithContentEncoding(Encoding encoding)
+        {
+            this.requestSpecification.ContentEncoding = encoding;
             return this;
         }
 

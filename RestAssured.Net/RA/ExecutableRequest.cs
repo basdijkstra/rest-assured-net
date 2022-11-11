@@ -425,9 +425,9 @@ namespace RestAssuredNet.RA
             else
             {
                 // Set the request body using the content, encoding and content type specified
-                string requestBodyAsString = this.Serialize(this.requestBody, this.contentTypeHeader);
+                string requestBodyAsString = this.Serialize(this.requestBody, this.requestSpecification?.ContentType ?? this.contentTypeHeader);
 
-                this.request.Content = new StringContent(requestBodyAsString, this.contentEncoding, this.contentTypeHeader);
+                this.request.Content = new StringContent(requestBodyAsString, this.requestSpecification?.ContentEncoding ?? this.contentEncoding, this.requestSpecification?.ContentType ?? this.contentTypeHeader);
             }
 
             // Create the HTTP request processor that sends the request and set its properties

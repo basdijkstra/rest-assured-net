@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http.Headers;
+using System.Text;
 
 namespace RestAssured.Net.RA.Builders
 {
@@ -71,6 +72,16 @@ namespace RestAssured.Net.RA.Builders
         public AuthenticationHeaderValue AuthenticationHeader { get; set; }
 
         /// <summary>
+        /// The value for the Content-Type header when sending the request.
+        /// </summary>
+        public string ContentType { get; set; }
+
+        /// <summary>
+        /// The value for the content encoding when sending the request.
+        /// </summary>
+        public Encoding ContentEncoding { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="RequestSpecification"/> class.
         /// </summary>
         /// <param name="scheme">The scheme (http, https, ....) to use in this request.</param>
@@ -81,7 +92,7 @@ namespace RestAssured.Net.RA.Builders
         /// <param name="userAgent">The user agent to use for this request.</param>
         /// <param name="proxy">The proxy to use for this request.</param>
         /// <param name="headers">The headers to add to this request.</param>
-        public RequestSpecification(string scheme, string host, int port, string basePath, TimeSpan? timeout, ProductInfoHeaderValue? userAgent, IWebProxy proxy, Dictionary<string, object> headers, AuthenticationHeaderValue authenticationHeader)
+        public RequestSpecification(string scheme, string host, int port, string basePath, TimeSpan? timeout, ProductInfoHeaderValue? userAgent, IWebProxy proxy, Dictionary<string, object> headers, AuthenticationHeaderValue authenticationHeader, string contentType, Encoding contentEncoding)
         {
             this.Scheme = scheme;
             this.HostName = host;
@@ -92,6 +103,8 @@ namespace RestAssured.Net.RA.Builders
             this.Proxy = proxy;
             this.Headers = headers;
             this.AuthenticationHeader = authenticationHeader;
+            this.ContentType = contentType;
+            this.ContentEncoding = contentEncoding;
         }
     }
 }

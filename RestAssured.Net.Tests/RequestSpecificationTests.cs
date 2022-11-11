@@ -15,6 +15,7 @@
 // </copyright>
 using NUnit.Framework;
 using RestAssured.Net.RA.Builders;
+using System.Text;
 using WireMock.Matchers;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
@@ -61,6 +62,8 @@ namespace RestAssuredNet.Tests
                 .WithHostName("localhost")
                 .WithPort(9876)
                 .WithBasicAuth("username", "password")
+                .WithContentType("application/xml")
+                .WithContentEncoding(Encoding.ASCII)
                 .WithHeader("custom_header", "custom_header_value")
                 .Build();
 
@@ -184,6 +187,7 @@ namespace RestAssuredNet.Tests
         private void CreateStubForRequestSpecificationWithHeaders()
         {
             this.Server.Given(Request.Create().WithPath("/request-specification-with-headers").UsingGet()
+                .WithHeader("Content-Type", new ExactMatcher("application/xml; charset=us-ascii"))
                 .WithHeader("Authorization", new ExactMatcher("Basic dXNlcm5hbWU6cGFzc3dvcmQ="))
                 .WithHeader("custom_header", "custom_header_value")
                 .WithHeader("another_header", "another_header_value"))
