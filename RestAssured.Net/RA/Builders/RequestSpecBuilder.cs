@@ -30,7 +30,7 @@ namespace RestAssured.Net.RA.Builders
 
         private readonly string scheme = "http";
         private readonly string host = "localhost";
-        private readonly int port = 80;
+        private readonly int port = -1;  // -1 means the default port for the scheme will be chosen
         private readonly string basePath = string.Empty;
         private readonly TimeSpan? timeout;
         private readonly ProductInfoHeaderValue? userAgent;
@@ -49,7 +49,7 @@ namespace RestAssured.Net.RA.Builders
         }
 
         /// <summary>
-        /// Sets the scheme (http, https, ...) on the <see cref="RequestSpecification"/> to build.
+        /// Sets the scheme (http or https) on the <see cref="RequestSpecification"/> to build.
         /// </summary>
         /// <param name="scheme">The scheme to use in the request.</param>
         /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
