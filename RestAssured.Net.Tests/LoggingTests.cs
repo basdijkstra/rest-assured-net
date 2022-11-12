@@ -68,6 +68,24 @@ namespace RestAssuredNet.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for logging
+        /// response details to the standard output.
+        /// </summary>
+        [Test]
+        public void NoResponseBodyDoesntThrowNullReferenceException()
+        {
+            this.CreateStubForLoggingResponseWithoutBody();
+
+            Given()
+            .When()
+            .Get("http://localhost:9876/log-no-response-body")
+            .Then()
+            .Log().All()
+            .And()
+            .StatusCode(200);
+        }
+
+        /// <summary>
         /// Creates the stub response for the JSON response body example.
         /// </summary>
         private void CreateStubForLoggingJsonResponse()
@@ -110,6 +128,16 @@ namespace RestAssuredNet.Tests
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/xml")
                 .WithBody(this.xmlBody)
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the no response body example.
+        /// </summary>
+        private void CreateStubForLoggingResponseWithoutBody()
+        {
+            this.Server.Given(Request.Create().WithPath("/log-no-response-body").UsingGet())
+                .RespondWith(Response.Create()
                 .WithStatusCode(200));
         }
     }

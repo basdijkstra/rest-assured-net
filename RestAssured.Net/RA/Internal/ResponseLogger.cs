@@ -99,7 +99,7 @@ namespace RestAssured.Net.RA.Internal
         {
             string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
 
-            string responseMediaType = this.response.Content.Headers.ContentType.MediaType ?? string.Empty;
+            string responseMediaType = this.response.Content.Headers.ContentType?.MediaType ?? string.Empty;
 
             if (responseMediaType.Equals(string.Empty) || responseMediaType.Contains("json"))
             {
