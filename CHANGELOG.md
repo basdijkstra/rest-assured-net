@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+### [1.1.1] - 2022-11-12
+
 #### Added 
 
 - Added support for ignoring SSL errors ([#13](https://github.com/basdijkstra/rest-assured-net/issues/13) by [@bheemreddy181](https://github.com/bheemreddy181))
@@ -17,6 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added support for specifying custom timeouts for individual requests as well as in a RequestSpecification ([#15](https://github.com/basdijkstra/rest-assured-net/issues/15) by [@bheemreddy181](https://github.com/bheemreddy181))
 - Added support for sending x-www-form-urlencoded data in requests ([#6](https://github.com/basdijkstra/rest-assured-net/issues/6) by [@bheemreddy181](https://github.com/bheemreddy181))
 - Added support for validating JSON response payloads against a JSON schema ([#8](https://github.com/basdijkstra/rest-assured-net/issues/8))
+
+#### Fixed
+
+- Fixed an issue with port numbers defaulting to 80 even when scheme was set to HTTPS ([#26](https://github.com/basdijkstra/rest-assured-net/issues/26)
+- Fixed an issue where trying to log a response with an empty response body would throw a NullReferenceException ([#26](https://github.com/basdijkstra/rest-assured-net/issues/26)
+
+### [1.1.0] - 2022-11-12 [YANKED]
 
 ### [1.0.0] - 2022-11-03
 
