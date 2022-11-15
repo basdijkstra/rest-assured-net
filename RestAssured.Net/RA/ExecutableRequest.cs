@@ -488,6 +488,7 @@ namespace RestAssuredNet.RA
 
                 // '/path' does not throw an UriFormatException on Linux and MacOS,
                 // but creates a Uri 'file://path', which we do not want to use here.
+                // See also https://github.com/dotnet/runtime/issues/27813
                 if (uri.Scheme == "file")
                 {
                     // MacOS, Unix, relative path
