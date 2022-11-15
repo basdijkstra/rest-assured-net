@@ -441,8 +441,11 @@ namespace RestAssuredNet.RA
                 this.request.Content = new StringContent(requestBodyAsString, this.requestSpecification?.ContentEncoding ?? this.contentEncoding, this.requestSpecification?.ContentType ?? this.contentTypeHeader);
             }
 
+            // SSL validation can be disabled either in a request or through a RequestSpecification
+            bool disableSslChecks = this.relaxedHttpsValidation || (this.requestSpecification?.UseRelaxedHttpsValidation ?? false);
+
             // Create the HTTP request processor that sends the request and set its properties
-            HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor(this.proxy ?? this.requestSpecification?.Proxy, this.relaxedHttpsValidation);
+            HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor(this.proxy ?? this.requestSpecification?.Proxy, disableSslChecks);
 
             // Timeout set in test has precedence over timeout set in request specification
             // If both are null, use default timeout for HttpClient (= 100.000 milliseconds).

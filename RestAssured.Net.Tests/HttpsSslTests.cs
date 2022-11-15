@@ -14,6 +14,7 @@
 // limitations under the License.
 // </copyright>
 using NUnit.Framework;
+using RestAssured.Net.RA.Builders;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using static RestAssuredNet.RestAssuredNet;
@@ -26,17 +27,48 @@ namespace RestAssuredNet.Tests
     [TestFixture]
     public class HttpsSslTests : TestBaseHttps
     {
+        private RequestSpecification? requestSpecification;
+
         /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for verifying
-        /// a response status code when performing an HTTP GET.
+        /// Creates the RequestSpecification before each test in this class.
+        /// </summary>
+        [SetUp]
+        public void CreateRequestSpecification()
+        {
+            this.requestSpecification = new RequestSpecBuilder()
+                .WithRelaxedHttpsValidation()
+                .Build();
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for disabling
+        /// SSL verification when performing an HTTP call.
         /// </summary>
         [Test]
-        public void HttpsConnectionsCanBeUsed()
+        public void SslVerificationCanBeDisabledPerRequest()
         {
             this.CreateStubForHttps();
 
             Given()
             .RelaxedHttpsValidation()
+            .When()
+            .Get("https://localhost:8443/ssl-endpoint")
+            .Then()
+            .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for disabling
+        /// SSL verification through the RequestSpecification
+        /// when performing an HTTP call.
+        /// </summary>
+        [Test]
+        public void SslVerificationCanBeDisabledThroughRequestSpecification()
+        {
+            this.CreateStubForHttps();
+
+            Given()
+            .Spec(this.requestSpecification)
             .When()
             .Get("https://localhost:8443/ssl-endpoint")
             .Then()

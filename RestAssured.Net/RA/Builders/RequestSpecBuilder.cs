@@ -39,13 +39,14 @@ namespace RestAssured.Net.RA.Builders
         private readonly AuthenticationHeaderValue? authenticationHeader;
         private readonly string contentTypeHeader = null;
         private readonly Encoding contentEncoding = null;
+        private readonly bool useRelaxedHttpsValidation = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestSpecBuilder"/> class.
         /// </summary>
         public RequestSpecBuilder()
         {
-            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.basePath, this.timeout, this.userAgent, this.proxy, this.headers, this.authenticationHeader, this.contentTypeHeader, this.contentEncoding);
+            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.basePath, this.timeout, this.userAgent, this.proxy, this.headers, this.authenticationHeader, this.contentTypeHeader, this.contentEncoding, this.useRelaxedHttpsValidation);
         }
 
         /// <summary>
@@ -192,6 +193,16 @@ namespace RestAssured.Net.RA.Builders
         public RequestSpecBuilder WithContentEncoding(Encoding encoding)
         {
             this.requestSpecification.ContentEncoding = encoding;
+            return this;
+        }
+
+        /// <summary>
+        /// Disables SSL validation for the requests that use this specification.
+        /// </summary>
+        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
+        public RequestSpecBuilder WithRelaxedHttpsValidation()
+        {
+            this.requestSpecification.UseRelaxedHttpsValidation = true;
             return this;
         }
 
