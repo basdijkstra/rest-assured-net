@@ -15,7 +15,9 @@
 // </copyright>
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using RestAssured.Net.RA.Builders;
 using RestAssuredNet.RA.Exceptions;
 
@@ -27,6 +29,30 @@ namespace RestAssured.Net.RA.Internal
     public class RequestSpecificationProcessor
     {
         /// <summary>
+        /// Builds the Uri using information provided in a request specification.
+        /// </summary>
+        /// <param name="requestSpec">The request specification containing the information to build the endpoint.</param>
+        /// <param name="endpoint">The original endpoint as provided by the user.</param>
+        /// <returns>A <see cref="Uri"/> to use in the request.</returns>
+        /// <exception cref="RequestCreationException">Thrown whenever the Uri cannot be created with the specified information.</exception>
+        public static Uri BuildUriFromRequestSpec(RequestSpecification requestSpec, string endpoint)
+        {
+            try
+            {
+                UriBuilder uri = new UriBuilder();
+                uri.Scheme = requestSpec.Scheme;
+                uri.Host = requestSpec.HostName;
+                uri.Port = requestSpec.Port;
+                uri.Path = BuildPath(requestSpec.BasePath, endpoint);
+                return uri.Uri;
+            }
+            catch (UriFormatException)
+            {
+                throw new RequestCreationException($"Supplied base URI '{requestSpec.Scheme}://{requestSpec.HostName}:{requestSpec.Port}' is invalid.");
+            }
+        }
+
+        /// <summary>
         /// Applies a <see cref="RequestSpecification"/> to an <see cref=HttpRequestMessage"/>.
         /// </summary>
         /// <param name="requestSpec">The <see cref="RequestSpecification"/> to apply.</param>
@@ -35,44 +61,22 @@ namespace RestAssured.Net.RA.Internal
         /// <returns>The updated <see cref="HttpRequestMessage"/> object.</returns>
         public static HttpRequestMessage Apply(RequestSpecification requestSpec, HttpRequestMessage request, string endpoint)
         {
-            try
+            if (requestSpec != null)
             {
-                Uri uri = new Uri(endpoint);
-
-                // If the endpoint supplied is a valid URI, ignore the request specification
-                request.RequestUri = uri;
-                return request;
-            }
-            catch (UriFormatException)
-            {
-                try
+                foreach (KeyValuePair<string, object> entry in requestSpec.Headers)
                 {
-                    UriBuilder uri = new UriBuilder();
-                    uri.Scheme = requestSpec.Scheme;
-                    uri.Host = requestSpec.HostName;
-                    uri.Port = requestSpec.Port;
-                    uri.Path = BuildPath(requestSpec.BasePath, endpoint);
-                    request.RequestUri = uri.Uri;
+                    request.Headers.Add(entry.Key, entry.Value.ToString());
                 }
-                catch (UriFormatException)
+
+                if (requestSpec.UserAgent != null)
                 {
-                    throw new RequestCreationException($"Supplied base URI '{requestSpec.Scheme}://{requestSpec.HostName}:{requestSpec.Port}' is invalid.");
+                    request.Headers.UserAgent.Add(requestSpec.UserAgent);
                 }
-            }
 
-            foreach (KeyValuePair<string, object> entry in requestSpec.Headers)
-            {
-                request.Headers.Add(entry.Key, entry.Value.ToString());
-            }
-
-            if (requestSpec.UserAgent != null)
-            {
-                request.Headers.UserAgent.Add(requestSpec.UserAgent);
-            }
-
-            if (requestSpec.AuthenticationHeader != null)
-            {
-                request.Headers.Authorization = request.Headers.Authorization ?? requestSpec.AuthenticationHeader;
+                if (requestSpec.AuthenticationHeader != null)
+                {
+                    request.Headers.Authorization = request.Headers.Authorization ?? requestSpec.AuthenticationHeader;
+                }
             }
 
             return request;

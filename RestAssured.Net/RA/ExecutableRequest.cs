@@ -425,7 +425,10 @@ namespace RestAssuredNet.RA
             // Add any query parameters that have been specified and create the endpoint
             endpoint = QueryHelpers.AddQueryString(endpoint, this.queryParams);
 
-            // Apply the request specification to the request message
+            // Build the Uri for the request
+            this.request.RequestUri = this.BuildUri(this.requestSpecification, endpoint);
+
+            // Apply other settings provided in the request specification to the request
             this.request = RequestSpecificationProcessor.Apply(this.requestSpecification, this.request, endpoint);
 
             if (this.formData != null)
@@ -474,6 +477,32 @@ namespace RestAssuredNet.RA
                 }
 
                 throw new HttpRequestProcessorException($"Unhandled exception {ae.Message}");
+            }
+        }
+
+        private Uri BuildUri(RequestSpecification requestSpec, string endpoint)
+        {
+            try
+            {
+                Uri uri = new Uri(endpoint);
+
+                // '/path' does not throw an UriFormatException on Linux and MacOS,
+                // but creates a Uri 'file://path', which we do not want to use here.
+                if (uri.Scheme == "file")
+                {
+                    // MacOS, Unix, relative path
+                    return RequestSpecificationProcessor.BuildUriFromRequestSpec(requestSpec, endpoint);
+                }
+                else
+                {
+                    // All OSes, absolute path
+                    return uri;
+                }
+            }
+            catch (UriFormatException)
+            {
+                // Windows, relative path
+                return RequestSpecificationProcessor.BuildUriFromRequestSpec(requestSpec, endpoint);
             }
         }
 
