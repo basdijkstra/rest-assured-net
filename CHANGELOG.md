@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added support for configuring the ignoring of SSL errors in a RequestSpecification ([#31](https://github.com/basdijkstra/rest-assured-net/issues/31))
 
+#### Fixed
+
+- Fixed an issue with relative paths being incorrectly converted to file paths on Unix and MacOS ([#22](https://github.com/basdijkstra/rest-assured-net/issues/22) by [@bheemreddy181](https://github.com/bheemreddy181))
+
 ### [1.1.1] - 2022-11-12
 
 #### Added 
@@ -26,7 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Fixed
 
-- Fixed an issue with port numbers defaulting to 80 even when scheme was set to HTTPS ([#26](https://github.com/basdijkstra/rest-assured-net/issues/26))
+- Fixed an issue with port numbers defaulting to 80 even when scheme was set to HTTPS ([#25](https://github.com/basdijkstra/rest-assured-net/issues/25))
 - Fixed an issue where trying to log a response with an empty response body would throw a NullReferenceException ([#26](https://github.com/basdijkstra/rest-assured-net/issues/26))
 
 ### [1.1.0] - 2022-11-12 [YANKED]
