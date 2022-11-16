@@ -38,14 +38,17 @@ namespace RestAssuredNet.RA
     public class VerifiableResponse
     {
         private readonly HttpResponseMessage response;
+        private readonly TimeSpan elapsedTime;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VerifiableResponse"/> class.
         /// </summary>
         /// <param name="response">The <see cref="HttpResponseMessage"/> returned by the HTTP client.</param>
-        public VerifiableResponse(HttpResponseMessage response)
+        /// <param name="elapsedTime">The time elapsed between sending the request and receiving the response.</param>
+        public VerifiableResponse(HttpResponseMessage response, TimeSpan elapsedTime)
         {
             this.response = response;
+            this.elapsedTime = elapsedTime;
         }
 
         /// <summary>
@@ -465,7 +468,7 @@ namespace RestAssuredNet.RA
         /// <returns>A <see cref="ResponseLogger"/> object, which can be used to log response details.</returns>
         public ResponseLogger Log()
         {
-            return new ResponseLogger(this.response);
+            return new ResponseLogger(this.response, this.elapsedTime);
         }
 
         /// <summary>

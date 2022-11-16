@@ -28,14 +28,17 @@ namespace RestAssured.Net.RA.Internal
     public class ResponseLogger
     {
         private readonly HttpResponseMessage response;
+        private readonly TimeSpan elapsedTime;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ResponseLogger"/> class.
         /// </summary>
         /// <param name="response">The <see cref="HttpResponseMessage"/> object to log details of.</param>
-        public ResponseLogger(HttpResponseMessage response)
+        /// <param name="elapsedTime">The time elapsed for between sending a request and receiving a response.</param>
+        public ResponseLogger(HttpResponseMessage response, TimeSpan elapsedTime)
         {
             this.response = response;
+            this.elapsedTime = elapsedTime;
         }
 
         /// <summary>
@@ -45,7 +48,7 @@ namespace RestAssured.Net.RA.Internal
         public VerifiableResponse Status()
         {
             this.LogStatusCode();
-            return new VerifiableResponse(this.response);
+            return new VerifiableResponse(this.response, this.elapsedTime);
         }
 
         /// <summary>
@@ -56,7 +59,7 @@ namespace RestAssured.Net.RA.Internal
         {
             this.LogStatusCode();
             this.LogHeaders();
-            return new VerifiableResponse(this.response);
+            return new VerifiableResponse(this.response, this.elapsedTime);
         }
 
         /// <summary>
@@ -67,7 +70,18 @@ namespace RestAssured.Net.RA.Internal
         {
             this.LogStatusCode();
             this.LogBody();
-            return new VerifiableResponse(this.response);
+            return new VerifiableResponse(this.response, this.elapsedTime);
+        }
+
+        /// <summary>
+        /// Logs the status code and the response body to the console.
+        /// </summary>
+        /// <returns>A <see cref="VerifiableResponse"/> that can be used for further response verification.</returns>
+        public VerifiableResponse Time()
+        {
+            this.LogStatusCode();
+            this.LogTime();
+            return new VerifiableResponse(this.response, this.elapsedTime);
         }
 
         /// <summary>
@@ -79,7 +93,8 @@ namespace RestAssured.Net.RA.Internal
             this.LogStatusCode();
             this.LogHeaders();
             this.LogBody();
-            return new VerifiableResponse(this.response);
+            this.LogTime();
+            return new VerifiableResponse(this.response, this.elapsedTime);
         }
 
         private void LogStatusCode()
@@ -93,6 +108,11 @@ namespace RestAssured.Net.RA.Internal
             {
                 Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
             }
+        }
+
+        private void LogTime()
+        {
+            Console.WriteLine($"Response time: {this.elapsedTime.TotalMilliseconds} ms");
         }
 
         private void LogBody()

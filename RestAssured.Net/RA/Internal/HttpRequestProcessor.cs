@@ -14,6 +14,7 @@
 // limitations under the License.
 // </copyright>
 using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -79,8 +80,13 @@ namespace RestAssuredNet.RA.Internal
 
             try
             {
+                Stopwatch stopwatch = new Stopwatch();
+
+                stopwatch.Start();
                 HttpResponseMessage response = await this.client.SendAsync(request);
-                return new VerifiableResponse(response);
+                stopwatch.Stop();
+
+                return new VerifiableResponse(response, stopwatch.Elapsed);
             }
             catch (HttpRequestException hre)
             {
