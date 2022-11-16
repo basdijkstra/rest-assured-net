@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added support for configuring the ignoring of SSL errors in a RequestSpecification ([#31](https://github.com/basdijkstra/rest-assured-net/issues/31))
 - Added the option to log the response time to the console ([#32](https://github.com/basdijkstra/rest-assured-net/issues/32) by [@bheemreddy181](https://github.com/bheemreddy181))
+- Added the option to log request details to the console ([#33](https://github.com/basdijkstra/rest-assured-net/issues/33) by [@bheemreddy181](https://github.com/bheemreddy181))
 
 #### Fixed
 
