@@ -54,6 +54,11 @@ namespace RestAssuredNet.RA
         private bool disposed = false;
 
         /// <summary>
+        /// The request logging level for this request.
+        /// </summary>
+        public RequestLoggingLevel RequestLoggingLevel { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ExecutableRequest"/> class.
         /// </summary>
         public ExecutableRequest()
@@ -299,6 +304,15 @@ namespace RestAssuredNet.RA
         }
 
         /// <summary>
+        /// Log request details to the standard output.
+        /// </summary>
+        /// <returns>A <see cref="RequestLogger"/> object, which can be used to log request details to the standard output.</returns>
+        public RequestLogger Log()
+        {
+            return new RequestLogger(this);
+        }
+
+        /// <summary>
         /// Adds a request body to the request object to be sent.
         /// </summary>
         /// <param name="body">The body that is to be sent with the request.</param>
@@ -390,6 +404,15 @@ namespace RestAssuredNet.RA
         }
 
         /// <summary>
+        /// Returns the associated <see cref="HttpRequestMessage"/> (for logging purposes).
+        /// </summary>
+        /// <returns>The <see cref="HttpRequestMessage"/> associated with this request.</returns>
+        internal HttpRequestMessage GetRequest()
+        {
+            return this.request;
+        }
+
+        /// <summary>
         /// Implements Dispose(bool) method of IDisposable interface.
         /// </summary>
         /// <param name="disposing">Flag indicating whether objects should be disposed.</param>
@@ -463,6 +486,8 @@ namespace RestAssuredNet.RA
                     httpRequestProcessor.SetTimeout((TimeSpan)this.requestSpecification.Timeout);
                 }
             }
+
+            new RequestLogger(this).LogToConsole();
 
             try
             {

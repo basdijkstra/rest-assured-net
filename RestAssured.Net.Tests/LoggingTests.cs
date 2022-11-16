@@ -14,7 +14,6 @@
 // limitations under the License.
 // </copyright>
 using System.Collections.Generic;
-using System.Net;
 using NUnit.Framework;
 using RestAssured.Net.Tests.Models;
 using WireMock.RequestBuilders;
@@ -30,6 +29,48 @@ namespace RestAssuredNet.Tests
     public class LoggingTests : TestBase
     {
         private readonly string xmlBody = "<?xml version=\"1.0\" encoding=\"utf-16\"?><Location xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><Country>United States</Country><State>California</State><ZipCode>90210</ZipCode><Places><Place><Name>Sun City</Name><Inhabitants>100000</Inhabitants><IsCapital>true</IsCapital></Place><Place><Name>Pleasure Meadow</Name><Inhabitants>50000</Inhabitants><IsCapital>false</IsCapital></Place></Places></Location>";
+        private readonly string jsonBody = "{\"id\": 1, \"user\": \"John Doe\"}";
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for logging
+        /// JSON request details to the standard output.
+        /// </summary>
+        [Test]
+        public void RequestDetailsCanBeWrittenToStandardOutputForJson()
+        {
+            this.CreateStubForLoggingJsonResponse();
+
+            Given()
+            .Log().All()
+            .And()
+            .Accept("application/json")
+            .Header("CustomHeader", "custom header value")
+            .ContentType("application/json")
+            .Body(this.jsonBody)
+            .When()
+            .Get("http://localhost:9876/log-json-response")
+            .Then()
+            .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for logging
+        /// XML request details to the standard output.
+        /// </summary>
+        [Test]
+        public void RequestDetailsCanBeWrittenToStandardOutputForXml()
+        {
+            this.CreateStubForLoggingXmlResponse();
+
+            Given()
+            .Log().All()
+            .ContentType("application/xml")
+            .Body(this.xmlBody)
+            .When()
+            .Get("http://localhost:9876/log-xml-response")
+            .Then()
+            .StatusCode(200);
+        }
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for logging
@@ -82,6 +123,23 @@ namespace RestAssuredNet.Tests
             .Then()
             .Log().All()
             .And()
+            .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for logging
+        /// response details to the standard output.
+        /// </summary>
+        [Test]
+        public void NoRequestBodyDoesntThrowNullReferenceException()
+        {
+            this.CreateStubForLoggingResponseWithoutBody();
+
+            Given()
+            .Log().All()
+            .When()
+            .Get("http://localhost:9876/log-no-response-body")
+            .Then()
             .StatusCode(200);
         }
 
