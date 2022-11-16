@@ -37,8 +37,8 @@ namespace RestAssured.Net.RA.Builders
         private readonly IWebProxy? proxy;
         private readonly Dictionary<string, object> headers = new Dictionary<string, object>();
         private readonly AuthenticationHeaderValue? authenticationHeader;
-        private readonly string contentTypeHeader = null;
-        private readonly Encoding contentEncoding = null;
+        private readonly string? contentTypeHeader = null;
+        private readonly Encoding? contentEncoding = null;
         private readonly bool useRelaxedHttpsValidation = false;
 
         /// <summary>

@@ -13,12 +13,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-using Newtonsoft.Json;
-using Newtonsoft.Json.Bson;
-using RestAssuredNet.RA;
 using System;
 using System.Net.Http;
 using System.Xml.Linq;
+using Newtonsoft.Json;
+using RestAssuredNet.RA;
 
 namespace RestAssured.Net.RA.Internal
 {
