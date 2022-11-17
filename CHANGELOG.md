@@ -35,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Fixed
 
 - Fixed an issue with port numbers defaulting to 80 even when scheme was set to HTTPS ([#25](https://github.com/basdijkstra/rest-assured-net/issues/25))
-- Fixed an issue where trying to log a response with an empty response body would throw a NullReferenceException ([#26](https://github.com/basdijkstra/re
+- Fixed an issue where trying to log a response with an empty response body would throw a NullReferenceException ([#26](https://github.com/basdijkstra/rest-assured-net/issues/26))
 
 ### [1.0.0] - 2022-11-03
 
