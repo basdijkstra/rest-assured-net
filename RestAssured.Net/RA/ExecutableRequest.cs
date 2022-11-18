@@ -13,27 +13,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
-using Microsoft.AspNetCore.WebUtilities;
-using Newtonsoft.Json;
-using RestAssured.Net.RA.Builders;
-using RestAssured.Net.RA.Internal;
-using RestAssuredNet.RA.Exceptions;
-using RestAssuredNet.RA.Internal;
-using Stubble.Core;
-using Stubble.Core.Builders;
 
-namespace RestAssuredNet.RA
+namespace RestAssured.Net.RA
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Net;
+    using System.Net.Http;
+    using System.Net.Http.Headers;
+    using System.Text;
+    using System.Threading.Tasks;
+    using System.Xml.Serialization;
+    using Microsoft.AspNetCore.WebUtilities;
+    using Newtonsoft.Json;
+    using RestAssured.Net.RA.Builders;
+    using RestAssured.Net.RA.Internal;
+    using RestAssuredNet.RA;
+    using RestAssuredNet.RA.Exceptions;
+    using Stubble.Core;
+    using Stubble.Core.Builders;
+
     /// <summary>
     /// The request to be sent.
     /// </summary>
@@ -452,7 +453,7 @@ namespace RestAssuredNet.RA
             this.request.RequestUri = this.BuildUri(this.requestSpecification, endpoint);
 
             // Apply other settings provided in the request specification to the request
-            this.request = RequestSpecificationProcessor.Apply(this.requestSpecification, this.request, endpoint);
+            this.request = RequestSpecificationProcessor.Apply(this.requestSpecification, this.request);
 
             if (this.formData != null)
             {
@@ -487,7 +488,8 @@ namespace RestAssuredNet.RA
                 }
             }
 
-            new RequestLogger(this).LogToConsole();
+            var requestLogger = new RequestLogger(this);
+            requestLogger.LogToConsole();
 
             try
             {
@@ -514,16 +516,14 @@ namespace RestAssuredNet.RA
                 // '/path' does not throw an UriFormatException on Linux and MacOS,
                 // but creates a Uri 'file://path', which we do not want to use here.
                 // See also https://github.com/dotnet/runtime/issues/27813
-                if (uri.Scheme == "file")
-                {
-                    // MacOS, Unix, relative path
-                    return RequestSpecificationProcessor.BuildUriFromRequestSpec(requestSpec, endpoint);
-                }
-                else
+                if (uri.Scheme != "file")
                 {
                     // All OSes, absolute path
                     return uri;
                 }
+                
+                // MacOS, Unix, relative path
+                return RequestSpecificationProcessor.BuildUriFromRequestSpec(requestSpec, endpoint);
             }
             catch (UriFormatException)
             {
@@ -540,30 +540,28 @@ namespace RestAssuredNet.RA
         /// <returns>Either the body itself (if the body is a string), or a serialized version of the body.</returns>
         private string Serialize(object body, string contentType)
         {
-            if (body.GetType() == typeof(string))
+            if (body is string)
             {
                 return (string)body;
             }
-            else
+            
+            if (contentType.Contains("json"))
             {
-                if (contentType.Contains("json"))
+                return JsonConvert.SerializeObject(body);
+            }
+
+            if (contentType.Contains("xml"))
+            {
+                using (StringWriter sw = new StringWriter())
                 {
-                    return JsonConvert.SerializeObject(body);
-                }
-                else if (contentType.Contains("xml"))
-                {
-                    using (StringWriter sw = new StringWriter())
-                    {
-                        XmlSerializer xmlSerializer = new XmlSerializer(body.GetType());
-                        xmlSerializer.Serialize(sw, body);
-                        return sw.ToString();
-                    }
-                }
-                else
-                {
-                    throw new RequestCreationException($"Could not determine how to serialize request based on specified content type '{contentType}'");
+                    XmlSerializer xmlSerializer = new XmlSerializer(body.GetType());
+                    xmlSerializer.Serialize(sw, body);
+                    return sw.ToString();
                 }
             }
+
+            throw new RequestCreationException(
+                $"Could not determine how to serialize request based on specified content type '{contentType}'");
         }
     }
 }

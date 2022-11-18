@@ -57,28 +57,25 @@ namespace RestAssured.Net.RA.Internal
         /// </summary>
         /// <param name="requestSpec">The <see cref="RequestSpecification"/> to apply.</param>
         /// <param name="request">The <see cref="HttpRequestMessage"/> to apply it to.</param>
-        /// <param name="endpoint">The endpoint as originally supplied by the user.</param>
         /// <returns>The updated <see cref="HttpRequestMessage"/> object.</returns>
-        public static HttpRequestMessage Apply(RequestSpecification requestSpec, HttpRequestMessage request, string endpoint)
+        public static HttpRequestMessage Apply(RequestSpecification requestSpec, HttpRequestMessage request)
         {
-            if (requestSpec != null)
+            if (requestSpec == null)
             {
-                foreach (KeyValuePair<string, object> entry in requestSpec.Headers)
-                {
-                    request.Headers.Add(entry.Key, entry.Value.ToString());
-                }
-
-                if (requestSpec.UserAgent != null)
-                {
-                    request.Headers.UserAgent.Add(requestSpec.UserAgent);
-                }
-
-                if (requestSpec.AuthenticationHeader != null)
-                {
-                    request.Headers.Authorization = request.Headers.Authorization ?? requestSpec.AuthenticationHeader;
-                }
+                return request;
             }
 
+            foreach (KeyValuePair<string, object> entry in requestSpec.Headers)
+            {
+                request.Headers.Add(entry.Key, entry.Value.ToString());
+            }
+
+            if (requestSpec.UserAgent != null)
+            {
+                request.Headers.UserAgent.Add(requestSpec.UserAgent);
+            }
+
+            request.Headers.Authorization ??= requestSpec.AuthenticationHeader;
             return request;
         }
 

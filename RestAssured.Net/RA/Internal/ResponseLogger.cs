@@ -13,15 +13,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Xml.Linq;
-using Newtonsoft.Json;
-using RestAssuredNet.RA;
-
 namespace RestAssured.Net.RA.Internal
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Net.Http;
+    using System.Xml.Linq;
+    using Newtonsoft.Json;
+    using RestAssuredNet.RA;
+
     /// <summary>
     /// Contains methods to log response details to the console.
     /// </summary>
