@@ -13,15 +13,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Xml;
-using Newtonsoft.Json.Linq;
-using RestAssuredNet.RA.Exceptions;
-
 namespace RestAssured.Net.RA
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Net.Http;
+    using System.Xml;
+    using Newtonsoft.Json.Linq;
+    using RestAssuredNet.RA.Exceptions;
+
     /// <summary>
     /// A class representing an <see cref="HttpResponseMessage"/> from which values can be extracted.
     /// </summary>
@@ -56,14 +56,9 @@ namespace RestAssured.Net.RA
                 JObject responseBodyAsJObject = JObject.Parse(responseBodyAsString);
                 IEnumerable<JToken>? resultingElements = responseBodyAsJObject.SelectTokens(path);
 
-                List<object> elementValues = new List<object>();
+                List<object> elementValues = resultingElements.Select(element => element.ToObject<object>()).ToList();
 
-                foreach (JToken element in resultingElements)
-                {
-                    elementValues.Add(element.ToObject<object>());
-                }
-
-                if (elementValues.Count == 0)
+                if (!elementValues.Any())
                 {
                     throw new AssertionException($"JsonPath expression '{path}' did not yield any results.");
                 }
@@ -75,7 +70,8 @@ namespace RestAssured.Net.RA
 
                 return elementValues;
             }
-            else if (responseMediaType.Contains("xml"))
+            
+            if (responseMediaType.Contains("xml"))
             {
                 XmlDocument xmlDoc = new XmlDocument();
                 xmlDoc.LoadXml(responseBodyAsString);
@@ -99,10 +95,8 @@ namespace RestAssured.Net.RA
 
                 return elementValues;
             }
-            else
-            {
-                throw new ExtractionException($"Unable to extract elements from response with Content-Type '{responseMediaType}'");
-            }
+            
+            throw new ExtractionException($"Unable to extract elements from response with Content-Type '{responseMediaType}'");
         }
 
         /// <summary>

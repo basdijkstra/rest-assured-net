@@ -13,15 +13,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-using System;
-using System.Diagnostics;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using RestAssuredNet.RA.Exceptions;
 
-namespace RestAssuredNet.RA.Internal
+namespace RestAssured.Net.RA.Internal
 {
+    using System;
+    using System.Diagnostics;
+    using System.Net;
+    using System.Net.Http;
+    using System.Threading.Tasks;
+    using RestAssuredNet.RA;
+    using RestAssuredNet.RA.Exceptions;
+
     /// <summary>
     /// The <see cref="HttpRequestProcessor"/> class is responsible for sending HTTP requests.
     /// </summary>
@@ -43,7 +45,7 @@ namespace RestAssuredNet.RA.Internal
             {
                 CookieContainer = this.cookieContainer,
                 Proxy = proxy,
-                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return useRelaxedHttpsValidation; },
+                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => useRelaxedHttpsValidation,
             };
             this.client = new HttpClient(this.handler);
         }
@@ -54,7 +56,7 @@ namespace RestAssuredNet.RA.Internal
         /// <param name="timeout">The timeout to set on the HTTP client.</param>
         public void SetTimeout(TimeSpan timeout)
         {
-            this.client.Timeout = (TimeSpan)timeout;
+            this.client.Timeout = timeout;
         }
 
         /// <summary>
@@ -90,7 +92,7 @@ namespace RestAssuredNet.RA.Internal
             }
             catch (HttpRequestException hre)
             {
-                throw new HttpRequestProcessorException(hre.Message);
+                throw new HttpRequestProcessorException(hre.Message, hre);
             }
         }
 

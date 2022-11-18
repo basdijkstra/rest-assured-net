@@ -86,7 +86,7 @@ namespace RestAssuredNet.RA
         /// <exception cref="AssertionException">Thrown when the actual status code does not match the expected one.</exception>
         public VerifiableResponse StatusCode(int expectedStatusCode)
         {
-            if (!(expectedStatusCode == (int)this.response.StatusCode))
+            if (expectedStatusCode != (int)this.response.StatusCode)
             {
                 throw new AssertionException($"Expected status code to be {expectedStatusCode}, but was {(int)this.response.StatusCode}");
             }
@@ -135,18 +135,14 @@ namespace RestAssuredNet.RA
         /// <exception cref="AssertionException">Thrown when the header does not exist, or when the header value does not equal the supplied expected value.</exception>
         public VerifiableResponse Header(string name, string expectedValue)
         {
-            IEnumerable<string> values;
-
-            if (this.response.Headers.TryGetValues(name, out values))
-            {
-                if (!values.First().Equals(expectedValue))
-                {
-                    throw new AssertionException($"Expected value for response header with name '{name}' to be '{expectedValue}', but was '{values.First()}'.");
-                }
-            }
-            else
+            if (!this.response.Headers.TryGetValues(name, out IEnumerable<string>? values))
             {
                 throw new AssertionException($"Expected header with name '{name}' to be in the response, but it could not be found.");
+            }
+
+            if (!values.First().Equals(expectedValue))
+            {
+                throw new AssertionException($"Expected value for response header with name '{name}' to be '{expectedValue}', but was '{values.First()}'.");
             }
 
             return this;

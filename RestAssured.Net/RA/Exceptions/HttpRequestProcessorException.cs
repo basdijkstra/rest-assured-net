@@ -38,5 +38,15 @@ namespace RestAssuredNet.RA.Exceptions
             : base(message)
         {
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HttpRequestProcessorException"/> class.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
+        public HttpRequestProcessorException(string message, Exception innerException) 
+            : base(message, innerException)
+        {
+        }
     }
 }

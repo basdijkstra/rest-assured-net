@@ -13,14 +13,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-using System;
-using System.Net.Http;
-using System.Xml.Linq;
-using Newtonsoft.Json;
-using RestAssuredNet.RA;
-
 namespace RestAssured.Net.RA.Internal
 {
+    using System;
+    using System.Net.Http;
+    using System.Threading.Tasks;
+    using System.Xml.Linq;
+    using Newtonsoft.Json;
+
     /// <summary>
     /// Contains methods to log request details to the console.
     /// </summary>
@@ -118,26 +118,31 @@ namespace RestAssured.Net.RA.Internal
 
         private void LogBody(HttpRequestMessage request)
         {
-            if (request.Content != null)
+            if (request.Content == null)
             {
-                string requestBodyAsString = request.Content.ReadAsStringAsync().Result;
+                return;
+            }
 
-                string requestMediaType = request.Content.Headers.ContentType?.MediaType ?? string.Empty;
+            Task<string> readAsStringTask = request.Content.ReadAsStringAsync();
+            readAsStringTask.Wait();
 
-                if (requestMediaType.Equals(string.Empty) || requestMediaType.Contains("json"))
-                {
-                    object jsonPayload = JsonConvert.DeserializeObject(requestBodyAsString, typeof(object)) ?? "Could not read request payload";
-                    Console.WriteLine(JsonConvert.SerializeObject(jsonPayload, Formatting.Indented));
-                }
-                else if (requestMediaType.Contains("xml"))
-                {
-                    XDocument doc = XDocument.Parse(requestBodyAsString);
-                    Console.WriteLine(doc.ToString());
-                }
-                else
-                {
-                    Console.WriteLine(requestBodyAsString);
-                }
+            string requestBodyAsString = readAsStringTask.Result;
+
+            string requestMediaType = request.Content.Headers.ContentType?.MediaType ?? string.Empty;
+
+            if (requestMediaType.Equals(string.Empty) || requestMediaType.Contains("json"))
+            {
+                object jsonPayload = JsonConvert.DeserializeObject(requestBodyAsString, typeof(object)) ?? "Could not read request payload";
+                Console.WriteLine(JsonConvert.SerializeObject(jsonPayload, Formatting.Indented));
+            }
+            else if (requestMediaType.Contains("xml"))
+            {
+                XDocument doc = XDocument.Parse(requestBodyAsString);
+                Console.WriteLine(doc.ToString());
+            }
+            else
+            {
+                Console.WriteLine(requestBodyAsString);
             }
         }
     }
