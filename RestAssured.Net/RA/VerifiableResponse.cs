@@ -27,8 +27,8 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 using NHamcrest;
 using RestAssured.Net.RA;
+using RestAssured.Net.RA.Exceptions;
 using RestAssured.Net.RA.Internal;
-using RestAssuredNet.RA.Exceptions;
 
 namespace RestAssuredNet.RA
 {

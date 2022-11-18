@@ -13,12 +13,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
+
 using NUnit.Framework;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using static RestAssuredNet.RestAssuredNet;
 
-namespace RestAssuredNet.Tests
+namespace RestAssured.Net.Tests
 {
     /// <summary>
     /// Examples of RestAssuredNet usage.
@@ -88,7 +89,7 @@ namespace RestAssuredNet.Tests
         {
             this.CreateStubForXmlResponseBody();
 
-            RA.Exceptions.AssertionException ae = Assert.Throws<RA.Exceptions.AssertionException>(() =>
+            var ae = Assert.Throws<RestAssured.Net.RA.Exceptions.AssertionException>(() =>
             {
                 Given()
                 .When()
@@ -111,7 +112,7 @@ namespace RestAssuredNet.Tests
         {
             this.CreateStubForXmlResponseBody();
 
-            RA.Exceptions.ResponseVerificationException rve = Assert.Throws<RA.Exceptions.ResponseVerificationException>(() =>
+            var rve = Assert.Throws<RestAssured.Net.RA.Exceptions.ResponseVerificationException>(() =>
             {
                 Given()
                 .When()
@@ -150,7 +151,7 @@ namespace RestAssuredNet.Tests
         {
             this.CreateStubForXmlResponseBody();
 
-            RA.Exceptions.AssertionException ae = Assert.Throws<RA.Exceptions.AssertionException>(() =>
+            var ae = Assert.Throws<RestAssured.Net.RA.Exceptions.AssertionException>(() =>
             {
                 Given()
                 .When()

@@ -13,13 +13,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
+
 using NUnit.Framework;
 using RestAssured.Net.RA.Builders;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using static RestAssuredNet.RestAssuredNet;
 
-namespace RestAssuredNet.Tests
+namespace RestAssured.Net.Tests
 {
     /// <summary>
     /// Examples of RestAssuredNet usage.

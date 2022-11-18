@@ -13,10 +13,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-using System;
-
-namespace RestAssuredNet.RA.Exceptions
+namespace RestAssured.Net.RA.Exceptions
 {
+    using System;
+    
     /// <summary>
     /// An exception to be thrown whenever a response value extraction fails.
     /// </summary>
