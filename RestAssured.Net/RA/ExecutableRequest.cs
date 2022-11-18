@@ -14,6 +14,8 @@
 // limitations under the License.
 // </copyright>
 
+using RestAssured.Net.RA.Exceptions;
+
 namespace RestAssured.Net.RA
 {
     using System;
@@ -31,7 +33,6 @@ namespace RestAssured.Net.RA
     using RestAssured.Net.RA.Builders;
     using RestAssured.Net.RA.Internal;
     using RestAssuredNet.RA;
-    using RestAssuredNet.RA.Exceptions;
     using Stubble.Core;
     using Stubble.Core.Builders;
 

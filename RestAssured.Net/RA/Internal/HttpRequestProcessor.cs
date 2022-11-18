@@ -14,6 +14,8 @@
 // limitations under the License.
 // </copyright>
 
+using RestAssured.Net.RA.Exceptions;
+
 namespace RestAssured.Net.RA.Internal
 {
     using System;
@@ -22,7 +24,6 @@ namespace RestAssured.Net.RA.Internal
     using System.Net.Http;
     using System.Threading.Tasks;
     using RestAssuredNet.RA;
-    using RestAssuredNet.RA.Exceptions;
 
     /// <summary>
     /// The <see cref="HttpRequestProcessor"/> class is responsible for sending HTTP requests.

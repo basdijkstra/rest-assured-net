@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
+
 using System.Collections.Generic;
 using NUnit.Framework;
 using RestAssured.Net.Tests.Models;
@@ -20,7 +21,7 @@ using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using static RestAssuredNet.RestAssuredNet;
 
-namespace RestAssuredNet.Tests
+namespace RestAssured.Net.Tests
 {
     /// <summary>
     /// Examples of RestAssuredNet usage.

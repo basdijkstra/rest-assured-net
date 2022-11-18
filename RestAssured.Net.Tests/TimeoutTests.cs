@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
+
 using System;
 using NUnit.Framework;
 using RestAssured.Net.RA.Builders;
@@ -20,7 +21,7 @@ using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using static RestAssuredNet.RestAssuredNet;
 
-namespace RestAssuredNet.Tests
+namespace RestAssured.Net.Tests
 {
     /// <summary>
     /// Examples of RestAssuredNet usage.
@@ -87,7 +88,7 @@ namespace RestAssuredNet.Tests
         {
             this.CreateStubForTimeoutNok();
 
-            RA.Exceptions.HttpRequestProcessorException hrpe = Assert.Throws<RA.Exceptions.HttpRequestProcessorException>(() =>
+            var hrpe = Assert.Throws<RestAssured.Net.RA.Exceptions.HttpRequestProcessorException>(() =>
             {
                 Given()
                 .Timeout(TimeSpan.FromSeconds(2))
@@ -109,7 +110,7 @@ namespace RestAssuredNet.Tests
         {
             this.CreateStubForTimeoutNok();
 
-            RA.Exceptions.HttpRequestProcessorException hrpe = Assert.Throws<RA.Exceptions.HttpRequestProcessorException>(() =>
+            var hrpe = Assert.Throws<RestAssured.Net.RA.Exceptions.HttpRequestProcessorException>(() =>
             {
                 Given()
                 .Spec(this.requestSpecification)

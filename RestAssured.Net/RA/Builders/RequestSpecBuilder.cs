@@ -13,14 +13,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Http.Headers;
-using System.Text;
-
 namespace RestAssured.Net.RA.Builders
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Net;
+    using System.Net.Http.Headers;
+    using System.Text;
+
     /// <summary>
     /// A builder class to construct a new instance of the <see cref="RequestSpecification"/> class.
     /// </summary>

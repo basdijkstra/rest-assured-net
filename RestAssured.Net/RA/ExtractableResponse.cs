@@ -13,6 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
+
+using RestAssured.Net.RA.Exceptions;
+
 namespace RestAssured.Net.RA
 {
     using System.Collections.Generic;
@@ -20,7 +23,6 @@ namespace RestAssured.Net.RA
     using System.Net.Http;
     using System.Xml;
     using Newtonsoft.Json.Linq;
-    using RestAssuredNet.RA.Exceptions;
 
     /// <summary>
     /// A class representing an <see cref="HttpResponseMessage"/> from which values can be extracted.

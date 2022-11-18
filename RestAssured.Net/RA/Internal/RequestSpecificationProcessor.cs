@@ -19,7 +19,7 @@ using System.Net;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using RestAssured.Net.RA.Builders;
-using RestAssuredNet.RA.Exceptions;
+using RestAssured.Net.RA.Exceptions;
 
 namespace RestAssured.Net.RA.Internal
 {
