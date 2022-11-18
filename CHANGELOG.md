@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+Thanks to [@appie2go](https://github.com/basdijkstra/rest-assured-net/issues?q=is%3Apr+author%3Aappie2go) for PR [#34](https://github.com/basdijkstra/rest-assured-net/pull/34), which contains quite a few improvements to the code.
+
 ### [1.2.0] - 2022-11-17
 
 #### Added
