@@ -29,6 +29,7 @@ namespace RestAssured.Response
     using Newtonsoft.Json.Schema;
     using NHamcrest;
     using RestAssured.Response.Exceptions;
+    using RestAssured.Response.Logging;
 
     /// <summary>
     /// A class representing the response of an HTTP call.

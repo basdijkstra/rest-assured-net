@@ -29,6 +29,7 @@ namespace RestAssured.Request
     using Newtonsoft.Json;
     using RestAssured.Request.Builders;
     using RestAssured.Request.Exceptions;
+    using RestAssured.Request.Logging;
     using RestAssured.Response;
     using Stubble.Core;
     using Stubble.Core.Builders;

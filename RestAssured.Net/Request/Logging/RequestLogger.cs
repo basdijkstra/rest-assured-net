@@ -13,7 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-namespace RestAssured.Request
+
+namespace RestAssured.Request.Logging
 {
     using System;
     using System.Net.Http;
