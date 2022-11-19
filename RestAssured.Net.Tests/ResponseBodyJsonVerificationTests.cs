@@ -13,16 +13,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-
-using System.Collections.Generic;
-using NUnit.Framework;
-using RestAssured.Net.Tests.Models;
-using WireMock.RequestBuilders;
-using WireMock.ResponseBuilders;
-using static RestAssuredNet.RestAssuredNet;
-
-namespace RestAssured.Net.Tests
+namespace RestAssured.Tests
 {
+    using System.Collections.Generic;
+    using NUnit.Framework;
+    using RestAssured.Response.Exceptions;
+    using RestAssured.Tests.Models;
+    using WireMock.RequestBuilders;
+    using WireMock.ResponseBuilders;
+    using static RestAssured.Client;
+
     /// <summary>
     /// Examples of RestAssuredNet usage.
     /// </summary>
@@ -55,7 +55,7 @@ namespace RestAssured.Net.Tests
         {
             this.CreateStubForJsonResponseBody();
 
-            var ae = Assert.Throws<RestAssured.Net.RA.Exceptions.AssertionException>(() =>
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
                 .When()
@@ -65,7 +65,7 @@ namespace RestAssured.Net.Tests
                 .Body("$.Places[0].Name", NHamcrest.Contains.String("Sin"));
             });
 
-            Assert.That(ae.Message, NUnit.Framework.Is.EqualTo("Expected element selected by '$.Places[0].Name' to match 'a string containing \"Sin\"' but was Sun City"));
+            Assert.That(rve.Message, NUnit.Framework.Is.EqualTo("Expected element selected by '$.Places[0].Name' to match 'a string containing \"Sin\"' but was Sun City"));
         }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace RestAssured.Net.Tests
         {
             this.CreateStubForJsonResponseBody();
 
-            var ae = Assert.Throws<RestAssured.Net.RA.Exceptions.AssertionException>(() =>
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
                 .When()
@@ -104,7 +104,7 @@ namespace RestAssured.Net.Tests
                 .Body("$.Places[0].Inhabitants", NHamcrest.Is.GreaterThan(200000));
             });
 
-            Assert.That(ae.Message, NUnit.Framework.Is.EqualTo("Expected element selected by '$.Places[0].Inhabitants' to match 'greater than 200000' but was 100000"));
+            Assert.That(rve.Message, NUnit.Framework.Is.EqualTo("Expected element selected by '$.Places[0].Inhabitants' to match 'greater than 200000' but was 100000"));
         }
 
         /// <summary>
@@ -133,7 +133,7 @@ namespace RestAssured.Net.Tests
         {
             this.CreateStubForJsonResponseBody();
 
-            var ae = Assert.Throws<RestAssured.Net.RA.Exceptions.AssertionException>(() =>
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
                 .When()
@@ -143,7 +143,7 @@ namespace RestAssured.Net.Tests
                 .Body("$.Places[0].IsCapital", NHamcrest.Is.False());
             });
 
-            Assert.That(ae.Message, NUnit.Framework.Is.EqualTo("Expected element selected by '$.Places[0].IsCapital' to match 'False' but was True"));
+            Assert.That(rve.Message, NUnit.Framework.Is.EqualTo("Expected element selected by '$.Places[0].IsCapital' to match 'False' but was True"));
         }
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace RestAssured.Net.Tests
         {
             this.CreateStubForJsonResponseBody();
 
-            var ae = Assert.Throws<RestAssured.Net.RA.Exceptions.AssertionException>(() =>
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
                 .When()
@@ -165,7 +165,7 @@ namespace RestAssured.Net.Tests
                 .Body("$.Places[0].DoesNotExist", NHamcrest.Is.False());
             });
 
-            Assert.That(ae.Message, NUnit.Framework.Is.EqualTo("JsonPath expression '$.Places[0].DoesNotExist' did not yield any results."));
+            Assert.That(rve.Message, NUnit.Framework.Is.EqualTo("JsonPath expression '$.Places[0].DoesNotExist' did not yield any results."));
         }
 
         /// <summary>
@@ -194,7 +194,7 @@ namespace RestAssured.Net.Tests
         {
             this.CreateStubForJsonResponseBody();
 
-            var ae = Assert.Throws<RestAssured.Net.RA.Exceptions.AssertionException>(() =>
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
                 .When()
@@ -204,7 +204,7 @@ namespace RestAssured.Net.Tests
                 .Body("$.Places[0:].Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Atlantis")));
             });
 
-            Assert.That(ae.Message, NUnit.Framework.Is.EqualTo($"Expected elements selected by '$.Places[0:].Name' to match 'a collection containing \"Atlantis\"', but was [Sun City, Pleasure Meadow]"));
+            Assert.That(rve.Message, NUnit.Framework.Is.EqualTo($"Expected elements selected by '$.Places[0:].Name' to match 'a collection containing \"Atlantis\"', but was [Sun City, Pleasure Meadow]"));
         }
 
         /// <summary>

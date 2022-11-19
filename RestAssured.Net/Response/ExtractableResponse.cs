@@ -13,16 +13,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-
-using RestAssured.Net.RA.Exceptions;
-
-namespace RestAssured.Net.RA
+namespace RestAssured.Response
 {
     using System.Collections.Generic;
     using System.Linq;
     using System.Net.Http;
     using System.Xml;
     using Newtonsoft.Json.Linq;
+    using RestAssured.Response.Exceptions;
 
     /// <summary>
     /// A class representing an <see cref="HttpResponseMessage"/> from which values can be extracted.
@@ -62,7 +60,7 @@ namespace RestAssured.Net.RA
 
                 if (!elementValues.Any())
                 {
-                    throw new AssertionException($"JsonPath expression '{path}' did not yield any results.");
+                    throw new ResponseVerificationException($"JsonPath expression '{path}' did not yield any results.");
                 }
 
                 if (elementValues.Count == 1)
@@ -72,7 +70,7 @@ namespace RestAssured.Net.RA
 
                 return elementValues;
             }
-            
+
             if (responseMediaType.Contains("xml"))
             {
                 XmlDocument xmlDoc = new XmlDocument();
@@ -97,7 +95,7 @@ namespace RestAssured.Net.RA
 
                 return elementValues;
             }
-            
+
             throw new ExtractionException($"Unable to extract elements from response with Content-Type '{responseMediaType}'");
         }
 

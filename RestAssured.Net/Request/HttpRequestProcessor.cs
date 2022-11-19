@@ -13,17 +13,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-
-using RestAssured.Net.RA.Exceptions;
-
-namespace RestAssured.Net.RA.Internal
+namespace RestAssured.Request
 {
     using System;
     using System.Diagnostics;
     using System.Net;
     using System.Net.Http;
     using System.Threading.Tasks;
-    using RestAssuredNet.RA;
+    using RestAssured.Request.Exceptions;
+    using RestAssured.Response;
 
     /// <summary>
     /// The <see cref="HttpRequestProcessor"/> class is responsible for sending HTTP requests.

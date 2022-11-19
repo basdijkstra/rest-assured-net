@@ -13,14 +13,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-
-using NUnit.Framework;
-using WireMock.RequestBuilders;
-using WireMock.ResponseBuilders;
-using static RestAssuredNet.RestAssuredNet;
-
-namespace RestAssured.Net.Tests
+namespace RestAssured.Tests
 {
+    using NUnit.Framework;
+    using RestAssured.Response.Exceptions;
+    using WireMock.RequestBuilders;
+    using WireMock.ResponseBuilders;
+    using static RestAssured.Client;
+
     /// <summary>
     /// Examples of RestAssuredNet usage.
     /// </summary>
@@ -91,7 +91,7 @@ namespace RestAssured.Net.Tests
         {
             this.CreateStubForPlaintextResponseBody();
 
-            var ae = Assert.Throws<RestAssured.Net.RA.Exceptions.AssertionException>(() =>
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
                 .When()
@@ -101,7 +101,7 @@ namespace RestAssured.Net.Tests
                 .Body("This is a different plaintext response body.");
             });
 
-            Assert.That(ae.Message, NUnit.Framework.Is.EqualTo("Actual response body did not match expected response body.\nExpected: This is a different plaintext response body.\nActual: Here's a plaintext response body."));
+            Assert.That(rve.Message, Is.EqualTo("Actual response body did not match expected response body.\nExpected: This is a different plaintext response body.\nActual: Here's a plaintext response body."));
         }
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace RestAssured.Net.Tests
         {
             this.CreateStubForJsonStringResponseBody();
 
-            var ae = Assert.Throws<RestAssured.Net.RA.Exceptions.AssertionException>(() =>
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
                 .When()
@@ -123,7 +123,7 @@ namespace RestAssured.Net.Tests
                 .Body(NHamcrest.Contains.String("Jane Doe"));
             });
 
-            Assert.That(ae.Message, NUnit.Framework.Is.EqualTo($"Actual response body expected to match 'a string containing \"Jane Doe\"' but didn't.\nActual: {this.jsonStringResponseBody}"));
+            Assert.That(rve.Message, Is.EqualTo($"Actual response body expected to match 'a string containing \"Jane Doe\"' but didn't.\nActual: {this.jsonStringResponseBody}"));
         }
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace RestAssured.Net.Tests
         {
             this.CreateStubForUnknownContentType();
 
-            var rve = Assert.Throws<RestAssured.Net.RA.Exceptions.ResponseVerificationException>(() =>
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
                 .When()
@@ -145,7 +145,7 @@ namespace RestAssured.Net.Tests
                 .Body("$.Places[0].Name", NHamcrest.Contains.String("City"));
             });
 
-            Assert.That(rve.Message, NUnit.Framework.Is.EqualTo($"Unable to extract elements from response with Content-Type 'application/unknown'"));
+            Assert.That(rve.Message, Is.EqualTo($"Unable to extract elements from response with Content-Type 'application/unknown'"));
         }
 
         private void CreateStubForPlaintextResponseBody()

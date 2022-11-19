@@ -1,4 +1,4 @@
-﻿// <copyright file="ExtractionException.cs" company="On Test Automation">
+﻿// <copyright file="RequestCreationException.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,28 +13,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-namespace RestAssured.Net.RA.Exceptions
+namespace RestAssured.Request.Exceptions
 {
     using System;
-    
+
     /// <summary>
-    /// An exception to be thrown whenever a response value extraction fails.
+    /// An exception to be thrown whenever creation of a suitable request fails.
     /// </summary>
-    public class ExtractionException : Exception
+    public class RequestCreationException : Exception
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ExtractionException"/> class.
+        /// Initializes a new instance of the <see cref="RequestCreationException"/> class.
         /// </summary>
-        public ExtractionException()
+        public RequestCreationException()
             : base()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ExtractionException"/> class.
+        /// Initializes a new instance of the <see cref="RequestCreationException"/> class.
         /// </summary>
         /// <param name="message">The message to assign to the exception being thrown.</param>
-        public ExtractionException(string? message)
+        public RequestCreationException(string? message)
             : base(message)
         {
         }

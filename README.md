@@ -6,7 +6,7 @@ This is a C# .NET version of the original [REST Assured](https://rest-assured.io
 With RestAssured.Net, writing tests for your HTTP APIs is as simple as
 
 ```csharp
-using static RestAssuredNet.RestAssuredNet;
+using static RestAssured.Client;
 
 [Test]
 public void DemonstrateRestAssuredNetEaseOfUse()

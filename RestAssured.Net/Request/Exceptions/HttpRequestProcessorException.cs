@@ -13,13 +13,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-
-namespace RestAssured.Net.RA.Exceptions
+namespace RestAssured.Request.Exceptions
 {
     using System;
 
     /// <summary>
-    /// An exception to be thrown whenever sending an HTTP request fails.
+    /// An exception to be thrown whenever sending of a request fails.
     /// </summary>
     public class HttpRequestProcessorException : Exception
     {
@@ -43,9 +42,9 @@ namespace RestAssured.Net.RA.Exceptions
         /// <summary>
         /// Initializes a new instance of the <see cref="HttpRequestProcessorException"/> class.
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="innerException"></param>
-        public HttpRequestProcessorException(string message, Exception innerException) 
+        /// <param name="message">The message to assign to the exception being thrown.</param>
+        /// <param name="innerException">The inner exception that is (re-)thrown as part of this exception.</param>
+        public HttpRequestProcessorException(string message, Exception innerException)
             : base(message, innerException)
         {
         }

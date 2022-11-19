@@ -13,10 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-
-using RestAssured.Net.RA.Exceptions;
-
-namespace RestAssured.Net.RA
+namespace RestAssured.Request
 {
     using System;
     using System.Collections.Generic;
@@ -30,9 +27,9 @@ namespace RestAssured.Net.RA
     using System.Xml.Serialization;
     using Microsoft.AspNetCore.WebUtilities;
     using Newtonsoft.Json;
-    using RestAssured.Net.RA.Builders;
-    using RestAssured.Net.RA.Internal;
-    using RestAssuredNet.RA;
+    using RestAssured.Request.Builders;
+    using RestAssured.Request.Exceptions;
+    using RestAssured.Response;
     using Stubble.Core;
     using Stubble.Core.Builders;
 
@@ -522,7 +519,7 @@ namespace RestAssured.Net.RA
                     // All OSes, absolute path
                     return uri;
                 }
-                
+
                 // MacOS, Unix, relative path
                 return RequestSpecificationProcessor.BuildUriFromRequestSpec(requestSpec, endpoint);
             }
@@ -545,7 +542,7 @@ namespace RestAssured.Net.RA
             {
                 return (string)body;
             }
-            
+
             if (contentType.Contains("json"))
             {
                 return JsonConvert.SerializeObject(body);

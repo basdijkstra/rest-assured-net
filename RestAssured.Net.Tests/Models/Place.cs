@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-namespace RestAssured.Net.Tests.Models
+namespace RestAssured.Tests.Models
 {
     /// <summary>
     /// A POCO representing a place on earth.

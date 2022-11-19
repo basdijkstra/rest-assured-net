@@ -13,12 +13,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-
-using NUnit.Framework;
-using WireMock.Server;
-
-namespace RestAssured.Net.Tests
+namespace RestAssured.Tests
 {
+    using NUnit.Framework;
+    using WireMock.Server;
+
     /// <summary>
     /// Base class containing common test logic.
     /// </summary>

@@ -1,4 +1,4 @@
-﻿// <copyright file="RestAssuredNet.cs" company="On Test Automation">
+﻿// <copyright file="Client.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,16 +13,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-
-using RestAssured.Net.RA;
-using RestAssuredNet.RA;
-
-namespace RestAssuredNet
+namespace RestAssured
 {
+    using RestAssured.Request;
+
     /// <summary>
-    /// Entry point to the RestAssuredNet code and writing tests for HTTP-based APIs.
+    /// Entry point to the RestAssured code and writing tests for HTTP-based APIs.
     /// </summary>
-    public class RestAssuredNet
+    public class Client
     {
         /// <summary>
         /// Used to start writing a new test.

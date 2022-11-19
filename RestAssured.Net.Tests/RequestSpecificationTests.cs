@@ -13,17 +13,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-
-using System.Text;
-using NUnit.Framework;
-using RestAssured.Net.RA.Builders;
-using WireMock.Matchers;
-using WireMock.RequestBuilders;
-using WireMock.ResponseBuilders;
-using static RestAssuredNet.RestAssuredNet;
-
-namespace RestAssured.Net.Tests
+namespace RestAssured.Tests
 {
+    using System.Text;
+    using NUnit.Framework;
+    using RestAssured.Request.Builders;
+    using RestAssured.Request.Exceptions;
+    using WireMock.Matchers;
+    using WireMock.RequestBuilders;
+    using WireMock.ResponseBuilders;
+    using static RestAssured.Client;
+
     /// <summary>
     /// Examples of RestAssuredNet usage.
     /// </summary>
@@ -159,7 +159,7 @@ namespace RestAssured.Net.Tests
         {
             this.CreateStubForRequestSpecification();
 
-            var rce = Assert.Throws<RestAssured.Net.RA.Exceptions.RequestCreationException>(() =>
+            var rce = Assert.Throws<RequestCreationException>(() =>
             {
                 Given()
                 .Spec(this.incorrectHostNameSpecification)

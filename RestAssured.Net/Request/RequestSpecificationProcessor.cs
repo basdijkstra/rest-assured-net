@@ -13,16 +13,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Runtime.CompilerServices;
-using RestAssured.Net.RA.Builders;
-using RestAssured.Net.RA.Exceptions;
-
-namespace RestAssured.Net.RA.Internal
+namespace RestAssured.Request
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Net.Http;
+    using RestAssured.Request.Builders;
+    using RestAssured.Request.Exceptions;
+
     /// <summary>
     /// Provides utility methods to apply a <see cref="RequestSpecification"/> to an <see cref="HttpRequestMessage"/>.
     /// </summary>

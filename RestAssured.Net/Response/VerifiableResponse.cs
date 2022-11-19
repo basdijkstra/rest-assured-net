@@ -13,25 +13,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Xml;
-using System.Xml.Serialization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Schema;
-using NHamcrest;
-using RestAssured.Net.RA;
-using RestAssured.Net.RA.Exceptions;
-using RestAssured.Net.RA.Internal;
-
-namespace RestAssuredNet.RA
+namespace RestAssured.Response
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Net;
+    using System.Net.Http;
+    using System.Net.Http.Headers;
+    using System.Xml;
+    using System.Xml.Serialization;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
+    using Newtonsoft.Json.Schema;
+    using NHamcrest;
+    using RestAssured.Response.Exceptions;
+
     /// <summary>
     /// A class representing the response of an HTTP call.
     /// </summary>
@@ -88,7 +86,7 @@ namespace RestAssuredNet.RA
         {
             if (expectedStatusCode != (int)this.response.StatusCode)
             {
-                throw new AssertionException($"Expected status code to be {expectedStatusCode}, but was {(int)this.response.StatusCode}");
+                throw new ResponseVerificationException($"Expected status code to be {expectedStatusCode}, but was {(int)this.response.StatusCode}");
             }
 
             return this;
@@ -104,7 +102,7 @@ namespace RestAssuredNet.RA
         {
             if (!expectedStatusCode.Equals(this.response.StatusCode))
             {
-                throw new AssertionException($"Expected status code to be {expectedStatusCode}, but was {this.response.StatusCode}");
+                throw new ResponseVerificationException($"Expected status code to be {expectedStatusCode}, but was {this.response.StatusCode}");
             }
 
             return this;
@@ -120,7 +118,7 @@ namespace RestAssuredNet.RA
         {
             if (!matcher.Matches((int)this.response.StatusCode))
             {
-                throw new AssertionException($"Expected response status code to match '{matcher}', but was {(int)this.response.StatusCode}");
+                throw new ResponseVerificationException($"Expected response status code to match '{matcher}', but was {(int)this.response.StatusCode}");
             }
 
             return this;
@@ -137,12 +135,12 @@ namespace RestAssuredNet.RA
         {
             if (!this.response.Headers.TryGetValues(name, out IEnumerable<string>? values))
             {
-                throw new AssertionException($"Expected header with name '{name}' to be in the response, but it could not be found.");
+                throw new ResponseVerificationException($"Expected header with name '{name}' to be in the response, but it could not be found.");
             }
 
             if (!values.First().Equals(expectedValue))
             {
-                throw new AssertionException($"Expected value for response header with name '{name}' to be '{expectedValue}', but was '{values.First()}'.");
+                throw new ResponseVerificationException($"Expected value for response header with name '{name}' to be '{expectedValue}', but was '{values.First()}'.");
             }
 
             return this;
@@ -163,12 +161,12 @@ namespace RestAssuredNet.RA
             {
                 if (!matcher.Matches(values.First()))
                 {
-                    throw new AssertionException($"Expected value for response header with name '{name}' to match '{matcher}', but was '{values.First()}'.");
+                    throw new ResponseVerificationException($"Expected value for response header with name '{name}' to match '{matcher}', but was '{values.First()}'.");
                 }
             }
             else
             {
-                throw new AssertionException($"Expected header with name '{name}' to be in the response, but it could not be found.");
+                throw new ResponseVerificationException($"Expected header with name '{name}' to be in the response, but it could not be found.");
             }
 
             return this;
@@ -185,12 +183,12 @@ namespace RestAssuredNet.RA
 
             if (actualContentType == null)
             {
-                throw new AssertionException("Response Content-Type header could not be found.");
+                throw new ResponseVerificationException("Response Content-Type header could not be found.");
             }
 
             if (!actualContentType.ToString().Equals(expectedContentType))
             {
-                throw new AssertionException($"Expected value for response Content-Type header to be '{expectedContentType}', but was '{actualContentType}'.");
+                throw new ResponseVerificationException($"Expected value for response Content-Type header to be '{expectedContentType}', but was '{actualContentType}'.");
             }
 
             return this;
@@ -207,12 +205,12 @@ namespace RestAssuredNet.RA
 
             if (actualContentType == null)
             {
-                throw new AssertionException("Response Content-Type header could not be found.");
+                throw new ResponseVerificationException("Response Content-Type header could not be found.");
             }
 
             if (!matcher.Matches(actualContentType.ToString()))
             {
-                throw new AssertionException($"Expected value for response Content-Type header to match '{matcher}', but was '{actualContentType}'.");
+                throw new ResponseVerificationException($"Expected value for response Content-Type header to match '{matcher}', but was '{actualContentType}'.");
             }
 
             return this;
@@ -229,7 +227,7 @@ namespace RestAssuredNet.RA
 
             if (!actualResponseBody.Equals(expectedResponseBody))
             {
-                throw new AssertionException($"Actual response body did not match expected response body.\nExpected: {expectedResponseBody}\nActual: {actualResponseBody}");
+                throw new ResponseVerificationException($"Actual response body did not match expected response body.\nExpected: {expectedResponseBody}\nActual: {actualResponseBody}");
             }
 
             return this;
@@ -246,7 +244,7 @@ namespace RestAssuredNet.RA
 
             if (!matcher.Matches(actualResponseBody))
             {
-                throw new AssertionException($"Actual response body expected to match '{matcher}' but didn't.\nActual: {actualResponseBody}");
+                throw new ResponseVerificationException($"Actual response body expected to match '{matcher}' but didn't.\nActual: {actualResponseBody}");
             }
 
             return this;
@@ -273,12 +271,12 @@ namespace RestAssuredNet.RA
 
                 if (resultingElement == null)
                 {
-                    throw new AssertionException($"JsonPath expression '{path}' did not yield any results.");
+                    throw new ResponseVerificationException($"JsonPath expression '{path}' did not yield any results.");
                 }
 
                 if (!matcher.Matches(resultingElement.ToObject<T>()))
                 {
-                    throw new AssertionException($"Expected element selected by '{path}' to match '{matcher}' but was {resultingElement}");
+                    throw new ResponseVerificationException($"Expected element selected by '{path}' to match '{matcher}' but was {resultingElement}");
                 }
             }
             else if (responseMediaType.Contains("xml"))
@@ -289,7 +287,7 @@ namespace RestAssuredNet.RA
 
                 if (xmlElement == null)
                 {
-                    throw new AssertionException($"XPath expression '{path}' did not yield any results.");
+                    throw new ResponseVerificationException($"XPath expression '{path}' did not yield any results.");
                 }
 
                 // Try and cast the element value to an object of the type used in the matcher
@@ -298,7 +296,7 @@ namespace RestAssuredNet.RA
                     T objectFromElementValue = (T)Convert.ChangeType(xmlElement.InnerText, typeof(T));
                     if (!matcher.Matches((T)Convert.ChangeType(xmlElement.InnerText, typeof(T))))
                     {
-                        throw new AssertionException($"Expected element selected by '{path}' to match '{matcher}' but was {xmlElement.InnerText}");
+                        throw new ResponseVerificationException($"Expected element selected by '{path}' to match '{matcher}' but was {xmlElement.InnerText}");
                     }
                 }
                 catch (FormatException)
@@ -342,7 +340,7 @@ namespace RestAssuredNet.RA
 
                 if (!matcher.Matches(elementValues))
                 {
-                    throw new AssertionException($"Expected elements selected by '{path}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
+                    throw new ResponseVerificationException($"Expected elements selected by '{path}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
                 }
             }
             else if (responseMediaType.Contains("xml"))
@@ -367,7 +365,7 @@ namespace RestAssuredNet.RA
 
                 if (!matcher.Matches(elementValues))
                 {
-                    throw new AssertionException($"Expected elements selected by '{path}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
+                    throw new ResponseVerificationException($"Expected elements selected by '{path}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
                 }
             }
             else
@@ -417,7 +415,7 @@ namespace RestAssuredNet.RA
 
             if (!response.IsValid(jsonSchema, out IList<string> messages))
             {
-                throw new AssertionException($"Response body did not match JSON schema supplied: {messages.First()}");
+                throw new ResponseVerificationException($"Response body did not match JSON schema supplied: {messages.First()}");
             }
 
             return this;

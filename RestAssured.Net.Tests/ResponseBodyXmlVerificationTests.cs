@@ -13,14 +13,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-
-using NUnit.Framework;
-using WireMock.RequestBuilders;
-using WireMock.ResponseBuilders;
-using static RestAssuredNet.RestAssuredNet;
-
-namespace RestAssured.Net.Tests
+namespace RestAssured.Tests
 {
+    using NUnit.Framework;
+    using RestAssured.Response.Exceptions;
+    using WireMock.RequestBuilders;
+    using WireMock.ResponseBuilders;
+    using static RestAssured.Client;
+
     /// <summary>
     /// Examples of RestAssuredNet usage.
     /// </summary>
@@ -89,7 +89,7 @@ namespace RestAssured.Net.Tests
         {
             this.CreateStubForXmlResponseBody();
 
-            var ae = Assert.Throws<RestAssured.Net.RA.Exceptions.AssertionException>(() =>
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
                 .When()
@@ -99,7 +99,7 @@ namespace RestAssured.Net.Tests
                 .Body("//Places[0]/DoesNotExist", NHamcrest.Is.EqualTo("Sun City"));
             });
 
-            Assert.That(ae.Message, Is.EqualTo("XPath expression '//Places[0]/DoesNotExist' did not yield any results."));
+            Assert.That(rve.Message, Is.EqualTo("XPath expression '//Places[0]/DoesNotExist' did not yield any results."));
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace RestAssured.Net.Tests
         {
             this.CreateStubForXmlResponseBody();
 
-            var rve = Assert.Throws<RestAssured.Net.RA.Exceptions.ResponseVerificationException>(() =>
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
                 .When()
@@ -151,7 +151,7 @@ namespace RestAssured.Net.Tests
         {
             this.CreateStubForXmlResponseBody();
 
-            var ae = Assert.Throws<RestAssured.Net.RA.Exceptions.AssertionException>(() =>
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
                 .When()
@@ -161,7 +161,7 @@ namespace RestAssured.Net.Tests
                 .Body("//Place/Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Atlantis")));
             });
 
-            Assert.That(ae.Message, Is.EqualTo($"Expected elements selected by '//Place/Name' to match 'a collection containing \"Atlantis\"', but was [Sun City, Pleasure Meadow]"));
+            Assert.That(rve.Message, Is.EqualTo($"Expected elements selected by '//Place/Name' to match 'a collection containing \"Atlantis\"', but was [Sun City, Pleasure Meadow]"));
         }
 
         /// <summary>

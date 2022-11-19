@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-namespace RestAssured.Net.RA.Internal
+namespace RestAssured.Request
 {
     using System;
     using System.Net.Http;

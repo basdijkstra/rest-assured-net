@@ -1,4 +1,4 @@
-﻿// <copyright file="ResponseVerificationException.cs" company="On Test Automation">
+﻿// <copyright file="DeserializationException.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,29 +13,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-
-using System;
-
-namespace RestAssured.Net.RA.Exceptions
+namespace RestAssured.Response.Exceptions
 {
+    using System;
+
     /// <summary>
-    /// An exception to be thrown whenever validation of a response fails for technical reasons.
+    /// An exception to be thrown whenever response deserialization fails.
     /// </summary>
-    public class ResponseVerificationException : Exception
+    public class DeserializationException : Exception
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ResponseVerificationException"/> class.
+        /// Initializes a new instance of the <see cref="DeserializationException"/> class.
         /// </summary>
-        public ResponseVerificationException()
+        public DeserializationException()
             : base()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ResponseVerificationException"/> class.
+        /// Initializes a new instance of the <see cref="DeserializationException"/> class.
         /// </summary>
         /// <param name="message">The message to assign to the exception being thrown.</param>
-        public ResponseVerificationException(string? message)
+        public DeserializationException(string? message)
             : base(message)
         {
         }

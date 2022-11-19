@@ -13,20 +13,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using NUnit.Framework;
-using RestAssured.Net.Tests.Models;
-using WireMock.RequestBuilders;
-using WireMock.ResponseBuilders;
-using static RestAssuredNet.RestAssuredNet;
-
-namespace RestAssured.Net.Tests
+namespace RestAssured.Tests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Net;
+    using System.Net.Http;
+    using NUnit.Framework;
+    using RestAssured.Response.Exceptions;
+    using RestAssured.Tests.Models;
+    using WireMock.RequestBuilders;
+    using WireMock.ResponseBuilders;
+    using static RestAssured.Client;
+
     /// <summary>
     /// Examples of RestAssuredNet usage.
     /// </summary>
@@ -49,7 +49,7 @@ namespace RestAssured.Net.Tests
             .StatusCode(200)
             .Extract().Body("$.Places[0].Name");
 
-            Assert.That(placeName, NUnit.Framework.Is.EqualTo("Sun City"));
+            Assert.That(placeName, Is.EqualTo("Sun City"));
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace RestAssured.Net.Tests
 
             int numberOfInhabitantsInt = Convert.ToInt32(numberOfInhabitants);
 
-            Assert.That(numberOfInhabitantsInt, NUnit.Framework.Is.EqualTo(100000));
+            Assert.That(numberOfInhabitantsInt, Is.EqualTo(100000));
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace RestAssured.Net.Tests
             .StatusCode(200)
             .Extract().Body("$.Places[0].IsCapital");
 
-            Assert.That(isCapital, NUnit.Framework.Is.True);
+            Assert.That(isCapital, Is.True);
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace RestAssured.Net.Tests
             .StatusCode(200)
             .Extract().Body("$.Places[0:].IsCapital");
 
-            Assert.That(placeNames.Count, NUnit.Framework.Is.EqualTo(2));
+            Assert.That(placeNames.Count, Is.EqualTo(2));
         }
 
         /// <summary>
@@ -126,7 +126,7 @@ namespace RestAssured.Net.Tests
         {
             this.CreateStubForJsonResponseWithBodyAndHeaders();
 
-            var ae = Assert.Throws<RestAssured.Net.RA.Exceptions.AssertionException>(() =>
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
                 .When()
@@ -136,7 +136,7 @@ namespace RestAssured.Net.Tests
                 .Extract().Body("$.Places[0].DoesNotExist");
             });
 
-            Assert.That(ae.Message, NUnit.Framework.Is.EqualTo("JsonPath expression '$.Places[0].DoesNotExist' did not yield any results."));
+            Assert.That(rve.Message, Is.EqualTo("JsonPath expression '$.Places[0].DoesNotExist' did not yield any results."));
         }
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace RestAssured.Net.Tests
             .StatusCode(200)
             .Extract().Header("custom_header");
 
-            Assert.That(responseHeaderValue, NUnit.Framework.Is.EqualTo("custom_header_value"));
+            Assert.That(responseHeaderValue, Is.EqualTo("custom_header_value"));
         }
 
         /// <summary>
@@ -167,7 +167,7 @@ namespace RestAssured.Net.Tests
         {
             this.CreateStubForJsonResponseWithBodyAndHeaders();
 
-            var ee = Assert.Throws<RestAssured.Net.RA.Exceptions.ExtractionException>(() =>
+            var ee = Assert.Throws<ExtractionException>(() =>
             {
                 Given()
                 .When()
@@ -177,7 +177,7 @@ namespace RestAssured.Net.Tests
                 .Extract().Header("does_not_exist");
             });
 
-            Assert.That(ee.Message, NUnit.Framework.Is.EqualTo("Header with name 'does_not_exist' could not be found in the response."));
+            Assert.That(ee.Message, Is.EqualTo("Header with name 'does_not_exist' could not be found in the response."));
         }
 
         /// <summary>
@@ -196,8 +196,8 @@ namespace RestAssured.Net.Tests
             .StatusCode(200)
             .Extract().Response();
 
-            Assert.That(response.StatusCode, NUnit.Framework.Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(response.Headers.GetValues("custom_header").First(), NUnit.Framework.Is.EqualTo("custom_header_value"));
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(response.Headers.GetValues("custom_header").First(), Is.EqualTo("custom_header_value"));
         }
 
         /// <summary>

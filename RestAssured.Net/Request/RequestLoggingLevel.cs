@@ -1,4 +1,4 @@
-﻿// <copyright file="DeserializationException.cs" company="On Test Automation">
+﻿// <copyright file="RequestLoggingLevel.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,31 +13,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-
-using System;
-
-namespace RestAssured.Net.RA.Exceptions
+namespace RestAssured.Request
 {
     /// <summary>
-    /// An exception to be thrown whenever response deserialization fails.
+    /// Contains the different logging levels for request logging.
     /// </summary>
-    public class DeserializationException : Exception
+    public enum RequestLoggingLevel
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DeserializationException"/> class.
+        /// Nothing will be logged to the console.
         /// </summary>
-        public DeserializationException()
-            : base()
-        {
-        }
+        None = 0,
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DeserializationException"/> class.
+        /// The HTTP method and the endpoint will be logged to the console.
         /// </summary>
-        /// <param name="message">The message to assign to the exception being thrown.</param>
-        public DeserializationException(string? message)
-            : base(message)
-        {
-        }
+        Endpoint = 1,
+
+        /// <summary>
+        /// Request headers will be logged to the console.
+        /// </summary>
+        Headers = 2,
+
+        /// <summary>
+        /// Request body will be logged to the console.
+        /// </summary>
+        Body = 3,
+
+        /// <summary>
+        /// All request details will be logged to the console.
+        /// </summary>
+        All = 4,
     }
 }

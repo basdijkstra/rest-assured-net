@@ -13,15 +13,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-
-using Newtonsoft.Json.Schema;
-using NUnit.Framework;
-using WireMock.RequestBuilders;
-using WireMock.ResponseBuilders;
-using static RestAssuredNet.RestAssuredNet;
-
-namespace RestAssured.Net.Tests
+namespace RestAssured.Tests
 {
+    using Newtonsoft.Json.Schema;
+    using NUnit.Framework;
+    using RestAssured.Response.Exceptions;
+    using WireMock.RequestBuilders;
+    using WireMock.ResponseBuilders;
+    using static RestAssured.Client;
+
     /// <summary>
     /// Examples of RestAssuredNet usage.
     /// </summary>
@@ -77,7 +77,7 @@ namespace RestAssured.Net.Tests
         {
             this.CreateStubForJsonSchemaValidationMismatch();
 
-            var ae = Assert.Throws<RestAssured.Net.RA.Exceptions.AssertionException>(() =>
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
                 .When()
@@ -88,7 +88,7 @@ namespace RestAssured.Net.Tests
                 .MatchesJsonSchema(this.jsonSchema);
             });
 
-            Assert.That(ae.Message, Does.Contain("Response body did not match JSON schema supplied: Invalid type. Expected String but got Integer."));
+            Assert.That(rve.Message, Does.Contain("Response body did not match JSON schema supplied: Invalid type. Expected String but got Integer."));
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace RestAssured.Net.Tests
         {
             this.CreateStubForJsonSchemaValidationMismatch();
 
-            var rve = Assert.Throws<RestAssured.Net.RA.Exceptions.ResponseVerificationException>(() =>
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
                 .When()
@@ -121,7 +121,7 @@ namespace RestAssured.Net.Tests
         {
             this.CreateStubForJsonSchemaUnexpectedResponseContentType();
 
-            var rve = Assert.Throws<RestAssured.Net.RA.Exceptions.ResponseVerificationException>(() =>
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
                 .When()

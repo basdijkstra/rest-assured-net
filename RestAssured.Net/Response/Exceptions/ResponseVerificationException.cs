@@ -1,4 +1,4 @@
-﻿// <copyright file="RequestCreationException.cs" company="On Test Automation">
+﻿// <copyright file="ResponseVerificationException.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,28 +13,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-namespace RestAssured.Net.RA.Exceptions
+namespace RestAssured.Response.Exceptions
 {
     using System;
 
     /// <summary>
-    /// An exception to be thrown whenever creation of a suitable request fails.
+    /// An exception to be thrown whenever validation of a response fails for technical reasons.
     /// </summary>
-    public class RequestCreationException : Exception
+    public class ResponseVerificationException : Exception
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RequestCreationException"/> class.
+        /// Initializes a new instance of the <see cref="ResponseVerificationException"/> class.
         /// </summary>
-        public RequestCreationException()
+        public ResponseVerificationException()
             : base()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RequestCreationException"/> class.
+        /// Initializes a new instance of the <see cref="ResponseVerificationException"/> class.
         /// </summary>
         /// <param name="message">The message to assign to the exception being thrown.</param>
-        public RequestCreationException(string? message)
+        public ResponseVerificationException(string? message)
             : base(message)
         {
         }

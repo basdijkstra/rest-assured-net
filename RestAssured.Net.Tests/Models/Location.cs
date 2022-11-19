@@ -13,10 +13,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-using System.Collections.Generic;
-
-namespace RestAssured.Net.Tests.Models
+namespace RestAssured.Tests.Models
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// A POCO representing a location on earth.
     /// </summary>

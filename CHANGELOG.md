@@ -7,7 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
-Thanks to [@appie2go](https://github.com/appie2go) for PR [#34](https://github.com/basdijkstra/rest-assured-net/pull/34), which contains quite a few improvements to the code.
+#### Changed
+
+- (BREAKING CHANGE) Changed class and namespace structure to follow 'folder-by-feature' structure. Please use `using static RestAssured.Client;` to start writing tests with RestAssured.Net from this release onwards.
+
+Thanks to [@appie2go](https://github.com/appie2go) for PRs [#34](https://github.com/basdijkstra/rest-assured-net/pull/34) and [#37](https://github.com/basdijkstra/rest-assured-net/pull/37), which contain quite a few improvements to the code, as well as for your other suggestions on improving 
 
 ### [1.2.0] - 2022-11-17
 

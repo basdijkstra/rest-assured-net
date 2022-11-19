@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-namespace RestAssured.Net.RA.Builders
+namespace RestAssured.Request.Builders
 {
     using System;
     using System.Collections.Generic;
@@ -97,6 +97,9 @@ namespace RestAssured.Net.RA.Builders
         /// <param name="userAgent">The user agent to use for this request.</param>
         /// <param name="proxy">The proxy to use for this request.</param>
         /// <param name="headers">The headers to add to this request.</param>
+        /// <param name="authenticationHeader">The authentication header to add to this request.</param>
+        /// <param name="contentType">The Content-Type header value to set for this request.</param>
+        /// <param name="contentEncoding">The content encoding to use in this request.</param>
         /// <param name="useRelaxedHttpsValidation">Flag indicating whether or not to disable SSL checks.</param>
         public RequestSpecification(string scheme, string host, int port, string basePath, TimeSpan? timeout, ProductInfoHeaderValue? userAgent, IWebProxy proxy, Dictionary<string, object> headers, AuthenticationHeaderValue authenticationHeader, string contentType, Encoding contentEncoding, bool useRelaxedHttpsValidation)
         {

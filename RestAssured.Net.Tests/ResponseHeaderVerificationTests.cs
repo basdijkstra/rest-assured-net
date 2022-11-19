@@ -13,14 +13,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-
-using NUnit.Framework;
-using WireMock.RequestBuilders;
-using WireMock.ResponseBuilders;
-using static RestAssuredNet.RestAssuredNet;
-
-namespace RestAssured.Net.Tests
+namespace RestAssured.Tests
 {
+    using NUnit.Framework;
+    using RestAssured.Response.Exceptions;
+    using WireMock.RequestBuilders;
+    using WireMock.ResponseBuilders;
+    using static RestAssured.Client;
+
     /// <summary>
     /// Examples of RestAssuredNet usage.
     /// </summary>
@@ -71,7 +71,7 @@ namespace RestAssured.Net.Tests
         {
             this.CreateStubForCustomSingleResponseHeader();
 
-            var ae = Assert.Throws<RestAssured.Net.RA.Exceptions.AssertionException>(() =>
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
                 .When()
@@ -81,7 +81,7 @@ namespace RestAssured.Net.Tests
                 .Header("header_does_not_exist", "custom_header_value");
             });
 
-            Assert.That(ae.Message, Is.EqualTo("Expected header with name 'header_does_not_exist' to be in the response, but it could not be found."));
+            Assert.That(rve.Message, Is.EqualTo("Expected header with name 'header_does_not_exist' to be in the response, but it could not be found."));
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace RestAssured.Net.Tests
         {
             this.CreateStubForCustomSingleResponseHeader();
 
-            var ae = Assert.Throws<RestAssured.Net.RA.Exceptions.AssertionException>(() =>
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
                 .When()
@@ -103,7 +103,7 @@ namespace RestAssured.Net.Tests
                 .Header("custom_header_name", "value_does_not_match");
             });
 
-            Assert.That(ae.Message, Is.EqualTo("Expected value for response header with name 'custom_header_name' to be 'value_does_not_match', but was 'custom_header_value'."));
+            Assert.That(rve.Message, Is.EqualTo("Expected value for response header with name 'custom_header_name' to be 'value_does_not_match', but was 'custom_header_value'."));
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace RestAssured.Net.Tests
         {
             this.CreateStubForCustomSingleResponseHeader();
 
-            var ae = Assert.Throws<RestAssured.Net.RA.Exceptions.AssertionException>(() =>
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
                 .When()
@@ -125,7 +125,7 @@ namespace RestAssured.Net.Tests
                 .Header("custom_header_name", NHamcrest.Contains.String("not_found"));
             });
 
-            Assert.That(ae.Message, Is.EqualTo("Expected value for response header with name 'custom_header_name' to match 'a string containing \"not_found\"', but was 'custom_header_value'."));
+            Assert.That(rve.Message, Is.EqualTo("Expected value for response header with name 'custom_header_name' to match 'a string containing \"not_found\"', but was 'custom_header_value'."));
         }
 
         /// <summary>
@@ -189,7 +189,7 @@ namespace RestAssured.Net.Tests
         {
             this.CreateStubForCustomResponseContentTypeHeader();
 
-            var ae = Assert.Throws<RestAssured.Net.RA.Exceptions.AssertionException>(() =>
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
                 .When()
@@ -199,7 +199,7 @@ namespace RestAssured.Net.Tests
                 .ContentType("application/something_else");
             });
 
-            Assert.That(ae.Message, Is.EqualTo("Expected value for response Content-Type header to be 'application/something_else', but was 'application/something'."));
+            Assert.That(rve.Message, Is.EqualTo("Expected value for response Content-Type header to be 'application/something_else', but was 'application/something'."));
         }
 
         /// <summary>
@@ -211,7 +211,7 @@ namespace RestAssured.Net.Tests
         {
             this.CreateStubForCustomResponseContentTypeHeader();
 
-            var ae = Assert.Throws<RestAssured.Net.RA.Exceptions.AssertionException>(() =>
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
                 .When()
@@ -221,7 +221,7 @@ namespace RestAssured.Net.Tests
                 .ContentType(NHamcrest.Contains.String("not_found"));
             });
 
-            Assert.That(ae.Message, Is.EqualTo("Expected value for response Content-Type header to match 'a string containing \"not_found\"', but was 'application/something'."));
+            Assert.That(rve.Message, Is.EqualTo("Expected value for response Content-Type header to match 'a string containing \"not_found\"', but was 'application/something'."));
         }
 
         /// <summary>

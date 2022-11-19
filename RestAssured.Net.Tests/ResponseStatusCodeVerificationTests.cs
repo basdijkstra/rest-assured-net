@@ -13,15 +13,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-
-using System.Net;
-using NUnit.Framework;
-using WireMock.RequestBuilders;
-using WireMock.ResponseBuilders;
-using static RestAssuredNet.RestAssuredNet;
-
-namespace RestAssured.Net.Tests
+namespace RestAssured.Tests
 {
+    using System.Net;
+    using NUnit.Framework;
+    using RestAssured.Response.Exceptions;
+    using WireMock.RequestBuilders;
+    using WireMock.ResponseBuilders;
+    using static RestAssured.Client;
+
     /// <summary>
     /// Examples of RestAssuredNet usage.
     /// </summary>
@@ -119,7 +119,7 @@ namespace RestAssured.Net.Tests
         {
             this.CreateStubForHttpOK();
 
-            var ae = Assert.Throws<RestAssured.Net.RA.Exceptions.AssertionException>(() =>
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
                 .When()
@@ -128,7 +128,7 @@ namespace RestAssured.Net.Tests
                 .StatusCode(NHamcrest.Is.GreaterThan(300));
             });
 
-            Assert.That(ae.Message, Is.EqualTo("Expected response status code to match 'greater than 300', but was 200"));
+            Assert.That(rve.Message, Is.EqualTo("Expected response status code to match 'greater than 300', but was 200"));
         }
 
         /// <summary>
