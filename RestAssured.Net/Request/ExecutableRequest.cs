@@ -249,6 +249,21 @@ namespace RestAssured.Request
         }
 
         /// <summary>
+        /// Forms a GraphQL request to be POSTed to a GraphQL API endpoint.
+        /// </summary>
+        /// <param name="graphQLRequest">The <see cref="GraphQLRequest"/> object to use in constructing the request.</param>
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest GraphQL(GraphQLRequest graphQLRequest)
+        {
+            this.contentTypeHeader = "application/json";
+            this.requestBody = new
+            {
+                query = graphQLRequest.Query,
+            };
+            return this;
+        }
+
+        /// <summary>
         /// Used to set a custom timeout for the request.
         /// </summary>
         /// <param name="timeout">The duration of the custom timeout as a <see cref="TimeSpan"/>.</param>
