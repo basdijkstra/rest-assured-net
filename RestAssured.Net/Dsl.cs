@@ -1,4 +1,4 @@
-﻿// <copyright file="Client.cs" company="On Test Automation">
+﻿// <copyright file="Dsl.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@ namespace RestAssured
     /// <summary>
     /// Entry point to the RestAssured code and writing tests for HTTP-based APIs.
     /// </summary>
-    public class Client
+    public class Dsl
     {
         /// <summary>
         /// Used to start writing a new test.

@@ -25,7 +25,7 @@ namespace RestAssured.Tests
     using RestAssured.Tests.Models;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
-    using static RestAssured.Client;
+    using static RestAssured.Dsl;
 
     /// <summary>
     /// Examples of RestAssuredNet usage.

@@ -19,7 +19,7 @@ namespace RestAssured.Tests
     using NUnit.Framework;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
-    using static RestAssured.Client;
+    using static RestAssured.Dsl;
 
     /// <summary>
     /// Examples of RestAssuredNet usage.
