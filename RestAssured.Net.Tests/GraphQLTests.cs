@@ -45,14 +45,11 @@ namespace RestAssured.Tests
                 .Build();
 
             Given()
-            .Log().All()
             .GraphQL(request)
             .When()
             .Post("http://localhost:9876/simple-graphql")
             .Then()
-            .Log().All()
             .StatusCode(200)
-            .And()
             .Body("$.data.company.name", NHamcrest.Is.EqualTo("SpaceX"));
         }
 
