@@ -28,6 +28,11 @@ namespace RestAssured.Request.Builders
         public string Query { get; set; }
 
         /// <summary>
+        /// The operation name to use when submitting a parameterized GraphQL request.
+        /// </summary>
+        public string OperationName { get; set; }
+
+        /// <summary>
         /// The variables to be used when submitting a parameterized GraphQL request.
         /// </summary>
         public Dictionary<string, object> Variables { get; set; } = new Dictionary<string, object>();
@@ -36,10 +41,12 @@ namespace RestAssured.Request.Builders
         /// Initializes a new instance of the <see cref="GraphQLRequest"/> class.
         /// </summary>
         /// <param name="query">The GraphQL query to use in this request.</param>
+        /// <param name="operationName">The operation name to use in this request.</param>
         /// <param name="variables">The variables to use in the GraphQL query.</param>
-        public GraphQLRequest(string query, Dictionary<string, object> variables)
+        public GraphQLRequest(string query, string operationName, Dictionary<string, object> variables)
         {
             this.Query = query;
+            this.OperationName = operationName;
             this.Variables = variables;
         }
     }

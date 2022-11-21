@@ -78,10 +78,13 @@ namespace RestAssured.Tests
 
             GraphQLRequest request = new GraphQLRequestBuilder()
                 .WithQuery(this.parameterizedQuery)
+                .WithOperationName("getRocketData")
                 .WithVariables(variables)
                 .Build();
 
             Given()
+            .Log().All()
+            .RelaxedHttpsValidation()
             .GraphQL(request)
             .When()
             .Post("http://localhost:9876/graphql-with-variables")
@@ -98,6 +101,7 @@ namespace RestAssured.Tests
             var expectedQuery = new
             {
                 query = this.simpleQuery,
+                operationName = string.Empty,
                 variables = new { },
             };
 
@@ -129,6 +133,7 @@ namespace RestAssured.Tests
             var expectedQuery = new
             {
                 query = this.parameterizedQuery,
+                operationName = "getRocketData",
                 variables = new
                 {
                     id = "falcon1",

@@ -25,6 +25,7 @@ namespace RestAssured.Request.Builders
         private readonly GraphQLRequest graphQLRequest;
 
         private readonly string query = string.Empty;
+        private readonly string operationName = string.Empty;
         private readonly Dictionary<string, object> variables = new Dictionary<string, object>();
 
         /// <summary>
@@ -32,7 +33,7 @@ namespace RestAssured.Request.Builders
         /// </summary>
         public GraphQLRequestBuilder()
         {
-            this.graphQLRequest = new GraphQLRequest(this.query, this.variables);
+            this.graphQLRequest = new GraphQLRequest(this.query, this.operationName, this.variables);
         }
 
         /// <summary>
@@ -43,6 +44,17 @@ namespace RestAssured.Request.Builders
         public GraphQLRequestBuilder WithQuery(string query)
         {
             this.graphQLRequest.Query = query;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the operation name on the <see cref="GraphQLRequest"/> to build.
+        /// </summary>
+        /// <param name="operationName">The operation name to use in the request.</param>
+        /// <returns>The current <see cref="GraphQLRequestBuilder"/> object.</returns>
+        public GraphQLRequestBuilder WithOperationName(string operationName)
+        {
+            this.graphQLRequest.OperationName = operationName;
             return this;
         }
 
