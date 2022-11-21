@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+#### Added
+
+- Added support for sending simple and parameterized GraphQL queries using a GraphQLRequest object and builder ([#38](https://github.com/basdijkstra/rest-assured-net/issues/38))
+
 ### [2.0.0] - 2022-11-20
 
 #### Changed
