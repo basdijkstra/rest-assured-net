@@ -15,23 +15,32 @@
 // </copyright>
 namespace RestAssured.Request.Builders
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Class containing properties for creating a GraphQL API request.
     /// </summary>
     public class GraphQLRequest
     {
         /// <summary>
-        /// The GraphQL query to be used when sending the request
+        /// The GraphQL query to be used when sending the request.
         /// </summary>
         public string Query { get; set; }
+
+        /// <summary>
+        /// The variables to be used when submitting a parameterized GraphQL request.
+        /// </summary>
+        public Dictionary<string, object> Variables { get; set; } = new Dictionary<string, object>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GraphQLRequest"/> class.
         /// </summary>
         /// <param name="query">The GraphQL query to use in this request.</param>
-        public GraphQLRequest(string query)
+        /// <param name="variables">The variables to use in the GraphQL query.</param>
+        public GraphQLRequest(string query, Dictionary<string, object> variables)
         {
             this.Query = query;
+            this.Variables = variables;
         }
     }
 }

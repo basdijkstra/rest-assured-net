@@ -259,6 +259,7 @@ namespace RestAssured.Request
             this.requestBody = new
             {
                 query = graphQLRequest.Query,
+                variables = graphQLRequest.Variables,
             };
             return this;
         }

@@ -15,6 +15,7 @@
 // </copyright>
 namespace RestAssured.Tests
 {
+    using System.Collections.Generic;
     using System.Net;
     using NUnit.Framework;
     using RestAssured.Request.Builders;
@@ -31,14 +32,22 @@ namespace RestAssured.Tests
     {
         private readonly string simpleQuery = "{ company { name ceo } }";
 
+        private readonly string parameterizedQuery = @"query getRocketData($id: ID!)
+            {
+                rocket(id: $id) {
+                    name
+                    country
+                }
+            }";
+
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for sending
-        /// a request to a GraphQL API.
+        /// a simple (non-parameterized) request to a GraphQL API.
         /// </summary>
         [Test]
-        public void GraphQLQueryCanBeSupplied()
+        public void SimpleGraphQLQueryCanBeSupplied()
         {
-            this.CreateStubForNonParameterizedGraphQLQuery();
+            this.CreateStubForSimpleGraphQLQuery();
 
             GraphQLRequest request = new GraphQLRequestBuilder()
                 .WithQuery(this.simpleQuery)
@@ -54,13 +63,42 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for sending
+        /// a parameterized request to a GraphQL API.
+        /// </summary>
+        [Test]
+        public void ParameterizedGraphQLQueryCanBeSupplied()
+        {
+            this.CreateStubForGraphQLQueryWithVariables();
+
+            Dictionary<string, object> variables = new Dictionary<string, object>
+            {
+                { "id", "falcon1" },
+            };
+
+            GraphQLRequest request = new GraphQLRequestBuilder()
+                .WithQuery(this.parameterizedQuery)
+                .WithVariables(variables)
+                .Build();
+
+            Given()
+            .GraphQL(request)
+            .When()
+            .Post("http://localhost:9876/graphql-with-variables")
+            .Then()
+            .StatusCode(200)
+            .Body("$.data.rocket.country", NHamcrest.Is.EqualTo("Republic of the Marshall Islands"));
+        }
+
+        /// <summary>
         /// Creates the stub response for the simple GraphQL example.
         /// </summary>
-        private void CreateStubForNonParameterizedGraphQLQuery()
+        private void CreateStubForSimpleGraphQLQuery()
         {
             var expectedQuery = new
             {
                 query = this.simpleQuery,
+                variables = new { },
             };
 
             var response = new
@@ -76,6 +114,40 @@ namespace RestAssured.Tests
             };
 
             this.Server.Given(Request.Create().WithPath("/simple-graphql").UsingPost()
+                .WithBody(new JsonMatcher(expectedQuery)))
+                .RespondWith(Response.Create()
+                .WithStatusCode(200)
+                .WithHeader("Content-Type", "application/json")
+                .WithBodyAsJson(response));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the simple GraphQL example.
+        /// </summary>
+        private void CreateStubForGraphQLQueryWithVariables()
+        {
+            var expectedQuery = new
+            {
+                query = this.parameterizedQuery,
+                variables = new
+                {
+                    id = "falcon1",
+                },
+            };
+
+            var response = new
+            {
+                data = new
+                {
+                    rocket = new
+                    {
+                        name = "Falcon 1",
+                        country = "Republic of the Marshall Islands",
+                    },
+                },
+            };
+
+            this.Server.Given(Request.Create().WithPath("/graphql-with-variables").UsingPost()
                 .WithBody(new JsonMatcher(expectedQuery)))
                 .RespondWith(Response.Create()
                 .WithStatusCode(200)

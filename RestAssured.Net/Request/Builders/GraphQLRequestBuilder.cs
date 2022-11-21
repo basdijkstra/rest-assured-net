@@ -15,6 +15,8 @@
 // </copyright>
 namespace RestAssured.Request.Builders
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// A builder class to construct a new instance of the <see cref="GraphQLRequest"/> class.
     /// </summary>
@@ -23,13 +25,14 @@ namespace RestAssured.Request.Builders
         private readonly GraphQLRequest graphQLRequest;
 
         private readonly string query = string.Empty;
+        private readonly Dictionary<string, object> variables = new Dictionary<string, object>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GraphQLRequestBuilder"/> class.
         /// </summary>
         public GraphQLRequestBuilder()
         {
-            this.graphQLRequest = new GraphQLRequest(this.query);
+            this.graphQLRequest = new GraphQLRequest(this.query, this.variables);
         }
 
         /// <summary>
@@ -40,6 +43,17 @@ namespace RestAssured.Request.Builders
         public GraphQLRequestBuilder WithQuery(string query)
         {
             this.graphQLRequest.Query = query;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the variables to use in the <see cref="GraphQLRequest"/> query.
+        /// </summary>
+        /// <param name="variables">The variables to use in the query sent in the request.</param>
+        /// <returns>The current <see cref="GraphQLRequestBuilder"/> object.</returns>
+        public GraphQLRequestBuilder WithVariables(Dictionary<string, object> variables)
+        {
+            this.graphQLRequest.Variables = variables;
             return this;
         }
 
