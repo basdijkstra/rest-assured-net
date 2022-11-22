@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added support for sending simple and parameterized GraphQL queries using a GraphQLRequest object and builder ([#38](https://github.com/basdijkstra/rest-assured-net/issues/38))
 
+#### Updated
+
+- Version bumps for NHamcrest (main project) and NUnit3TestAdapter (test project)
+
 ### [2.0.0] - 2022-11-20
 
 #### Changed
