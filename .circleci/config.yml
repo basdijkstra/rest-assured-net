@@ -19,7 +19,8 @@ jobs:
           name: "Run tests"
           command: dotnet.exe test /p:SkipNet7=True --collect:"XPlat Code Coverage"
       - store_artifacts:
-          path: /RestAssured.Net.Tests/**/coverage.cobertura.xml
+          path: RestAssured.Net.Tests/**/coverage.cobertura.xml
+          destination: code_coverage.xml
           
 workflows:
   run-rest-assured-net-tests:
