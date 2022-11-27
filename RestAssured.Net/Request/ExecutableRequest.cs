@@ -255,7 +255,6 @@ namespace RestAssured.Request
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
         public ExecutableRequest GraphQL(GraphQLRequest graphQLRequest)
         {
-            this.contentTypeHeader = "application/json";
             this.requestBody = new
             {
                 query = graphQLRequest.Query,

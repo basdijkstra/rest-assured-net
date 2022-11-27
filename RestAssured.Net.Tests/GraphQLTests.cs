@@ -16,7 +16,6 @@
 namespace RestAssured.Tests
 {
     using System.Collections.Generic;
-    using System.Net;
     using NUnit.Framework;
     using RestAssured.Request.Builders;
     using WireMock.Matchers;
@@ -83,9 +82,8 @@ namespace RestAssured.Tests
                 .Build();
 
             Given()
-            .Log().All()
-            .RelaxedHttpsValidation()
             .GraphQL(request)
+            .ContentType("application/graphql+json")
             .When()
             .Post("http://localhost:9876/graphql-with-variables")
             .Then()
@@ -118,6 +116,7 @@ namespace RestAssured.Tests
             };
 
             this.Server.Given(Request.Create().WithPath("/simple-graphql").UsingPost()
+                .WithHeader("Content-Type", "application/json; charset=utf-8")
                 .WithBody(new JsonMatcher(expectedQuery)))
                 .RespondWith(Response.Create()
                 .WithStatusCode(200)
@@ -153,6 +152,7 @@ namespace RestAssured.Tests
             };
 
             this.Server.Given(Request.Create().WithPath("/graphql-with-variables").UsingPost()
+                .WithHeader("Content-Type", "application/graphql+json; charset=utf-8")
                 .WithBody(new JsonMatcher(expectedQuery)))
                 .RespondWith(Response.Create()
                 .WithStatusCode(200)
