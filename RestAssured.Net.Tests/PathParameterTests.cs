@@ -69,9 +69,11 @@ namespace RestAssured.Tests
         [Test]
         public void MultiplePathParameterCanBeSpecifiedUsingADictionary()
         {
-            Dictionary<string, object> pathParams = new Dictionary<string, object>();
-            pathParams.Add("userid", 1);
-            pathParams.Add("accountid", "NL1234");
+            Dictionary<string, object> pathParams = new Dictionary<string, object>
+            {
+                { "userid", 1 },
+                { "accountid", "NL1234" },
+            };
 
             this.CreateStubForMultiplePathParameters();
 
