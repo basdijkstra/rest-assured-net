@@ -15,7 +15,9 @@
 // </copyright>
 namespace RestAssured
 {
+    using RestAssured.Configuration;
     using RestAssured.Request;
+    using System.Runtime.CompilerServices;
 
     /// <summary>
     /// Entry point to the RestAssured code and writing tests for HTTP-based APIs.
@@ -23,12 +25,17 @@ namespace RestAssured
     public class Dsl
     {
         /// <summary>
+        /// Global RestAssured.Net configuration object.
+        /// </summary>
+        public static RestAssuredConfiguration RestAssuredConfig { get; set; } = new RestAssuredConfiguration();
+
+        /// <summary>
         /// Used to start writing a new test.
         /// </summary>
         /// <returns>A <see cref="ExecutableRequest"/> object containing all relevant request properties.</returns>
         public static ExecutableRequest Given()
         {
-            return new ExecutableRequest();
+            return new ExecutableRequest(RestAssuredConfig);
         }
     }
 }

@@ -17,6 +17,7 @@ namespace RestAssured.Request
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.Contracts;
     using System.IO;
     using System.Linq;
     using System.Net;
@@ -27,6 +28,7 @@ namespace RestAssured.Request
     using System.Xml.Serialization;
     using Microsoft.AspNetCore.WebUtilities;
     using Newtonsoft.Json;
+    using RestAssured.Configuration;
     using RestAssured.Request.Builders;
     using RestAssured.Request.Exceptions;
     using RestAssured.Request.Logging;
@@ -61,8 +63,11 @@ namespace RestAssured.Request
         /// <summary>
         /// Initializes a new instance of the <see cref="ExecutableRequest"/> class.
         /// </summary>
-        public ExecutableRequest()
+        /// <param name="config">The <see cref="RestAssuredConfiguration"/> to use for all requests.</param>
+        public ExecutableRequest(RestAssuredConfiguration config)
         {
+            Console.WriteLine($"Use relaxed HTTPS validation: {config.UseRelaxedHttpsValidation}");
+            this.relaxedHttpsValidation = config.UseRelaxedHttpsValidation;
         }
 
         /// <summary>
