@@ -87,9 +87,11 @@ namespace RestAssured.Tests
         [Test]
         public void MultipleQueryParametersCanBeSpecifiedUsingADictionary()
         {
-            Dictionary<string, object> queryParams = new Dictionary<string, object>();
-            queryParams.Add("name", "john");
-            queryParams.Add("id", 12345);
+            Dictionary<string, object> queryParams = new Dictionary<string, object>
+            {
+                { "name", "john" },
+                { "id", 12345 },
+            };
 
             this.CreateStubForMultipleQueryParameters();
 
@@ -108,9 +110,11 @@ namespace RestAssured.Tests
         [Test]
         public void SpecifyingTheSameQueryParametersMoreThanOnceUsingADictionaryIsNotAProblem()
         {
-            Dictionary<string, object> queryParams = new Dictionary<string, object>();
-            queryParams.Add("name", "susan"); // This parameter value will be overwritten
-            queryParams.Add("id", 12345);
+            Dictionary<string, object> queryParams = new Dictionary<string, object>
+            {
+                { "name", "susan" }, // This parameter value will be overwritten
+                { "id", 12345 },
+            };
 
             this.CreateStubForMultipleQueryParameters();
 
