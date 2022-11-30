@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+### [2.1.0] - 2022-11-30
+
 #### Added
 
 - Added support for sending simple and parameterized GraphQL queries using a GraphQLRequest object and builder ([#38](https://github.com/basdijkstra/rest-assured-net/issues/38))
+- Added support for global configuration of SSL check disabling using RestAssuredConfig ([#40](https://github.com/basdijkstra/rest-assured-net/issues/38) by [@mennopot](https://github.com/mennopot))
 
 #### Fixed
 
