@@ -17,7 +17,6 @@ namespace RestAssured.Request
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.Contracts;
     using System.IO;
     using System.Linq;
     using System.Net;
@@ -66,7 +65,6 @@ namespace RestAssured.Request
         /// <param name="config">The <see cref="RestAssuredConfiguration"/> to use for all requests.</param>
         public ExecutableRequest(RestAssuredConfiguration config)
         {
-            Console.WriteLine($"Use relaxed HTTPS validation: {config.UseRelaxedHttpsValidation}");
             this.relaxedHttpsValidation = config.UseRelaxedHttpsValidation;
         }
 
