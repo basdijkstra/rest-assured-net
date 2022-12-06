@@ -57,7 +57,7 @@ namespace RestAssured.Request
         /// <summary>
         /// The request logging level for this request.
         /// </summary>
-        public RequestLoggingLevel RequestLoggingLevel { get; set; }
+        public RequestLogLevel RequestLoggingLevel { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExecutableRequest"/> class.
@@ -66,6 +66,7 @@ namespace RestAssured.Request
         public ExecutableRequest(RestAssuredConfiguration config)
         {
             this.relaxedHttpsValidation = config.UseRelaxedHttpsValidation;
+            this.RequestLoggingLevel = config.RequestLogLevel;
         }
 
         /// <summary>

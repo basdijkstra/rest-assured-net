@@ -44,7 +44,7 @@ namespace RestAssured.Request.Logging
         /// <returns>An <see cref="ExecutableRequest"/> that can be used for further request building and processing.</returns>
         public ExecutableRequest Endpoint()
         {
-            this.executableRequest.RequestLoggingLevel = RequestLoggingLevel.Endpoint;
+            this.executableRequest.RequestLoggingLevel = RequestLogLevel.Endpoint;
             return this.executableRequest;
         }
 
@@ -54,7 +54,7 @@ namespace RestAssured.Request.Logging
         /// <returns>An <see cref="ExecutableRequest"/> that can be used for further request building and processing.</returns>
         public ExecutableRequest Headers()
         {
-            this.executableRequest.RequestLoggingLevel = RequestLoggingLevel.Headers;
+            this.executableRequest.RequestLoggingLevel = RequestLogLevel.Headers;
             return this.executableRequest;
         }
 
@@ -64,7 +64,7 @@ namespace RestAssured.Request.Logging
         /// <returns>An <see cref="ExecutableRequest"/> that can be used for further request building and processing.</returns>
         public ExecutableRequest Body()
         {
-            this.executableRequest.RequestLoggingLevel = RequestLoggingLevel.Body;
+            this.executableRequest.RequestLoggingLevel = RequestLogLevel.Body;
             return this.executableRequest;
         }
 
@@ -74,33 +74,33 @@ namespace RestAssured.Request.Logging
         /// <returns>An <see cref="ExecutableRequest"/> that can be used for further request building and processing.</returns>
         public ExecutableRequest All()
         {
-            this.executableRequest.RequestLoggingLevel = RequestLoggingLevel.All;
+            this.executableRequest.RequestLoggingLevel = RequestLogLevel.All;
             return this.executableRequest;
         }
 
         /// <summary>
-        /// Logs request details to the console at the set <see cref="RequestLoggingLevel"/>.
+        /// Logs request details to the console at the set <see cref="RequestLogLevel"/>.
         /// </summary>
         internal void LogToConsole()
         {
             HttpRequestMessage request = this.executableRequest.GetRequest();
 
-            if (this.executableRequest.RequestLoggingLevel >= RequestLoggingLevel.Endpoint)
+            if (this.executableRequest.RequestLoggingLevel >= RequestLogLevel.Endpoint)
             {
                 Console.WriteLine($"{request.Method} {request.RequestUri}");
             }
 
-            if (this.executableRequest.RequestLoggingLevel == RequestLoggingLevel.Headers)
+            if (this.executableRequest.RequestLoggingLevel == RequestLogLevel.Headers)
             {
                 this.LogHeaders(request);
             }
 
-            if (this.executableRequest.RequestLoggingLevel == RequestLoggingLevel.Body)
+            if (this.executableRequest.RequestLoggingLevel == RequestLogLevel.Body)
             {
                 this.LogBody(request);
             }
 
-            if (this.executableRequest.RequestLoggingLevel == RequestLoggingLevel.All)
+            if (this.executableRequest.RequestLoggingLevel == RequestLogLevel.All)
             {
                 this.LogHeaders(request);
                 this.LogBody(request);

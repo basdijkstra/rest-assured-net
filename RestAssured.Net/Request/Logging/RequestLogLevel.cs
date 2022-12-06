@@ -1,4 +1,4 @@
-﻿// <copyright file="RestAssuredConfiguration.cs" company="On Test Automation">
+﻿// <copyright file="RequestLoggingLevel.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,29 +13,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
-namespace RestAssured.Configuration
-{
-    using RestAssured.Request.Logging;
-    using RestAssured.Response.Logging;
 
+namespace RestAssured.Request.Logging
+{
     /// <summary>
-    /// Contains static method for global RestAssured.Net configuration.
+    /// Contains the different logging levels for request logging.
     /// </summary>
-    public class RestAssuredConfiguration
+    public enum RequestLogLevel
     {
         /// <summary>
-        /// Setting to disable SSL validation for requests.
+        /// Nothing will be logged to the console.
         /// </summary>
-        public bool UseRelaxedHttpsValidation { get; set; } = false;
+        None = 0,
 
         /// <summary>
-        /// Setting to configure request logging level for all tests.
+        /// The HTTP method and the endpoint will be logged to the console.
         /// </summary>
-        public RequestLogLevel RequestLogLevel { get; set; } = RequestLogLevel.None;
+        Endpoint = 1,
 
         /// <summary>
-        /// Setting to configure response logging level for all tests.
+        /// Request headers will be logged to the console.
         /// </summary>
-        public ResponseLogLevel ResponseLogLevel { get; set; } = ResponseLogLevel.None;
+        Headers = 2,
+
+        /// <summary>
+        /// Request body will be logged to the console.
+        /// </summary>
+        Body = 3,
+
+        /// <summary>
+        /// All request details will be logged to the console.
+        /// </summary>
+        All = 4,
     }
 }
