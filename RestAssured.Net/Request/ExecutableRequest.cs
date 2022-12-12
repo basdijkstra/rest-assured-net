@@ -77,6 +77,7 @@ namespace RestAssured.Request
         public ExecutableRequest Spec(RequestSpecification requestSpecification)
         {
             this.requestSpecification = requestSpecification;
+            this.RequestLoggingLevel = requestSpecification.RequestLogLevel;
             return this;
         }
 

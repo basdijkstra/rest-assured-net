@@ -20,6 +20,7 @@ namespace RestAssured.Request.Builders
     using System.Net;
     using System.Net.Http.Headers;
     using System.Text;
+    using RestAssured.Request.Logging;
 
     /// <summary>
     /// A builder class to construct a new instance of the <see cref="RequestSpecification"/> class.
@@ -40,13 +41,14 @@ namespace RestAssured.Request.Builders
         private readonly string? contentTypeHeader = null;
         private readonly Encoding? contentEncoding = null;
         private readonly bool useRelaxedHttpsValidation = false;
+        private readonly RequestLogLevel requestLogLevel = RequestLogLevel.None;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestSpecBuilder"/> class.
         /// </summary>
         public RequestSpecBuilder()
         {
-            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.basePath, this.timeout, this.userAgent, this.proxy, this.headers, this.authenticationHeader, this.contentTypeHeader, this.contentEncoding, this.useRelaxedHttpsValidation);
+            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.basePath, this.timeout, this.userAgent, this.proxy, this.headers, this.authenticationHeader, this.contentTypeHeader, this.contentEncoding, this.useRelaxedHttpsValidation, this.requestLogLevel);
         }
 
         /// <summary>
@@ -203,6 +205,17 @@ namespace RestAssured.Request.Builders
         public RequestSpecBuilder WithRelaxedHttpsValidation()
         {
             this.requestSpecification.UseRelaxedHttpsValidation = true;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the request log level to the specified <see cref="RequestLogLevel"/> value.
+        /// </summary>
+        /// <param name="requestLogLevel">The <see cref="RequestLogLevel"/> to apply to the requests.</param>
+        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
+        public RequestSpecBuilder WithRequestLogLevel(RequestLogLevel requestLogLevel)
+        {
+            this.requestSpecification.RequestLogLevel = requestLogLevel;
             return this;
         }
 

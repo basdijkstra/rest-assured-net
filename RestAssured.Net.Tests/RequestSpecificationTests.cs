@@ -19,6 +19,7 @@ namespace RestAssured.Tests
     using NUnit.Framework;
     using RestAssured.Request.Builders;
     using RestAssured.Request.Exceptions;
+    using RestAssured.Request.Logging;
     using WireMock.Matchers;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
@@ -47,10 +48,11 @@ namespace RestAssured.Tests
                 .WithHostName("localhost")
                 .WithBasePath("api")
                 .WithPort(9876)
+                .WithRequestLogLevel(RequestLogLevel.All)
                 .Build();
 
             this.applyDefaultsRequestSpecification = new RequestSpecBuilder()
-                .WithPort(9876) // We need to set this because the default is 80
+                .WithPort(9876) // We need to set this because the default is 80 / 443
                 .Build();
 
             this.incorrectHostNameSpecification = new RequestSpecBuilder()

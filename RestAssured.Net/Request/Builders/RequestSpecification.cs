@@ -20,6 +20,7 @@ namespace RestAssured.Request.Builders
     using System.Net;
     using System.Net.Http.Headers;
     using System.Text;
+    using RestAssured.Request.Logging;
 
     /// <summary>
     /// Class containing shared properties for requests.
@@ -87,6 +88,11 @@ namespace RestAssured.Request.Builders
         public bool UseRelaxedHttpsValidation { get; set; }
 
         /// <summary>
+        /// The value for the request logging level when sending the request.
+        /// </summary>
+        public RequestLogLevel RequestLogLevel { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="RequestSpecification"/> class.
         /// </summary>
         /// <param name="scheme">The scheme (http, https, ....) to use in this request.</param>
@@ -101,7 +107,8 @@ namespace RestAssured.Request.Builders
         /// <param name="contentType">The Content-Type header value to set for this request.</param>
         /// <param name="contentEncoding">The content encoding to use in this request.</param>
         /// <param name="useRelaxedHttpsValidation">Flag indicating whether or not to disable SSL checks.</param>
-        public RequestSpecification(string scheme, string host, int port, string basePath, TimeSpan? timeout, ProductInfoHeaderValue? userAgent, IWebProxy proxy, Dictionary<string, object> headers, AuthenticationHeaderValue authenticationHeader, string contentType, Encoding contentEncoding, bool useRelaxedHttpsValidation)
+        /// <param name="requestLogLevel">The request log level to use in this request.</param>
+        public RequestSpecification(string scheme, string host, int port, string basePath, TimeSpan? timeout, ProductInfoHeaderValue? userAgent, IWebProxy proxy, Dictionary<string, object> headers, AuthenticationHeaderValue authenticationHeader, string contentType, Encoding contentEncoding, bool useRelaxedHttpsValidation, RequestLogLevel requestLogLevel)
         {
             this.Scheme = scheme;
             this.HostName = host;
@@ -115,6 +122,7 @@ namespace RestAssured.Request.Builders
             this.ContentType = contentType;
             this.ContentEncoding = contentEncoding;
             this.UseRelaxedHttpsValidation = useRelaxedHttpsValidation;
+            this.RequestLogLevel = requestLogLevel;
         }
     }
 }
