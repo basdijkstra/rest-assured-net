@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+#### Updated
+
+- Version bumps for Newtonsoft.Json (main project) and WireMock.Net (test project)
+
 ### [2.1.0] - 2022-11-30
 
 #### Added
