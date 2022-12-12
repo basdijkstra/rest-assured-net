@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+#### Added
+
+- Added support for specifying request log level through the RequestSpecification ([#44](https://github.com/basdijkstra/rest-assured-net/issues/44) by [@Ukrainis](https://github.com/Ukrainis))
+
 #### Updated
 
 - Version bumps for Newtonsoft.Json (main project) and WireMock.Net (test project)
