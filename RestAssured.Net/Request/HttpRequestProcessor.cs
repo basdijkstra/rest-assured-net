@@ -26,7 +26,7 @@ namespace RestAssured.Request
     /// <summary>
     /// The <see cref="HttpRequestProcessor"/> class is responsible for sending HTTP requests.
     /// </summary>
-    public class HttpRequestProcessor : IDisposable
+    internal class HttpRequestProcessor : IDisposable
     {
         private readonly HttpClientHandler handler;
         private readonly HttpClient client;
@@ -34,11 +34,39 @@ namespace RestAssured.Request
         private bool disposed = false;
 
         /// <summary>
+        /// Implements Dispose() method of IDisposable interface.
+        /// </summary>
+        public void Dispose()
+        {
+            // Dispose of unmanaged resources.
+            this.Dispose(true);
+
+            // Suppress finalization.
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Implements Dispose(bool) method of IDisposable interface.
+        /// </summary>
+        /// <param name="disposing">Flag indicating whether objects should be disposed.</param>
+        public virtual void Dispose(bool disposing)
+        {
+            if (this.disposed)
+            {
+                return;
+            }
+
+            this.client.Dispose();
+            this.handler.Dispose();
+            this.disposed = true;
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="HttpRequestProcessor"/> class.
         /// </summary>
         /// <param name="proxy">The <see cref="IWebProxy"/> to set on the <see cref="HttpClientHandler"/> used with the <see cref="HttpClient"/>.</param>
         /// <param name="useRelaxedHttpsValidation">If set to true, SSL check is disabled.</param>
-        public HttpRequestProcessor(IWebProxy? proxy, bool useRelaxedHttpsValidation)
+        internal HttpRequestProcessor(IWebProxy? proxy, bool useRelaxedHttpsValidation)
         {
             this.handler = new HttpClientHandler
             {
@@ -53,7 +81,7 @@ namespace RestAssured.Request
         /// Sets the timeout on the HTTP client to the specified value.
         /// </summary>
         /// <param name="timeout">The timeout to set on the HTTP client.</param>
-        public void SetTimeout(TimeSpan timeout)
+        internal void SetTimeout(TimeSpan timeout)
         {
             this.client.Timeout = timeout;
         }
@@ -65,7 +93,7 @@ namespace RestAssured.Request
         /// <param name="cookieCollection">The <see cref="CookieCollection"/> to add to the request before it is sent.</param>
         /// <returns>The HTTP response.</returns>
         /// <exception cref="HttpRequestProcessorException">Thrown whenever the HTTP request fails.</exception>
-        public async Task<VerifiableResponse> Send(HttpRequestMessage request, CookieCollection cookieCollection)
+        internal async Task<VerifiableResponse> Send(HttpRequestMessage request, CookieCollection cookieCollection)
         {
             foreach (Cookie cookie in cookieCollection)
             {
@@ -93,34 +121,6 @@ namespace RestAssured.Request
             {
                 throw new HttpRequestProcessorException(hre.Message, hre);
             }
-        }
-
-        /// <summary>
-        /// Implements Dispose() method of IDisposable interface.
-        /// </summary>
-        public void Dispose()
-        {
-            // Dispose of unmanaged resources.
-            this.Dispose(true);
-
-            // Suppress finalization.
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Implements Dispose(bool) method of IDisposable interface.
-        /// </summary>
-        /// <param name="disposing">Flag indicating whether objects should be disposed.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (this.disposed)
-            {
-                return;
-            }
-
-            this.client.Dispose();
-            this.handler.Dispose();
-            this.disposed = true;
         }
     }
 }
