@@ -24,7 +24,7 @@ namespace RestAssured.Request
     /// <summary>
     /// Provides utility methods to apply a <see cref="RequestSpecification"/> to an <see cref="HttpRequestMessage"/>.
     /// </summary>
-    public class RequestSpecificationProcessor
+    internal class RequestSpecificationProcessor
     {
         /// <summary>
         /// Builds the Uri using information provided in a request specification.
@@ -33,7 +33,7 @@ namespace RestAssured.Request
         /// <param name="endpoint">The original endpoint as provided by the user.</param>
         /// <returns>A <see cref="Uri"/> to use in the request.</returns>
         /// <exception cref="RequestCreationException">Thrown whenever the Uri cannot be created with the specified information.</exception>
-        public static Uri BuildUriFromRequestSpec(RequestSpecification requestSpec, string endpoint)
+        internal static Uri BuildUriFromRequestSpec(RequestSpecification requestSpec, string endpoint)
         {
             try
             {
@@ -56,7 +56,7 @@ namespace RestAssured.Request
         /// <param name="requestSpec">The <see cref="RequestSpecification"/> to apply.</param>
         /// <param name="request">The <see cref="HttpRequestMessage"/> to apply it to.</param>
         /// <returns>The updated <see cref="HttpRequestMessage"/> object.</returns>
-        public static HttpRequestMessage Apply(RequestSpecification requestSpec, HttpRequestMessage request)
+        internal static HttpRequestMessage Apply(RequestSpecification requestSpec, HttpRequestMessage request)
         {
             if (requestSpec == null)
             {
