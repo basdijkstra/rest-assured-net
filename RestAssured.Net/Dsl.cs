@@ -17,7 +17,6 @@ namespace RestAssured
 {
     using RestAssured.Configuration;
     using RestAssured.Request;
-    using System.Runtime.CompilerServices;
 
     /// <summary>
     /// Entry point to the RestAssured code and writing tests for HTTP-based APIs.
