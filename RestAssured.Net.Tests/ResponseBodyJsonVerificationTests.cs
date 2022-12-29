@@ -65,7 +65,7 @@ namespace RestAssured.Tests
                 .Body("$.Places[0].Name", NHamcrest.Contains.String("Sin"));
             });
 
-            Assert.That(rve.Message, NUnit.Framework.Is.EqualTo("Expected element selected by '$.Places[0].Name' to match 'a string containing \"Sin\"' but was Sun City"));
+            Assert.That(rve?.Message, Is.EqualTo("Expected element selected by '$.Places[0].Name' to match 'a string containing \"Sin\"' but was Sun City"));
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace RestAssured.Tests
                 .Body("$.Places[0].Inhabitants", NHamcrest.Is.GreaterThan(200000));
             });
 
-            Assert.That(rve.Message, NUnit.Framework.Is.EqualTo("Expected element selected by '$.Places[0].Inhabitants' to match 'greater than 200000' but was 100000"));
+            Assert.That(rve?.Message, Is.EqualTo("Expected element selected by '$.Places[0].Inhabitants' to match 'greater than 200000' but was 100000"));
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace RestAssured.Tests
                 .Body("$.Places[0].IsCapital", NHamcrest.Is.False());
             });
 
-            Assert.That(rve.Message, NUnit.Framework.Is.EqualTo("Expected element selected by '$.Places[0].IsCapital' to match 'False' but was True"));
+            Assert.That(rve?.Message, Is.EqualTo("Expected element selected by '$.Places[0].IsCapital' to match 'False' but was True"));
         }
 
         /// <summary>
@@ -165,7 +165,7 @@ namespace RestAssured.Tests
                 .Body("$.Places[0].DoesNotExist", NHamcrest.Is.False());
             });
 
-            Assert.That(rve.Message, NUnit.Framework.Is.EqualTo("JsonPath expression '$.Places[0].DoesNotExist' did not yield any results."));
+            Assert.That(rve?.Message, Is.EqualTo("JsonPath expression '$.Places[0].DoesNotExist' did not yield any results."));
         }
 
         /// <summary>
@@ -204,7 +204,7 @@ namespace RestAssured.Tests
                 .Body("$.Places[0:].Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Atlantis")));
             });
 
-            Assert.That(rve.Message, NUnit.Framework.Is.EqualTo($"Expected elements selected by '$.Places[0:].Name' to match 'a collection containing \"Atlantis\"', but was [Sun City, Pleasure Meadow]"));
+            Assert.That(rve?.Message, Is.EqualTo($"Expected elements selected by '$.Places[0:].Name' to match 'a collection containing \"Atlantis\"', but was [Sun City, Pleasure Meadow]"));
         }
 
         /// <summary>
@@ -234,7 +234,7 @@ namespace RestAssured.Tests
                 Places = new List<Place>() { firstPlace, secondPlace },
             };
 
-            this.Server.Given(Request.Create().WithPath("/json-response-body").UsingGet())
+            this.Server?.Given(Request.Create().WithPath("/json-response-body").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/json")
                 .WithBodyAsJson(location)

@@ -171,7 +171,7 @@ namespace RestAssured.Tests
                 .StatusCode(200);
             });
 
-            Assert.That(rce.Message, Is.EqualTo("Supplied base URI 'http://http://localhost:9876' is invalid."));
+            Assert.That(rce?.Message, Is.EqualTo("Supplied base URI 'http://http://localhost:9876' is invalid."));
         }
 
         /// <summary>
@@ -179,7 +179,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForRequestSpecification()
         {
-            this.Server.Given(Request.Create().WithPath("/api/request-specification").UsingGet())
+            this.Server?.Given(Request.Create().WithPath("/api/request-specification").UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
         }
@@ -189,7 +189,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForRequestSpecificationWithHeaders()
         {
-            this.Server.Given(Request.Create().WithPath("/request-specification-with-headers").UsingGet()
+            this.Server?.Given(Request.Create().WithPath("/request-specification-with-headers").UsingGet()
                 .WithHeader("Content-Type", new ExactMatcher("application/xml; charset=us-ascii"))
                 .WithHeader("Authorization", new ExactMatcher("Basic dXNlcm5hbWU6cGFzc3dvcmQ="))
                 .WithHeader("custom_header", "custom_header_value")
@@ -203,7 +203,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForRequestSpecificationWithOAuth2()
         {
-            this.Server.Given(Request.Create().WithPath("/request-specification-with-oauth2").UsingGet()
+            this.Server?.Given(Request.Create().WithPath("/request-specification-with-oauth2").UsingGet()
                 .WithHeader("Authorization", new ExactMatcher("Bearer this_is_my_token")))
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));

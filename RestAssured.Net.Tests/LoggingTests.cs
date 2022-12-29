@@ -170,7 +170,7 @@ namespace RestAssured.Tests
                 Places = new List<Place>() { firstPlace, secondPlace },
             };
 
-            this.Server.Given(Request.Create().WithPath("/log-json-response").UsingGet())
+            this.Server?.Given(Request.Create().WithPath("/log-json-response").UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200)
                 .WithHeader("Content-Type", "application/json")
@@ -182,7 +182,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForLoggingXmlResponse()
         {
-            this.Server.Given(Request.Create().WithPath("/log-xml-response").UsingGet())
+            this.Server?.Given(Request.Create().WithPath("/log-xml-response").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/xml")
                 .WithBody(this.xmlBody)
@@ -194,7 +194,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForLoggingResponseWithoutBody()
         {
-            this.Server.Given(Request.Create().WithPath("/log-no-response-body").UsingGet())
+            this.Server?.Given(Request.Create().WithPath("/log-no-response-body").UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
         }

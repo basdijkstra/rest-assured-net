@@ -132,7 +132,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForSingleQueryParameter()
         {
-            this.Server.Given(Request.Create()
+            this.Server?.Given(Request.Create()
                 .WithPath("/single-query-param")
                 .WithParam("name", "john")
                 .UsingGet())
@@ -145,7 +145,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForMultipleQueryParameters()
         {
-            this.Server.Given(Request.Create()
+            this.Server?.Given(Request.Create()
                 .WithPath("/multiple-query-params")
                 .WithParam("name", "john")
                 .WithParam("id", "12345")

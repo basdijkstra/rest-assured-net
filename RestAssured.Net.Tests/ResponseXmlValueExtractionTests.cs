@@ -90,7 +90,7 @@ namespace RestAssured.Tests
                 .Extract().Body("//Place/DoesNotExist");
             });
 
-            Assert.That(ee.Message, Is.EqualTo("XPath expression '//Place/DoesNotExist' did not yield any results."));
+            Assert.That(ee?.Message, Is.EqualTo("XPath expression '//Place/DoesNotExist' did not yield any results."));
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForXmlResponseWithBodyAndHeaders()
         {
-            this.Server.Given(Request.Create().WithPath("/xml-response-body").UsingGet())
+            this.Server?.Given(Request.Create().WithPath("/xml-response-body").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/xml")
                 .WithBody(this.xmlBody)

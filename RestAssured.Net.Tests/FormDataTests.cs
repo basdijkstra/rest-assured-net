@@ -56,7 +56,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForFormData()
         {
-            this.Server.Given(Request.Create().WithPath("/form-data").UsingPost()
+            this.Server?.Given(Request.Create().WithPath("/form-data").UsingPost()
                 .WithHeader("Content-Type", "application/x-www-form-urlencoded")
                 .WithBody(new ExactMatcher("name=John+Doe&email=johndoe%40example.com")))
                 .RespondWith(Response.Create()

@@ -136,7 +136,7 @@ namespace RestAssured.Tests
                 .Extract().Body("$.Places[0].DoesNotExist");
             });
 
-            Assert.That(rve.Message, Is.EqualTo("JsonPath expression '$.Places[0].DoesNotExist' did not yield any results."));
+            Assert.That(rve?.Message, Is.EqualTo("JsonPath expression '$.Places[0].DoesNotExist' did not yield any results."));
         }
 
         /// <summary>
@@ -177,7 +177,7 @@ namespace RestAssured.Tests
                 .Extract().Header("does_not_exist");
             });
 
-            Assert.That(ee.Message, Is.EqualTo("Header with name 'does_not_exist' could not be found in the response."));
+            Assert.That(ee?.Message, Is.EqualTo("Header with name 'does_not_exist' could not be found in the response."));
         }
 
         /// <summary>
@@ -227,7 +227,7 @@ namespace RestAssured.Tests
                 Places = new List<Place>() { firstPlace, secondPlace },
             };
 
-            this.Server.Given(Request.Create().WithPath("/json-response-body").UsingGet())
+            this.Server?.Given(Request.Create().WithPath("/json-response-body").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("custom_header", "custom_header_value")
                 .WithHeader("Content-Type", "application/json")

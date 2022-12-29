@@ -100,7 +100,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForUserAgent()
         {
-            this.Server.Given(Request.Create().WithPath("/user-agent").UsingGet()
+            this.Server?.Given(Request.Create().WithPath("/user-agent").UsingGet()
                 .WithHeader("User-Agent", "MyUserAgent/1.0"))
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));

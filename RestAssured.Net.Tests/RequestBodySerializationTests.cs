@@ -168,7 +168,7 @@ namespace RestAssured.Tests
                 .StatusCode(201);
             });
 
-            Assert.That(rce.Message, Is.EqualTo("Could not determine how to serialize request based on specified content type 'application/something'"));
+            Assert.That(rce?.Message, Is.EqualTo("Could not determine how to serialize request based on specified content type 'application/something'"));
         }
 
         /// <summary>
@@ -176,7 +176,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForJsonRequestBody()
         {
-            this.Server.Given(Request.Create().WithPath("/json-serialization").UsingPost()
+            this.Server?.Given(Request.Create().WithPath("/json-serialization").UsingPost()
                 .WithBody(new JsonMatcher(this.expectedSerializedJsonRequestBody)))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));
@@ -187,7 +187,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForObjectSerialization()
         {
-            this.Server.Given(Request.Create().WithPath("/object-serialization").UsingPost()
+            this.Server?.Given(Request.Create().WithPath("/object-serialization").UsingPost()
                 .WithBody(new JsonMatcher(this.expectedSerializedObject)))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));
@@ -198,7 +198,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForXmlRequestBody()
         {
-            this.Server.Given(Request.Create().WithPath("/xml-serialization").UsingPost()
+            this.Server?.Given(Request.Create().WithPath("/xml-serialization").UsingPost()
                 .WithBody(new XPathMatcher("//Places[count(Place) = 2]")))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));

@@ -121,7 +121,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForSingleHeaderValue()
         {
-            this.Server.Given(Request.Create().WithPath("/single-header-value").UsingGet()
+            this.Server?.Given(Request.Create().WithPath("/single-header-value").UsingGet()
                 .WithHeader("my_header", "my_header_value"))
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
@@ -132,7 +132,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForMultipleHeaderValues()
         {
-            this.Server.Given(Request.Create().WithPath("/multiple-header-values").UsingGet()
+            this.Server?.Given(Request.Create().WithPath("/multiple-header-values").UsingGet()
                 .WithHeader("my_header", "my_header_value_1, my_header_value_2"))
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
@@ -143,7 +143,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForContentTypeHeaderAsString()
         {
-            this.Server.Given(Request.Create().WithPath("/content-type-as-string").UsingPost()
+            this.Server?.Given(Request.Create().WithPath("/content-type-as-string").UsingPost()
                 .WithHeader("Content-Type", new ExactMatcher("application/xml; charset=utf-8")))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));
@@ -154,7 +154,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForEncoding()
         {
-            this.Server.Given(Request.Create().WithPath("/content-type-with-encoding").UsingPost()
+            this.Server?.Given(Request.Create().WithPath("/content-type-with-encoding").UsingPost()
                 .WithHeader("Content-Type", new ExactMatcher("application/xml; charset=us-ascii")))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));
@@ -165,7 +165,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForAcceptHeaderAsString()
         {
-            this.Server.Given(Request.Create().WithPath("/accept-header-as-string").UsingPost()
+            this.Server?.Given(Request.Create().WithPath("/accept-header-as-string").UsingPost()
                 .WithHeader("Accept", new ExactMatcher("application/xml")))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));

@@ -66,7 +66,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForBasicAuthorizationVerification()
         {
-            this.Server.Given(Request.Create().WithPath("/basic-auth").UsingGet()
+            this.Server?.Given(Request.Create().WithPath("/basic-auth").UsingGet()
                 .WithHeader("Authorization", new ExactMatcher("Basic dXNlcm5hbWU6cGFzc3dvcmQ=")))
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
@@ -77,7 +77,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForOAuth2TokenAuthorizationVerification()
         {
-            this.Server.Given(Request.Create().WithPath("/oauth2").UsingGet()
+            this.Server?.Given(Request.Create().WithPath("/oauth2").UsingGet()
                 .WithHeader("Authorization", new ExactMatcher("Bearer this_is_my_token")))
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));

@@ -46,7 +46,7 @@ namespace RestAssured.Tests
             .As(typeof(Location));
 
             Assert.That(responseLocation.Country, Is.EqualTo("United States"));
-            Assert.That(responseLocation.Places.Count, Is.EqualTo(2));
+            Assert.That(responseLocation.Places?.Count, Is.EqualTo(2));
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace RestAssured.Tests
             .As(typeof(Location));
 
             Assert.That(responseLocation.Country, Is.EqualTo("United States"));
-            Assert.That(responseLocation.Places.Count, Is.EqualTo(2));
+            Assert.That(responseLocation.Places?.Count, Is.EqualTo(2));
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace RestAssured.Tests
                 .As(typeof(Location));
             });
 
-            Assert.That(de.Message, Is.EqualTo("Unable to deserialize response with Content-Type 'application/something'"));
+            Assert.That(de?.Message, Is.EqualTo("Unable to deserialize response with Content-Type 'application/something'"));
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace RestAssured.Tests
                 Places = new List<Place>() { firstPlace, secondPlace },
             };
 
-            this.Server.Given(Request.Create().WithPath("/json-deserialization").UsingGet())
+            this.Server?.Given(Request.Create().WithPath("/json-deserialization").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/json")
                 .WithBodyAsJson(location)
@@ -126,7 +126,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForXmlResponseBody()
         {
-            this.Server.Given(Request.Create().WithPath("/xml-deserialization").UsingGet())
+            this.Server?.Given(Request.Create().WithPath("/xml-deserialization").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/xml")
                 .WithBody(this.xmlBody)
@@ -138,7 +138,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForXmlResponseBodyWithUnrecognizedContentType()
         {
-            this.Server.Given(Request.Create().WithPath("/xml-deserialization-unrecognized-content-type").UsingGet())
+            this.Server?.Given(Request.Create().WithPath("/xml-deserialization-unrecognized-content-type").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/something")
                 .WithBody(this.xmlBody)

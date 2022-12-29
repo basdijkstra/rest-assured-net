@@ -86,7 +86,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForSingleCookieValue()
         {
-            this.Server.Given(Request.Create().WithPath("/single-cookie-value").UsingGet()
+            this.Server?.Given(Request.Create().WithPath("/single-cookie-value").UsingGet()
                 .WithCookie("my_cookie", "my_cookie_value"))
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));

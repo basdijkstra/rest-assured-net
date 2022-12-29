@@ -88,7 +88,7 @@ namespace RestAssured.Tests
                 .MatchesJsonSchema(this.jsonSchema);
             });
 
-            Assert.That(rve.Message, Does.Contain("Response body did not match JSON schema supplied: Invalid type. Expected String but got Integer."));
+            Assert.That(rve?.Message, Does.Contain("Response body did not match JSON schema supplied: Invalid type. Expected String but got Integer."));
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace RestAssured.Tests
                 .MatchesJsonSchema(this.invalidJsonSchema);
             });
 
-            Assert.That(rve.Message, Does.Contain("Could not parse supplied JSON schema:"));
+            Assert.That(rve?.Message, Does.Contain("Could not parse supplied JSON schema:"));
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace RestAssured.Tests
                 .MatchesJsonSchema(this.jsonSchema);
             });
 
-            Assert.That(rve.Message, Is.EqualTo("Expected response Content-Type header to contain 'json', but was 'application/something'"));
+            Assert.That(rve?.Message, Is.EqualTo("Expected response Content-Type header to contain 'json', but was 'application/something'"));
         }
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace RestAssured.Tests
                 hobbies = new[] { "Running", "Reading", "C#", "Software testing" },
             };
 
-            this.Server.Given(Request.Create().WithPath("/json-schema-validation").UsingGet())
+            this.Server?.Given(Request.Create().WithPath("/json-schema-validation").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/json")
                 .WithBodyAsJson(responseData)
@@ -164,7 +164,7 @@ namespace RestAssured.Tests
                 hobbies = new[] { "Running", "Reading", "C#", "Software testing" },
             };
 
-            this.Server.Given(Request.Create().WithPath("/json-schema-validation-mismatch").UsingGet())
+            this.Server?.Given(Request.Create().WithPath("/json-schema-validation-mismatch").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/json")
                 .WithBodyAsJson(responseData)
@@ -177,7 +177,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForJsonSchemaUnexpectedResponseContentType()
         {
-            this.Server.Given(Request.Create().WithPath("/json-schema-unexpected-content-type").UsingGet())
+            this.Server?.Given(Request.Create().WithPath("/json-schema-unexpected-content-type").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/something")
                 .WithBody("Something")

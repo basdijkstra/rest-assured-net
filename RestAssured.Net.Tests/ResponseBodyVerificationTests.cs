@@ -101,7 +101,7 @@ namespace RestAssured.Tests
                 .Body("This is a different plaintext response body.");
             });
 
-            Assert.That(rve.Message, Is.EqualTo("Actual response body did not match expected response body.\nExpected: This is a different plaintext response body.\nActual: Here's a plaintext response body."));
+            Assert.That(rve?.Message, Is.EqualTo("Actual response body did not match expected response body.\nExpected: This is a different plaintext response body.\nActual: Here's a plaintext response body."));
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace RestAssured.Tests
                 .Body(NHamcrest.Contains.String("Jane Doe"));
             });
 
-            Assert.That(rve.Message, Is.EqualTo($"Actual response body expected to match 'a string containing \"Jane Doe\"' but didn't.\nActual: {this.jsonStringResponseBody}"));
+            Assert.That(rve?.Message, Is.EqualTo($"Actual response body expected to match 'a string containing \"Jane Doe\"' but didn't.\nActual: {this.jsonStringResponseBody}"));
         }
 
         /// <summary>
@@ -145,12 +145,12 @@ namespace RestAssured.Tests
                 .Body("$.Places[0].Name", NHamcrest.Contains.String("City"));
             });
 
-            Assert.That(rve.Message, Is.EqualTo($"Unable to extract elements from response with Content-Type 'application/unknown'"));
+            Assert.That(rve?.Message, Is.EqualTo($"Unable to extract elements from response with Content-Type 'application/unknown'"));
         }
 
         private void CreateStubForPlaintextResponseBody()
         {
-            this.Server.Given(Request.Create().WithPath("/plaintext-response-body").UsingGet())
+            this.Server?.Given(Request.Create().WithPath("/plaintext-response-body").UsingGet())
                 .RespondWith(Response.Create()
                 .WithBody(this.plaintextResponseBody)
                 .WithStatusCode(200));
@@ -161,7 +161,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForJsonStringResponseBody()
         {
-            this.Server.Given(Request.Create().WithPath("/json-string-response-body").UsingGet())
+            this.Server?.Given(Request.Create().WithPath("/json-string-response-body").UsingGet())
                 .RespondWith(Response.Create()
                 .WithBody(this.jsonStringResponseBody)
                 .WithStatusCode(200));
@@ -172,7 +172,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForUnknownContentType()
         {
-            this.Server.Given(Request.Create().WithPath("/content-type-cannot-be-processed").UsingGet())
+            this.Server?.Given(Request.Create().WithPath("/content-type-cannot-be-processed").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/unknown")
                 .WithBody(this.jsonStringResponseBody)

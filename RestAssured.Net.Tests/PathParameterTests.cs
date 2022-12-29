@@ -90,7 +90,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForSinglePathParameter()
         {
-            this.Server.Given(Request.Create()
+            this.Server?.Given(Request.Create()
                 .WithPath("/user/1")
                 .UsingGet())
                 .RespondWith(Response.Create()
@@ -102,7 +102,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForMultiplePathParameters()
         {
-            this.Server.Given(Request.Create()
+            this.Server?.Given(Request.Create()
                 .WithPath("/user/1/account/NL1234")
                 .UsingGet())
                 .RespondWith(Response.Create()

@@ -99,7 +99,7 @@ namespace RestAssured.Tests
                 .Body("//Places[0]/DoesNotExist", NHamcrest.Is.EqualTo("Sun City"));
             });
 
-            Assert.That(rve.Message, Is.EqualTo("XPath expression '//Places[0]/DoesNotExist' did not yield any results."));
+            Assert.That(rve?.Message, Is.EqualTo("XPath expression '//Places[0]/DoesNotExist' did not yield any results."));
         }
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace RestAssured.Tests
                 .Body("//Place[1]/Inhabitants", NHamcrest.Is.True());
             });
 
-            Assert.That(rve.Message, Is.EqualTo("Response element value 100000 cannot be converted to object of type System.Boolean"));
+            Assert.That(rve?.Message, Is.EqualTo("Response element value 100000 cannot be converted to object of type System.Boolean"));
         }
 
         /// <summary>
@@ -161,7 +161,7 @@ namespace RestAssured.Tests
                 .Body("//Place/Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Atlantis")));
             });
 
-            Assert.That(rve.Message, Is.EqualTo($"Expected elements selected by '//Place/Name' to match 'a collection containing \"Atlantis\"', but was [Sun City, Pleasure Meadow]"));
+            Assert.That(rve?.Message, Is.EqualTo($"Expected elements selected by '//Place/Name' to match 'a collection containing \"Atlantis\"', but was [Sun City, Pleasure Meadow]"));
         }
 
         /// <summary>
@@ -169,7 +169,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForXmlResponseBody()
         {
-            this.Server.Given(Request.Create().WithPath("/xml-response-body").UsingGet())
+            this.Server?.Given(Request.Create().WithPath("/xml-response-body").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/xml")
                 .WithBody(this.xmlBody)

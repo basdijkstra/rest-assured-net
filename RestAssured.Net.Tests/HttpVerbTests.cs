@@ -101,7 +101,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForHttpGet()
         {
-            this.Server.Given(Request.Create().WithPath("/http-get").UsingGet())
+            this.Server?.Given(Request.Create().WithPath("/http-get").UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
         }
@@ -111,7 +111,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForHttpPost()
         {
-            this.Server.Given(Request.Create().WithPath("/http-post").UsingPost())
+            this.Server?.Given(Request.Create().WithPath("/http-post").UsingPost())
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));
         }
@@ -121,7 +121,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForHttpPut()
         {
-            this.Server.Given(Request.Create().WithPath("/http-put").UsingPut())
+            this.Server?.Given(Request.Create().WithPath("/http-put").UsingPut())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
         }
@@ -131,7 +131,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForHttpPatch()
         {
-            this.Server.Given(Request.Create().WithPath("/http-patch").UsingPatch())
+            this.Server?.Given(Request.Create().WithPath("/http-patch").UsingPatch())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
         }
@@ -141,7 +141,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForHttpDelete()
         {
-            this.Server.Given(Request.Create().WithPath("/http-delete").UsingDelete())
+            this.Server?.Given(Request.Create().WithPath("/http-delete").UsingDelete())
                 .RespondWith(Response.Create()
                 .WithStatusCode(204));
         }

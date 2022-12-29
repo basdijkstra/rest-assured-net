@@ -80,7 +80,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForHttps()
         {
-            this.Server.Given(Request.Create().WithPath("/ssl-endpoint").UsingGet())
+            this.Server?.Given(Request.Create().WithPath("/ssl-endpoint").UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
         }

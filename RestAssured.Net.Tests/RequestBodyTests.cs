@@ -70,7 +70,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForPlaintextRequestBody()
         {
-            this.Server.Given(Request.Create().WithPath("/plaintext-request-body").UsingPost()
+            this.Server?.Given(Request.Create().WithPath("/plaintext-request-body").UsingPost()
                 .WithBody(new ExactMatcher(this.plaintextRequestBody)))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));
@@ -81,7 +81,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForJsonStringRequestBody()
         {
-            this.Server.Given(Request.Create().WithPath("/json-string-request-body").UsingPost()
+            this.Server?.Given(Request.Create().WithPath("/json-string-request-body").UsingPost()
                 .WithBody(new JsonMatcher(this.jsonStringRequestBody)))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));

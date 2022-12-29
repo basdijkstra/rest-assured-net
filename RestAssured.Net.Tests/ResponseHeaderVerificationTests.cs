@@ -81,7 +81,7 @@ namespace RestAssured.Tests
                 .Header("header_does_not_exist", "custom_header_value");
             });
 
-            Assert.That(rve.Message, Is.EqualTo("Expected header with name 'header_does_not_exist' to be in the response, but it could not be found."));
+            Assert.That(rve?.Message, Is.EqualTo("Expected header with name 'header_does_not_exist' to be in the response, but it could not be found."));
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace RestAssured.Tests
                 .Header("custom_header_name", "value_does_not_match");
             });
 
-            Assert.That(rve.Message, Is.EqualTo("Expected value for response header with name 'custom_header_name' to be 'value_does_not_match', but was 'custom_header_value'."));
+            Assert.That(rve?.Message, Is.EqualTo("Expected value for response header with name 'custom_header_name' to be 'value_does_not_match', but was 'custom_header_value'."));
         }
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace RestAssured.Tests
                 .Header("custom_header_name", NHamcrest.Contains.String("not_found"));
             });
 
-            Assert.That(rve.Message, Is.EqualTo("Expected value for response header with name 'custom_header_name' to match 'a string containing \"not_found\"', but was 'custom_header_value'."));
+            Assert.That(rve?.Message, Is.EqualTo("Expected value for response header with name 'custom_header_name' to match 'a string containing \"not_found\"', but was 'custom_header_value'."));
         }
 
         /// <summary>
@@ -199,7 +199,7 @@ namespace RestAssured.Tests
                 .ContentType("application/something_else");
             });
 
-            Assert.That(rve.Message, Is.EqualTo("Expected value for response Content-Type header to be 'application/something_else', but was 'application/something'."));
+            Assert.That(rve?.Message, Is.EqualTo("Expected value for response Content-Type header to be 'application/something_else', but was 'application/something'."));
         }
 
         /// <summary>
@@ -221,7 +221,7 @@ namespace RestAssured.Tests
                 .ContentType(NHamcrest.Contains.String("not_found"));
             });
 
-            Assert.That(rve.Message, Is.EqualTo("Expected value for response Content-Type header to match 'a string containing \"not_found\"', but was 'application/something'."));
+            Assert.That(rve?.Message, Is.EqualTo("Expected value for response Content-Type header to match 'a string containing \"not_found\"', but was 'application/something'."));
         }
 
         /// <summary>
@@ -229,7 +229,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForCustomSingleResponseHeader()
         {
-            this.Server.Given(Request.Create().WithPath("/custom-response-header").UsingGet())
+            this.Server?.Given(Request.Create().WithPath("/custom-response-header").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("custom_header_name", "custom_header_value")
                 .WithStatusCode(200));
@@ -240,7 +240,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForCustomResponseContentTypeHeader()
         {
-            this.Server.Given(Request.Create().WithPath("/custom-response-content-type-header").UsingGet())
+            this.Server?.Given(Request.Create().WithPath("/custom-response-content-type-header").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/something")
                 .WithStatusCode(200));
@@ -251,7 +251,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForCustomMultipleResponseHeaders()
         {
-            this.Server.Given(Request.Create().WithPath("/custom-multiple-response-headers").UsingGet())
+            this.Server?.Given(Request.Create().WithPath("/custom-multiple-response-headers").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("custom_header_name", "custom_header_value")
                 .WithHeader("another_header", "another_value")

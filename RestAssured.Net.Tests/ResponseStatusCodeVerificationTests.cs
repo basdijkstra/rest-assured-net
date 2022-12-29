@@ -128,7 +128,7 @@ namespace RestAssured.Tests
                 .StatusCode(NHamcrest.Is.GreaterThan(300));
             });
 
-            Assert.That(rve.Message, Is.EqualTo("Expected response status code to match 'greater than 300', but was 200"));
+            Assert.That(rve?.Message, Is.EqualTo("Expected response status code to match 'greater than 300', but was 200"));
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForHttpOK()
         {
-            this.Server.Given(Request.Create().WithPath("/http-status-code-ok").UsingGet())
+            this.Server?.Given(Request.Create().WithPath("/http-status-code-ok").UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
         }
@@ -146,7 +146,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForHttpNotFound()
         {
-            this.Server.Given(Request.Create().WithPath("/http-status-code-not-found").UsingGet())
+            this.Server?.Given(Request.Create().WithPath("/http-status-code-not-found").UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(404));
         }
@@ -156,7 +156,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForHttpServiceUnavailable()
         {
-            this.Server.Given(Request.Create().WithPath("/http-status-code-service-unavailable").UsingGet())
+            this.Server?.Given(Request.Create().WithPath("/http-status-code-service-unavailable").UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(503));
         }

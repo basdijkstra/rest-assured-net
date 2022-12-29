@@ -115,7 +115,7 @@ namespace RestAssured.Tests
                 },
             };
 
-            this.Server.Given(Request.Create().WithPath("/simple-graphql").UsingPost()
+            this.Server?.Given(Request.Create().WithPath("/simple-graphql").UsingPost()
                 .WithHeader("Content-Type", "application/json; charset=utf-8")
                 .WithBody(new JsonMatcher(expectedQuery)))
                 .RespondWith(Response.Create()
@@ -151,7 +151,7 @@ namespace RestAssured.Tests
                 },
             };
 
-            this.Server.Given(Request.Create().WithPath("/graphql-with-variables").UsingPost()
+            this.Server?.Given(Request.Create().WithPath("/graphql-with-variables").UsingPost()
                 .WithHeader("Content-Type", "application/graphql+json; charset=utf-8")
                 .WithBody(new JsonMatcher(expectedQuery)))
                 .RespondWith(Response.Create()

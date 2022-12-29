@@ -98,7 +98,7 @@ namespace RestAssured.Tests
                 .StatusCode(200);
             });
 
-            Assert.That(hrpe.Message, Is.EqualTo("Request timeout of 00:00:02 exceeded."));
+            Assert.That(hrpe?.Message, Is.EqualTo("Request timeout of 00:00:02 exceeded."));
         }
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace RestAssured.Tests
                 .StatusCode(200);
             });
 
-            Assert.That(hrpe.Message, Is.EqualTo("Request timeout of 00:00:02 exceeded."));
+            Assert.That(hrpe?.Message, Is.EqualTo("Request timeout of 00:00:02 exceeded."));
         }
 
         /// <summary>
@@ -128,7 +128,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForTimeoutOk()
         {
-            this.Server.Given(Request.Create().WithPath("/timeout-ok").UsingGet())
+            this.Server?.Given(Request.Create().WithPath("/timeout-ok").UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
         }
@@ -138,7 +138,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForTimeoutNok()
         {
-            this.Server.Given(Request.Create().WithPath("/timeout-nok").UsingGet())
+            this.Server?.Given(Request.Create().WithPath("/timeout-nok").UsingGet())
                 .RespondWith(Response.Create()
                 .WithDelay(TimeSpan.FromSeconds(3))
                 .WithStatusCode(200));
