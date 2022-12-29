@@ -461,9 +461,21 @@ namespace RestAssured.Response
         /// Log response details to the standard output.
         /// </summary>
         /// <returns>A <see cref="ResponseLogger"/> object, which can be used to log response details.</returns>
+        [Obsolete("Please use Log(ResponseLogLevel responseLogLevel) instead. This method will be removed in version 3.0.0.", false)]
         public ResponseLogger Log()
         {
             return new ResponseLogger(this.response, this.elapsedTime);
+        }
+
+        /// <summary>
+        /// Log response details to the standard output.
+        /// </summary>
+        /// <param name="responseLogLevel">The required log level.</param>
+        /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        public VerifiableResponse Log(ResponseLogLevel responseLogLevel)
+        {
+            ResponseLogger.Log(this.response, responseLogLevel, this.elapsedTime);
+            return this;
         }
 
         /// <summary>

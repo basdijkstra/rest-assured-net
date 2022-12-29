@@ -97,6 +97,82 @@ namespace RestAssured.Response.Logging
             return new VerifiableResponse(this.response, this.elapsedTime);
         }
 
+        /// <summary>
+        /// Logs the response to the console with the requested <see cref="ResponseLogLevel"/>.
+        /// </summary>
+        /// <param name="response">The response to be logged to the console.</param>
+        /// <param name="responseLogLevel">The <see cref="ResponseLogLevel"/> to use.</param>
+        /// <param name="elapsedTime">The time elasped between sending a request and returning a response.</param>
+        internal static void Log(HttpResponseMessage response, ResponseLogLevel responseLogLevel, TimeSpan elapsedTime)
+        {
+            if (responseLogLevel > ResponseLogLevel.None)
+            {
+                LogStatusCode(response);
+            }
+
+            if (responseLogLevel == ResponseLogLevel.Headers)
+            {
+                LogHeaders(response);
+            }
+
+            if (responseLogLevel == ResponseLogLevel.Body)
+            {
+                LogBody(response);
+            }
+
+            if (responseLogLevel == ResponseLogLevel.ResponseTime)
+            {
+                LogTime(elapsedTime);
+            }
+
+            if (responseLogLevel == ResponseLogLevel.All)
+            {
+                LogHeaders(response);
+                LogBody(response);
+                LogTime(elapsedTime);
+            }
+        }
+
+        private static void LogStatusCode(HttpResponseMessage response)
+        {
+            Console.WriteLine($"HTTP {(int)response.StatusCode} ({response.StatusCode})");
+        }
+
+        private static void LogHeaders(HttpResponseMessage response)
+        {
+            foreach (KeyValuePair<string, IEnumerable<string>> header in response.Headers)
+            {
+                Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
+            }
+        }
+
+        private static void LogBody(HttpResponseMessage response)
+        {
+            string responseBodyAsString = response.Content.ReadAsStringAsync().Result;
+
+            string responseMediaType = response.Content.Headers.ContentType?.MediaType ?? string.Empty;
+
+            if (responseMediaType.Equals(string.Empty) || responseMediaType.Contains("json"))
+            {
+                object jsonPayload = JsonConvert.DeserializeObject(responseBodyAsString, typeof(object)) ?? "Could not read response payload";
+                Console.WriteLine(JsonConvert.SerializeObject(jsonPayload, Formatting.Indented));
+            }
+            else if (responseMediaType.Contains("xml"))
+            {
+                XDocument doc = XDocument.Parse(responseBodyAsString);
+                Console.WriteLine(doc.ToString());
+            }
+            else
+            {
+                Console.WriteLine(responseBodyAsString);
+            }
+        }
+
+        private static void LogTime(TimeSpan elapsedTime)
+        {
+            Console.WriteLine($"Response time: {elapsedTime.TotalMilliseconds} ms");
+        }
+
         private void LogStatusCode()
         {
             Console.WriteLine($"HTTP {(int)this.response.StatusCode} ({this.response.StatusCode})");

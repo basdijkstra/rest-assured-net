@@ -17,6 +17,7 @@ namespace RestAssured.Tests
 {
     using System.Collections.Generic;
     using NUnit.Framework;
+    using RestAssured.Response.Logging;
     using RestAssured.Tests.Models;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
@@ -85,7 +86,7 @@ namespace RestAssured.Tests
             .When()
             .Get("http://localhost:9876/log-json-response")
             .Then()
-            .Log().All()
+            .Log(ResponseLogLevel.All)
             .And()
             .StatusCode(200);
         }
@@ -103,7 +104,7 @@ namespace RestAssured.Tests
             .When()
             .Get("http://localhost:9876/log-xml-response")
             .Then()
-            .Log().All()
+            .Log(ResponseLogLevel.All)
             .And()
             .StatusCode(200);
         }
@@ -121,7 +122,7 @@ namespace RestAssured.Tests
             .When()
             .Get("http://localhost:9876/log-no-response-body")
             .Then()
-            .Log().All()
+            .Log(ResponseLogLevel.All)
             .And()
             .StatusCode(200);
         }
