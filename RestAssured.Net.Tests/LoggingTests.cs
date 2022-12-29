@@ -57,6 +57,28 @@ namespace RestAssured.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for logging
+        /// JSON request details to the standard output.
+        /// </summary>
+        [Test]
+        public void RequestDetailsCanBeWrittenToStandardOutputForJsonUsingObsoleteMethod()
+        {
+            this.CreateStubForLoggingJsonResponse();
+
+            Given()
+            .Log().All()
+            .And()
+            .Accept("application/json")
+            .Header("CustomHeader", "custom header value")
+            .ContentType("application/json")
+            .Body(this.jsonBody)
+            .When()
+            .Get("http://localhost:9876/log-json-response")
+            .Then()
+            .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for logging
         /// XML request details to the standard output.
         /// </summary>
         [Test]
@@ -88,6 +110,24 @@ namespace RestAssured.Tests
             .Get("http://localhost:9876/log-json-response")
             .Then()
             .Log(ResponseLogLevel.All)
+            .And()
+            .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for logging
+        /// response details to the standard output.
+        /// </summary>
+        [Test]
+        public void ResponseDetailsCanBeWrittenToStandardOutputForJsonUsingObsoleteMethod()
+        {
+            this.CreateStubForLoggingJsonResponse();
+
+            Given()
+            .When()
+            .Get("http://localhost:9876/log-json-response")
+            .Then()
+            .Log().All()
             .And()
             .StatusCode(200);
         }

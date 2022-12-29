@@ -10,10 +10,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Added
 
 - Added support for specifying request log level through the RequestSpecification ([#44](https://github.com/basdijkstra/rest-assured-net/issues/44) by [@Ukrainis](https://github.com/Ukrainis))
+- Added `Log(ResponseLogLevel responseLogLevel)` method for response logging ([#46](https://github.com/basdijkstra/rest-assured-net/issues/46))
 
 #### Updated
 
 - Version bumps for Newtonsoft.Json (main project) and WireMock.Net (test project)
+
+#### Deprecated
+
+- Deprecated `Log().All()` and other methods for response logging in favour of `Log(ResponseLogLevel responseLogLevel)`.
 
 ### [2.1.0] - 2022-11-30
 
