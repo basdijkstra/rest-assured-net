@@ -17,6 +17,7 @@ namespace RestAssured.Tests
 {
     using System.Collections.Generic;
     using NUnit.Framework;
+    using RestAssured.Request.Logging;
     using RestAssured.Response.Logging;
     using RestAssured.Tests.Models;
     using WireMock.RequestBuilders;
@@ -42,7 +43,7 @@ namespace RestAssured.Tests
             this.CreateStubForLoggingJsonResponse();
 
             Given()
-            .Log().All()
+            .Log(RequestLogLevel.All)
             .And()
             .Accept("application/json")
             .Header("CustomHeader", "custom header value")
@@ -64,7 +65,7 @@ namespace RestAssured.Tests
             this.CreateStubForLoggingXmlResponse();
 
             Given()
-            .Log().All()
+            .Log(RequestLogLevel.All)
             .ContentType("application/xml")
             .Body(this.xmlBody)
             .When()
@@ -137,7 +138,7 @@ namespace RestAssured.Tests
             this.CreateStubForLoggingResponseWithoutBody();
 
             Given()
-            .Log().All()
+            .Log(RequestLogLevel.All)
             .When()
             .Get("http://localhost:9876/log-no-response-body")
             .Then()

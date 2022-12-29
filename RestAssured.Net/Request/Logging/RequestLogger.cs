@@ -81,6 +81,35 @@ namespace RestAssured.Request.Logging
         /// <summary>
         /// Logs request details to the console at the set <see cref="RequestLogLevel"/>.
         /// </summary>
+        /// <param name="request">The <see cref="HttpRequestMessage"/> to be logged to the console.</param>
+        /// <param name="requestLogLevel">the <see cref="RequestLogLevel"/> to use when logging request details.</param>
+        internal static void LogToConsole(HttpRequestMessage request, RequestLogLevel requestLogLevel)
+        {
+            if (requestLogLevel >= RequestLogLevel.Endpoint)
+            {
+                Console.WriteLine($"{request.Method} {request.RequestUri}");
+            }
+
+            if (requestLogLevel == RequestLogLevel.Headers)
+            {
+                LogHeaders(request);
+            }
+
+            if (requestLogLevel == RequestLogLevel.Body)
+            {
+                LogBody(request);
+            }
+
+            if (requestLogLevel == RequestLogLevel.All)
+            {
+                LogHeaders(request);
+                LogBody(request);
+            }
+        }
+
+        /// <summary>
+        /// Logs request details to the console at the set <see cref="RequestLogLevel"/>.
+        /// </summary>
         internal void LogToConsole()
         {
             HttpRequestMessage request = this.executableRequest.GetRequest();
@@ -92,22 +121,22 @@ namespace RestAssured.Request.Logging
 
             if (this.executableRequest.RequestLoggingLevel == RequestLogLevel.Headers)
             {
-                this.LogHeaders(request);
+                LogHeaders(request);
             }
 
             if (this.executableRequest.RequestLoggingLevel == RequestLogLevel.Body)
             {
-                this.LogBody(request);
+                LogBody(request);
             }
 
             if (this.executableRequest.RequestLoggingLevel == RequestLogLevel.All)
             {
-                this.LogHeaders(request);
-                this.LogBody(request);
+                LogHeaders(request);
+                LogBody(request);
             }
         }
 
-        private void LogHeaders(HttpRequestMessage request)
+        private static void LogHeaders(HttpRequestMessage request)
         {
             if (request.Content != null)
             {
@@ -117,7 +146,7 @@ namespace RestAssured.Request.Logging
             Console.WriteLine(request.Headers);
         }
 
-        private void LogBody(HttpRequestMessage request)
+        private static void LogBody(HttpRequestMessage request)
         {
             if (request.Content == null)
             {

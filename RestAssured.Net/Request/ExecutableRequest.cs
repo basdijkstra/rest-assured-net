@@ -328,9 +328,21 @@ namespace RestAssured.Request
         /// Log request details to the standard output.
         /// </summary>
         /// <returns>A <see cref="RequestLogger"/> object, which can be used to log request details to the standard output.</returns>
+        [Obsolete("Please use Log(RequestLogLevel requestLogLevel) instead. This method will be removed in version 3.0.0.", false)]
         public RequestLogger Log()
         {
             return new RequestLogger(this);
+        }
+
+        /// <summary>
+        /// Log request details to the standard output.
+        /// </summary>
+        /// <param name="requestLogLevel">The desired request log level.</param>
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest Log(RequestLogLevel requestLogLevel)
+        {
+            this.RequestLoggingLevel = requestLogLevel;
+            return this;
         }
 
         /// <summary>
@@ -508,8 +520,7 @@ namespace RestAssured.Request
                 }
             }
 
-            var requestLogger = new RequestLogger(this);
-            requestLogger.LogToConsole();
+            RequestLogger.LogToConsole(this.request, this.RequestLoggingLevel);
 
             try
             {
