@@ -32,6 +32,7 @@ namespace RestAssured.Request
     using RestAssured.Request.Exceptions;
     using RestAssured.Request.Logging;
     using RestAssured.Response;
+    using RestAssured.Response.Logging;
     using Stubble.Core;
     using Stubble.Core.Builders;
 
@@ -60,6 +61,11 @@ namespace RestAssured.Request
         internal RequestLogLevel RequestLoggingLevel { get; set; }
 
         /// <summary>
+        /// The response logging level for this request.
+        /// </summary>
+        internal ResponseLogLevel ResponseLoggingLevel { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ExecutableRequest"/> class.
         /// </summary>
         /// <param name="config">The <see cref="RestAssuredConfiguration"/> to use for all requests.</param>
@@ -67,6 +73,7 @@ namespace RestAssured.Request
         {
             this.relaxedHttpsValidation = config.UseRelaxedHttpsValidation;
             this.RequestLoggingLevel = config.RequestLogLevel;
+            this.ResponseLoggingLevel = config.ResponseLogLevel;
         }
 
         /// <summary>
@@ -525,7 +532,9 @@ namespace RestAssured.Request
             try
             {
                 Task<VerifiableResponse> task = httpRequestProcessor.Send(this.request, this.cookieCollection);
-                return task.Result;
+                VerifiableResponse verifiableResponse = task.Result;
+                verifiableResponse.Log(this.ResponseLoggingLevel);
+                return verifiableResponse;
             }
             catch (AggregateException ae)
             {
