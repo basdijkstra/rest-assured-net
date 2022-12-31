@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+### [2.2.0] - 2022-12-31
+
 #### Added
 
 - Added support for specifying request and response log level through static RestAssured configuration ([#43](https://github.com/basdijkstra/rest-assured-net/issues/43) by [@Ukrainis](https://github.com/Ukrainis))
