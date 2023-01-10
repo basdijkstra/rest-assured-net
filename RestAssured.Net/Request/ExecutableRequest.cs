@@ -485,11 +485,11 @@ namespace RestAssured.Request
                 endpoint = renderer.Render(endpoint, this.pathParams);
             }
 
-            // Add any query parameters that have been specified and create the endpoint
-            endpoint = QueryHelpers.AddQueryString(endpoint, this.queryParams);
-
             // Build the Uri for the request
             this.request.RequestUri = this.BuildUri(this.requestSpecification, endpoint);
+
+            // Add any query parameters that have been specified and create the endpoint
+            this.request.RequestUri = new Uri(QueryHelpers.AddQueryString(this.request.RequestUri.ToString(), this.queryParams));
 
             // Apply other settings provided in the request specification to the request
             this.request = RequestSpecificationProcessor.Apply(this.requestSpecification, this.request);

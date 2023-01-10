@@ -42,6 +42,7 @@ namespace RestAssured.Request
                 uri.Host = requestSpec.HostName;
                 uri.Port = requestSpec.Port;
                 uri.Path = BuildPath(requestSpec.BasePath, endpoint);
+
                 return uri.Uri;
             }
             catch (UriFormatException)

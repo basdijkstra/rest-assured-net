@@ -17,6 +17,7 @@ namespace RestAssured.Tests
 {
     using System.Collections.Generic;
     using NUnit.Framework;
+    using RestAssured.Request.Builders;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
     using static RestAssured.Dsl;
@@ -27,6 +28,22 @@ namespace RestAssured.Tests
     [TestFixture]
     public class QueryParameterTests : TestBase
     {
+        private RequestSpecification? requestSpecification;
+
+        /// <summary>
+        /// Creates the <see cref="RequestSpecification"/> instances to be used in the tests in this class.
+        /// </summary>
+        [SetUp]
+        public void CreateRequestSpecifications()
+        {
+            this.requestSpecification = new RequestSpecBuilder()
+                .WithScheme("http")
+                .WithHostName("localhost")
+                .WithBasePath("api")
+                .WithPort(9876)
+                .Build();
+        }
+
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for adding
         /// a single query parameter.
@@ -39,7 +56,7 @@ namespace RestAssured.Tests
             Given()
             .QueryParam("name", "john")
             .When()
-            .Get("http://localhost:9876/single-query-param")
+            .Get("http://localhost:9876/api/single-query-param")
             .Then()
             .StatusCode(200);
         }
@@ -75,7 +92,7 @@ namespace RestAssured.Tests
             .QueryParam("name", "susan")
             .QueryParam("name", "john")
             .When()
-            .Get("http://localhost:9876/single-query-param")
+            .Get("http://localhost:9876/api/single-query-param")
             .Then()
             .StatusCode(200);
         }
@@ -128,12 +145,31 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test demonstrating that RestAssured.Net adds query parameters
+        /// correctly to a relative path (i.e., when using a <see cref="RequestSpecification"/>.
+        /// From https://github.com/basdijkstra/rest-assured-net/issues/47.
+        /// </summary>
+        [Test]
+        public void QueryParametersAreAddedToRelativePathCorrectly()
+        {
+            this.CreateStubForSingleQueryParameter();
+
+            Given()
+            .Spec(this.requestSpecification)
+            .QueryParam("name", "john")
+            .When()
+            .Get("/single-query-param")
+            .Then()
+            .StatusCode(200);
+        }
+
+        /// <summary>
         /// Creates the stub response for the single query parameter example.
         /// </summary>
         private void CreateStubForSingleQueryParameter()
         {
             this.Server?.Given(Request.Create()
-                .WithPath("/single-query-param")
+                .WithPath("/api/single-query-param")
                 .WithParam("name", "john")
                 .UsingGet())
                 .RespondWith(Response.Create()
