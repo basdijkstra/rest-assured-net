@@ -117,9 +117,9 @@ namespace RestAssured.Tests
 
             var post = new
             {
-               Id = 1,
-               Title = "My post title",
-               Body = "My post body",
+                Id = 1,
+                Title = "My post title",
+                Body = "My post body",
             };
 
             Given()
