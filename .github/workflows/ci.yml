@@ -33,6 +33,12 @@ jobs:
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
 
+      - name: Run linters
+        uses: wearerequired/lint-action@v2
+        with:
+          dotnet_format: true
+          continue_on_error: false
+
       - name: Restore project dependencies
         run: dotnet restore ${{ env.DOTNET_PARAMS }}
 
