@@ -5,6 +5,7 @@
     <TargetFrameworks Condition="'$(SkipNet7)' == 'True'">net6.0;netcoreapp3.1</TargetFrameworks>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <LangVersion>10</LangVersion>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Version>2.2.1</Version>
     <Authors>Bas Dijkstra</Authors>

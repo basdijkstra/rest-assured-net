@@ -350,17 +350,20 @@ namespace RestAssured.Response
                 xmlDoc.LoadXml(responseBodyAsString);
                 XmlNodeList? xmlElements = xmlDoc.SelectNodes(path);
 
-                // Try and cast the element values to an object of the type used in the matcher
-                foreach (XmlNode xmlElement in xmlElements)
+                if (xmlElements != null)
                 {
-                    try
+                    // Try and cast the element values to an object of the type used in the matcher
+                    foreach (XmlNode xmlElement in xmlElements)
                     {
-                        T objectFromElementValue = (T)Convert.ChangeType(xmlElement.InnerText, typeof(T));
-                        elementValues.Add(objectFromElementValue);
-                    }
-                    catch (FormatException)
-                    {
-                        throw new ResponseVerificationException($"Response element value {xmlElement.InnerText} cannot be converted to object of type {typeof(T)}");
+                        try
+                        {
+                            T objectFromElementValue = (T)Convert.ChangeType(xmlElement.InnerText, typeof(T));
+                            elementValues.Add(objectFromElementValue);
+                        }
+                        catch (FormatException)
+                        {
+                            throw new ResponseVerificationException($"Response element value '{xmlElement.InnerText}' cannot be converted to value of type '{typeof(T)}'");
+                        }
                     }
                 }
 
@@ -427,7 +430,7 @@ namespace RestAssured.Response
         /// </summary>
         /// <param name="type">The object type to deserialize into.</param>
         /// <returns>The deserialized response object.</returns>
-        public object As(Type type)
+        public object? As(Type type)
         {
             string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
 
@@ -446,10 +449,41 @@ namespace RestAssured.Response
             else if (responseMediaType.Contains("xml"))
             {
                 XmlSerializer xmlSerializer = new XmlSerializer(type);
-                using (TextReader reader = new StringReader(this.response.Content.ReadAsStringAsync().Result))
-                {
-                    return xmlSerializer.Deserialize(reader);
-                }
+                using TextReader reader = new StringReader(this.response.Content.ReadAsStringAsync().Result);
+                return xmlSerializer.Deserialize(reader);
+            }
+            else
+            {
+                throw new DeserializationException($"Unable to deserialize response with Content-Type '{responseMediaType}'");
+            }
+        }
+
+        /// <summary>
+        /// Deserializes the response content into the specified type and returns it.
+        /// </summary>
+        /// <typeparam name="T">The type to deserialize the response content to.</typeparam>
+        /// <returns>The deserialized response object.</returns>
+        public T? As<T>()
+        {
+            string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
+
+            if (responseBodyAsString == null)
+            {
+                throw new JsonSerializationException("Response content is null or empty.");
+            }
+
+            // Look at the response Content-Type header to determine how to deserialize
+            string? responseMediaType = this.response.Content.Headers.ContentType?.MediaType;
+
+            if (responseMediaType == null || responseMediaType.Contains("json"))
+            {
+                return (T?)JsonConvert.DeserializeObject(this.response.Content.ReadAsStringAsync().Result, typeof(T));
+            }
+            else if (responseMediaType.Contains("xml"))
+            {
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
+                using TextReader reader = new StringReader(this.response.Content.ReadAsStringAsync().Result);
+                return (T?)xmlSerializer.Deserialize(reader);
             }
             else
             {
