@@ -56,7 +56,9 @@ namespace RestAssured.Response
                 JObject responseBodyAsJObject = JObject.Parse(responseBodyAsString);
                 IEnumerable<JToken>? resultingElements = responseBodyAsJObject.SelectTokens(path);
 
-                List<object> elementValues = resultingElements.Select(element => element.ToObject<object>()).ToList();
+                List<object> elementValues = resultingElements
+                    .Select(element => element.ToObject<object>())
+                    .ToList();
 
                 if (!elementValues.Any())
                 {

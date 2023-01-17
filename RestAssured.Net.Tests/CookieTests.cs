@@ -72,7 +72,7 @@ namespace RestAssured.Tests
 
             CookieCollection cookies = new CookieCollection
             {
-                new Cookie("my_cookie", "my_cookie_value")
+                new Cookie("my_cookie", "my_cookie_value"),
             };
 
             Given()
