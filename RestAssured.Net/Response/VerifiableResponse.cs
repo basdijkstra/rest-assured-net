@@ -87,7 +87,7 @@ namespace RestAssured.Response
         {
             if (expectedStatusCode != (int)this.response.StatusCode)
             {
-                throw new ResponseVerificationException($"Expected status code to be {expectedStatusCode}, but was {(int)this.response.StatusCode}");
+                throw new ResponseVerificationException($"Expected status code to be '{expectedStatusCode}', but was '{(int)this.response.StatusCode}'");
             }
 
             return this;
@@ -103,7 +103,7 @@ namespace RestAssured.Response
         {
             if (!expectedStatusCode.Equals(this.response.StatusCode))
             {
-                throw new ResponseVerificationException($"Expected status code to be {expectedStatusCode}, but was {this.response.StatusCode}");
+                throw new ResponseVerificationException($"Expected status code to be '{expectedStatusCode}', but was '{this.response.StatusCode}'");
             }
 
             return this;
@@ -119,7 +119,7 @@ namespace RestAssured.Response
         {
             if (!matcher.Matches((int)this.response.StatusCode))
             {
-                throw new ResponseVerificationException($"Expected response status code to match '{matcher}', but was {(int)this.response.StatusCode}");
+                throw new ResponseVerificationException($"Expected response status code to match '{matcher}', but was '{(int)this.response.StatusCode}'");
             }
 
             return this;
@@ -141,7 +141,7 @@ namespace RestAssured.Response
 
             if (!values.First().Equals(expectedValue))
             {
-                throw new ResponseVerificationException($"Expected value for response header with name '{name}' to be '{expectedValue}', but was '{values.First()}'.");
+                throw new ResponseVerificationException($"Expected value for response header with name '{name}' to be '{expectedValue}', but was '{firstValue}'.");
             }
 
             return this;
@@ -160,7 +160,7 @@ namespace RestAssured.Response
             {
                 if (!matcher.Matches(values.First()))
                 {
-                    throw new ResponseVerificationException($"Expected value for response header with name '{name}' to match '{matcher}', but was '{values.First()}'.");
+                    throw new ResponseVerificationException($"Expected value for response header with name '{name}' to match '{matcher}', but was '{firstValue}'.");
                 }
             }
             else
@@ -226,7 +226,7 @@ namespace RestAssured.Response
 
             if (!actualResponseBody.Equals(expectedResponseBody))
             {
-                throw new ResponseVerificationException($"Actual response body did not match expected response body.\nExpected: {expectedResponseBody}\nActual: {actualResponseBody}");
+                throw new ResponseVerificationException($"Actual response body did not match expected response body.\nExpected: '{expectedResponseBody}'\nActual: '{actualResponseBody}'");
             }
 
             return this;
@@ -243,7 +243,7 @@ namespace RestAssured.Response
 
             if (!matcher.Matches(actualResponseBody))
             {
-                throw new ResponseVerificationException($"Actual response body expected to match '{matcher}' but didn't.\nActual: {actualResponseBody}");
+                throw new ResponseVerificationException($"Actual response body expected to match '{matcher}' but didn't.\nActual: '{actualResponseBody}'");
             }
 
             return this;
@@ -275,7 +275,7 @@ namespace RestAssured.Response
 
                 if (!matcher.Matches(resultingElement.ToObject<T>()!))
                 {
-                    throw new ResponseVerificationException($"Expected element selected by '{path}' to match '{matcher}' but was {resultingElement}");
+                    throw new ResponseVerificationException($"Expected element selected by '{path}' to match '{matcher}' but was '{resultingElement}'");
                 }
             }
             else if (responseMediaType.Contains("xml"))
@@ -295,12 +295,12 @@ namespace RestAssured.Response
                     T objectFromElementValue = (T)Convert.ChangeType(xmlElement.InnerText, typeof(T));
                     if (!matcher.Matches((T)Convert.ChangeType(xmlElement.InnerText, typeof(T))))
                     {
-                        throw new ResponseVerificationException($"Expected element selected by '{path}' to match '{matcher}' but was {xmlElement.InnerText}");
+                        throw new ResponseVerificationException($"Expected element selected by '{path}' to match '{matcher}' but was '{xmlElement.InnerText}'");
                     }
                 }
                 catch (FormatException)
                 {
-                    throw new ResponseVerificationException($"Response element value {xmlElement.InnerText} cannot be converted to object of type {typeof(T)}");
+                    throw new ResponseVerificationException($"Response element value '{xmlElement.InnerText}' cannot be converted to value of type '{typeof(T)}'");
                 }
             }
             else
@@ -390,7 +390,7 @@ namespace RestAssured.Response
             }
             catch (JsonReaderException jre)
             {
-                throw new ResponseVerificationException($"Could not parse supplied JSON schema: {jre.Message}");
+                throw new ResponseVerificationException($"Could not parse supplied JSON schema. Error: '{jre.Message}'");
             }
 
             return this.MatchesJsonSchema(parsedSchema);
@@ -414,7 +414,7 @@ namespace RestAssured.Response
 
             if (!response.IsValid(jsonSchema, out IList<string> messages))
             {
-                throw new ResponseVerificationException($"Response body did not match JSON schema supplied: {messages.First()}");
+                throw new ResponseVerificationException($"Response body did not match JSON schema supplied: '{messages.First()}'");
             }
 
             return this;
@@ -431,7 +431,7 @@ namespace RestAssured.Response
 
             if (responseBodyAsString == null)
             {
-                throw new JsonSerializationException("Response content null or empty.");
+                throw new JsonSerializationException("Response content is null or empty.");
             }
 
             // Look at the response Content-Type header to determine how to deserialize
