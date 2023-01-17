@@ -37,11 +37,13 @@ namespace RestAssured.Request
         {
             try
             {
-                UriBuilder uri = new UriBuilder();
-                uri.Scheme = requestSpec.Scheme;
-                uri.Host = requestSpec.HostName;
-                uri.Port = requestSpec.Port;
-                uri.Path = BuildPath(requestSpec.BasePath, endpoint);
+                UriBuilder uri = new UriBuilder
+                {
+                    Scheme = requestSpec.Scheme,
+                    Host = requestSpec.HostName,
+                    Port = requestSpec.Port,
+                    Path = BuildPath(requestSpec.BasePath, endpoint),
+                };
 
                 return uri.Uri;
             }

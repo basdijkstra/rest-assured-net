@@ -41,14 +41,15 @@ namespace RestAssured.Request
     /// </summary>
     public class ExecutableRequest : IDisposable
     {
+        private readonly CookieCollection cookieCollection = new CookieCollection();
+        private readonly Dictionary<string, string> queryParams = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> pathParams = new Dictionary<string, string>();
+
         private HttpRequestMessage request = new HttpRequestMessage();
-        private CookieCollection cookieCollection = new CookieCollection();
         private RequestSpecification? requestSpecification;
         private object requestBody = string.Empty;
         private string contentTypeHeader = "application/json";
         private Encoding contentEncoding = Encoding.UTF8;
-        private Dictionary<string, string> queryParams = new Dictionary<string, string>();
-        private Dictionary<string, string> pathParams = new Dictionary<string, string>();
         private IEnumerable<KeyValuePair<string, string>>? formData = null;
         private TimeSpan? timeout = null;
         private IWebProxy? proxy = null;
@@ -164,7 +165,9 @@ namespace RestAssured.Request
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
         public ExecutableRequest QueryParams(Dictionary<string, object> queryParams)
         {
-            queryParams.ToList().ForEach(param => this.queryParams[param.Key] = param.Value.ToString() ?? string.Empty);
+            queryParams
+                .ToList()
+                .ForEach(param => this.queryParams[param.Key] = param.Value?.ToString() ?? string.Empty);
             return this;
         }
 
@@ -187,7 +190,9 @@ namespace RestAssured.Request
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
         public ExecutableRequest PathParams(Dictionary<string, object> pathParams)
         {
-            pathParams.ToList().ForEach(param => this.pathParams[param.Key] = param.Value.ToString() ?? string.Empty);
+            pathParams
+                .ToList()
+                .ForEach(param => this.pathParams[param.Key] = param.Value?.ToString() ?? string.Empty);
             return this;
         }
 
@@ -519,12 +524,9 @@ namespace RestAssured.Request
             {
                 httpRequestProcessor.SetTimeout((TimeSpan)this.timeout);
             }
-            else if (this.requestSpecification != null)
+            else if (this.requestSpecification?.Timeout != null)
             {
-                if (this.requestSpecification.Timeout != null)
-                {
-                    httpRequestProcessor.SetTimeout((TimeSpan)this.requestSpecification.Timeout);
-                }
+                httpRequestProcessor.SetTimeout((TimeSpan)this.requestSpecification.Timeout);
             }
 
             RequestLogger.LogToConsole(this.request, this.RequestLoggingLevel);
