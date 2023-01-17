@@ -35,7 +35,7 @@ namespace RestAssured.Request.Builders
         /// <summary>
         /// The variables to be used when submitting a parameterized GraphQL request.
         /// </summary>
-        public Dictionary<string, object> Variables { get; set; } = new Dictionary<string, object>();
+        public Dictionary<string, object> Variables { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GraphQLRequest"/> class.
