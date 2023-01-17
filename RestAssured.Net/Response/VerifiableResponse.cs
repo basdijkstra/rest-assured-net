@@ -254,7 +254,7 @@ namespace RestAssured.Response
         /// <summary>
         /// Verifies that the response body matches the specified NHamcrest matcher.
         /// </summary>
-        /// <typeparam name="T">The type of object that the matcher operates on.</typeparam>
+        /// <typeparam name="T">The type of value that the matcher operates on.</typeparam>
         /// <param name="path">The JsonPath or XPath expression to evaluate.</param>
         /// <param name="matcher">The NHamcrest matcher to evaluate.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
@@ -316,7 +316,7 @@ namespace RestAssured.Response
         /// <summary>
         /// Verifies that the response body matches the specified NHamcrest matcher.
         /// </summary>
-        /// <typeparam name="T">The type of object that the matcher operates on.</typeparam>
+        /// <typeparam name="T">The type of value that the matcher operates on.</typeparam>
         /// <param name="path">The JsonPath expression to evaluate.</param>
         /// <param name="matcher">The NHamcrest matcher to evaluate.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
