@@ -43,7 +43,7 @@ namespace RestAssured.Response
         /// </summary>
         /// <param name="path">The JsonPath or XPath expression pointing to the object to extract.</param>
         /// <returns>The element value or values extracted from the response using the JsonPath expression.</returns>
-        /// <exception cref="AssertionException">Throws an AssertionException when evaluating the JsonPath did not yield any results.</exception>
+        /// <exception cref="ResponseVerificationException">Thrown when evaluating the JsonPath did not yield any results.</exception>
         public object Body(string path)
         {
             string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
