@@ -263,7 +263,7 @@ namespace RestAssured.Response
             string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
 
             // Look at the response Content-Type header to determine how to deserialize
-            string responseMediaType = this.response.Content.Headers.ContentType.MediaType ?? string.Empty;
+            string responseMediaType = this.response.Content.Headers.ContentType?.MediaType ?? string.Empty;
 
             if (responseMediaType.Equals(string.Empty) || responseMediaType.Contains("json"))
             {
@@ -275,7 +275,7 @@ namespace RestAssured.Response
                     throw new ResponseVerificationException($"JsonPath expression '{path}' did not yield any results.");
                 }
 
-                if (!matcher.Matches(resultingElement.ToObject<T>()))
+                if (!matcher.Matches(resultingElement.ToObject<T>()!))
                 {
                     throw new ResponseVerificationException($"Expected element selected by '{path}' to match '{matcher}' but was {resultingElement}");
                 }
@@ -327,7 +327,7 @@ namespace RestAssured.Response
             string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
 
             // Look at the response Content-Type header to determine how to deserialize
-            string responseMediaType = this.response.Content.Headers.ContentType.MediaType ?? string.Empty;
+            string responseMediaType = this.response.Content.Headers.ContentType?.MediaType ?? string.Empty;
 
             if (responseMediaType.Equals(string.Empty) || responseMediaType.Contains("json"))
             {
@@ -336,7 +336,7 @@ namespace RestAssured.Response
 
                 foreach (JToken element in resultingElements)
                 {
-                    elementValues.Add(element.ToObject<T>());
+                    elementValues.Add(element.ToObject<T>()!);
                 }
 
                 if (!matcher.Matches(elementValues))
@@ -405,7 +405,7 @@ namespace RestAssured.Response
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse MatchesJsonSchema(JSchema jsonSchema)
         {
-            string responseMediaType = this.response.Content.Headers.ContentType.MediaType ?? string.Empty;
+            string responseMediaType = this.response.Content.Headers.ContentType?.MediaType ?? string.Empty;
 
             if (!responseMediaType.Contains("json"))
             {
@@ -437,7 +437,7 @@ namespace RestAssured.Response
             }
 
             // Look at the response Content-Type header to determine how to deserialize
-            string responseMediaType = this.response.Content.Headers.ContentType.MediaType;
+            string? responseMediaType = this.response.Content.Headers.ContentType?.MediaType;
 
             if (responseMediaType == null || responseMediaType.Contains("json"))
             {
