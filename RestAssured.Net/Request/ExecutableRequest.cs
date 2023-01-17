@@ -77,7 +77,7 @@ namespace RestAssured.Request
         }
 
         /// <summary>
-        /// Add a <see cref="RequestSpecification"/> to the request properties.
+        /// Adds a <see cref="RequestSpecification"/> to the request properties.
         /// </summary>
         /// <param name="requestSpecification">The <see cref="RequestSpecification"/> to use when building the request.</param>
         /// <returns>The current <see cref="ExecutableRequest"/>.</returns>
@@ -101,7 +101,7 @@ namespace RestAssured.Request
         }
 
         /// <summary>
-        /// Add a request header and the associated values to the request object to be sent.
+        /// Adds a request header and the associated values to the request object to be sent.
         /// </summary>
         /// <param name="key">The header key that is to be added to the request.</param>
         /// <param name="values">The associated header values that are to be added to the request.</param>
@@ -113,7 +113,7 @@ namespace RestAssured.Request
         }
 
         /// <summary>
-        /// Add a Content-Type header and the specified value to the request object to be sent.
+        /// Adds a Content-Type header and the specified value to the request object to be sent.
         /// </summary>
         /// <param name="contentType">The value for the Content-Type header to be added.</param>
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
@@ -124,7 +124,7 @@ namespace RestAssured.Request
         }
 
         /// <summary>
-        /// Set the content character encoding for the request object to be sent.
+        /// Sets the content character encoding for the request object to be sent.
         /// </summary>
         /// <param name="encoding">The value for the character encoding to be added.</param>
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
@@ -135,7 +135,7 @@ namespace RestAssured.Request
         }
 
         /// <summary>
-        /// Set the value for the Accept header for the request object to be sent.
+        /// Sets the value for the Accept header for the request object to be sent.
         /// </summary>
         /// <param name="accept">The value for the Accept header to be added.</param>
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
@@ -146,7 +146,7 @@ namespace RestAssured.Request
         }
 
         /// <summary>
-        /// Add a query parameter to the endpoint when the request is sent.
+        /// Adds a query parameter to the endpoint when the request is sent.
         /// </summary>
         /// <param name="key">The query parameter name.</param>
         /// <param name="value">The associated query parameter value.</param>
@@ -169,7 +169,7 @@ namespace RestAssured.Request
         }
 
         /// <summary>
-        /// Add a path parameter to the endpoint when the request is sent.
+        /// Adds a path parameter to the endpoint when the request is sent.
         /// </summary>
         /// <param name="key">The path parameter name.</param>
         /// <param name="value">The associated path parameter value.</param>
@@ -277,7 +277,7 @@ namespace RestAssured.Request
         }
 
         /// <summary>
-        /// Used to set a custom timeout for the request.
+        /// Sets a custom timeout for the request.
         /// </summary>
         /// <param name="timeout">The duration of the custom timeout as a <see cref="TimeSpan"/>.</param>
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
@@ -288,7 +288,7 @@ namespace RestAssured.Request
         }
 
         /// <summary>
-        /// User to set a custom User Agent value for the request.
+        /// Sets a custom User Agent value for the request.
         /// </summary>
         /// <param name="product">The <see cref="ProductInfoHeaderValue"/> for the user agent to add to the request.</param>
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
@@ -299,7 +299,7 @@ namespace RestAssured.Request
         }
 
         /// <summary>
-        /// Used to set a custom User Agent value for the request.
+        /// Sets a custom User Agent value for the request.
         /// </summary>
         /// <param name="productName">The value for the user agent product name to add to the request.</param>
         /// <param name="productVersion">the value for the user agent product version to add to the request.</param>
@@ -332,7 +332,7 @@ namespace RestAssured.Request
         }
 
         /// <summary>
-        /// Log request details to the standard output.
+        /// Logs request details to the standard output.
         /// </summary>
         /// <returns>A <see cref="RequestLogger"/> object, which can be used to log request details to the standard output.</returns>
         [Obsolete("Please use Log(RequestLogLevel requestLogLevel) instead. This method will be removed in version 3.0.0.", false)]
@@ -342,7 +342,7 @@ namespace RestAssured.Request
         }
 
         /// <summary>
-        /// Log request details to the standard output.
+        /// Logs request details to the standard output.
         /// </summary>
         /// <param name="requestLogLevel">The desired request log level.</param>
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
