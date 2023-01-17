@@ -108,7 +108,20 @@ namespace RestAssured.Request.Builders
         /// <param name="contentEncoding">The content encoding to use in this request.</param>
         /// <param name="useRelaxedHttpsValidation">Flag indicating whether or not to disable SSL checks.</param>
         /// <param name="requestLogLevel">The request log level to use in this request.</param>
-        public RequestSpecification(string scheme, string host, int port, string basePath, TimeSpan? timeout, ProductInfoHeaderValue? userAgent, IWebProxy proxy, Dictionary<string, object> headers, AuthenticationHeaderValue authenticationHeader, string contentType, Encoding contentEncoding, bool useRelaxedHttpsValidation, RequestLogLevel requestLogLevel)
+        public RequestSpecification(
+            string scheme,
+            string host,
+            int port,
+            string basePath,
+            TimeSpan? timeout,
+            ProductInfoHeaderValue? userAgent,
+            IWebProxy proxy,
+            Dictionary<string, object> headers,
+            AuthenticationHeaderValue authenticationHeader,
+            string contentType,
+            Encoding contentEncoding,
+            bool useRelaxedHttpsValidation,
+            RequestLogLevel requestLogLevel)
         {
             this.Scheme = scheme;
             this.HostName = host;

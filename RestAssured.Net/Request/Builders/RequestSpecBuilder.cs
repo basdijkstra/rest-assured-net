@@ -48,7 +48,20 @@ namespace RestAssured.Request.Builders
         /// </summary>
         public RequestSpecBuilder()
         {
-            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.basePath, this.timeout, this.userAgent, this.proxy, this.headers, this.authenticationHeader, this.contentTypeHeader, this.contentEncoding, this.useRelaxedHttpsValidation, this.requestLogLevel);
+            this.requestSpecification = new RequestSpecification(
+                this.scheme,
+                this.host,
+                this.port,
+                this.basePath,
+                this.timeout,
+                this.userAgent,
+                this.proxy,
+                this.headers,
+                this.authenticationHeader,
+                this.contentTypeHeader,
+                this.contentEncoding,
+                this.useRelaxedHttpsValidation,
+                this.requestLogLevel);
         }
 
         /// <summary>
