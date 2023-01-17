@@ -441,7 +441,7 @@ namespace RestAssured.Response
 
             if (responseMediaType == null || responseMediaType.Contains("json"))
             {
-                return JsonConvert.DeserializeObject(this.response.Content.ReadAsStringAsync().Result, type) ?? string.Empty;
+                return JsonConvert.DeserializeObject(this.response.Content.ReadAsStringAsync().Result, type);
             }
             else if (responseMediaType.Contains("xml"))
             {
