@@ -564,11 +564,21 @@ namespace RestAssured.Request
                     return uri;
                 }
 
+                if (requestSpec is null)
+                {
+                    throw new RequestCreationException($"Supplied request specification is null.");
+                }
+
                 // MacOS, Unix, relative path
                 return RequestSpecificationProcessor.BuildUriFromRequestSpec(requestSpec, endpoint);
             }
             catch (UriFormatException)
             {
+                if (requestSpec is null)
+                {
+                    throw new RequestCreationException($"Supplied request specification is null.");
+                }
+
                 // Windows, relative path
                 return RequestSpecificationProcessor.BuildUriFromRequestSpec(requestSpec, endpoint);
             }
