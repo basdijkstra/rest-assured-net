@@ -44,30 +44,30 @@ namespace RestAssured.Response
         /// <param name="path">The JsonPath or XPath expression pointing to the object to extract.</param>
         /// <returns>The element value or values extracted from the response using the JsonPath expression.</returns>
         /// <exception cref="AssertionException">Throws an AssertionException when evaluating the JsonPath did not yield any results.</exception>
-        public object Body(string path)
+        public object? Body(string path)
         {
             string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
 
             // Look at the response Content-Type header to determine how to deserialize
-            string responseMediaType = this.response.Content.Headers.ContentType.MediaType ?? string.Empty;
+            string responseMediaType = this.response.Content.Headers.ContentType?.MediaType ?? string.Empty;
 
             if (responseMediaType == string.Empty || responseMediaType.Contains("json"))
             {
                 JObject responseBodyAsJObject = JObject.Parse(responseBodyAsString);
                 IEnumerable<JToken>? resultingElements = responseBodyAsJObject.SelectTokens(path);
 
-                List<object> elementValues = resultingElements
+                List<object?>? elementValues = resultingElements?
                     .Select(element => element.ToObject<object>())
                     .ToList();
 
-                if (!elementValues.Any())
+                if (elementValues?.Any() == false)
                 {
                     throw new ResponseVerificationException($"JsonPath expression '{path}' did not yield any results.");
                 }
 
-                if (elementValues.Count == 1)
+                if (elementValues?.Count == 1)
                 {
-                    return elementValues.First();
+                    return elementValues!.First();
                 }
 
                 return elementValues;
@@ -86,7 +86,7 @@ namespace RestAssured.Response
 
                 if (xmlElements.Count == 1)
                 {
-                    return xmlElements.Item(0).InnerText;
+                    return xmlElements.Item(0)?.InnerText;
                 }
 
                 List<string> elementValues = new List<string>();

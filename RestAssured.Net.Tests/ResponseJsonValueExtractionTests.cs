@@ -42,7 +42,7 @@ namespace RestAssured.Tests
         {
             this.CreateStubForJsonResponseWithBodyAndHeaders();
 
-            string placeName = (string)Given()
+            string? placeName = (string?)Given()
             .When()
             .Get("http://localhost:9876/json-response-body")
             .Then()
@@ -69,7 +69,7 @@ namespace RestAssured.Tests
             .Get("http://localhost:9876/json-response-body")
             .Then()
             .StatusCode(200)
-            .Extract().Body("$.Places[0].Inhabitants");
+            .Extract().Body("$.Places[0].Inhabitants")!;
 
             int numberOfInhabitantsInt = Convert.ToInt32(numberOfInhabitants);
 
@@ -90,7 +90,7 @@ namespace RestAssured.Tests
             .Get("http://localhost:9876/json-response-body")
             .Then()
             .StatusCode(200)
-            .Extract().Body("$.Places[0].IsCapital");
+            .Extract().Body("$.Places[0].IsCapital")!;
 
             Assert.That(isCapital, Is.True);
         }
@@ -107,14 +107,14 @@ namespace RestAssured.Tests
             // At least for now, if you want to retrieve multiple
             // JSON response body objects, they will have to be
             // stored in an object of type List<object>.
-            List<object> placeNames = (List<object>)Given()
+            List<object>? placeNames = (List<object>?)Given()
             .When()
             .Get("http://localhost:9876/json-response-body")
             .Then()
             .StatusCode(200)
             .Extract().Body("$.Places[0:].IsCapital");
 
-            Assert.That(placeNames.Count, Is.EqualTo(2));
+            Assert.That(placeNames?.Count, Is.EqualTo(2));
         }
 
         /// <summary>

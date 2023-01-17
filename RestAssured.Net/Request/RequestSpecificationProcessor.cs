@@ -57,7 +57,7 @@ namespace RestAssured.Request
         /// <param name="requestSpec">The <see cref="RequestSpecification"/> to apply.</param>
         /// <param name="request">The <see cref="HttpRequestMessage"/> to apply it to.</param>
         /// <returns>The updated <see cref="HttpRequestMessage"/> object.</returns>
-        internal static HttpRequestMessage Apply(RequestSpecification requestSpec, HttpRequestMessage request)
+        internal static HttpRequestMessage Apply(RequestSpecification? requestSpec, HttpRequestMessage request)
         {
             if (requestSpec == null)
             {
