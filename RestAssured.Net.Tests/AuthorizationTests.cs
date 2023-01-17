@@ -37,11 +37,11 @@ namespace RestAssured.Tests
             this.CreateStubForBasicAuthorizationVerification();
 
             Given()
-            .BasicAuth("username", "password")
-            .When()
-            .Get("http://localhost:9876/basic-auth")
-            .Then()
-            .StatusCode(200);
+                .BasicAuth("username", "password")
+                .When()
+                .Get("http://localhost:9876/basic-auth")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -54,11 +54,11 @@ namespace RestAssured.Tests
             this.CreateStubForOAuth2TokenAuthorizationVerification();
 
             Given()
-            .OAuth2("this_is_my_token")
-            .When()
-            .Get("http://localhost:9876/oauth2")
-            .Then()
-            .StatusCode(200);
+                .OAuth2("this_is_my_token")
+                .When()
+                .Get("http://localhost:9876/oauth2")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>

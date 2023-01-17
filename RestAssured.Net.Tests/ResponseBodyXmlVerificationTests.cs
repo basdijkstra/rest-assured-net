@@ -39,11 +39,11 @@ namespace RestAssured.Tests
             this.CreateStubForXmlResponseBody();
 
             Given()
-            .When()
-            .Get("http://localhost:9876/xml-response-body")
-            .Then()
-            .StatusCode(200)
-            .Body("//Place[1]/Name", NHamcrest.Is.EqualTo("Sun City"));
+                .When()
+                .Get("http://localhost:9876/xml-response-body")
+                .Then()
+                .StatusCode(200)
+                .Body("//Place[1]/Name", NHamcrest.Is.EqualTo("Sun City"));
         }
 
         /// <summary>
@@ -56,11 +56,11 @@ namespace RestAssured.Tests
             this.CreateStubForXmlResponseBody();
 
             Given()
-            .When()
-            .Get("http://localhost:9876/xml-response-body")
-            .Then()
-            .StatusCode(200)
-            .Body("//Place[1]/Inhabitants", NHamcrest.Is.GreaterThan(75000));
+                .When()
+                .Get("http://localhost:9876/xml-response-body")
+                .Then()
+                .StatusCode(200)
+                .Body("//Place[1]/Inhabitants", NHamcrest.Is.GreaterThan(75000));
         }
 
         /// <summary>
@@ -73,11 +73,11 @@ namespace RestAssured.Tests
             this.CreateStubForXmlResponseBody();
 
             Given()
-            .When()
-            .Get("http://localhost:9876/xml-response-body")
-            .Then()
-            .StatusCode(200)
-            .Body("//Place[1]/IsCapital", NHamcrest.Is.True());
+                .When()
+                .Get("http://localhost:9876/xml-response-body")
+                .Then()
+                .StatusCode(200)
+                .Body("//Place[1]/IsCapital", NHamcrest.Is.True());
         }
 
         /// <summary>
@@ -92,11 +92,11 @@ namespace RestAssured.Tests
             var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
-                .When()
-                .Get("http://localhost:9876/xml-response-body")
-                .Then()
-                .StatusCode(200)
-                .Body("//Places[0]/DoesNotExist", NHamcrest.Is.EqualTo("Sun City"));
+                    .When()
+                    .Get("http://localhost:9876/xml-response-body")
+                    .Then()
+                    .StatusCode(200)
+                    .Body("//Places[0]/DoesNotExist", NHamcrest.Is.EqualTo("Sun City"));
             });
 
             Assert.That(rve?.Message, Is.EqualTo("XPath expression '//Places[0]/DoesNotExist' did not yield any results."));
@@ -115,11 +115,11 @@ namespace RestAssured.Tests
             var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
-                .When()
-                .Get("http://localhost:9876/xml-response-body")
-                .Then()
-                .StatusCode(200)
-                .Body("//Place[1]/Inhabitants", NHamcrest.Is.True());
+                    .When()
+                    .Get("http://localhost:9876/xml-response-body")
+                    .Then()
+                    .StatusCode(200)
+                    .Body("//Place[1]/Inhabitants", NHamcrest.Is.True());
             });
 
             Assert.That(rve?.Message, Is.EqualTo("Response element value 100000 cannot be converted to object of type System.Boolean"));
@@ -135,11 +135,11 @@ namespace RestAssured.Tests
             this.CreateStubForXmlResponseBody();
 
             Given()
-            .When()
-            .Get("http://localhost:9876/xml-response-body")
-            .Then()
-            .StatusCode(200)
-            .Body("//Place/Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Sun City")));
+                .When()
+                .Get("http://localhost:9876/xml-response-body")
+                .Then()
+                .StatusCode(200)
+                .Body("//Place/Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Sun City")));
         }
 
         /// <summary>
@@ -154,11 +154,11 @@ namespace RestAssured.Tests
             var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
-                .When()
-                .Get("http://localhost:9876/xml-response-body")
-                .Then()
-                .StatusCode(200)
-                .Body("//Place/Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Atlantis")));
+                    .When()
+                    .Get("http://localhost:9876/xml-response-body")
+                    .Then()
+                    .StatusCode(200)
+                    .Body("//Place/Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Atlantis")));
             });
 
             Assert.That(rve?.Message, Is.EqualTo($"Expected elements selected by '//Place/Name' to match 'a collection containing \"Atlantis\"', but was [Sun City, Pleasure Meadow]"));

@@ -53,12 +53,12 @@ namespace RestAssured.Tests
                 .Build();
 
             Given()
-            .GraphQL(request)
-            .When()
-            .Post("http://localhost:9876/simple-graphql")
-            .Then()
-            .StatusCode(200)
-            .Body("$.data.company.name", NHamcrest.Is.EqualTo("SpaceX"));
+                .GraphQL(request)
+                .When()
+                .Post("http://localhost:9876/simple-graphql")
+                .Then()
+                .StatusCode(200)
+                .Body("$.data.company.name", NHamcrest.Is.EqualTo("SpaceX"));
         }
 
         /// <summary>
@@ -82,13 +82,13 @@ namespace RestAssured.Tests
                 .Build();
 
             Given()
-            .GraphQL(request)
-            .ContentType("application/graphql+json")
-            .When()
-            .Post("http://localhost:9876/graphql-with-variables")
-            .Then()
-            .StatusCode(200)
-            .Body("$.data.rocket.country", NHamcrest.Is.EqualTo("Republic of the Marshall Islands"));
+                .GraphQL(request)
+                .ContentType("application/graphql+json")
+                .When()
+                .Post("http://localhost:9876/graphql-with-variables")
+                .Then()
+                .StatusCode(200)
+                .Body("$.data.rocket.country", NHamcrest.Is.EqualTo("Republic of the Marshall Islands"));
         }
 
         /// <summary>

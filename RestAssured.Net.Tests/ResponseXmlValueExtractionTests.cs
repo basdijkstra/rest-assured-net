@@ -40,11 +40,11 @@ namespace RestAssured.Tests
             this.CreateStubForXmlResponseWithBodyAndHeaders();
 
             string placeName = (string)Given()
-            .When()
-            .Get("http://localhost:9876/xml-response-body")
-            .Then()
-            .StatusCode(200)
-            .Extract().Body("//Place[1]/Name");
+                .When()
+                .Get("http://localhost:9876/xml-response-body")
+                .Then()
+                .StatusCode(200)
+                .Extract().Body("//Place[1]/Name");
 
             Assert.That(placeName, Is.EqualTo("Sun City"));
         }
@@ -62,11 +62,11 @@ namespace RestAssured.Tests
             // XML response body element values, they will have to be
             // stored in an object of type List<string>.
             List<string> placeNames = (List<string>)Given()
-            .When()
-            .Get("http://localhost:9876/xml-response-body")
-            .Then()
-            .StatusCode(200)
-            .Extract().Body("//Place/Name");
+                .When()
+                .Get("http://localhost:9876/xml-response-body")
+                .Then()
+                .StatusCode(200)
+                .Extract().Body("//Place/Name");
 
             Assert.That(placeNames.Count, Is.EqualTo(2));
         }
@@ -83,11 +83,11 @@ namespace RestAssured.Tests
             var ee = Assert.Throws<ExtractionException>(() =>
             {
                 Given()
-                .When()
-                .Get("http://localhost:9876/xml-response-body")
-                .Then()
-                .StatusCode(200)
-                .Extract().Body("//Place/DoesNotExist");
+                    .When()
+                    .Get("http://localhost:9876/xml-response-body")
+                    .Then()
+                    .StatusCode(200)
+                    .Extract().Body("//Place/DoesNotExist");
             });
 
             Assert.That(ee?.Message, Is.EqualTo("XPath expression '//Place/DoesNotExist' did not yield any results."));

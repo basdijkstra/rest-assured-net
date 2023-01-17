@@ -43,11 +43,11 @@ namespace RestAssured.Tests
             this.CreateStubForJsonResponseWithBodyAndHeaders();
 
             string placeName = (string)Given()
-            .When()
-            .Get("http://localhost:9876/json-response-body")
-            .Then()
-            .StatusCode(200)
-            .Extract().Body("$.Places[0].Name");
+                .When()
+                .Get("http://localhost:9876/json-response-body")
+                .Then()
+                .StatusCode(200)
+                .Extract().Body("$.Places[0].Name");
 
             Assert.That(placeName, Is.EqualTo("Sun City"));
         }
@@ -65,11 +65,11 @@ namespace RestAssured.Tests
             // type 'long', because Json.NET by default deserializes numbers
             // into Int64 (=long), not Int32 (= int).
             long numberOfInhabitants = (long)Given()
-            .When()
-            .Get("http://localhost:9876/json-response-body")
-            .Then()
-            .StatusCode(200)
-            .Extract().Body("$.Places[0].Inhabitants");
+                .When()
+                .Get("http://localhost:9876/json-response-body")
+                .Then()
+                .StatusCode(200)
+                .Extract().Body("$.Places[0].Inhabitants");
 
             int numberOfInhabitantsInt = Convert.ToInt32(numberOfInhabitants);
 
@@ -86,11 +86,11 @@ namespace RestAssured.Tests
             this.CreateStubForJsonResponseWithBodyAndHeaders();
 
             bool isCapital = (bool)Given()
-            .When()
-            .Get("http://localhost:9876/json-response-body")
-            .Then()
-            .StatusCode(200)
-            .Extract().Body("$.Places[0].IsCapital");
+                .When()
+                .Get("http://localhost:9876/json-response-body")
+                .Then()
+                .StatusCode(200)
+                .Extract().Body("$.Places[0].IsCapital");
 
             Assert.That(isCapital, Is.True);
         }
@@ -108,11 +108,11 @@ namespace RestAssured.Tests
             // JSON response body objects, they will have to be
             // stored in an object of type List<object>.
             List<object> placeNames = (List<object>)Given()
-            .When()
-            .Get("http://localhost:9876/json-response-body")
-            .Then()
-            .StatusCode(200)
-            .Extract().Body("$.Places[0:].IsCapital");
+                .When()
+                .Get("http://localhost:9876/json-response-body")
+                .Then()
+                .StatusCode(200)
+                .Extract().Body("$.Places[0:].IsCapital");
 
             Assert.That(placeNames.Count, Is.EqualTo(2));
         }
@@ -129,11 +129,11 @@ namespace RestAssured.Tests
             var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
-                .When()
-                .Get("http://localhost:9876/json-response-body")
-                .Then()
-                .StatusCode(200)
-                .Extract().Body("$.Places[0].DoesNotExist");
+                    .When()
+                    .Get("http://localhost:9876/json-response-body")
+                    .Then()
+                    .StatusCode(200)
+                    .Extract().Body("$.Places[0].DoesNotExist");
             });
 
             Assert.That(rve?.Message, Is.EqualTo("JsonPath expression '$.Places[0].DoesNotExist' did not yield any results."));
@@ -149,11 +149,11 @@ namespace RestAssured.Tests
             this.CreateStubForJsonResponseWithBodyAndHeaders();
 
             string responseHeaderValue = Given()
-            .When()
-            .Get("http://localhost:9876/json-response-body")
-            .Then()
-            .StatusCode(200)
-            .Extract().Header("custom_header");
+                .When()
+                .Get("http://localhost:9876/json-response-body")
+                .Then()
+                .StatusCode(200)
+                .Extract().Header("custom_header");
 
             Assert.That(responseHeaderValue, Is.EqualTo("custom_header_value"));
         }
@@ -170,11 +170,11 @@ namespace RestAssured.Tests
             var ee = Assert.Throws<ExtractionException>(() =>
             {
                 Given()
-                .When()
-                .Get("http://localhost:9876/json-response-body")
-                .Then()
-                .StatusCode(200)
-                .Extract().Header("does_not_exist");
+                    .When()
+                    .Get("http://localhost:9876/json-response-body")
+                    .Then()
+                    .StatusCode(200)
+                    .Extract().Header("does_not_exist");
             });
 
             Assert.That(ee?.Message, Is.EqualTo("Header with name 'does_not_exist' could not be found in the response."));
@@ -190,11 +190,11 @@ namespace RestAssured.Tests
             this.CreateStubForJsonResponseWithBodyAndHeaders();
 
             HttpResponseMessage response = Given()
-            .When()
-            .Get("http://localhost:9876/json-response-body")
-            .Then()
-            .StatusCode(200)
-            .Extract().Response();
+                .When()
+                .Get("http://localhost:9876/json-response-body")
+                .Then()
+                .StatusCode(200)
+                .Extract().Response();
 
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(response.Headers.GetValues("custom_header").First(), Is.EqualTo("custom_header_value"));

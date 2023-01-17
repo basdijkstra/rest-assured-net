@@ -50,10 +50,10 @@ namespace RestAssured.Tests
             this.CreateStubForHttps();
 
             Given()
-            .When()
-            .Get("https://localhost:8443/ssl-endpoint")
-            .Then()
-            .StatusCode(200);
+                .When()
+                .Get("https://localhost:8443/ssl-endpoint")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>

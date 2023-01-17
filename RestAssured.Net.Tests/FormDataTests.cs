@@ -44,11 +44,11 @@ namespace RestAssured.Tests
             };
 
             Given()
-            .FormData(formData)
-            .When()
-            .Post("http://localhost:9876/form-data")
-            .Then()
-            .StatusCode(201);
+                .FormData(formData)
+                .When()
+                .Post("http://localhost:9876/form-data")
+                .Then()
+                .StatusCode(201);
         }
 
         /// <summary>

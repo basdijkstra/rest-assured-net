@@ -39,11 +39,11 @@ namespace RestAssured.Tests
             this.CreateStubForJsonResponseBody();
 
             Given()
-            .When()
-            .Get("http://localhost:9876/json-response-body")
-            .Then()
-            .StatusCode(200)
-            .Body("$.Places[0].Name", NHamcrest.Contains.String("City"));
+                .When()
+                .Get("http://localhost:9876/json-response-body")
+                .Then()
+                .StatusCode(200)
+                .Body("$.Places[0].Name", NHamcrest.Contains.String("City"));
         }
 
         /// <summary>
@@ -58,11 +58,11 @@ namespace RestAssured.Tests
             var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
-                .When()
-                .Get("http://localhost:9876/json-response-body")
-                .Then()
-                .StatusCode(200)
-                .Body("$.Places[0].Name", NHamcrest.Contains.String("Sin"));
+                    .When()
+                    .Get("http://localhost:9876/json-response-body")
+                    .Then()
+                    .StatusCode(200)
+                    .Body("$.Places[0].Name", NHamcrest.Contains.String("Sin"));
             });
 
             Assert.That(rve?.Message, Is.EqualTo("Expected element selected by '$.Places[0].Name' to match 'a string containing \"Sin\"' but was Sun City"));
@@ -78,11 +78,11 @@ namespace RestAssured.Tests
             this.CreateStubForJsonResponseBody();
 
             Given()
-            .When()
-            .Get("http://localhost:9876/json-response-body")
-            .Then()
-            .StatusCode(200)
-            .Body("$.Places[0].Inhabitants", NHamcrest.Is.GreaterThan(75000));
+                .When()
+                .Get("http://localhost:9876/json-response-body")
+                .Then()
+                .StatusCode(200)
+                .Body("$.Places[0].Inhabitants", NHamcrest.Is.GreaterThan(75000));
         }
 
         /// <summary>
@@ -97,11 +97,11 @@ namespace RestAssured.Tests
             var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
-                .When()
-                .Get("http://localhost:9876/json-response-body")
-                .Then()
-                .StatusCode(200)
-                .Body("$.Places[0].Inhabitants", NHamcrest.Is.GreaterThan(200000));
+                    .When()
+                    .Get("http://localhost:9876/json-response-body")
+                    .Then()
+                    .StatusCode(200)
+                    .Body("$.Places[0].Inhabitants", NHamcrest.Is.GreaterThan(200000));
             });
 
             Assert.That(rve?.Message, Is.EqualTo("Expected element selected by '$.Places[0].Inhabitants' to match 'greater than 200000' but was 100000"));
@@ -117,11 +117,11 @@ namespace RestAssured.Tests
             this.CreateStubForJsonResponseBody();
 
             Given()
-            .When()
-            .Get("http://localhost:9876/json-response-body")
-            .Then()
-            .StatusCode(200)
-            .Body("$.Places[0].IsCapital", NHamcrest.Is.True());
+                .When()
+                .Get("http://localhost:9876/json-response-body")
+                .Then()
+                .StatusCode(200)
+                .Body("$.Places[0].IsCapital", NHamcrest.Is.True());
         }
 
         /// <summary>
@@ -136,11 +136,11 @@ namespace RestAssured.Tests
             var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
-                .When()
-                .Get("http://localhost:9876/json-response-body")
-                .Then()
-                .StatusCode(200)
-                .Body("$.Places[0].IsCapital", NHamcrest.Is.False());
+                    .When()
+                    .Get("http://localhost:9876/json-response-body")
+                    .Then()
+                    .StatusCode(200)
+                    .Body("$.Places[0].IsCapital", NHamcrest.Is.False());
             });
 
             Assert.That(rve?.Message, Is.EqualTo("Expected element selected by '$.Places[0].IsCapital' to match 'False' but was True"));
@@ -158,11 +158,11 @@ namespace RestAssured.Tests
             var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
-                .When()
-                .Get("http://localhost:9876/json-response-body")
-                .Then()
-                .StatusCode(200)
-                .Body("$.Places[0].DoesNotExist", NHamcrest.Is.False());
+                    .When()
+                    .Get("http://localhost:9876/json-response-body")
+                    .Then()
+                    .StatusCode(200)
+                    .Body("$.Places[0].DoesNotExist", NHamcrest.Is.False());
             });
 
             Assert.That(rve?.Message, Is.EqualTo("JsonPath expression '$.Places[0].DoesNotExist' did not yield any results."));
@@ -178,11 +178,11 @@ namespace RestAssured.Tests
             this.CreateStubForJsonResponseBody();
 
             Given()
-            .When()
-            .Get("http://localhost:9876/json-response-body")
-            .Then()
-            .StatusCode(200)
-            .Body("$.Places[0:].Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Sun City")));
+                .When()
+                .Get("http://localhost:9876/json-response-body")
+                .Then()
+                .StatusCode(200)
+                .Body("$.Places[0:].Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Sun City")));
         }
 
         /// <summary>
@@ -197,11 +197,11 @@ namespace RestAssured.Tests
             var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
-                .When()
-                .Get("http://localhost:9876/json-response-body")
-                .Then()
-                .StatusCode(200)
-                .Body("$.Places[0:].Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Atlantis")));
+                    .When()
+                    .Get("http://localhost:9876/json-response-body")
+                    .Then()
+                    .StatusCode(200)
+                    .Body("$.Places[0:].Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Atlantis")));
             });
 
             Assert.That(rve?.Message, Is.EqualTo($"Expected elements selected by '$.Places[0:].Name' to match 'a collection containing \"Atlantis\"', but was [Sun City, Pleasure Meadow]"));
