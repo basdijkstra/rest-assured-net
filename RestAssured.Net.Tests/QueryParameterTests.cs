@@ -155,7 +155,7 @@ namespace RestAssured.Tests
             this.CreateStubForSingleQueryParameter();
 
             Given()
-            .Spec(this.requestSpecification)
+            .Spec(this.requestSpecification!)
             .QueryParam("name", "john")
             .When()
             .Get("/single-query-param")

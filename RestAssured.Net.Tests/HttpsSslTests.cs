@@ -68,7 +68,7 @@ namespace RestAssured.Tests
             this.CreateStubForHttps();
 
             Given()
-            .Spec(this.requestSpecification)
+            .Spec(this.requestSpecification!)
             .When()
             .Get("https://localhost:8443/ssl-endpoint")
             .Then()

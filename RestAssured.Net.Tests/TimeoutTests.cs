@@ -72,7 +72,7 @@ namespace RestAssured.Tests
             this.CreateStubForTimeoutOk();
 
             Given()
-            .Spec(this.requestSpecification)
+            .Spec(this.requestSpecification!)
             .When()
             .Get("http://localhost:9876/timeout-ok")
             .Then()
@@ -113,7 +113,7 @@ namespace RestAssured.Tests
             var hrpe = Assert.Throws<HttpRequestProcessorException>(() =>
             {
                 Given()
-                .Spec(this.requestSpecification)
+                .Spec(this.requestSpecification!)
                 .When()
                 .Get("http://localhost:9876/timeout-nok")
                 .Then()

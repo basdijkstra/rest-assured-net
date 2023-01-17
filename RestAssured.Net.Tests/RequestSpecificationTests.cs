@@ -90,7 +90,7 @@ namespace RestAssured.Tests
             this.CreateStubForRequestSpecification();
 
             Given()
-            .Spec(this.fullRequestSpecification)
+            .Spec(this.fullRequestSpecification!)
             .When()
             .Get(endpoint)
             .Then()
@@ -109,7 +109,7 @@ namespace RestAssured.Tests
             this.CreateStubForRequestSpecification();
 
             Given()
-            .Spec(this.applyDefaultsRequestSpecification)
+            .Spec(this.applyDefaultsRequestSpecification!)
             .When()
             .Get(endpoint)
             .Then()
@@ -126,7 +126,7 @@ namespace RestAssured.Tests
             this.CreateStubForRequestSpecificationWithHeaders();
 
             Given()
-            .Spec(this.headersSpecification)
+            .Spec(this.headersSpecification!)
             .Header("another_header", "another_header_value")
             .When()
             .Get("/request-specification-with-headers")
@@ -144,7 +144,7 @@ namespace RestAssured.Tests
             this.CreateStubForRequestSpecificationWithOAuth2();
 
             Given()
-            .Spec(this.oauthSpecification)
+            .Spec(this.oauthSpecification!)
             .When()
             .Get("/request-specification-with-oauth2")
             .Then()
@@ -164,7 +164,7 @@ namespace RestAssured.Tests
             var rce = Assert.Throws<RequestCreationException>(() =>
             {
                 Given()
-                .Spec(this.incorrectHostNameSpecification)
+                .Spec(this.incorrectHostNameSpecification!)
                 .When()
                 .Get("/api/request-specification")
                 .Then()
