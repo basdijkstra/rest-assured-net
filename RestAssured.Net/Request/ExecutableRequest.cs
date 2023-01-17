@@ -580,9 +580,9 @@ namespace RestAssured.Request
         /// <returns>Either the body itself (if the body is a string), or a serialized version of the body.</returns>
         private string Serialize(object body, string contentType)
         {
-            if (body is string)
+            if (body is string bodyStr)
             {
-                return (string)body;
+                return bodyStr;
             }
 
             if (contentType.Contains("json"))
@@ -592,12 +592,10 @@ namespace RestAssured.Request
 
             if (contentType.Contains("xml"))
             {
-                using (StringWriter sw = new StringWriter())
-                {
-                    XmlSerializer xmlSerializer = new XmlSerializer(body.GetType());
-                    xmlSerializer.Serialize(sw, body);
-                    return sw.ToString();
-                }
+                using StringWriter sw = new StringWriter();
+                XmlSerializer xmlSerializer = new XmlSerializer(body.GetType());
+                xmlSerializer.Serialize(sw, body);
+                return sw.ToString();
             }
 
             throw new RequestCreationException(

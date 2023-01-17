@@ -70,8 +70,10 @@ namespace RestAssured.Tests
         {
             this.CreateStubForSingleCookieValue();
 
-            CookieCollection cookies = new CookieCollection();
-            cookies.Add(new Cookie("my_cookie", "my_cookie_value"));
+            CookieCollection cookies = new CookieCollection
+            {
+                new Cookie("my_cookie", "my_cookie_value")
+            };
 
             Given()
             .Cookie(cookies)
