@@ -37,9 +37,9 @@ namespace RestAssured.Tests
             this.CreateStubForSinglePathParameter();
 
             Given()
-            .PathParam("userid", 1)
+            .PathParam("userId", 1)
             .When()
-            .Get("http://localhost:9876/user/{{userid}}")
+            .Get("http://localhost:9876/user/{{userId}}")
             .Then()
             .StatusCode(200);
         }
@@ -55,9 +55,9 @@ namespace RestAssured.Tests
 
             Given()
             .PathParam("userid", 1)
-            .PathParam("accountid", "NL1234")
+            .PathParam("accountId", "NL1234")
             .When()
-            .Get("http://localhost:9876/user/{{userid}}/account/{{accountid}}")
+            .Get("http://localhost:9876/user/{{userid}}/account/{{accountId}}")
             .Then()
             .StatusCode(200);
         }
@@ -72,7 +72,7 @@ namespace RestAssured.Tests
             Dictionary<string, object> pathParams = new Dictionary<string, object>
             {
                 { "userid", 1 },
-                { "accountid", "NL1234" },
+                { "accountId", "NL1234" },
             };
 
             this.CreateStubForMultiplePathParameters();
@@ -80,7 +80,7 @@ namespace RestAssured.Tests
             Given()
             .PathParams(pathParams)
             .When()
-            .Get("http://localhost:9876/user/{{userid}}/account/{{accountid}}")
+            .Get("http://localhost:9876/user/{{userid}}/account/{{accountId}}")
             .Then()
             .StatusCode(200);
         }
