@@ -70,17 +70,17 @@ namespace RestAssured.Request.Builders
         /// <summary>
         /// Authentication details to be added when sending the request.
         /// </summary>
-        public AuthenticationHeaderValue AuthenticationHeader { get; set; }
+        public AuthenticationHeaderValue? AuthenticationHeader { get; set; }
 
         /// <summary>
         /// The value for the Content-Type header when sending the request.
         /// </summary>
-        public string ContentType { get; set; }
+        public string? ContentType { get; set; }
 
         /// <summary>
         /// The value for the content encoding when sending the request.
         /// </summary>
-        public Encoding ContentEncoding { get; set; }
+        public Encoding? ContentEncoding { get; set; }
 
         /// <summary>
         /// When set to true, disables SSL validation on the requests that use this specification.
@@ -115,11 +115,11 @@ namespace RestAssured.Request.Builders
             string basePath,
             TimeSpan? timeout,
             ProductInfoHeaderValue? userAgent,
-            IWebProxy proxy,
+            IWebProxy? proxy,
             Dictionary<string, object> headers,
-            AuthenticationHeaderValue authenticationHeader,
-            string contentType,
-            Encoding contentEncoding,
+            AuthenticationHeaderValue? authenticationHeader,
+            string? contentType,
+            Encoding? contentEncoding,
             bool useRelaxedHttpsValidation,
             RequestLogLevel requestLogLevel)
         {

@@ -33,11 +33,11 @@ namespace RestAssured.Request.Builders
         private readonly string host = "localhost";
         private readonly int port = -1;  // -1 means the default port for the scheme will be chosen
         private readonly string basePath = string.Empty;
-        private readonly TimeSpan? timeout;
-        private readonly ProductInfoHeaderValue? userAgent;
-        private readonly IWebProxy? proxy;
+        private readonly TimeSpan? timeout = null;
+        private readonly ProductInfoHeaderValue? userAgent = null;
+        private readonly IWebProxy? proxy = null;
         private readonly Dictionary<string, object> headers = new Dictionary<string, object>();
-        private readonly AuthenticationHeaderValue? authenticationHeader;
+        private readonly AuthenticationHeaderValue? authenticationHeader = null;
         private readonly string? contentTypeHeader = null;
         private readonly Encoding? contentEncoding = null;
         private readonly bool useRelaxedHttpsValidation = false;
