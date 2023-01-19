@@ -41,11 +41,11 @@ namespace RestAssured.Tests
             this.CreateStubForPlaintextRequestBody();
 
             Given()
-            .Body(this.plaintextRequestBody)
-            .When()
-            .Post("http://localhost:9876/plaintext-request-body")
-            .Then()
-            .StatusCode(201);
+                .Body(this.plaintextRequestBody)
+                .When()
+                .Post("http://localhost:9876/plaintext-request-body")
+                .Then()
+                .StatusCode(201);
         }
 
         /// <summary>
@@ -58,11 +58,11 @@ namespace RestAssured.Tests
             this.CreateStubForJsonStringRequestBody();
 
             Given()
-            .Body(this.jsonStringRequestBody)
-            .When()
-            .Post("http://localhost:9876/json-string-request-body")
-            .Then()
-            .StatusCode(201);
+                .Body(this.jsonStringRequestBody)
+                .When()
+                .Post("http://localhost:9876/json-string-request-body")
+                .Then()
+                .StatusCode(201);
         }
 
         /// <summary>

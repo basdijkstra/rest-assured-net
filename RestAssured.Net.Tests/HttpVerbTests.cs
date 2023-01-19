@@ -36,8 +36,8 @@ namespace RestAssured.Tests
             this.CreateStubForHttpGet();
 
             Given()
-            .When()
-            .Get("http://localhost:9876/http-get");
+                .When()
+                .Get("http://localhost:9876/http-get");
         }
 
         /// <summary>
@@ -50,8 +50,8 @@ namespace RestAssured.Tests
             this.CreateStubForHttpPost();
 
             Given()
-            .When()
-            .Post("http://localhost:9876/http-post");
+                .When()
+                .Post("http://localhost:9876/http-post");
         }
 
         /// <summary>
@@ -64,8 +64,8 @@ namespace RestAssured.Tests
             this.CreateStubForHttpPut();
 
             Given()
-            .When()
-            .Put("http://localhost:9876/http-put");
+                .When()
+                .Put("http://localhost:9876/http-put");
         }
 
         /// <summary>
@@ -78,8 +78,8 @@ namespace RestAssured.Tests
             this.CreateStubForHttpPatch();
 
             Given()
-            .When()
-            .Patch("http://localhost:9876/http-patch");
+                .When()
+                .Patch("http://localhost:9876/http-patch");
         }
 
         /// <summary>
@@ -92,8 +92,8 @@ namespace RestAssured.Tests
             this.CreateStubForHttpDelete();
 
             Given()
-            .When()
-            .Delete("http://localhost:9876/http-delete");
+                .When()
+                .Delete("http://localhost:9876/http-delete");
         }
 
         /// <summary>

@@ -41,11 +41,11 @@ namespace RestAssured.Tests
             this.CreateStubForPlaintextResponseBody();
 
             Given()
-            .When()
-            .Get("http://localhost:9876/plaintext-response-body")
-            .Then()
-            .StatusCode(200)
-            .Body(this.plaintextResponseBody);
+                .When()
+                .Get("http://localhost:9876/plaintext-response-body")
+                .Then()
+                .StatusCode(200)
+                .Body(this.plaintextResponseBody);
         }
 
         /// <summary>
@@ -58,11 +58,11 @@ namespace RestAssured.Tests
             this.CreateStubForJsonStringResponseBody();
 
             Given()
-            .When()
-            .Get("http://localhost:9876/json-string-response-body")
-            .Then()
-            .StatusCode(200)
-            .Body(this.jsonStringResponseBody);
+                .When()
+                .Get("http://localhost:9876/json-string-response-body")
+                .Then()
+                .StatusCode(200)
+                .Body(this.jsonStringResponseBody);
         }
 
         /// <summary>
@@ -75,11 +75,11 @@ namespace RestAssured.Tests
             this.CreateStubForJsonStringResponseBody();
 
             Given()
-            .When()
-            .Get("http://localhost:9876/json-string-response-body")
-            .Then()
-            .StatusCode(200)
-            .Body(NHamcrest.Contains.String("John Doe"));
+                .When()
+                .Get("http://localhost:9876/json-string-response-body")
+                .Then()
+                .StatusCode(200)
+                .Body(NHamcrest.Contains.String("John Doe"));
         }
 
         /// <summary>
@@ -94,11 +94,11 @@ namespace RestAssured.Tests
             var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
-                .When()
-                .Get("http://localhost:9876/plaintext-response-body")
-                .Then()
-                .StatusCode(200)
-                .Body("This is a different plaintext response body.");
+                    .When()
+                    .Get("http://localhost:9876/plaintext-response-body")
+                    .Then()
+                    .StatusCode(200)
+                    .Body("This is a different plaintext response body.");
             });
 
             Assert.That(rve?.Message, Is.EqualTo("Actual response body did not match expected response body.\nExpected: This is a different plaintext response body.\nActual: Here's a plaintext response body."));
@@ -116,11 +116,11 @@ namespace RestAssured.Tests
             var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
-                .When()
-                .Get("http://localhost:9876/json-string-response-body")
-                .Then()
-                .StatusCode(200)
-                .Body(NHamcrest.Contains.String("Jane Doe"));
+                    .When()
+                    .Get("http://localhost:9876/json-string-response-body")
+                    .Then()
+                    .StatusCode(200)
+                    .Body(NHamcrest.Contains.String("Jane Doe"));
             });
 
             Assert.That(rve?.Message, Is.EqualTo($"Actual response body expected to match 'a string containing \"Jane Doe\"' but didn't.\nActual: {this.jsonStringResponseBody}"));
@@ -138,11 +138,11 @@ namespace RestAssured.Tests
             var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
-                .When()
-                .Get("http://localhost:9876/content-type-cannot-be-processed")
-                .Then()
-                .StatusCode(200)
-                .Body("$.Places[0].Name", NHamcrest.Contains.String("City"));
+                    .When()
+                    .Get("http://localhost:9876/content-type-cannot-be-processed")
+                    .Then()
+                    .StatusCode(200)
+                    .Body("$.Places[0].Name", NHamcrest.Contains.String("City"));
             });
 
             Assert.That(rve?.Message, Is.EqualTo($"Unable to extract elements from response with Content-Type 'application/unknown'"));

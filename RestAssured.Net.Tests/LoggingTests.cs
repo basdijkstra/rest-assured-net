@@ -43,16 +43,16 @@ namespace RestAssured.Tests
             this.CreateStubForLoggingJsonResponse();
 
             Given()
-            .Log(RequestLogLevel.All)
-            .And()
-            .Accept("application/json")
-            .Header("CustomHeader", "custom header value")
-            .ContentType("application/json")
-            .Body(this.jsonBody)
-            .When()
-            .Get("http://localhost:9876/log-json-response")
-            .Then()
-            .StatusCode(200);
+                .Log(RequestLogLevel.All)
+                .And()
+                .Accept("application/json")
+                .Header("CustomHeader", "custom header value")
+                .ContentType("application/json")
+                .Body(this.jsonBody)
+                .When()
+                .Get("http://localhost:9876/log-json-response")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -65,16 +65,16 @@ namespace RestAssured.Tests
             this.CreateStubForLoggingJsonResponse();
 
             Given()
-            .Log().All()
-            .And()
-            .Accept("application/json")
-            .Header("CustomHeader", "custom header value")
-            .ContentType("application/json")
-            .Body(this.jsonBody)
-            .When()
-            .Get("http://localhost:9876/log-json-response")
-            .Then()
-            .StatusCode(200);
+                .Log().All()
+                .And()
+                .Accept("application/json")
+                .Header("CustomHeader", "custom header value")
+                .ContentType("application/json")
+                .Body(this.jsonBody)
+                .When()
+                .Get("http://localhost:9876/log-json-response")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -87,13 +87,13 @@ namespace RestAssured.Tests
             this.CreateStubForLoggingXmlResponse();
 
             Given()
-            .Log(RequestLogLevel.All)
-            .ContentType("application/xml")
-            .Body(this.xmlBody)
-            .When()
-            .Get("http://localhost:9876/log-xml-response")
-            .Then()
-            .StatusCode(200);
+                .Log(RequestLogLevel.All)
+                .ContentType("application/xml")
+                .Body(this.xmlBody)
+                .When()
+                .Get("http://localhost:9876/log-xml-response")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -106,12 +106,12 @@ namespace RestAssured.Tests
             this.CreateStubForLoggingJsonResponse();
 
             Given()
-            .When()
-            .Get("http://localhost:9876/log-json-response")
-            .Then()
-            .Log(ResponseLogLevel.All)
-            .And()
-            .StatusCode(200);
+                .When()
+                .Get("http://localhost:9876/log-json-response")
+                .Then()
+                .Log(ResponseLogLevel.All)
+                .And()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -124,12 +124,12 @@ namespace RestAssured.Tests
             this.CreateStubForLoggingJsonResponse();
 
             Given()
-            .When()
-            .Get("http://localhost:9876/log-json-response")
-            .Then()
-            .Log().All()
-            .And()
-            .StatusCode(200);
+                .When()
+                .Get("http://localhost:9876/log-json-response")
+                .Then()
+                .Log().All()
+                .And()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -142,12 +142,12 @@ namespace RestAssured.Tests
             this.CreateStubForLoggingXmlResponse();
 
             Given()
-            .When()
-            .Get("http://localhost:9876/log-xml-response")
-            .Then()
-            .Log(ResponseLogLevel.All)
-            .And()
-            .StatusCode(200);
+                .When()
+                .Get("http://localhost:9876/log-xml-response")
+                .Then()
+                .Log(ResponseLogLevel.All)
+                .And()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -160,12 +160,12 @@ namespace RestAssured.Tests
             this.CreateStubForLoggingResponseWithoutBody();
 
             Given()
-            .When()
-            .Get("http://localhost:9876/log-no-response-body")
-            .Then()
-            .Log(ResponseLogLevel.All)
-            .And()
-            .StatusCode(200);
+                .When()
+                .Get("http://localhost:9876/log-no-response-body")
+                .Then()
+                .Log(ResponseLogLevel.All)
+                .And()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -178,11 +178,11 @@ namespace RestAssured.Tests
             this.CreateStubForLoggingResponseWithoutBody();
 
             Given()
-            .Log(RequestLogLevel.All)
-            .When()
-            .Get("http://localhost:9876/log-no-response-body")
-            .Then()
-            .StatusCode(200);
+                .Log(RequestLogLevel.All)
+                .When()
+                .Get("http://localhost:9876/log-no-response-body")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>

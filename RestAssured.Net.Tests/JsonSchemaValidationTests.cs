@@ -41,12 +41,12 @@ namespace RestAssured.Tests
             this.CreateStubForJsonSchemaValidation();
 
             Given()
-            .When()
-            .Get("http://localhost:9876/json-schema-validation")
-            .Then()
-            .StatusCode(200)
-            .And()
-            .MatchesJsonSchema(this.jsonSchema);
+                .When()
+                .Get("http://localhost:9876/json-schema-validation")
+                .Then()
+                .StatusCode(200)
+                .And()
+                .MatchesJsonSchema(this.jsonSchema);
         }
 
         /// <summary>
@@ -61,12 +61,12 @@ namespace RestAssured.Tests
             JSchema parsedSchema = JSchema.Parse(this.jsonSchema);
 
             Given()
-            .When()
-            .Get("http://localhost:9876/json-schema-validation")
-            .Then()
-            .StatusCode(200)
-            .And()
-            .MatchesJsonSchema(parsedSchema);
+                .When()
+                .Get("http://localhost:9876/json-schema-validation")
+                .Then()
+                .StatusCode(200)
+                .And()
+                .MatchesJsonSchema(parsedSchema);
         }
 
         /// <summary>
@@ -80,12 +80,12 @@ namespace RestAssured.Tests
             var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
-                .When()
-                .Get("http://localhost:9876/json-schema-validation-mismatch")
-                .Then()
-                .StatusCode(200)
-                .And()
-                .MatchesJsonSchema(this.jsonSchema);
+                    .When()
+                    .Get("http://localhost:9876/json-schema-validation-mismatch")
+                    .Then()
+                    .StatusCode(200)
+                    .And()
+                    .MatchesJsonSchema(this.jsonSchema);
             });
 
             Assert.That(rve?.Message, Does.Contain("Response body did not match JSON schema supplied: Invalid type. Expected String but got Integer."));
@@ -102,12 +102,12 @@ namespace RestAssured.Tests
             var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
-                .When()
-                .Get("http://localhost:9876/json-schema-validation-mismatch")
-                .Then()
-                .StatusCode(200)
-                .And()
-                .MatchesJsonSchema(this.invalidJsonSchema);
+                    .When()
+                    .Get("http://localhost:9876/json-schema-validation-mismatch")
+                    .Then()
+                    .StatusCode(200)
+                    .And()
+                    .MatchesJsonSchema(this.invalidJsonSchema);
             });
 
             Assert.That(rve?.Message, Does.Contain("Could not parse supplied JSON schema:"));
@@ -124,12 +124,12 @@ namespace RestAssured.Tests
             var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
-                .When()
-                .Get("http://localhost:9876/json-schema-unexpected-content-type")
-                .Then()
-                .StatusCode(200)
-                .And()
-                .MatchesJsonSchema(this.jsonSchema);
+                    .When()
+                    .Get("http://localhost:9876/json-schema-unexpected-content-type")
+                    .Then()
+                    .StatusCode(200)
+                    .And()
+                    .MatchesJsonSchema(this.jsonSchema);
             });
 
             Assert.That(rve?.Message, Is.EqualTo("Expected response Content-Type header to contain 'json', but was 'application/something'"));

@@ -55,11 +55,11 @@ namespace RestAssured.Tests
             this.CreateStubForTimeoutOk();
 
             Given()
-            .Timeout(TimeSpan.FromSeconds(2))
-            .When()
-            .Get("http://localhost:9876/timeout-ok")
-            .Then()
-            .StatusCode(200);
+                .Timeout(TimeSpan.FromSeconds(2))
+                .When()
+                .Get("http://localhost:9876/timeout-ok")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -72,11 +72,11 @@ namespace RestAssured.Tests
             this.CreateStubForTimeoutOk();
 
             Given()
-            .Spec(this.requestSpecification)
-            .When()
-            .Get("http://localhost:9876/timeout-ok")
-            .Then()
-            .StatusCode(200);
+                .Spec(this.requestSpecification)
+                .When()
+                .Get("http://localhost:9876/timeout-ok")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -91,11 +91,11 @@ namespace RestAssured.Tests
             var hrpe = Assert.Throws<HttpRequestProcessorException>(() =>
             {
                 Given()
-                .Timeout(TimeSpan.FromSeconds(2))
-                .When()
-                .Get("http://localhost:9876/timeout-nok")
-                .Then()
-                .StatusCode(200);
+                    .Timeout(TimeSpan.FromSeconds(2))
+                    .When()
+                    .Get("http://localhost:9876/timeout-nok")
+                    .Then()
+                    .StatusCode(200);
             });
 
             Assert.That(hrpe?.Message, Is.EqualTo("Request timeout of 00:00:02 exceeded."));
@@ -113,11 +113,11 @@ namespace RestAssured.Tests
             var hrpe = Assert.Throws<HttpRequestProcessorException>(() =>
             {
                 Given()
-                .Spec(this.requestSpecification)
-                .When()
-                .Get("http://localhost:9876/timeout-nok")
-                .Then()
-                .StatusCode(200);
+                    .Spec(this.requestSpecification)
+                    .When()
+                    .Get("http://localhost:9876/timeout-nok")
+                    .Then()
+                    .StatusCode(200);
             });
 
             Assert.That(hrpe?.Message, Is.EqualTo("Request timeout of 00:00:02 exceeded."));

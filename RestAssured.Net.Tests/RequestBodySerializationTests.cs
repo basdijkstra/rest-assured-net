@@ -75,11 +75,11 @@ namespace RestAssured.Tests
             this.CreateStubForJsonRequestBody();
 
             Given()
-            .Body(this.location)
-            .When()
-            .Post("http://localhost:9876/json-serialization")
-            .Then()
-            .StatusCode(201);
+                .Body(this.location)
+                .When()
+                .Post("http://localhost:9876/json-serialization")
+                .Then()
+                .StatusCode(201);
         }
 
         /// <summary>
@@ -99,11 +99,11 @@ namespace RestAssured.Tests
             };
 
             Given()
-            .Body(post)
-            .When()
-            .Post("http://localhost:9876/object-serialization")
-            .Then()
-            .StatusCode(201);
+                .Body(post)
+                .When()
+                .Post("http://localhost:9876/object-serialization")
+                .Then()
+                .StatusCode(201);
         }
 
         /// <summary>
@@ -123,11 +123,11 @@ namespace RestAssured.Tests
             };
 
             Given()
-            .Body(post)
-            .When()
-            .Post("http://localhost:9876/object-serialization")
-            .Then()
-            .StatusCode(201);
+                .Body(post)
+                .When()
+                .Post("http://localhost:9876/object-serialization")
+                .Then()
+                .StatusCode(201);
         }
 
         /// <summary>
@@ -140,12 +140,12 @@ namespace RestAssured.Tests
             this.CreateStubForXmlRequestBody();
 
             Given()
-            .ContentType("application/xml")
-            .Body(this.location)
-            .When()
-            .Post("http://localhost:9876/xml-serialization")
-            .Then()
-            .StatusCode(201);
+                .ContentType("application/xml")
+                .Body(this.location)
+                .When()
+                .Post("http://localhost:9876/xml-serialization")
+                .Then()
+                .StatusCode(201);
         }
 
         /// <summary>
@@ -160,12 +160,12 @@ namespace RestAssured.Tests
             var rce = Assert.Throws<RequestCreationException>(() =>
             {
                 Given()
-                .ContentType("application/something")
-                .Body(this.location)
-                .When()
-                .Post("http://localhost:9876/xml-serialization")
-                .Then()
-                .StatusCode(201);
+                    .ContentType("application/something")
+                    .Body(this.location)
+                    .When()
+                    .Post("http://localhost:9876/xml-serialization")
+                    .Then()
+                    .StatusCode(201);
             });
 
             Assert.That(rce?.Message, Is.EqualTo("Could not determine how to serialize request based on specified content type 'application/something'"));

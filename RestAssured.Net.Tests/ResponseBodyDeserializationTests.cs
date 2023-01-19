@@ -41,9 +41,9 @@ namespace RestAssured.Tests
             this.CreateStubForJsonResponseBody();
 
             Location responseLocation = (Location)Given()
-            .When()
-            .Get("http://localhost:9876/json-deserialization")
-            .As(typeof(Location));
+                .When()
+                .Get("http://localhost:9876/json-deserialization")
+                .As(typeof(Location));
 
             Assert.That(responseLocation.Country, Is.EqualTo("United States"));
             Assert.That(responseLocation.Places?.Count, Is.EqualTo(2));
@@ -59,9 +59,9 @@ namespace RestAssured.Tests
             this.CreateStubForXmlResponseBody();
 
             Location responseLocation = (Location)Given()
-            .When()
-            .Get("http://localhost:9876/xml-deserialization")
-            .As(typeof(Location));
+                .When()
+                .Get("http://localhost:9876/xml-deserialization")
+                .As(typeof(Location));
 
             Assert.That(responseLocation.Country, Is.EqualTo("United States"));
             Assert.That(responseLocation.Places?.Count, Is.EqualTo(2));
@@ -79,9 +79,9 @@ namespace RestAssured.Tests
             var de = Assert.Throws<DeserializationException>(() =>
             {
                 Location responseLocation = (Location)Given()
-                .When()
-                .Get("http://localhost:9876/xml-deserialization-unrecognized-content-type")
-                .As(typeof(Location));
+                    .When()
+                    .Get("http://localhost:9876/xml-deserialization-unrecognized-content-type")
+                    .As(typeof(Location));
             });
 
             Assert.That(de?.Message, Is.EqualTo("Unable to deserialize response with Content-Type 'application/something'"));
