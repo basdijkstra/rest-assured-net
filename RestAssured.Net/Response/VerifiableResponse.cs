@@ -82,7 +82,7 @@ namespace RestAssured.Response
         /// </summary>
         /// <param name="expectedStatusCode">The expected status code.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
-        /// <exception cref="AssertionException">Thrown when the actual status code does not match the expected one.</exception>
+        /// <exception cref="ResponseVerificationException">Thrown when the actual status code does not match the expected one.</exception>
         public VerifiableResponse StatusCode(int expectedStatusCode)
         {
             if (expectedStatusCode != (int)this.response.StatusCode)
@@ -98,7 +98,7 @@ namespace RestAssured.Response
         /// </summary>
         /// <param name="expectedStatusCode">The expected status code.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
-        /// <exception cref="AssertionException">Thrown when the actual status code does not match the expected one.</exception>
+        /// <exception cref="ResponseVerificationException">Thrown when the actual status code does not match the expected one.</exception>
         public VerifiableResponse StatusCode(HttpStatusCode expectedStatusCode)
         {
             if (!expectedStatusCode.Equals(this.response.StatusCode))
@@ -114,7 +114,7 @@ namespace RestAssured.Response
         /// </summary>
         /// <param name="matcher">The NHamcrest matcher to evaluate.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
-        /// <exception cref="AssertionException">Thrown when the actual status code does not match the expected one.</exception>
+        /// <exception cref="ResponseVerificationException">Thrown when the actual status code does not match the expected one.</exception>
         public VerifiableResponse StatusCode(IMatcher<int> matcher)
         {
             if (!matcher.Matches((int)this.response.StatusCode))
@@ -131,7 +131,7 @@ namespace RestAssured.Response
         /// <param name="name">The expected response header name.</param>
         /// <param name="expectedValue">The corresponding expected response header value.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
-        /// <exception cref="AssertionException">Thrown when the header does not exist, or when the header value does not equal the supplied expected value.</exception>
+        /// <exception cref="ResponseVerificationException">Thrown when the header does not exist, or when the header value does not equal the supplied expected value.</exception>
         public VerifiableResponse Header(string name, string expectedValue)
         {
             if (!this.response.Headers.TryGetValues(name, out IEnumerable<string>? values))
@@ -153,7 +153,7 @@ namespace RestAssured.Response
         /// <param name="name">The expected response header name.</param>
         /// <param name="matcher">The NHamcrest matcher to evaluate.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
-        /// <exception cref="AssertionException">Thrown when the header does not exist, or when the header value does not equal the supplied expected value.</exception>
+        /// <exception cref="ResponseVerificationException">Thrown when the header does not exist, or when the header value does not equal the supplied expected value.</exception>
         public VerifiableResponse Header(string name, IMatcher<string> matcher)
         {
             IEnumerable<string> values;
@@ -178,6 +178,7 @@ namespace RestAssured.Response
         /// </summary>
         /// <param name="expectedContentType">The expected value for the response Content-Type header.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        /// <exception cref="ResponseVerificationException">Thrown when the "Content-Type" header does not exist, or when the header value does not equal the supplied expected value.</exception>
         public VerifiableResponse ContentType(string expectedContentType)
         {
             MediaTypeHeaderValue? actualContentType = this.response.Content.Headers.ContentType;
@@ -200,6 +201,7 @@ namespace RestAssured.Response
         /// </summary>
         /// <param name="matcher">The NHamcrest matcher to evaluate.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        /// <exception cref="ResponseVerificationException">Thrown when the "Content-Type" header does not exist, or when the header value does not equal the supplied expected value.</exception>
         public VerifiableResponse ContentType(IMatcher<string> matcher)
         {
             MediaTypeHeaderValue? actualContentType = this.response.Content.Headers.ContentType;
@@ -222,6 +224,7 @@ namespace RestAssured.Response
         /// </summary>
         /// <param name="expectedResponseBody">The expected response body.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        /// <exception cref="ResponseVerificationException">Thrown when the actual response body does not match the expected one.</exception>
         public VerifiableResponse Body(string expectedResponseBody)
         {
             string actualResponseBody = this.response.Content.ReadAsStringAsync().Result;
@@ -239,6 +242,7 @@ namespace RestAssured.Response
         /// </summary>
         /// <param name="matcher">The NHamcrest matcher to evaluate.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        /// <exception cref="ResponseVerificationException">Thrown when the actual response body does not match the expected one.</exception>
         public VerifiableResponse Body(IMatcher<string> matcher)
         {
             string actualResponseBody = this.response.Content.ReadAsStringAsync().Result;
@@ -382,6 +386,7 @@ namespace RestAssured.Response
         /// </summary>
         /// <param name="jsonSchema">The JSON schema to verify the response against.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        /// <exception cref="ResponseVerificationException">Thrown when can't parse supplied JSON schema.</exception>
         public VerifiableResponse MatchesJsonSchema(string jsonSchema)
         {
             JSchema parsedSchema;
@@ -403,6 +408,7 @@ namespace RestAssured.Response
         /// </summary>
         /// <param name="jsonSchema">The JSON schema to verify the response against.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        /// <exception cref="ResponseVerificationException">Thrown when "Content-Type" doesn't contain "json" or when body doesn't match JSON schema supplied.</exception>
         public VerifiableResponse MatchesJsonSchema(JSchema jsonSchema)
         {
             string responseMediaType = this.response.Content.Headers.ContentType.MediaType ?? string.Empty;

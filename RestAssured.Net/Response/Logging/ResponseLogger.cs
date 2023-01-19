@@ -102,7 +102,7 @@ namespace RestAssured.Response.Logging
         /// </summary>
         /// <param name="response">The response to be logged to the console.</param>
         /// <param name="responseLogLevel">The <see cref="ResponseLogLevel"/> to use.</param>
-        /// <param name="elapsedTime">The time elasped between sending a request and returning a response.</param>
+        /// <param name="elapsedTime">The time elapsed between sending a request and returning a response.</param>
         internal static void Log(HttpResponseMessage response, ResponseLogLevel responseLogLevel, TimeSpan elapsedTime)
         {
             if (responseLogLevel > ResponseLogLevel.None)
