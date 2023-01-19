@@ -54,11 +54,11 @@ namespace RestAssured.Tests
             this.CreateStubForUserAgent();
 
             Given()
-            .UserAgent(new ProductInfoHeaderValue("MyUserAgent", "1.0"))
-            .When()
-            .Get("http://localhost:9876/user-agent")
-            .Then()
-            .StatusCode(200);
+                .UserAgent(new ProductInfoHeaderValue("MyUserAgent", "1.0"))
+                .When()
+                .Get("http://localhost:9876/user-agent")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -71,11 +71,11 @@ namespace RestAssured.Tests
             this.CreateStubForUserAgent();
 
             Given()
-            .UserAgent("MyUserAgent", "1.0")
-            .When()
-            .Get("http://localhost:9876/user-agent")
-            .Then()
-            .StatusCode(200);
+                .UserAgent("MyUserAgent", "1.0")
+                .When()
+                .Get("http://localhost:9876/user-agent")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -88,11 +88,11 @@ namespace RestAssured.Tests
             this.CreateStubForUserAgent();
 
             Given()
-            .Spec(this.requestSpecification!)
-            .When()
-            .Get("/user-agent")
-            .Then()
-            .StatusCode(200);
+                .Spec(this.requestSpecification!)
+                .When()
+                .Get("/user-agent")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>

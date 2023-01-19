@@ -39,11 +39,11 @@ namespace RestAssured.Tests
             this.CreateStubForSingleHeaderValue();
 
             Given()
-            .Header("my_header", "my_header_value")
-            .When()
-            .Get("http://localhost:9876/single-header-value")
-            .Then()
-            .StatusCode(200);
+                .Header("my_header", "my_header_value")
+                .When()
+                .Get("http://localhost:9876/single-header-value")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -56,11 +56,11 @@ namespace RestAssured.Tests
             this.CreateStubForMultipleHeaderValues();
 
             Given()
-            .Header("my_header", new List<string>() { "my_header_value_1", "my_header_value_2" })
-            .When()
-            .Get("http://localhost:9876/multiple-header-values")
-            .Then()
-            .StatusCode(200);
+                .Header("my_header", new List<string>() { "my_header_value_1", "my_header_value_2" })
+                .When()
+                .Get("http://localhost:9876/multiple-header-values")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -73,11 +73,11 @@ namespace RestAssured.Tests
             this.CreateStubForContentTypeHeaderAsString();
 
             Given()
-            .ContentType("application/xml")
-            .When()
-            .Post("http://localhost:9876/content-type-as-string")
-            .Then()
-            .StatusCode(201);
+                .ContentType("application/xml")
+                .When()
+                .Post("http://localhost:9876/content-type-as-string")
+                .Then()
+                .StatusCode(201);
         }
 
         /// <summary>
@@ -90,13 +90,13 @@ namespace RestAssured.Tests
             this.CreateStubForEncoding();
 
             Given()
-            .ContentType("application/xml")
-            .And() // Example of using the And() syntactic sugar method in request building.
-            .ContentEncoding(Encoding.ASCII)
-            .When()
-            .Post("http://localhost:9876/content-type-with-encoding")
-            .Then()
-            .StatusCode(201);
+                .ContentType("application/xml")
+                .And() // Example of using the And() syntactic sugar method in request building.
+                .ContentEncoding(Encoding.ASCII)
+                .When()
+                .Post("http://localhost:9876/content-type-with-encoding")
+                .Then()
+                .StatusCode(201);
         }
 
         /// <summary>
@@ -109,11 +109,11 @@ namespace RestAssured.Tests
             this.CreateStubForAcceptHeaderAsString();
 
             Given()
-            .Accept("application/xml")
-            .When()
-            .Post("http://localhost:9876/accept-header-as-string")
-            .Then()
-            .StatusCode(201);
+                .Accept("application/xml")
+                .When()
+                .Post("http://localhost:9876/accept-header-as-string")
+                .Then()
+                .StatusCode(201);
         }
 
         /// <summary>

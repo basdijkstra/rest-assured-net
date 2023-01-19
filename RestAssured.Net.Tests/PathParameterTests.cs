@@ -37,11 +37,11 @@ namespace RestAssured.Tests
             this.CreateStubForSinglePathParameter();
 
             Given()
-            .PathParam("userId", 1)
-            .When()
-            .Get("http://localhost:9876/user/{{userId}}")
-            .Then()
-            .StatusCode(200);
+                .PathParam("userId", 1)
+                .When()
+                .Get("http://localhost:9876/user/{{userId}}")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -54,12 +54,12 @@ namespace RestAssured.Tests
             this.CreateStubForMultiplePathParameters();
 
             Given()
-            .PathParam("userid", 1)
-            .PathParam("accountId", "NL1234")
-            .When()
-            .Get("http://localhost:9876/user/{{userid}}/account/{{accountId}}")
-            .Then()
-            .StatusCode(200);
+                .PathParam("userid", 1)
+                .PathParam("accountId", "NL1234")
+                .When()
+                .Get("http://localhost:9876/user/{{userid}}/account/{{accountId}}")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -78,11 +78,11 @@ namespace RestAssured.Tests
             this.CreateStubForMultiplePathParameters();
 
             Given()
-            .PathParams(pathParams)
-            .When()
-            .Get("http://localhost:9876/user/{{userid}}/account/{{accountId}}")
-            .Then()
-            .StatusCode(200);
+                .PathParams(pathParams)
+                .When()
+                .Get("http://localhost:9876/user/{{userid}}/account/{{accountId}}")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>

@@ -54,11 +54,11 @@ namespace RestAssured.Tests
             this.CreateStubForSingleQueryParameter();
 
             Given()
-            .QueryParam("name", "john")
-            .When()
-            .Get("http://localhost:9876/api/single-query-param")
-            .Then()
-            .StatusCode(200);
+                .QueryParam("name", "john")
+                .When()
+                .Get("http://localhost:9876/api/single-query-param")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -71,12 +71,12 @@ namespace RestAssured.Tests
             this.CreateStubForMultipleQueryParameters();
 
             Given()
-            .QueryParam("name", "john")
-            .QueryParam("id", 12345)
-            .When()
-            .Get("http://localhost:9876/multiple-query-params")
-            .Then()
-            .StatusCode(200);
+                .QueryParam("name", "john")
+                .QueryParam("id", 12345)
+                .When()
+                .Get("http://localhost:9876/multiple-query-params")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -89,12 +89,12 @@ namespace RestAssured.Tests
             this.CreateStubForSingleQueryParameter();
 
             Given()
-            .QueryParam("name", "susan")
-            .QueryParam("name", "john")
-            .When()
-            .Get("http://localhost:9876/api/single-query-param")
-            .Then()
-            .StatusCode(200);
+                .QueryParam("name", "susan")
+                .QueryParam("name", "john")
+                .When()
+                .Get("http://localhost:9876/api/single-query-param")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -113,11 +113,11 @@ namespace RestAssured.Tests
             this.CreateStubForMultipleQueryParameters();
 
             Given()
-            .QueryParams(queryParams)
-            .When()
-            .Get("http://localhost:9876/multiple-query-params")
-            .Then()
-            .StatusCode(200);
+                .QueryParams(queryParams)
+                .When()
+                .Get("http://localhost:9876/multiple-query-params")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -136,12 +136,12 @@ namespace RestAssured.Tests
             this.CreateStubForMultipleQueryParameters();
 
             Given()
-            .QueryParams(queryParams)
-            .QueryParam("name", "john") // This parameter value will be used
-            .When()
-            .Get("http://localhost:9876/multiple-query-params")
-            .Then()
-            .StatusCode(200);
+                .QueryParams(queryParams)
+                .QueryParam("name", "john") // This parameter value will be used
+                .When()
+                .Get("http://localhost:9876/multiple-query-params")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -155,12 +155,12 @@ namespace RestAssured.Tests
             this.CreateStubForSingleQueryParameter();
 
             Given()
-            .Spec(this.requestSpecification!)
-            .QueryParam("name", "john")
-            .When()
-            .Get("/single-query-param")
-            .Then()
-            .StatusCode(200);
+                .Spec(this.requestSpecification!)
+                .QueryParam("name", "john")
+                .When()
+                .Get("/single-query-param")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>

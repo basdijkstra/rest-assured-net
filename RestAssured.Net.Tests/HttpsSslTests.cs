@@ -50,11 +50,11 @@ namespace RestAssured.Tests
             this.CreateStubForHttps();
 
             Given()
-            .RelaxedHttpsValidation()
-            .When()
-            .Get("https://localhost:8443/ssl-endpoint")
-            .Then()
-            .StatusCode(200);
+                .RelaxedHttpsValidation()
+                .When()
+                .Get("https://localhost:8443/ssl-endpoint")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -68,11 +68,11 @@ namespace RestAssured.Tests
             this.CreateStubForHttps();
 
             Given()
-            .Spec(this.requestSpecification!)
-            .When()
-            .Get("https://localhost:8443/ssl-endpoint")
-            .Then()
-            .StatusCode(200);
+                .Spec(this.requestSpecification!)
+                .When()
+                .Get("https://localhost:8443/ssl-endpoint")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>

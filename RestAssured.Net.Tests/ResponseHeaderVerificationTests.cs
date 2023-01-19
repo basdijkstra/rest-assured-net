@@ -37,12 +37,12 @@ namespace RestAssured.Tests
             this.CreateStubForCustomSingleResponseHeader();
 
             Given()
-            .When()
-            .Get("http://localhost:9876/custom-response-header")
-            .Then()
-            .StatusCode(200)
-            .And() // Example of using the And() syntactic sugar method in response verification.
-            .Header("custom_header_name", "custom_header_value");
+                .When()
+                .Get("http://localhost:9876/custom-response-header")
+                .Then()
+                .StatusCode(200)
+                .And() // Example of using the And() syntactic sugar method in response verification.
+                .Header("custom_header_name", "custom_header_value");
         }
 
         /// <summary>
@@ -55,11 +55,11 @@ namespace RestAssured.Tests
             this.CreateStubForCustomSingleResponseHeader();
 
             Given()
-            .When()
-            .Get("http://localhost:9876/custom-response-header")
-            .Then()
-            .StatusCode(200)
-            .Header("custom_header_name", NHamcrest.Contains.String("tom_header_val"));
+                .When()
+                .Get("http://localhost:9876/custom-response-header")
+                .Then()
+                .StatusCode(200)
+                .Header("custom_header_name", NHamcrest.Contains.String("tom_header_val"));
         }
 
         /// <summary>
@@ -74,11 +74,11 @@ namespace RestAssured.Tests
             var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
-                .When()
-                .Get("http://localhost:9876/custom-response-header")
-                .Then()
-                .StatusCode(200)
-                .Header("header_does_not_exist", "custom_header_value");
+                    .When()
+                    .Get("http://localhost:9876/custom-response-header")
+                    .Then()
+                    .StatusCode(200)
+                    .Header("header_does_not_exist", "custom_header_value");
             });
 
             Assert.That(rve?.Message, Is.EqualTo("Expected header with name 'header_does_not_exist' to be in the response, but it could not be found."));
@@ -96,11 +96,11 @@ namespace RestAssured.Tests
             var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
-                .When()
-                .Get("http://localhost:9876/custom-response-header")
-                .Then()
-                .StatusCode(200)
-                .Header("custom_header_name", "value_does_not_match");
+                    .When()
+                    .Get("http://localhost:9876/custom-response-header")
+                    .Then()
+                    .StatusCode(200)
+                    .Header("custom_header_name", "value_does_not_match");
             });
 
             Assert.That(rve?.Message, Is.EqualTo("Expected value for response header with name 'custom_header_name' to be 'value_does_not_match', but was 'custom_header_value'."));
@@ -118,11 +118,11 @@ namespace RestAssured.Tests
             var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
-                .When()
-                .Get("http://localhost:9876/custom-response-header")
-                .Then()
-                .StatusCode(200)
-                .Header("custom_header_name", NHamcrest.Contains.String("not_found"));
+                    .When()
+                    .Get("http://localhost:9876/custom-response-header")
+                    .Then()
+                    .StatusCode(200)
+                    .Header("custom_header_name", NHamcrest.Contains.String("not_found"));
             });
 
             Assert.That(rve?.Message, Is.EqualTo("Expected value for response header with name 'custom_header_name' to match 'a string containing \"not_found\"', but was 'custom_header_value'."));
@@ -138,12 +138,12 @@ namespace RestAssured.Tests
             this.CreateStubForCustomMultipleResponseHeaders();
 
             Given()
-            .When()
-            .Get("http://localhost:9876/custom-multiple-response-headers")
-            .Then()
-            .StatusCode(200)
-            .Header("custom_header_name", "custom_header_value")
-            .Header("another_header", "another_value");
+                .When()
+                .Get("http://localhost:9876/custom-multiple-response-headers")
+                .Then()
+                .StatusCode(200)
+                .Header("custom_header_name", "custom_header_value")
+                .Header("another_header", "another_value");
         }
 
         /// <summary>
@@ -156,11 +156,11 @@ namespace RestAssured.Tests
             this.CreateStubForCustomResponseContentTypeHeader();
 
             Given()
-            .When()
-            .Get("http://localhost:9876/custom-response-content-type-header")
-            .Then()
-            .StatusCode(200)
-            .ContentType("application/something");
+                .When()
+                .Get("http://localhost:9876/custom-response-content-type-header")
+                .Then()
+                .StatusCode(200)
+                .ContentType("application/something");
         }
 
         /// <summary>
@@ -173,11 +173,11 @@ namespace RestAssured.Tests
             this.CreateStubForCustomResponseContentTypeHeader();
 
             Given()
-            .When()
-            .Get("http://localhost:9876/custom-response-content-type-header")
-            .Then()
-            .StatusCode(200)
-            .ContentType(NHamcrest.Contains.String("something"));
+                .When()
+                .Get("http://localhost:9876/custom-response-content-type-header")
+                .Then()
+                .StatusCode(200)
+                .ContentType(NHamcrest.Contains.String("something"));
         }
 
         /// <summary>
@@ -192,11 +192,11 @@ namespace RestAssured.Tests
             var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
-                .When()
-                .Get("http://localhost:9876/custom-response-content-type-header")
-                .Then()
-                .StatusCode(200)
-                .ContentType("application/something_else");
+                    .When()
+                    .Get("http://localhost:9876/custom-response-content-type-header")
+                    .Then()
+                    .StatusCode(200)
+                    .ContentType("application/something_else");
             });
 
             Assert.That(rve?.Message, Is.EqualTo("Expected value for response Content-Type header to be 'application/something_else', but was 'application/something'."));
@@ -214,11 +214,11 @@ namespace RestAssured.Tests
             var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
-                .When()
-                .Get("http://localhost:9876/custom-response-content-type-header")
-                .Then()
-                .StatusCode(200)
-                .ContentType(NHamcrest.Contains.String("not_found"));
+                    .When()
+                    .Get("http://localhost:9876/custom-response-content-type-header")
+                    .Then()
+                    .StatusCode(200)
+                    .ContentType(NHamcrest.Contains.String("not_found"));
             });
 
             Assert.That(rve?.Message, Is.EqualTo("Expected value for response Content-Type header to match 'a string containing \"not_found\"', but was 'application/something'."));

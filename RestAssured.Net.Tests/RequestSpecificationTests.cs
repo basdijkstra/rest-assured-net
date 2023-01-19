@@ -90,11 +90,11 @@ namespace RestAssured.Tests
             this.CreateStubForRequestSpecification();
 
             Given()
-            .Spec(this.fullRequestSpecification!)
-            .When()
-            .Get(endpoint)
-            .Then()
-            .StatusCode(200);
+                .Spec(this.fullRequestSpecification!)
+                .When()
+                .Get(endpoint)
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -109,11 +109,11 @@ namespace RestAssured.Tests
             this.CreateStubForRequestSpecification();
 
             Given()
-            .Spec(this.applyDefaultsRequestSpecification!)
-            .When()
-            .Get(endpoint)
-            .Then()
-            .StatusCode(200);
+                .Spec(this.applyDefaultsRequestSpecification!)
+                .When()
+                .Get(endpoint)
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -126,12 +126,12 @@ namespace RestAssured.Tests
             this.CreateStubForRequestSpecificationWithHeaders();
 
             Given()
-            .Spec(this.headersSpecification!)
-            .Header("another_header", "another_header_value")
-            .When()
-            .Get("/request-specification-with-headers")
-            .Then()
-            .StatusCode(200);
+                .Spec(this.headersSpecification!)
+                .Header("another_header", "another_header_value")
+                .When()
+                .Get("/request-specification-with-headers")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -144,11 +144,11 @@ namespace RestAssured.Tests
             this.CreateStubForRequestSpecificationWithOAuth2();
 
             Given()
-            .Spec(this.oauthSpecification!)
-            .When()
-            .Get("/request-specification-with-oauth2")
-            .Then()
-            .StatusCode(200);
+                .Spec(this.oauthSpecification!)
+                .When()
+                .Get("/request-specification-with-oauth2")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -164,11 +164,11 @@ namespace RestAssured.Tests
             var rce = Assert.Throws<RequestCreationException>(() =>
             {
                 Given()
-                .Spec(this.incorrectHostNameSpecification!)
-                .When()
-                .Get("/api/request-specification")
-                .Then()
-                .StatusCode(200);
+                    .Spec(this.incorrectHostNameSpecification!)
+                    .When()
+                    .Get("/api/request-specification")
+                    .Then()
+                    .StatusCode(200);
             });
 
             Assert.That(rce?.Message, Is.EqualTo("Supplied base URI 'http://http://localhost:9876' is invalid."));

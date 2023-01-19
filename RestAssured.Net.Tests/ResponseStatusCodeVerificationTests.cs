@@ -38,11 +38,11 @@ namespace RestAssured.Tests
             this.CreateStubForHttpOK();
 
             Given()
-            .When()
-            .Get("http://localhost:9876/http-status-code-ok")
-            .Then()
-            .AssertThat() // example of using the AssertThat() syntactic sugar method.
-            .StatusCode(200);
+                .When()
+                .Get("http://localhost:9876/http-status-code-ok")
+                .Then()
+                .AssertThat() // example of using the AssertThat() syntactic sugar method.
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -55,10 +55,10 @@ namespace RestAssured.Tests
             this.CreateStubForHttpNotFound();
 
             Given()
-            .When()
-            .Get("http://localhost:9876/http-status-code-not-found")
-            .Then()
-            .StatusCode(404);
+                .When()
+                .Get("http://localhost:9876/http-status-code-not-found")
+                .Then()
+                .StatusCode(404);
         }
 
         /// <summary>
@@ -71,10 +71,10 @@ namespace RestAssured.Tests
             this.CreateStubForHttpServiceUnavailable();
 
             Given()
-            .When()
-            .Get("http://localhost:9876/http-status-code-service-unavailable")
-            .Then()
-            .StatusCode(503);
+                .When()
+                .Get("http://localhost:9876/http-status-code-service-unavailable")
+                .Then()
+                .StatusCode(503);
         }
 
         /// <summary>
@@ -87,10 +87,10 @@ namespace RestAssured.Tests
             this.CreateStubForHttpOK();
 
             Given()
-            .When()
-            .Get("http://localhost:9876/http-status-code-ok")
-            .Then()
-            .StatusCode(HttpStatusCode.OK);
+                .When()
+                .Get("http://localhost:9876/http-status-code-ok")
+                .Then()
+                .StatusCode(HttpStatusCode.OK);
         }
 
         /// <summary>
@@ -103,10 +103,10 @@ namespace RestAssured.Tests
             this.CreateStubForHttpOK();
 
             Given()
-            .When()
-            .Get("http://localhost:9876/http-status-code-ok")
-            .Then()
-            .StatusCode(NHamcrest.Is.EqualTo(200));
+                .When()
+                .Get("http://localhost:9876/http-status-code-ok")
+                .Then()
+                .StatusCode(NHamcrest.Is.EqualTo(200));
         }
 
         /// <summary>
@@ -122,10 +122,10 @@ namespace RestAssured.Tests
             var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
-                .When()
-                .Get("http://localhost:9876/http-status-code-ok")
-                .Then()
-                .StatusCode(NHamcrest.Is.GreaterThan(300));
+                    .When()
+                    .Get("http://localhost:9876/http-status-code-ok")
+                    .Then()
+                    .StatusCode(NHamcrest.Is.GreaterThan(300));
             });
 
             Assert.That(rve?.Message, Is.EqualTo("Expected response status code to match 'greater than 300', but was 200"));
