@@ -128,7 +128,7 @@ namespace RestAssured.Tests
                     .StatusCode(NHamcrest.Is.GreaterThan(300));
             });
 
-            Assert.That(rve?.Message, Is.EqualTo("Expected response status code to match 'greater than 300', but was 200"));
+            Assert.That(rve?.Message, Is.EqualTo("Expected response status code to match 'greater than 300', but was '200'"));
         }
 
         /// <summary>

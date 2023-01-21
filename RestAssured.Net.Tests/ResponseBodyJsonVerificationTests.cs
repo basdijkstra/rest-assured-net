@@ -65,7 +65,7 @@ namespace RestAssured.Tests
                     .Body("$.Places[0].Name", NHamcrest.Contains.String("Sin"));
             });
 
-            Assert.That(rve?.Message, Is.EqualTo("Expected element selected by '$.Places[0].Name' to match 'a string containing \"Sin\"' but was Sun City"));
+            Assert.That(rve?.Message, Is.EqualTo("Expected element selected by '$.Places[0].Name' to match 'a string containing \"Sin\"' but was 'Sun City'"));
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace RestAssured.Tests
                     .Body("$.Places[0].Inhabitants", NHamcrest.Is.GreaterThan(200000));
             });
 
-            Assert.That(rve?.Message, Is.EqualTo("Expected element selected by '$.Places[0].Inhabitants' to match 'greater than 200000' but was 100000"));
+            Assert.That(rve?.Message, Is.EqualTo("Expected element selected by '$.Places[0].Inhabitants' to match 'greater than 200000' but was '100000'"));
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace RestAssured.Tests
                     .Body("$.Places[0].IsCapital", NHamcrest.Is.False());
             });
 
-            Assert.That(rve?.Message, Is.EqualTo("Expected element selected by '$.Places[0].IsCapital' to match 'False' but was True"));
+            Assert.That(rve?.Message, Is.EqualTo("Expected element selected by '$.Places[0].IsCapital' to match 'False' but was 'True'"));
         }
 
         /// <summary>
