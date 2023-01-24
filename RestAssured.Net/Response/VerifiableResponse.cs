@@ -139,9 +139,11 @@ namespace RestAssured.Response
                 throw new ResponseVerificationException($"Expected header with name '{name}' to be in the response, but it could not be found.");
             }
 
-            if (!values.First().Equals(expectedValue))
+            string firstValue = values.First();
+
+            if (!firstValue.Equals(expectedValue))
             {
-                throw new ResponseVerificationException($"Expected value for response header with name '{name}' to be '{expectedValue}', but was '{values.First()}'.");
+                throw new ResponseVerificationException($"Expected value for response header with name '{name}' to be '{expectedValue}', but was '{firstValue}'.");
             }
 
             return this;
@@ -158,9 +160,11 @@ namespace RestAssured.Response
         {
             if (this.response.Headers.TryGetValues(name, out IEnumerable<string>? values))
             {
-                if (!matcher.Matches(values.First()))
+                string firstValue = values.First();
+
+                if (!matcher.Matches(firstValue))
                 {
-                    throw new ResponseVerificationException($"Expected value for response header with name '{name}' to match '{matcher}', but was '{values.First()}'.");
+                    throw new ResponseVerificationException($"Expected value for response header with name '{name}' to match '{matcher}', but was '{firstValue}'.");
                 }
             }
             else
