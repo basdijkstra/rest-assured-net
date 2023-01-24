@@ -122,7 +122,7 @@ namespace RestAssured.Tests
                     .Body("//Place[1]/Inhabitants", NHamcrest.Is.True());
             });
 
-            Assert.That(rve?.Message, Is.EqualTo("Response element value 100000 cannot be converted to object of type System.Boolean"));
+            Assert.That(rve?.Message, Is.EqualTo("Response element value 100000 cannot be converted to value of type 'System.Boolean'"));
         }
 
         /// <summary>

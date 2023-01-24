@@ -88,7 +88,7 @@ namespace RestAssured.Tests
                     .MatchesJsonSchema(this.jsonSchema);
             });
 
-            Assert.That(rve?.Message, Does.Contain("Response body did not match JSON schema supplied: Invalid type. Expected String but got Integer."));
+            Assert.That(rve?.Message, Does.Contain("Response body did not match JSON schema supplied. Error: 'Invalid type. Expected String but got Integer."));
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace RestAssured.Tests
                     .MatchesJsonSchema(this.invalidJsonSchema);
             });
 
-            Assert.That(rve?.Message, Does.Contain("Could not parse supplied JSON schema:"));
+            Assert.That(rve?.Message, Does.Contain("Could not parse supplied JSON schema. Error:"));
         }
 
         /// <summary>

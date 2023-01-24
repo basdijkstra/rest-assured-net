@@ -101,7 +101,7 @@ namespace RestAssured.Tests
                     .Body("This is a different plaintext response body.");
             });
 
-            Assert.That(rve?.Message, Is.EqualTo("Actual response body did not match expected response body.\nExpected: This is a different plaintext response body.\nActual: Here's a plaintext response body."));
+            Assert.That(rve?.Message, Is.EqualTo("Actual response body did not match expected response body.\nExpected: 'This is a different plaintext response body.'\nActual: 'Here's a plaintext response body.'"));
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace RestAssured.Tests
                     .Body(NHamcrest.Contains.String("Jane Doe"));
             });
 
-            Assert.That(rve?.Message, Is.EqualTo($"Actual response body expected to match 'a string containing \"Jane Doe\"' but didn't.\nActual: {this.jsonStringResponseBody}"));
+            Assert.That(rve?.Message, Is.EqualTo($"Actual response body expected to match 'a string containing \"Jane Doe\"' but didn't.\nActual: '{this.jsonStringResponseBody}'"));
         }
 
         /// <summary>
