@@ -35,6 +35,11 @@ namespace RestAssured.Request
         /// <exception cref="RequestCreationException">Thrown whenever the Uri cannot be created with the specified information.</exception>
         internal static Uri BuildUriFromRequestSpec(RequestSpecification requestSpec, string endpoint)
         {
+            if (requestSpec is null)
+            {
+                throw new RequestCreationException("Supplied request specification is null.");
+            }
+
             try
             {
                 UriBuilder uri = new UriBuilder();
