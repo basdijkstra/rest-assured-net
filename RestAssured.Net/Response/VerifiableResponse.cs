@@ -156,9 +156,7 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when the header does not exist, or when the header value does not equal the supplied expected value.</exception>
         public VerifiableResponse Header(string name, IMatcher<string> matcher)
         {
-            IEnumerable<string> values;
-
-            if (this.response.Headers.TryGetValues(name, out values))
+            if (this.response.Headers.TryGetValues(name, out IEnumerable<string>? values))
             {
                 if (!matcher.Matches(values.First()))
                 {
