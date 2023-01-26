@@ -49,14 +49,16 @@ namespace RestAssured.Response
             string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
 
             // Look at the response Content-Type header to determine how to deserialize
-            string responseMediaType = this.response.Content.Headers.ContentType.MediaType ?? string.Empty;
+            string responseMediaType = this.response.Content.Headers.ContentType?.MediaType ?? string.Empty;
 
             if (responseMediaType == string.Empty || responseMediaType.Contains("json"))
             {
                 JObject responseBodyAsJObject = JObject.Parse(responseBodyAsString);
                 IEnumerable<JToken>? resultingElements = responseBodyAsJObject.SelectTokens(path);
 
-                List<object> elementValues = resultingElements.Select(element => element.ToObject<object>()).ToList();
+                List<object> elementValues = resultingElements
+                    .Select(element => element.ToObject<object>())
+                    .ToList();
 
                 if (!elementValues.Any())
                 {
@@ -84,7 +86,7 @@ namespace RestAssured.Response
 
                 if (xmlElements.Count == 1)
                 {
-                    return xmlElements.Item(0).InnerText;
+                    return xmlElements.Item(0) !.InnerText;
                 }
 
                 List<string> elementValues = new List<string>();
@@ -107,9 +109,7 @@ namespace RestAssured.Response
         /// <exception cref="ExtractionException">Thrown when the specified header name could not be located in the response.</exception>
         public string Header(string name)
         {
-            IEnumerable<string> values;
-
-            if (this.response.Headers.TryGetValues(name, out values))
+            if (this.response.Headers.TryGetValues(name, out IEnumerable<string>? values))
             {
                 return values.First();
             }
