@@ -269,7 +269,7 @@ namespace RestAssured.Response
             string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
 
             // Look at the response Content-Type header to determine how to deserialize
-            string responseMediaType = this.response.Content.Headers.ContentType.MediaType ?? string.Empty;
+            string responseMediaType = this.response.Content.Headers.ContentType?.MediaType ?? string.Empty;
 
             if (responseMediaType.Equals(string.Empty) || responseMediaType.Contains("json"))
             {
@@ -281,7 +281,7 @@ namespace RestAssured.Response
                     throw new ResponseVerificationException($"JsonPath expression '{path}' did not yield any results.");
                 }
 
-                if (!matcher.Matches(resultingElement.ToObject<T>()))
+                if (!matcher.Matches(resultingElement.ToObject<T>() !))
                 {
                     throw new ResponseVerificationException($"Expected element selected by '{path}' to match '{matcher}' but was '{resultingElement}'");
                 }
@@ -333,7 +333,7 @@ namespace RestAssured.Response
             string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
 
             // Look at the response Content-Type header to determine how to deserialize
-            string responseMediaType = this.response.Content.Headers.ContentType.MediaType ?? string.Empty;
+            string responseMediaType = this.response.Content.Headers.ContentType?.MediaType ?? string.Empty;
 
             if (responseMediaType.Equals(string.Empty) || responseMediaType.Contains("json"))
             {
@@ -342,7 +342,7 @@ namespace RestAssured.Response
 
                 foreach (JToken element in resultingElements)
                 {
-                    elementValues.Add(element.ToObject<T>());
+                    elementValues.Add(element.ToObject<T>() !);
                 }
 
                 if (!matcher.Matches(elementValues))
@@ -357,7 +357,7 @@ namespace RestAssured.Response
                 XmlNodeList? xmlElements = xmlDoc.SelectNodes(path);
 
                 // Try and cast the element values to an object of the type used in the matcher
-                foreach (XmlNode xmlElement in xmlElements)
+                foreach (XmlNode xmlElement in xmlElements!)
                 {
                     try
                     {
@@ -413,7 +413,7 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when "Content-Type" doesn't contain "json" or when body doesn't match JSON schema supplied.</exception>
         public VerifiableResponse MatchesJsonSchema(JSchema jsonSchema)
         {
-            string responseMediaType = this.response.Content.Headers.ContentType.MediaType ?? string.Empty;
+            string responseMediaType = this.response.Content.Headers.ContentType?.MediaType ?? string.Empty;
 
             if (!responseMediaType.Contains("json"))
             {
@@ -445,7 +445,7 @@ namespace RestAssured.Response
             }
 
             // Look at the response Content-Type header to determine how to deserialize
-            string responseMediaType = this.response.Content.Headers.ContentType.MediaType;
+            string? responseMediaType = this.response.Content.Headers.ContentType?.MediaType;
 
             if (responseMediaType == null || responseMediaType.Contains("json"))
             {
@@ -456,7 +456,7 @@ namespace RestAssured.Response
                 XmlSerializer xmlSerializer = new XmlSerializer(type);
                 using (TextReader reader = new StringReader(this.response.Content.ReadAsStringAsync().Result))
                 {
-                    return xmlSerializer.Deserialize(reader);
+                    return xmlSerializer.Deserialize(reader) !;
                 }
             }
             else
