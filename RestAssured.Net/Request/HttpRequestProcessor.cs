@@ -99,9 +99,9 @@ namespace RestAssured.Request
             {
                 // The domain for a cookie cannot be empty, so set it to the hostname for
                 // the request if it has not been set already
-                if (cookie.Domain == null || cookie.Domain == string.Empty)
+                if (string.IsNullOrEmpty(cookie.Domain))
                 {
-                    cookie.Domain = request.RequestUri.Host;
+                    cookie.Domain = request.RequestUri!.Host;
                 }
             }
 
