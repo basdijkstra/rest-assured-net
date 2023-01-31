@@ -88,7 +88,7 @@ namespace RestAssured.Tests
             this.CreateStubForUserAgent();
 
             Given()
-                .Spec(this.requestSpecification)
+                .Spec(this.requestSpecification!)
                 .When()
                 .Get("/user-agent")
                 .Then()
