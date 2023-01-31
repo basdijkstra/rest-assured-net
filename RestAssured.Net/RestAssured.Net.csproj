@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFrameworks Condition="'$(SkipNet7)' != 'True'">net6.0;net7.0;netcoreapp3.1</TargetFrameworks>
-	<TargetFrameworks Condition="'$(SkipNet7)' == 'True'">net6.0;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks Condition="'$(SkipNet7)' == 'True'">net6.0;netcoreapp3.1</TargetFrameworks>
     <ImplicitUsings>disable</ImplicitUsings>
-	<Nullable>enable</Nullable>
+    <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Version>2.2.1</Version>
     <Authors>Bas Dijkstra</Authors>
@@ -14,8 +14,8 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/basdijkstra/rest-assured-net</RepositoryUrl>
     <PackageId>RestAssured.Net</PackageId>
-	<PackageTags>testing;api;rest;http;rest-assured</PackageTags>
-	<RootNamespace>RestAssured</RootNamespace>
+    <PackageTags>testing;api;rest;http;rest-assured</PackageTags>
+    <RootNamespace>RestAssured</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
