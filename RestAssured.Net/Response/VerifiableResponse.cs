@@ -78,7 +78,7 @@ namespace RestAssured.Response
         }
 
         /// <summary>
-        /// A method to verify that the actual status code is equal to an expected value.
+        /// Verifies that the actual status code is equal to an expected value.
         /// </summary>
         /// <param name="expectedStatusCode">The expected status code.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
@@ -94,7 +94,7 @@ namespace RestAssured.Response
         }
 
         /// <summary>
-        /// A method to verify that the actual status code is equal to an expected value.
+        /// Verifies that the actual status code is equal to an expected value.
         /// </summary>
         /// <param name="expectedStatusCode">The expected status code.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
@@ -110,7 +110,7 @@ namespace RestAssured.Response
         }
 
         /// <summary>
-        /// A method to verify that the actual status code is equal to an expected value.
+        /// Verifies that the actual status code is equal to an expected value.
         /// </summary>
         /// <param name="matcher">The NHamcrest matcher to evaluate.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
@@ -126,7 +126,7 @@ namespace RestAssured.Response
         }
 
         /// <summary>
-        /// A method to verify that a header exists in the response, with the expected value.
+        /// Verifies that a header exists in the response, with the expected value.
         /// </summary>
         /// <param name="name">The expected response header name.</param>
         /// <param name="expectedValue">The corresponding expected response header value.</param>
@@ -150,7 +150,7 @@ namespace RestAssured.Response
         }
 
         /// <summary>
-        /// A method to verify that a header exists in the response, with the expected value.
+        /// Verifies that a header exists in the response, with the expected value.
         /// </summary>
         /// <param name="name">The expected response header name.</param>
         /// <param name="matcher">The NHamcrest matcher to evaluate.</param>
@@ -176,7 +176,7 @@ namespace RestAssured.Response
         }
 
         /// <summary>
-        /// A method to verify that the response Content-Type header has the expected value.
+        /// Verifies that the response Content-Type header has the expected value.
         /// </summary>
         /// <param name="expectedContentType">The expected value for the response Content-Type header.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
@@ -199,7 +199,7 @@ namespace RestAssured.Response
         }
 
         /// <summary>
-        /// A method to verify that the response Content-Type header value matches a given NHamcrest matcher.
+        /// Verifies that the response Content-Type header value matches a given NHamcrest matcher.
         /// </summary>
         /// <param name="matcher">The NHamcrest matcher to evaluate.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
@@ -466,7 +466,7 @@ namespace RestAssured.Response
         }
 
         /// <summary>
-        /// Log response details to the standard output.
+        /// Logs response details to the standard output.
         /// </summary>
         /// <returns>A <see cref="ResponseLogger"/> object, which can be used to log response details.</returns>
         [Obsolete("Please use Log(ResponseLogLevel responseLogLevel) instead. This method will be removed in version 3.0.0.", false)]
@@ -476,7 +476,7 @@ namespace RestAssured.Response
         }
 
         /// <summary>
-        /// Log response details to the standard output.
+        /// Logs response details to the standard output.
         /// </summary>
         /// <param name="responseLogLevel">The required log level.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
