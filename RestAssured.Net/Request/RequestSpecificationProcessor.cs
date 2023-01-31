@@ -57,7 +57,7 @@ namespace RestAssured.Request
         }
 
         /// <summary>
-        /// Applies a <see cref="RequestSpecification"/> to an <see cref=HttpRequestMessage"/>.
+        /// Applies a <see cref="RequestSpecification"/> to an <see cref="HttpRequestMessage"/>.
         /// </summary>
         /// <param name="requestSpec">The <see cref="RequestSpecification"/> to apply.</param>
         /// <param name="request">The <see cref="HttpRequestMessage"/> to apply it to.</param>
