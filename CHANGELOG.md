@@ -7,11 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+### [2.2.2] - 2023-01-31
+
+#### Updated
+
+- Migrated CI from CircleCI to GitHub Actions ([#48](https://github.com/basdijkstra/rest-assured-net/pull/48) by [@drakulavich](https://github.com/drakulavich))
+- Improved code documentation, code styling and variable names (all reported by [@dev-experience](https://github.com/dev-experience))
+
+#### Fixed
+
+- Fixed a vulnerability issue in System.Text.Encodings.Web (transitive dependency from Microsoft.AspNetCore.WebUtilities) by explicitly adding a safe version as a dependency (reported by [@dev-experience](https://github.com/dev-experience))
+- Fixed lots of nullability warnings and (all reported by [@dev-experience](https://github.com/dev-experience))
+
 ### [2.2.1] - 2023-01-10
 
 #### Fixed
 
-- Fixed an issue with incorrect URL encoding when adding query parameters to a relative URL ([#47](https://github.com/basdijkstra/rest-assured-net/issues/47) by [@MuresanCristianRichard](https://github.com/MuresanCristianRichard))
+- Fixed an issue with incorrect URL encoding when adding query parameters to a relative URL ([#47](https://github.com/basdijkstra/rest-assured-net/issues/47) by [@MuresanCristianRichard](https://github.com/MuresanCristianRichard)))
 
 ### [2.2.0] - 2022-12-31
 
