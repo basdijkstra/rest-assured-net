@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Fixed
 
-- Fixed an issue with incorrect URL encoding when adding query parameters to a relative URL ([#47](https://github.com/basdijkstra/rest-assured-net/issues/47) by [@MuresanCristianRichard](https://github.com/MuresanCristianRichard)))
+- Fixed an issue with incorrect URL encoding when adding query parameters to a relative URL ([#47](https://github.com/basdijkstra/rest-assured-net/issues/47) by [@MuresanCristianRichard](https://github.com/MuresanCristianRichard))
 
 ### [2.2.0] - 2022-12-31
 
