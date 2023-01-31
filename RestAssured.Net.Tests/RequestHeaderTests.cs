@@ -51,7 +51,7 @@ namespace RestAssured.Tests
         /// a header with multiple values when sending an HTTP request.
         /// </summary>
         [Test]
-        public void HeaderWithMultipleValuesCanbeSupplied()
+        public void HeaderWithMultipleValuesCanBeSupplied()
         {
             this.CreateStubForMultipleHeaderValues();
 
