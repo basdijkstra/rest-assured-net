@@ -31,6 +31,7 @@
     <PackageReference Include="Newtonsoft.Json.Schema" Version="3.0.14" />
     <PackageReference Include="NHamcrest" Version="3.1.0" />
     <PackageReference Include="Stubble.Core" Version="1.10.8" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="4.7.2" />
   </ItemGroup>
 
 </Project>
