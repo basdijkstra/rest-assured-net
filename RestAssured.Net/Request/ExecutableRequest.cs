@@ -22,9 +22,11 @@ namespace RestAssured.Request
     using System.Net;
     using System.Net.Http;
     using System.Net.Http.Headers;
+    using System.Runtime.CompilerServices;
     using System.Text;
     using System.Threading.Tasks;
     using System.Xml.Serialization;
+    using Microsoft.AspNetCore.StaticFiles;
     using Microsoft.AspNetCore.WebUtilities;
     using Newtonsoft.Json;
     using RestAssured.Configuration;
@@ -50,6 +52,7 @@ namespace RestAssured.Request
         private Dictionary<string, string> queryParams = new Dictionary<string, string>();
         private Dictionary<string, string> pathParams = new Dictionary<string, string>();
         private IEnumerable<KeyValuePair<string, string>>? formData = null;
+        private MultipartFormDataContent? multipartFormDataContent = null;
         private TimeSpan? timeout = null;
         private IWebProxy? proxy = null;
         private bool relaxedHttpsValidation = false;
@@ -261,6 +264,43 @@ namespace RestAssured.Request
         }
 
         /// <summary>
+        /// Adds multipart form data (multipart/form-data) to the request. Useful for file uploads.
+        /// </summary>
+        /// <param name="controlName">The control name associated with the multipart file to be uploaded.</param>
+        /// <param name="fileName">The path to the file that is to be uploaded with the request.</param>
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest MultiPart(string controlName, string fileName)
+        {
+            this.multipartFormDataContent = new MultipartFormDataContent();
+
+            try
+            {
+                string contentType = this.GetContentTypeForFile(fileName);
+
+                StreamContent fileContents = new StreamContent(File.OpenRead(fileName));
+                fileContents.Headers.ContentType = MediaTypeHeaderValue.Parse(contentType);
+
+                this.multipartFormDataContent.Add(fileContents, controlName, fileName);
+            }
+            catch (IOException ioe)
+            {
+                throw new RequestCreationException(ioe.Message);
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Adds multipart form data (multipart/form-data) to the request. Useful for file uploads.
+        /// </summary>
+        /// <param name="fileName">The path to the file that is to be uploaded with the request.</param>
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest MultiPart(string fileName)
+        {
+            return this.MultiPart("file", fileName);
+        }
+
+        /// <summary>
         /// Forms a GraphQL request to be POSTed to a GraphQL API endpoint.
         /// </summary>
         /// <param name="graphQLRequest">The <see cref="GraphQLRequest"/> object to use in constructing the request.</param>
@@ -463,6 +503,7 @@ namespace RestAssured.Request
                 return;
             }
 
+            this.multipartFormDataContent?.Dispose();
             this.request.Dispose();
             this.disposed = true;
         }
@@ -494,7 +535,11 @@ namespace RestAssured.Request
             // Apply other settings provided in the request specification to the request
             this.request = RequestSpecificationProcessor.Apply(this.requestSpecification!, this.request);
 
-            if (this.formData != null)
+            if (this.multipartFormDataContent != null)
+            {
+                this.request.Content = this.multipartFormDataContent;
+            }
+            else if (this.formData != null)
             {
                 // Set the request body using the form data specified (will set the Content-Type header automatically)
                 this.request.Content = new FormUrlEncodedContent(this.formData);
@@ -608,6 +653,20 @@ namespace RestAssured.Request
 
             throw new RequestCreationException(
                 $"Could not determine how to serialize request based on specified content type '{contentType}'");
+        }
+
+        private string GetContentTypeForFile(string fileName)
+        {
+            FileExtensionContentTypeProvider provider = new FileExtensionContentTypeProvider();
+
+            string contentType;
+
+            if (!provider.TryGetContentType(fileName, out contentType))
+            {
+                contentType = "application/octet-stream";
+            }
+
+            return contentType;
         }
     }
 }
