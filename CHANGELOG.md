@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+### [2.3.0] - 2023-03-02
+
+### Added
+
+- Added support for uploading multipart files ([#53](https://github.com/basdijkstra/rest-assured-net/issues/53) by [@RipaBogdan](https://github.com/RipaBogdan))
+
+#### Updated
+
+- Version bumps for WireMock.Net and Microsoft.NET.Test.Sdk (test project)
+
 ### [2.2.2] - 2023-01-31
 
 #### Updated
