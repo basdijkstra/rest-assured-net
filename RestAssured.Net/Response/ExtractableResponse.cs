@@ -56,7 +56,7 @@ namespace RestAssured.Response
                 JObject responseBodyAsJObject = JObject.Parse(responseBodyAsString);
                 IEnumerable<JToken>? resultingElements = responseBodyAsJObject.SelectTokens(path);
 
-                List<object> elementValues = resultingElements
+                List<object?> elementValues = resultingElements
                     .Select(element => element.ToObject<object>())
                     .ToList();
 
@@ -67,7 +67,7 @@ namespace RestAssured.Response
 
                 if (elementValues.Count == 1)
                 {
-                    return elementValues.First();
+                    return elementValues.First() !;
                 }
 
                 return elementValues;
