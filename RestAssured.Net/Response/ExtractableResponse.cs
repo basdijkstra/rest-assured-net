@@ -15,10 +15,14 @@
 // </copyright>
 namespace RestAssured.Response
 {
+    using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Net.Http;
     using System.Xml;
+    using System.Xml.Serialization;
+    using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     using RestAssured.Response.Exceptions;
 
@@ -116,6 +120,41 @@ namespace RestAssured.Response
             else
             {
                 throw new ExtractionException($"Header with name '{name}' could not be found in the response.");
+            }
+        }
+
+        /// <summary>
+        /// Deserializes the response content into the specified type and returns it.
+        /// </summary>
+        /// <param name="type">The object type to deserialize into.</param>
+        /// <returns>The deserialized response object.</returns>
+        public object As(Type type)
+        {
+            string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
+
+            if (responseBodyAsString == null)
+            {
+                throw new JsonSerializationException("Response content is null or empty.");
+            }
+
+            // Look at the response Content-Type header to determine how to deserialize
+            string? responseMediaType = this.response.Content.Headers.ContentType?.MediaType;
+
+            if (responseMediaType == null || responseMediaType.Contains("json"))
+            {
+                return JsonConvert.DeserializeObject(this.response.Content.ReadAsStringAsync().Result, type) ?? string.Empty;
+            }
+            else if (responseMediaType.Contains("xml"))
+            {
+                XmlSerializer xmlSerializer = new XmlSerializer(type);
+                using (TextReader reader = new StringReader(this.response.Content.ReadAsStringAsync().Result))
+                {
+                    return xmlSerializer.Deserialize(reader) !;
+                }
+            }
+            else
+            {
+                throw new DeserializationException($"Unable to deserialize response with Content-Type '{responseMediaType}'");
             }
         }
 

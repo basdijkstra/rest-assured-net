@@ -51,6 +51,29 @@ namespace RestAssured.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for deserializing
+        /// a JSON response into an object when performing an HTTP GET
+        /// after performing some initial verifications.
+        /// </summary>
+        [Test]
+        public void ObjectCanBeDeserializedFromJsonAfterVerifications()
+        {
+            this.CreateStubForJsonResponseBody();
+
+            Location responseLocation = (Location)Given()
+                .When()
+                .Get("http://localhost:9876/json-deserialization")
+                .Then()
+                .StatusCode(200)
+                .And()
+                .Extract()
+                .As(typeof(Location));
+
+            Assert.That(responseLocation.Country, Is.EqualTo("United States"));
+            Assert.That(responseLocation.Places?.Count, Is.EqualTo(2));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for deserializing
         /// a XML response into an object when performing an HTTP GET.
         /// </summary>
         [Test]
