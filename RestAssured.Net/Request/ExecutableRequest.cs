@@ -472,6 +472,26 @@ namespace RestAssured.Request
         }
 
         /// <summary>
+        /// Performs an HTTP HEAD.
+        /// </summary>
+        /// <param name="endpoint">The endpoint to invoke in the HTTP HEAD request.</param>
+        /// <returns>The HTTP response object.</returns>
+        public VerifiableResponse Head(string endpoint)
+        {
+            return this.Send(HttpMethod.Head, endpoint);
+        }
+
+        /// <summary>
+        /// Performs an HTTP OPTIONS.
+        /// </summary>
+        /// <param name="endpoint">The endpoint to invoke in the HTTP OPTIONS request.</param>
+        /// <returns>The HTTP response object.</returns>
+        public VerifiableResponse Options(string endpoint)
+        {
+            return this.Send(HttpMethod.Options, endpoint);
+        }
+
+        /// <summary>
         /// Implements Dispose() method of IDisposable interface.
         /// </summary>
         public void Dispose()

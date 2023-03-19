@@ -97,6 +97,34 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a response status code when performing an HTTP HEAD.
+        /// </summary>
+        [Test]
+        public void HttpHeadCanBeUsed()
+        {
+            this.CreateStubForHttpHead();
+
+            Given()
+                .When()
+                .Head("http://localhost:9876/http-head");
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a response status code when performing an HTTP OPTIONS.
+        /// </summary>
+        [Test]
+        public void HttpOptionsCanBeUsed()
+        {
+            this.CreateStubForHttpOptions();
+
+            Given()
+                .When()
+                .Options("http://localhost:9876/http-options");
+        }
+
+        /// <summary>
         /// Creates the stub response for the HTTP GET example.
         /// </summary>
         private void CreateStubForHttpGet()
@@ -144,6 +172,26 @@ namespace RestAssured.Tests
             this.Server?.Given(Request.Create().WithPath("/http-delete").UsingDelete())
                 .RespondWith(Response.Create()
                 .WithStatusCode(204));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the HTTP HEAD example.
+        /// </summary>
+        private void CreateStubForHttpHead()
+        {
+            this.Server?.Given(Request.Create().WithPath("/http-head").UsingHead())
+                .RespondWith(Response.Create()
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the HTTP OPTIONS example.
+        /// </summary>
+        private void CreateStubForHttpOptions()
+        {
+            this.Server?.Given(Request.Create().WithPath("/http-options").UsingOptions())
+                .RespondWith(Response.Create()
+                .WithStatusCode(200));
         }
     }
 }
