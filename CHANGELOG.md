@@ -7,9 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
-####
+### [2.4.0] - 2023-03-20
 
+#### Added
+
+- Added support for HEAD and OPTIONS HTTP verbs ([#55](https://github.com/basdijkstra/rest-assured-net/issues/55))
 - Added the ability to deserialize the response body after initial verifications in the `Then()` section of a test ([#54](https://github.com/basdijkstra/rest-assured-net/issues/54))
+
+#### Updated
+
+- Version bumps for Newtonsoft.Json (main project) and WireMock.Net and NUnit3TestAdapter (test project)
 
 ### [2.3.0] - 2023-03-02
 
