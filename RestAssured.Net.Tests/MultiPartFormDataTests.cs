@@ -17,6 +17,7 @@ namespace RestAssured.Tests
 {
     using System;
     using System.IO;
+    using System.Net.Http.Headers;
     using System.Threading.Tasks;
     using NUnit.Framework;
     using RestAssured.Request.Exceptions;
@@ -31,51 +32,61 @@ namespace RestAssured.Tests
     [TestFixture]
     public class MultiPartFormDataTests : TestBase
     {
-        private readonly string fileName = @"ToDoItems.txt";
+        private readonly string plaintextFileName = @"ToDoItems.txt";
+        private readonly string csvFileName = @"Addresses.csv";
 
         private readonly string todoItem = "Watch Office Space";
 
+        private readonly string[] addressItems = new string[]
+        {
+            "Street;Number;ZipCode;City",
+            "Main Street;123;12345;Nothingville",
+            "State Street;987;23456;Sun City",
+        };
+
         /// <summary>
-        /// Creates the file to be uploaded in these tests.
+        /// Creates the files to be uploaded in these tests.
         /// </summary>
         /// <returns>The asynchronous test result.</returns>
         [SetUp]
-        public async Task CreateFileToUpload()
+        public async Task CreateFilesToUpload()
         {
-            await File.WriteAllLinesAsync(this.fileName, new string[] { this.todoItem });
+            await File.WriteAllLinesAsync(this.plaintextFileName, new string[] { this.todoItem });
+            await File.WriteAllLinesAsync(this.csvFileName, this.addressItems);
         }
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for including
         /// multipart form data with the default 'file' control name
-        /// in the request.
+        /// and an automatically determined content type in the request.
         /// </summary>
         [Test]
-        public void MultiPartFormDataWithDefaultControlNameCanBeSupplied()
+        public void MultiPartFormDataWithDefaultControlNameAndAutoDetectedContentTypeCanBeSupplied()
         {
-            this.CreateStubForSimpleMultiPartFormData();
+            this.CreateStubForPlainTextMultiPartFormData();
 
             Given()
-                .MultiPart(this.fileName)
+                .MultiPart(new FileInfo(this.plaintextFileName))
                 .When()
-                .Post("http://localhost:9876/simple-multipart-form-data")
+                .Post("http://localhost:9876/plaintext-multipart-form-data")
                 .Then()
                 .StatusCode(201);
         }
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for including
-        /// multipart form data with a custom control name in the request.
+        /// multipart form data with a custom control name and a custom
+        /// content type in the request.
         /// </summary>
         [Test]
-        public void MultiPartFormDataWithCustomControlNameCanBeSupplied()
+        public void MultiPartFormDataWithCustomControlNameAndCustomContentTypeCanBeSupplied()
         {
-            this.CreateStubForSimpleMultiPartFormData();
+            this.CreateStubForCsvMultiPartFormData();
 
             Given()
-                .MultiPart("customControl", this.fileName)
+                .MultiPart(new FileInfo(this.csvFileName), "customControl", MediaTypeHeaderValue.Parse("text/csv"))
                 .When()
-                .Post("http://localhost:9876/simple-multipart-form-data")
+                .Post("http://localhost:9876/csv-multipart-form-data")
                 .Then()
                 .StatusCode(201);
         }
@@ -88,14 +99,14 @@ namespace RestAssured.Tests
         [Test]
         public void UploadingNonExistentFileThrowsTheExpectedException()
         {
-            this.CreateStubForSimpleMultiPartFormData();
+            this.CreateStubForPlainTextMultiPartFormData();
 
             var rce = Assert.Throws<RequestCreationException>(() =>
             {
                 Given()
                 .MultiPart("customControl", @"DoesNotExist.txt")
                 .When()
-                .Post("http://localhost:9876/simple-multipart-form-data")
+                .Post("http://localhost:9876/plaintext-multipart-form-data")
                 .Then()
                 .StatusCode(201);
             });
@@ -112,17 +123,32 @@ namespace RestAssured.Tests
             GC.Collect();
             GC.WaitForPendingFinalizers();
 
-            File.Delete(this.fileName);
+            File.Delete(this.plaintextFileName);
+            File.Delete(this.csvFileName);
         }
 
         /// <summary>
-        /// Creates the stub response for the form data example.
+        /// Creates the stub response for the plaintext form data example.
         /// </summary>
-        private void CreateStubForSimpleMultiPartFormData()
+        private void CreateStubForPlainTextMultiPartFormData()
         {
-            this.Server?.Given(Request.Create().WithPath("/simple-multipart-form-data").UsingPost()
+            this.Server?.Given(Request.Create().WithPath("/plaintext-multipart-form-data").UsingPost()
                 .WithHeader("Content-Type", new RegexMatcher("multipart/form-data; boundary=.*"))
-                .WithBody(new RegexMatcher($".*{this.todoItem}.*")))
+                .WithBody(new RegexMatcher($".*text/plain.*"))
+                .WithBody(new RegexMatcher($".*name=file.*")))
+                .RespondWith(Response.Create()
+                .WithStatusCode(201));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the csv form data example.
+        /// </summary>
+        private void CreateStubForCsvMultiPartFormData()
+        {
+            this.Server?.Given(Request.Create().WithPath("/csv-multipart-form-data").UsingPost()
+                .WithHeader("Content-Type", new RegexMatcher("multipart/form-data; boundary=.*"))
+                .WithBody(new RegexMatcher($".*text/csv.*"))
+                .WithBody(new RegexMatcher($".*name=customControl.*")))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));
         }

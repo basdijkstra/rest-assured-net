@@ -22,7 +22,6 @@ namespace RestAssured.Request
     using System.Net;
     using System.Net.Http;
     using System.Net.Http.Headers;
-    using System.Runtime.CompilerServices;
     using System.Text;
     using System.Threading.Tasks;
     using System.Xml.Serialization;
@@ -266,9 +265,38 @@ namespace RestAssured.Request
         /// <summary>
         /// Adds multipart form data (multipart/form-data) to the request. Useful for file uploads.
         /// </summary>
+        /// /// <param name="fileName">The path to the file that is to be uploaded with the request.</param>
+        /// <param name="controlName">The control name associated with the multipart file to be uploaded.</param>
+        /// <param name="contentType">The content type to be associated with the multipart file. Will be automatically determined if not specified.</param>
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest MultiPart(FileInfo fileName, string controlName = "file", MediaTypeHeaderValue? contentType = null)
+        {
+            this.multipartFormDataContent = new MultipartFormDataContent();
+
+            try
+            {
+                contentType ??= this.GetContentTypeForFile(fileName);
+
+                StreamContent fileContents = new StreamContent(fileName.OpenRead());
+                fileContents.Headers.ContentType = contentType;
+
+                this.multipartFormDataContent.Add(fileContents, controlName, fileName.Name);
+            }
+            catch (IOException ioe)
+            {
+                throw new RequestCreationException(ioe.Message);
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Adds multipart form data (multipart/form-data) to the request. Useful for file uploads.
+        /// </summary>
         /// <param name="controlName">The control name associated with the multipart file to be uploaded.</param>
         /// <param name="fileName">The path to the file that is to be uploaded with the request.</param>
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        [Obsolete("Please use Multipart(FileInfo fileName, string controlName, MediaTypeHeaderValue contentType) instead. This method will be removed in version 3.0.0.", false)]
         public ExecutableRequest MultiPart(string controlName, string fileName)
         {
             this.multipartFormDataContent = new MultipartFormDataContent();
@@ -295,6 +323,7 @@ namespace RestAssured.Request
         /// </summary>
         /// <param name="fileName">The path to the file that is to be uploaded with the request.</param>
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        [Obsolete("Please use Multipart(FileInfo fileName, string controlName, MediaTypeHeaderValue contentType) instead. This method will be removed in version 3.0.0.", false)]
         public ExecutableRequest MultiPart(string fileName)
         {
             return this.MultiPart("file", fileName);
@@ -673,6 +702,20 @@ namespace RestAssured.Request
 
             throw new RequestCreationException(
                 $"Could not determine how to serialize request based on specified content type '{contentType}'");
+        }
+
+        private MediaTypeHeaderValue GetContentTypeForFile(FileInfo fileName)
+        {
+            FileExtensionContentTypeProvider provider = new FileExtensionContentTypeProvider();
+
+            string contentType;
+
+            if (!provider.TryGetContentType(fileName.FullName, out contentType))
+            {
+                contentType = "application/octet-stream";
+            }
+
+            return MediaTypeHeaderValue.Parse(contentType);
         }
 
         private string GetContentTypeForFile(string fileName)
