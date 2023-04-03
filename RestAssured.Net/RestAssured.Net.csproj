@@ -6,7 +6,7 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>2.4.0</Version>
+    <Version>2.5.0</Version>
     <Authors>Bas Dijkstra</Authors>
     <Company>On Test Automation</Company>
     <Description>C# port of the popular REST Assured library for writing tests for HTTP APIs.</Description>
