@@ -92,6 +92,26 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for including
+        /// multiple files when submitting multipart form data
+        /// with the default 'file' control name and an automatically
+        /// determined content type in the request.
+        /// </summary>
+        [Test]
+        public void MultipleFilesCanBeSupplied()
+        {
+            this.CreateStubForMultipleFilesMultiPartFormData();
+
+            Given()
+                .MultiPart(new FileInfo(this.plaintextFileName))
+                .MultiPart(new FileInfo(this.csvFileName), "customControl", MediaTypeHeaderValue.Parse("text/csv"))
+                .When()
+                .Post("http://localhost:9876/multiple-files-multipart-form-data")
+                .Then()
+                .StatusCode(201);
+        }
+
+        /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
         /// that trying to upload a nonexistent file throws the expected
         /// exception.
@@ -104,7 +124,7 @@ namespace RestAssured.Tests
             var rce = Assert.Throws<RequestCreationException>(() =>
             {
                 Given()
-                .MultiPart("customControl", @"DoesNotExist.txt")
+                .MultiPart(new FileInfo(@"DoesNotExist.txt"))
                 .When()
                 .Post("http://localhost:9876/plaintext-multipart-form-data")
                 .Then()
@@ -149,6 +169,19 @@ namespace RestAssured.Tests
                 .WithHeader("Content-Type", new RegexMatcher("multipart/form-data; boundary=.*"))
                 .WithBody(new RegexMatcher($".*text/csv.*"))
                 .WithBody(new RegexMatcher($".*name=customControl.*")))
+                .RespondWith(Response.Create()
+                .WithStatusCode(201));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the csv form data example.
+        /// </summary>
+        private void CreateStubForMultipleFilesMultiPartFormData()
+        {
+            this.Server?.Given(Request.Create().WithPath("/multiple-files-multipart-form-data").UsingPost()
+                .WithHeader("Content-Type", new RegexMatcher("multipart/form-data; boundary=.*"))
+                .WithBody(new RegexMatcher($".*ToDoItems.*"))
+                .WithBody(new RegexMatcher($".*Addresses.*")))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));
         }

@@ -271,7 +271,7 @@ namespace RestAssured.Request
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
         public ExecutableRequest MultiPart(FileInfo fileName, string controlName = "file", MediaTypeHeaderValue? contentType = null)
         {
-            this.multipartFormDataContent = new MultipartFormDataContent();
+            this.multipartFormDataContent ??= new MultipartFormDataContent();
 
             try
             {
