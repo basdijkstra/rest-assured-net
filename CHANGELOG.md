@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+### [2.5.0] - 2023-04-03
+
+#### Added
+
+- Added improved multipart file upload, including the ability to overwrite the automatically determined MIME type and uploading multiple files in a single HTTP call ([#58](https://github.com/basdijkstra/rest-assured-net/issues/58) by [@MuresanCristianRichard](https://github.com/MuresanCristianRichard))
+
+#### Fixed
+
+- Fixed issue with Content-Length and other content headers not being included when logging requests and responses ([#59](https://github.com/basdijkstra/rest-assured-net/issues/59) by [@workmichsem](https://github.com/workmichsem))
+
+#### Updated
+
+- Version bump for WireMock.Net (test project)
+
 ### [2.4.0] - 2023-03-20
 
 #### Added
