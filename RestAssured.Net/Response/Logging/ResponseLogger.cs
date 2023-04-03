@@ -140,6 +140,13 @@ namespace RestAssured.Response.Logging
 
         private static void LogHeaders(HttpResponseMessage response)
         {
+            if (response.Content != null)
+            {
+                // TODO: Add other headers to log
+                Console.WriteLine($"Content-Type: {response.Content.Headers.ContentType}");
+                Console.WriteLine($"Content-Length: {response.Content.Headers.ContentLength}");
+            }
+
             foreach (KeyValuePair<string, IEnumerable<string>> header in response.Headers)
             {
                 Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
@@ -180,6 +187,11 @@ namespace RestAssured.Response.Logging
 
         private void LogHeaders()
         {
+            foreach (KeyValuePair<string, IEnumerable<string>> header in this.response.Content.Headers)
+            {
+                Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
+            }
+
             foreach (KeyValuePair<string, IEnumerable<string>> header in this.response.Headers)
             {
                 Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");

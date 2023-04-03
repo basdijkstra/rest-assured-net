@@ -17,6 +17,8 @@
 namespace RestAssured.Request.Logging
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Net.Http;
     using System.Threading.Tasks;
     using System.Xml.Linq;
@@ -141,9 +143,13 @@ namespace RestAssured.Request.Logging
             if (request.Content != null)
             {
                 Console.WriteLine($"Content-Type: {request.Content.Headers.ContentType}");
+                Console.WriteLine($"Content-Length: {request.Content.Headers.ContentLength}");
             }
 
-            Console.WriteLine(request.Headers);
+            foreach (KeyValuePair<string, IEnumerable<string>> header in request.Headers)
+            {
+                Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
+            }
         }
 
         private static void LogBody(HttpRequestMessage request)
