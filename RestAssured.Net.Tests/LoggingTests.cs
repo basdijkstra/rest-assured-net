@@ -58,6 +58,7 @@ namespace RestAssured.Tests
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for logging
         /// JSON request details to the standard output.
+        /// Uses the deprecated way to log request details.
         /// </summary>
         [Test]
         public void RequestDetailsCanBeWrittenToStandardOutputForJsonUsingObsoleteMethod()
@@ -98,7 +99,7 @@ namespace RestAssured.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for logging
-        /// response details to the standard output.
+        /// all response details to the standard output.
         /// </summary>
         [Test]
         public void ResponseDetailsCanBeWrittenToStandardOutputForJson()
@@ -116,7 +117,8 @@ namespace RestAssured.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for logging
-        /// response details to the standard output.
+        /// JSON response details to the standard output.
+        /// Uses the deprecated way to log response details.
         /// </summary>
         [Test]
         public void ResponseDetailsCanBeWrittenToStandardOutputForJsonUsingObsoleteMethod()
@@ -134,7 +136,7 @@ namespace RestAssured.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for logging
-        /// response details to the standard output.
+        /// XML response details to the standard output.
         /// </summary>
         [Test]
         public void ResponseDetailsCanBeWrittenToStandardOutputForXml()
@@ -153,6 +155,7 @@ namespace RestAssured.Tests
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for logging
         /// response details to the standard output.
+        /// This response has no body, which should not throw an exception.
         /// </summary>
         [Test]
         public void NoResponseBodyDoesntThrowNullReferenceException()
@@ -171,6 +174,7 @@ namespace RestAssured.Tests
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for logging
         /// response details to the standard output.
+        /// This request has no body, which should not throw an exception.
         /// </summary>
         [Test]
         public void NoRequestBodyDoesntThrowNullReferenceException()
@@ -182,6 +186,44 @@ namespace RestAssured.Tests
                 .When()
                 .Get("http://localhost:9876/log-no-response-body")
                 .Then()
+                .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for logging
+        /// response details to the standard output only if the status
+        /// code is 4xx or 5xx.
+        /// This test should log details, because the status code is 404.
+        /// </summary>
+        [Test]
+        public void ResponseBodyDetailsAreLoggedOnlyOnErrorResponseCode()
+        {
+            this.CreateStubForErrorResponse();
+
+            Given()
+                .When()
+                .Get("http://localhost:9876/error-response-body")
+                .Then()
+                .Log(ResponseLogLevel.OnError)
+                .StatusCode(404);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for logging
+        /// response details to the standard output only if the status
+        /// code is 4xx or 5xx.
+        /// This test should not log details, because the status code is 200.
+        /// </summary>
+        [Test]
+        public void ResponseBodyDetailsAreNotLoggedOnOkResponseCode()
+        {
+            this.CreateStubForLoggingJsonResponse();
+
+            Given()
+                .When()
+                .Get("http://localhost:9876/log-json-response")
+                .Then()
+                .Log(ResponseLogLevel.OnError)
                 .StatusCode(200);
         }
 
@@ -239,6 +281,18 @@ namespace RestAssured.Tests
             this.Server?.Given(Request.Create().WithPath("/log-no-response-body").UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the error response body example.
+        /// </summary>
+        private void CreateStubForErrorResponse()
+        {
+            this.Server?.Given(Request.Create().WithPath("/error-response-body").UsingGet())
+                .RespondWith(Response.Create()
+                .WithStatusCode(404)
+                .WithHeader("Content-Type", "text/plain")
+                .WithBody("The resource you requested was not found on this server."));
         }
     }
 }
