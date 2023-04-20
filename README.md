@@ -23,6 +23,13 @@ public void DemonstrateRestAssuredNetEaseOfUse()
 
 All features of the library are described and demonstrated in the [RestAssured.Net Usage Guide](https://github.com/basdijkstra/rest-assured-net/wiki/Usage-Guide).
 
+### Where can I get RestAssured.Net?
+You can add RestAssured.Net to your project using [NuGet](https://www.nuget.org/packages/RestAssured.Net):
+
+`dotnet add package RestAssured.Net` or `nuget install RestAssured.Net`
+
+RestAssured.Net is also available through [GitHub Packages](https://github.com/basdijkstra/rest-assured-net/pkgs/nuget/RestAssured.Net).
+
 ### Want to contribute?
 I'm mostly looking for people who want to give the library a spin and let me know what they think, what issues they found and what they're still missing.
 
