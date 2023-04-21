@@ -88,8 +88,7 @@ namespace RestAssured.Response
         {
             if (expectedStatusCode != (int)this.response.StatusCode)
             {
-                this.LogOnVerificationFailureIfSet();
-                throw new ResponseVerificationException($"Expected status code to be {expectedStatusCode}, but was {(int)this.response.StatusCode}");
+                this.FailVerification($"Expected status code to be {expectedStatusCode}, but was {(int)this.response.StatusCode}");
             }
 
             return this;
@@ -105,8 +104,7 @@ namespace RestAssured.Response
         {
             if (!expectedStatusCode.Equals(this.response.StatusCode))
             {
-                this.LogOnVerificationFailureIfSet();
-                throw new ResponseVerificationException($"Expected status code to be {expectedStatusCode}, but was {this.response.StatusCode}");
+                this.FailVerification($"Expected status code to be {expectedStatusCode}, but was {this.response.StatusCode}");
             }
 
             return this;
@@ -122,8 +120,7 @@ namespace RestAssured.Response
         {
             if (!matcher.Matches((int)this.response.StatusCode))
             {
-                this.LogOnVerificationFailureIfSet();
-                throw new ResponseVerificationException($"Expected response status code to match '{matcher}', but was {(int)this.response.StatusCode}");
+                this.FailVerification($"Expected response status code to match '{matcher}', but was {(int)this.response.StatusCode}");
             }
 
             return this;
@@ -140,16 +137,14 @@ namespace RestAssured.Response
         {
             if (!this.response.Headers.TryGetValues(name, out IEnumerable<string>? values))
             {
-                this.LogOnVerificationFailureIfSet();
-                throw new ResponseVerificationException($"Expected header with name '{name}' to be in the response, but it could not be found.");
+                this.FailVerification($"Expected header with name '{name}' to be in the response, but it could not be found.");
             }
 
-            string firstValue = values.First();
+            string firstValue = values!.First();
 
             if (!firstValue.Equals(expectedValue))
             {
-                this.LogOnVerificationFailureIfSet();
-                throw new ResponseVerificationException($"Expected value for response header with name '{name}' to be '{expectedValue}', but was '{firstValue}'.");
+                this.FailVerification($"Expected value for response header with name '{name}' to be '{expectedValue}', but was '{firstValue}'.");
             }
 
             return this;
@@ -170,14 +165,12 @@ namespace RestAssured.Response
 
                 if (!matcher.Matches(firstValue))
                 {
-                    this.LogOnVerificationFailureIfSet();
-                    throw new ResponseVerificationException($"Expected value for response header with name '{name}' to match '{matcher}', but was '{firstValue}'.");
+                    this.FailVerification($"Expected value for response header with name '{name}' to match '{matcher}', but was '{firstValue}'.");
                 }
             }
             else
             {
-                this.LogOnVerificationFailureIfSet();
-                throw new ResponseVerificationException($"Expected header with name '{name}' to be in the response, but it could not be found.");
+                this.FailVerification($"Expected header with name '{name}' to be in the response, but it could not be found.");
             }
 
             return this;
@@ -195,14 +188,12 @@ namespace RestAssured.Response
 
             if (actualContentType == null)
             {
-                this.LogOnVerificationFailureIfSet();
-                throw new ResponseVerificationException("Response Content-Type header could not be found.");
+                this.FailVerification("Response Content-Type header could not be found.");
             }
 
-            if (!actualContentType.ToString().Equals(expectedContentType))
+            if (!actualContentType!.ToString().Equals(expectedContentType))
             {
-                this.LogOnVerificationFailureIfSet();
-                throw new ResponseVerificationException($"Expected value for response Content-Type header to be '{expectedContentType}', but was '{actualContentType}'.");
+                this.FailVerification($"Expected value for response Content-Type header to be '{expectedContentType}', but was '{actualContentType}'.");
             }
 
             return this;
@@ -220,14 +211,12 @@ namespace RestAssured.Response
 
             if (actualContentType == null)
             {
-                this.LogOnVerificationFailureIfSet();
-                throw new ResponseVerificationException("Response Content-Type header could not be found.");
+                this.FailVerification("Response Content-Type header could not be found.");
             }
 
-            if (!matcher.Matches(actualContentType.ToString()))
+            if (!matcher.Matches(actualContentType!.ToString()))
             {
-                this.LogOnVerificationFailureIfSet();
-                throw new ResponseVerificationException($"Expected value for response Content-Type header to match '{matcher}', but was '{actualContentType}'.");
+                this.FailVerification($"Expected value for response Content-Type header to match '{matcher}', but was '{actualContentType}'.");
             }
 
             return this;
@@ -245,8 +234,7 @@ namespace RestAssured.Response
 
             if (!actualResponseBody.Equals(expectedResponseBody))
             {
-                this.LogOnVerificationFailureIfSet();
-                throw new ResponseVerificationException($"Actual response body did not match expected response body.\nExpected: '{expectedResponseBody}'\nActual: '{actualResponseBody}'");
+                this.FailVerification($"Actual response body did not match expected response body.\nExpected: '{expectedResponseBody}'\nActual: '{actualResponseBody}'");
             }
 
             return this;
@@ -264,8 +252,7 @@ namespace RestAssured.Response
 
             if (!matcher.Matches(actualResponseBody))
             {
-                this.LogOnVerificationFailureIfSet();
-                throw new ResponseVerificationException($"Actual response body expected to match '{matcher}' but didn't.\nActual: '{actualResponseBody}'");
+                this.FailVerification($"Actual response body expected to match '{matcher}' but didn't.\nActual: '{actualResponseBody}'");
             }
 
             return this;
@@ -292,14 +279,12 @@ namespace RestAssured.Response
 
                 if (resultingElement == null)
                 {
-                    this.LogOnVerificationFailureIfSet();
-                    throw new ResponseVerificationException($"JsonPath expression '{path}' did not yield any results.");
+                    this.FailVerification($"JsonPath expression '{path}' did not yield any results.");
                 }
 
-                if (!matcher.Matches(resultingElement.ToObject<T>() !))
+                if (!matcher.Matches(resultingElement!.ToObject<T>() !))
                 {
-                    this.LogOnVerificationFailureIfSet();
-                    throw new ResponseVerificationException($"Expected element selected by '{path}' to match '{matcher}' but was '{resultingElement}'");
+                    this.FailVerification($"Expected element selected by '{path}' to match '{matcher}' but was '{resultingElement}'");
                 }
             }
             else if (responseMediaType.Contains("xml"))
@@ -310,30 +295,26 @@ namespace RestAssured.Response
 
                 if (xmlElement == null)
                 {
-                    this.LogOnVerificationFailureIfSet();
-                    throw new ResponseVerificationException($"XPath expression '{path}' did not yield any results.");
+                    this.FailVerification($"XPath expression '{path}' did not yield any results.");
                 }
 
                 // Try and cast the element value to an object of the type used in the matcher
                 try
                 {
-                    T objectFromElementValue = (T)Convert.ChangeType(xmlElement.InnerText, typeof(T));
+                    T objectFromElementValue = (T)Convert.ChangeType(xmlElement!.InnerText, typeof(T));
                     if (!matcher.Matches((T)Convert.ChangeType(xmlElement.InnerText, typeof(T))))
                     {
-                        this.LogOnVerificationFailureIfSet();
-                        throw new ResponseVerificationException($"Expected element selected by '{path}' to match '{matcher}' but was '{xmlElement.InnerText}'");
+                        this.FailVerification($"Expected element selected by '{path}' to match '{matcher}' but was '{xmlElement.InnerText}'");
                     }
                 }
                 catch (FormatException)
                 {
-                    this.LogOnVerificationFailureIfSet();
-                    throw new ResponseVerificationException($"Response element value {xmlElement.InnerText} cannot be converted to value of type '{typeof(T)}'");
+                    this.FailVerification($"Response element value {xmlElement!.InnerText} cannot be converted to value of type '{typeof(T)}'");
                 }
             }
             else
             {
-                this.LogOnVerificationFailureIfSet();
-                throw new ResponseVerificationException($"Unable to extract elements from response with Content-Type '{responseMediaType}'");
+                this.FailVerification($"Unable to extract elements from response with Content-Type '{responseMediaType}'");
             }
 
             return this;
@@ -367,8 +348,7 @@ namespace RestAssured.Response
 
                 if (!matcher.Matches(elementValues))
                 {
-                    this.LogOnVerificationFailureIfSet();
-                    throw new ResponseVerificationException($"Expected elements selected by '{path}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
+                    this.FailVerification($"Expected elements selected by '{path}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
                 }
             }
             else if (responseMediaType.Contains("xml"))
@@ -387,21 +367,18 @@ namespace RestAssured.Response
                     }
                     catch (FormatException)
                     {
-                        this.LogOnVerificationFailureIfSet();
-                        throw new ResponseVerificationException($"Response element value {xmlElement.InnerText} cannot be converted to object of type {typeof(T)}");
+                        this.FailVerification($"Response element value {xmlElement.InnerText} cannot be converted to object of type {typeof(T)}");
                     }
                 }
 
                 if (!matcher.Matches(elementValues))
                 {
-                    this.LogOnVerificationFailureIfSet();
-                    throw new ResponseVerificationException($"Expected elements selected by '{path}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
+                    this.FailVerification($"Expected elements selected by '{path}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
                 }
             }
             else
             {
-                this.LogOnVerificationFailureIfSet();
-                throw new ResponseVerificationException($"Unable to extract elements from response with Content-Type '{responseMediaType}'");
+                this.FailVerification($"Unable to extract elements from response with Content-Type '{responseMediaType}'");
             }
 
             return this;
@@ -420,14 +397,13 @@ namespace RestAssured.Response
             try
             {
                 parsedSchema = JSchema.Parse(jsonSchema);
+                return this.MatchesJsonSchema(parsedSchema);
             }
             catch (JsonReaderException jre)
             {
-                this.LogOnVerificationFailureIfSet();
-                throw new ResponseVerificationException($"Could not parse supplied JSON schema. Error: {jre.Message}");
+                this.FailVerification($"Could not parse supplied JSON schema. Error: {jre.Message}");
+                return this;
             }
-
-            return this.MatchesJsonSchema(parsedSchema);
         }
 
         /// <summary>
@@ -442,16 +418,14 @@ namespace RestAssured.Response
 
             if (!responseMediaType.Contains("json"))
             {
-                this.LogOnVerificationFailureIfSet();
-                throw new ResponseVerificationException($"Expected response Content-Type header to contain 'json', but was '{responseMediaType}'");
+                this.FailVerification($"Expected response Content-Type header to contain 'json', but was '{responseMediaType}'");
             }
 
             JObject response = JObject.Parse(this.response.Content.ReadAsStringAsync().Result);
 
             if (!response.IsValid(jsonSchema, out IList<string> messages))
             {
-                this.LogOnVerificationFailureIfSet();
-                throw new ResponseVerificationException($"Response body did not match JSON schema supplied. Error: '{messages.First()}'");
+                this.FailVerification($"Response body did not match JSON schema supplied. Error: '{messages.First()}'");
             }
 
             return this;
@@ -503,12 +477,14 @@ namespace RestAssured.Response
             return new ExtractableResponse(this.response);
         }
 
-        private void LogOnVerificationFailureIfSet()
+        private void FailVerification(string exceptionMessage)
         {
             if (this.logOnVerificationFailure)
             {
                 ResponseLogger.Log(this.response, ResponseLogLevel.All, this.elapsedTime);
             }
+
+            throw new ResponseVerificationException(exceptionMessage);
         }
     }
 }
