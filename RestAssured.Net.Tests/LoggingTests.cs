@@ -228,6 +228,25 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for logging
+        /// response details to the standard output only if the status
+        /// code is 4xx or 5xx.
+        /// This test should not log details, because the status code is 200.
+        /// </summary>
+        [Test]
+        public void ResponseBodyDetailsAreLoggedIfVerificationFails()
+        {
+            this.CreateStubForLoggingJsonResponse();
+
+            Given()
+                .When()
+                .Get("http://localhost:9876/log-json-response")
+                .Then()
+                .Log(ResponseLogLevel.OnVerificationFailure)
+                .StatusCode(200);
+        }
+
+        /// <summary>
         /// Creates the stub response for the JSON response body example.
         /// </summary>
         private void CreateStubForLoggingJsonResponse()

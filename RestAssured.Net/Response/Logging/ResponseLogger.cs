@@ -105,6 +105,11 @@ namespace RestAssured.Response.Logging
         /// <param name="elapsedTime">The time elapsed between sending a request and returning a response.</param>
         internal static void Log(HttpResponseMessage response, ResponseLogLevel responseLogLevel, TimeSpan elapsedTime)
         {
+            if (responseLogLevel == ResponseLogLevel.OnVerificationFailure)
+            {
+                return;
+            }
+
             if (responseLogLevel == ResponseLogLevel.OnError)
             {
                 if ((int)response.StatusCode >= 400)

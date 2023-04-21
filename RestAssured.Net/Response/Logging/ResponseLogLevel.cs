@@ -51,5 +51,11 @@ namespace RestAssured.Response.Logging
         /// if the response status code is 4xx or 5xx.
         /// </summary>
         OnError = 5,
+
+        /// <summary>
+        /// The entire response will be logged to the console
+        /// if any of the response verifications fails.
+        /// </summary>
+        OnVerificationFailure = 6,
     }
 }

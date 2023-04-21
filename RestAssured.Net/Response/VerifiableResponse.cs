@@ -38,6 +38,8 @@ namespace RestAssured.Response
         private readonly HttpResponseMessage response;
         private readonly TimeSpan elapsedTime;
 
+        private bool logOnVerificationFailure = false;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="VerifiableResponse"/> class.
         /// </summary>
@@ -86,6 +88,7 @@ namespace RestAssured.Response
         {
             if (expectedStatusCode != (int)this.response.StatusCode)
             {
+                this.LogOnVerificationFailureIfSet();
                 throw new ResponseVerificationException($"Expected status code to be {expectedStatusCode}, but was {(int)this.response.StatusCode}");
             }
 
@@ -102,6 +105,7 @@ namespace RestAssured.Response
         {
             if (!expectedStatusCode.Equals(this.response.StatusCode))
             {
+                this.LogOnVerificationFailureIfSet();
                 throw new ResponseVerificationException($"Expected status code to be {expectedStatusCode}, but was {this.response.StatusCode}");
             }
 
@@ -118,6 +122,7 @@ namespace RestAssured.Response
         {
             if (!matcher.Matches((int)this.response.StatusCode))
             {
+                this.LogOnVerificationFailureIfSet();
                 throw new ResponseVerificationException($"Expected response status code to match '{matcher}', but was {(int)this.response.StatusCode}");
             }
 
@@ -135,6 +140,7 @@ namespace RestAssured.Response
         {
             if (!this.response.Headers.TryGetValues(name, out IEnumerable<string>? values))
             {
+                this.LogOnVerificationFailureIfSet();
                 throw new ResponseVerificationException($"Expected header with name '{name}' to be in the response, but it could not be found.");
             }
 
@@ -142,6 +148,7 @@ namespace RestAssured.Response
 
             if (!firstValue.Equals(expectedValue))
             {
+                this.LogOnVerificationFailureIfSet();
                 throw new ResponseVerificationException($"Expected value for response header with name '{name}' to be '{expectedValue}', but was '{firstValue}'.");
             }
 
@@ -163,11 +170,13 @@ namespace RestAssured.Response
 
                 if (!matcher.Matches(firstValue))
                 {
+                    this.LogOnVerificationFailureIfSet();
                     throw new ResponseVerificationException($"Expected value for response header with name '{name}' to match '{matcher}', but was '{firstValue}'.");
                 }
             }
             else
             {
+                this.LogOnVerificationFailureIfSet();
                 throw new ResponseVerificationException($"Expected header with name '{name}' to be in the response, but it could not be found.");
             }
 
@@ -186,11 +195,13 @@ namespace RestAssured.Response
 
             if (actualContentType == null)
             {
+                this.LogOnVerificationFailureIfSet();
                 throw new ResponseVerificationException("Response Content-Type header could not be found.");
             }
 
             if (!actualContentType.ToString().Equals(expectedContentType))
             {
+                this.LogOnVerificationFailureIfSet();
                 throw new ResponseVerificationException($"Expected value for response Content-Type header to be '{expectedContentType}', but was '{actualContentType}'.");
             }
 
@@ -209,11 +220,13 @@ namespace RestAssured.Response
 
             if (actualContentType == null)
             {
+                this.LogOnVerificationFailureIfSet();
                 throw new ResponseVerificationException("Response Content-Type header could not be found.");
             }
 
             if (!matcher.Matches(actualContentType.ToString()))
             {
+                this.LogOnVerificationFailureIfSet();
                 throw new ResponseVerificationException($"Expected value for response Content-Type header to match '{matcher}', but was '{actualContentType}'.");
             }
 
@@ -232,6 +245,7 @@ namespace RestAssured.Response
 
             if (!actualResponseBody.Equals(expectedResponseBody))
             {
+                this.LogOnVerificationFailureIfSet();
                 throw new ResponseVerificationException($"Actual response body did not match expected response body.\nExpected: '{expectedResponseBody}'\nActual: '{actualResponseBody}'");
             }
 
@@ -250,6 +264,7 @@ namespace RestAssured.Response
 
             if (!matcher.Matches(actualResponseBody))
             {
+                this.LogOnVerificationFailureIfSet();
                 throw new ResponseVerificationException($"Actual response body expected to match '{matcher}' but didn't.\nActual: '{actualResponseBody}'");
             }
 
@@ -277,11 +292,13 @@ namespace RestAssured.Response
 
                 if (resultingElement == null)
                 {
+                    this.LogOnVerificationFailureIfSet();
                     throw new ResponseVerificationException($"JsonPath expression '{path}' did not yield any results.");
                 }
 
                 if (!matcher.Matches(resultingElement.ToObject<T>() !))
                 {
+                    this.LogOnVerificationFailureIfSet();
                     throw new ResponseVerificationException($"Expected element selected by '{path}' to match '{matcher}' but was '{resultingElement}'");
                 }
             }
@@ -293,6 +310,7 @@ namespace RestAssured.Response
 
                 if (xmlElement == null)
                 {
+                    this.LogOnVerificationFailureIfSet();
                     throw new ResponseVerificationException($"XPath expression '{path}' did not yield any results.");
                 }
 
@@ -302,16 +320,19 @@ namespace RestAssured.Response
                     T objectFromElementValue = (T)Convert.ChangeType(xmlElement.InnerText, typeof(T));
                     if (!matcher.Matches((T)Convert.ChangeType(xmlElement.InnerText, typeof(T))))
                     {
+                        this.LogOnVerificationFailureIfSet();
                         throw new ResponseVerificationException($"Expected element selected by '{path}' to match '{matcher}' but was '{xmlElement.InnerText}'");
                     }
                 }
                 catch (FormatException)
                 {
+                    this.LogOnVerificationFailureIfSet();
                     throw new ResponseVerificationException($"Response element value {xmlElement.InnerText} cannot be converted to value of type '{typeof(T)}'");
                 }
             }
             else
             {
+                this.LogOnVerificationFailureIfSet();
                 throw new ResponseVerificationException($"Unable to extract elements from response with Content-Type '{responseMediaType}'");
             }
 
@@ -346,6 +367,7 @@ namespace RestAssured.Response
 
                 if (!matcher.Matches(elementValues))
                 {
+                    this.LogOnVerificationFailureIfSet();
                     throw new ResponseVerificationException($"Expected elements selected by '{path}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
                 }
             }
@@ -365,17 +387,20 @@ namespace RestAssured.Response
                     }
                     catch (FormatException)
                     {
+                        this.LogOnVerificationFailureIfSet();
                         throw new ResponseVerificationException($"Response element value {xmlElement.InnerText} cannot be converted to object of type {typeof(T)}");
                     }
                 }
 
                 if (!matcher.Matches(elementValues))
                 {
+                    this.LogOnVerificationFailureIfSet();
                     throw new ResponseVerificationException($"Expected elements selected by '{path}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
                 }
             }
             else
             {
+                this.LogOnVerificationFailureIfSet();
                 throw new ResponseVerificationException($"Unable to extract elements from response with Content-Type '{responseMediaType}'");
             }
 
@@ -398,6 +423,7 @@ namespace RestAssured.Response
             }
             catch (JsonReaderException jre)
             {
+                this.LogOnVerificationFailureIfSet();
                 throw new ResponseVerificationException($"Could not parse supplied JSON schema. Error: {jre.Message}");
             }
 
@@ -416,6 +442,7 @@ namespace RestAssured.Response
 
             if (!responseMediaType.Contains("json"))
             {
+                this.LogOnVerificationFailureIfSet();
                 throw new ResponseVerificationException($"Expected response Content-Type header to contain 'json', but was '{responseMediaType}'");
             }
 
@@ -423,6 +450,7 @@ namespace RestAssured.Response
 
             if (!response.IsValid(jsonSchema, out IList<string> messages))
             {
+                this.LogOnVerificationFailureIfSet();
                 throw new ResponseVerificationException($"Response body did not match JSON schema supplied. Error: '{messages.First()}'");
             }
 
@@ -456,6 +484,12 @@ namespace RestAssured.Response
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse Log(ResponseLogLevel responseLogLevel)
         {
+            if (responseLogLevel == ResponseLogLevel.OnVerificationFailure)
+            {
+                this.logOnVerificationFailure = true;
+                return this;
+            }
+
             ResponseLogger.Log(this.response, responseLogLevel, this.elapsedTime);
             return this;
         }
@@ -467,6 +501,14 @@ namespace RestAssured.Response
         public ExtractableResponse Extract()
         {
             return new ExtractableResponse(this.response);
+        }
+
+        private void LogOnVerificationFailureIfSet()
+        {
+            if (this.logOnVerificationFailure)
+            {
+                ResponseLogger.Log(this.response, ResponseLogLevel.All, this.elapsedTime);
+            }
         }
     }
 }
