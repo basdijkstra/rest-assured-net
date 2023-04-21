@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Added
 
 - Added the ability to log response details only when the response status code indicates an error (i.e., 4xx or 5xx) ([#64](https://github.com/basdijkstra/rest-assured-net/issues/64))
+- Added the ability to log response details only when a response verification fails ([#63](https://github.com/basdijkstra/rest-assured-net/issues/63))
 
 ### [2.5.0] - 2023-04-03
 
