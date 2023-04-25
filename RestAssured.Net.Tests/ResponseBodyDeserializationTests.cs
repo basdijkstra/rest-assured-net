@@ -74,6 +74,49 @@ namespace RestAssured.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for deserializing
+        /// a JSON response into an object when performing an HTTP GET
+        /// using the DeserializeTo() alias method.
+        /// </summary>
+        [Test]
+        public void ObjectCanBeDeserializedFromJsonUsingDeserializeTo()
+        {
+            this.CreateStubForJsonResponseBody();
+
+            Location responseLocation = (Location)Given()
+                .When()
+                .Get("http://localhost:9876/json-deserialization")
+                .Then()
+                .DeserializeTo(typeof(Location));
+
+            Assert.That(responseLocation.Country, Is.EqualTo("United States"));
+            Assert.That(responseLocation.Places?.Count, Is.EqualTo(2));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for deserializing
+        /// a JSON response into an object when performing an HTTP GET
+        /// after performing some initial verifications, using the
+        /// DeserializeTo() alias method.
+        /// </summary>
+        [Test]
+        public void ObjectCanBeDeserializedFromJsonAfterVerificationsUsingDeserializeTo()
+        {
+            this.CreateStubForJsonResponseBody();
+
+            Location responseLocation = (Location)Given()
+                .When()
+                .Get("http://localhost:9876/json-deserialization")
+                .Then()
+                .StatusCode(200)
+                .And()
+                .DeserializeTo(typeof(Location));
+
+            Assert.That(responseLocation.Country, Is.EqualTo("United States"));
+            Assert.That(responseLocation.Places?.Count, Is.EqualTo(2));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for deserializing
         /// a XML response into an object when performing an HTTP GET.
         /// </summary>
         [Test]
@@ -85,6 +128,25 @@ namespace RestAssured.Tests
                 .When()
                 .Get("http://localhost:9876/xml-deserialization")
                 .As(typeof(Location));
+
+            Assert.That(responseLocation.Country, Is.EqualTo("United States"));
+            Assert.That(responseLocation.Places?.Count, Is.EqualTo(2));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for deserializing
+        /// a XML response into an object when performing an HTTP GET.
+        /// </summary>
+        [Test]
+        public void ObjectCanBeDeserializedFromXmlUsingDeserializeTo()
+        {
+            this.CreateStubForXmlResponseBody();
+
+            Location responseLocation = (Location)Given()
+                .When()
+                .Get("http://localhost:9876/xml-deserialization")
+                .Then()
+                .DeserializeTo(typeof(Location));
 
             Assert.That(responseLocation.Country, Is.EqualTo("United States"));
             Assert.That(responseLocation.Places?.Count, Is.EqualTo(2));

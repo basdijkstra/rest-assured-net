@@ -477,6 +477,16 @@ namespace RestAssured.Response
             return new ExtractableResponse(this.response);
         }
 
+        /// <summary>
+        /// Deserializes the response content into the specified type and returns it.
+        /// </summary>
+        /// <param name="type">The object type to deserialize into.</param>
+        /// <returns>The deserialized response object.</returns>
+        public object DeserializeTo(Type type)
+        {
+            return new ExtractableResponse(this.response).As(type);
+        }
+
         private void FailVerification(string exceptionMessage)
         {
             if (this.logOnVerificationFailure)
