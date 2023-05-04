@@ -15,11 +15,9 @@
 // </copyright>
 namespace RestAssured.Tests
 {
-    using System.Collections.Generic;
     using NUnit.Framework;
     using RestAssured.Request.Logging;
     using RestAssured.Response.Logging;
-    using RestAssured.Tests.Models;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
     using static RestAssured.Dsl;
@@ -30,7 +28,6 @@ namespace RestAssured.Tests
     [TestFixture]
     public class LoggingTests : TestBase
     {
-        private readonly string xmlBody = "<?xml version=\"1.0\" encoding=\"utf-16\"?><Location xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><Country>United States</Country><State>California</State><ZipCode>90210</ZipCode><Places><Place><Name>Sun City</Name><Inhabitants>100000</Inhabitants><IsCapital>true</IsCapital></Place><Place><Name>Pleasure Meadow</Name><Inhabitants>50000</Inhabitants><IsCapital>false</IsCapital></Place></Places></Location>";
         private readonly string jsonBody = "{\"id\": 1, \"user\": \"John Doe\"}";
 
         /// <summary>
@@ -90,7 +87,7 @@ namespace RestAssured.Tests
             Given()
                 .Log(RequestLogLevel.All)
                 .ContentType("application/xml")
-                .Body(this.xmlBody)
+                .Body(this.GetLocationAsXmlString())
                 .When()
                 .Get("http://localhost:9876/log-xml-response")
                 .Then()
@@ -251,33 +248,11 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForLoggingJsonResponse()
         {
-            Place firstPlace = new Place
-            {
-                Name = "Sun City",
-                Inhabitants = 100000,
-                IsCapital = true,
-            };
-
-            Place secondPlace = new Place
-            {
-                Name = "Pleasure Meadow",
-                Inhabitants = 50000,
-                IsCapital = false,
-            };
-
-            Location location = new Location
-            {
-                Country = "United States",
-                State = "California",
-                ZipCode = 90210,
-                Places = new List<Place>() { firstPlace, secondPlace },
-            };
-
             this.Server?.Given(Request.Create().WithPath("/log-json-response").UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200)
                 .WithHeader("Content-Type", "application/json")
-                .WithBodyAsJson(location));
+                .WithBodyAsJson(this.GetLocation()));
         }
 
         /// <summary>
@@ -288,7 +263,7 @@ namespace RestAssured.Tests
             this.Server?.Given(Request.Create().WithPath("/log-xml-response").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/xml")
-                .WithBody(this.xmlBody)
+                .WithBody(this.GetLocationAsXmlString())
                 .WithStatusCode(200));
         }
 

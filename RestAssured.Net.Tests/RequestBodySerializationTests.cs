@@ -18,7 +18,6 @@ namespace RestAssured.Tests
     using System.Collections.Generic;
     using NUnit.Framework;
     using RestAssured.Request.Exceptions;
-    using RestAssured.Tests.Models;
     using WireMock.Matchers;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
@@ -32,38 +31,6 @@ namespace RestAssured.Tests
     {
         private readonly string expectedSerializedJsonRequestBody = "{\"Country\":\"United States\",\"State\":\"California\",\"ZipCode\":90210,\"Places\":[{\"Name\":\"Sun City\",\"Inhabitants\":100000,\"IsCapital\":true},{\"Name\":\"Pleasure Meadow\",\"Inhabitants\":50000,\"IsCapital\":false}]}";
         private readonly string expectedSerializedObject = "{\"Id\":1,\"Title\":\"My post title\",\"Body\":\"My post body\"}";
-        private readonly string xmlBody = "<?xml version=\"1.0\" encoding=\"utf-16\"?><Location xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><Country>United States</Country><State>California</State><ZipCode>90210</ZipCode><Places><Place><Name>Sun City</Name><Inhabitants>100000</Inhabitants><IsCapital>true</IsCapital></Place><Place><Name>Pleasure Meadow</Name><Inhabitants>50000</Inhabitants><IsCapital>false</IsCapital></Place></Places></Location>";
-
-        private Location location = new Location();
-
-        /// <summary>
-        /// Creates the <see cref="Location"/> object to be serialized.
-        /// </summary>
-        [SetUp]
-        public void SetUpLocation()
-        {
-            Place firstPlace = new Place
-            {
-                Name = "Sun City",
-                Inhabitants = 100000,
-                IsCapital = true,
-            };
-
-            Place secondPlace = new Place
-            {
-                Name = "Pleasure Meadow",
-                Inhabitants = 50000,
-                IsCapital = false,
-            };
-
-            this.location = new Location
-            {
-                Country = "United States",
-                State = "California",
-                ZipCode = 90210,
-                Places = new List<Place>() { firstPlace, secondPlace },
-            };
-        }
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for serializing
@@ -75,7 +42,7 @@ namespace RestAssured.Tests
             this.CreateStubForJsonRequestBody();
 
             Given()
-                .Body(this.location)
+                .Body(this.GetLocation())
                 .When()
                 .Post("http://localhost:9876/json-serialization")
                 .Then()
@@ -141,7 +108,7 @@ namespace RestAssured.Tests
 
             Given()
                 .ContentType("application/xml")
-                .Body(this.location)
+                .Body(this.GetLocation())
                 .When()
                 .Post("http://localhost:9876/xml-serialization")
                 .Then()
@@ -161,7 +128,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .ContentType("application/something")
-                    .Body(this.location)
+                    .Body(this.GetLocation())
                     .When()
                     .Post("http://localhost:9876/xml-serialization")
                     .Then()

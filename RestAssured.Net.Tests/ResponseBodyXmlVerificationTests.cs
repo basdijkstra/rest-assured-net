@@ -27,8 +27,6 @@ namespace RestAssured.Tests
     [TestFixture]
     public class ResponseBodyXmlVerificationTests : TestBase
     {
-        private readonly string xmlBody = "<?xml version=\"1.0\" encoding=\"utf-16\"?><Location xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><Country>United States</Country><State>California</State><ZipCode>90210</ZipCode><Places><Place><Name>Sun City</Name><Inhabitants>100000</Inhabitants><IsCapital>true</IsCapital></Place><Place><Name>Pleasure Meadow</Name><Inhabitants>50000</Inhabitants><IsCapital>false</IsCapital></Place></Places></Location>";
-
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
         /// an XML response body element using an NHamcrest matcher.
@@ -172,7 +170,7 @@ namespace RestAssured.Tests
             this.Server?.Given(Request.Create().WithPath("/xml-response-body").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/xml")
-                .WithBody(this.xmlBody)
+                .WithBody(this.GetLocationAsXmlString())
                 .WithStatusCode(200));
         }
     }

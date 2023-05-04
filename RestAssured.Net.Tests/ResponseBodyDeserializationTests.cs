@@ -15,7 +15,7 @@
 // </copyright>
 namespace RestAssured.Tests
 {
-    using System.Collections.Generic;
+    using System.Linq;
     using NUnit.Framework;
     using RestAssured.Response.Exceptions;
     using RestAssured.Tests.Models;
@@ -29,8 +29,6 @@ namespace RestAssured.Tests
     [TestFixture]
     public class ResponseBodyDeserializationTests : TestBase
     {
-        private readonly string xmlBody = "<?xml version=\"1.0\" encoding=\"utf-16\"?><Location xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><Country>United States</Country><State>California</State><ZipCode>90210</ZipCode><Places><Place><Name>Sun City</Name><Inhabitants>100000</Inhabitants><IsCapital>true</IsCapital></Place><Place><Name>Pleasure Meadow</Name><Inhabitants>50000</Inhabitants><IsCapital>false</IsCapital></Place></Places></Location>";
-
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for deserializing
         /// a JSON response into an object when performing an HTTP GET.
@@ -47,6 +45,12 @@ namespace RestAssured.Tests
 
             Assert.That(responseLocation.Country, Is.EqualTo("United States"));
             Assert.That(responseLocation.Places?.Count, Is.EqualTo(2));
+
+            Place firstPlace = responseLocation.Places!.First();
+
+            Assert.That(firstPlace.Name, Is.EqualTo("Sun City"));
+            Assert.That(firstPlace.Inhabitants, Is.EqualTo(100000));
+            Assert.That(firstPlace.IsCapital, Is.True);
         }
 
         /// <summary>
@@ -70,6 +74,12 @@ namespace RestAssured.Tests
 
             Assert.That(responseLocation.Country, Is.EqualTo("United States"));
             Assert.That(responseLocation.Places?.Count, Is.EqualTo(2));
+
+            Place firstPlace = responseLocation.Places!.First();
+
+            Assert.That(firstPlace.Name, Is.EqualTo("Sun City"));
+            Assert.That(firstPlace.Inhabitants, Is.EqualTo(100000));
+            Assert.That(firstPlace.IsCapital, Is.True);
         }
 
         /// <summary>
@@ -90,6 +100,12 @@ namespace RestAssured.Tests
 
             Assert.That(responseLocation.Country, Is.EqualTo("United States"));
             Assert.That(responseLocation.Places?.Count, Is.EqualTo(2));
+
+            Place firstPlace = responseLocation.Places!.First();
+
+            Assert.That(firstPlace.Name, Is.EqualTo("Sun City"));
+            Assert.That(firstPlace.Inhabitants, Is.EqualTo(100000));
+            Assert.That(firstPlace.IsCapital, Is.True);
         }
 
         /// <summary>
@@ -113,6 +129,12 @@ namespace RestAssured.Tests
 
             Assert.That(responseLocation.Country, Is.EqualTo("United States"));
             Assert.That(responseLocation.Places?.Count, Is.EqualTo(2));
+
+            Place firstPlace = responseLocation.Places!.First();
+
+            Assert.That(firstPlace.Name, Is.EqualTo("Sun City"));
+            Assert.That(firstPlace.Inhabitants, Is.EqualTo(100000));
+            Assert.That(firstPlace.IsCapital, Is.True);
         }
 
         /// <summary>
@@ -131,6 +153,12 @@ namespace RestAssured.Tests
 
             Assert.That(responseLocation.Country, Is.EqualTo("United States"));
             Assert.That(responseLocation.Places?.Count, Is.EqualTo(2));
+
+            Place firstPlace = responseLocation.Places!.First();
+
+            Assert.That(firstPlace.Name, Is.EqualTo("Sun City"));
+            Assert.That(firstPlace.Inhabitants, Is.EqualTo(100000));
+            Assert.That(firstPlace.IsCapital, Is.True);
         }
 
         /// <summary>
@@ -150,6 +178,12 @@ namespace RestAssured.Tests
 
             Assert.That(responseLocation.Country, Is.EqualTo("United States"));
             Assert.That(responseLocation.Places?.Count, Is.EqualTo(2));
+
+            Place firstPlace = responseLocation.Places!.First();
+
+            Assert.That(firstPlace.Name, Is.EqualTo("Sun City"));
+            Assert.That(firstPlace.Inhabitants, Is.EqualTo(100000));
+            Assert.That(firstPlace.IsCapital, Is.True);
         }
 
         /// <summary>
@@ -177,32 +211,10 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForJsonResponseBody()
         {
-            Place firstPlace = new Place
-            {
-                Name = "Sun City",
-                Inhabitants = 100000,
-                IsCapital = true,
-            };
-
-            Place secondPlace = new Place
-            {
-                Name = "Pleasure Meadow",
-                Inhabitants = 50000,
-                IsCapital = false,
-            };
-
-            Location location = new Location
-            {
-                Country = "United States",
-                State = "California",
-                ZipCode = 90210,
-                Places = new List<Place>() { firstPlace, secondPlace },
-            };
-
             this.Server?.Given(Request.Create().WithPath("/json-deserialization").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/json")
-                .WithBodyAsJson(location)
+                .WithBodyAsJson(this.GetLocation())
                 .WithStatusCode(200));
         }
 
@@ -214,7 +226,7 @@ namespace RestAssured.Tests
             this.Server?.Given(Request.Create().WithPath("/xml-deserialization").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/xml")
-                .WithBody(this.xmlBody)
+                .WithBody(this.GetLocationAsXmlString())
                 .WithStatusCode(200));
         }
 
@@ -226,7 +238,7 @@ namespace RestAssured.Tests
             this.Server?.Given(Request.Create().WithPath("/xml-deserialization-unrecognized-content-type").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/something")
-                .WithBody(this.xmlBody)
+                .WithBody(this.GetLocationAsXmlString())
                 .WithStatusCode(200));
         }
     }

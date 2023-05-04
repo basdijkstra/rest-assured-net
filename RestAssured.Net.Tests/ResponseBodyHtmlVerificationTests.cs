@@ -27,8 +27,6 @@ namespace RestAssured.Tests
     [TestFixture]
     public class ResponseBodyHtmlVerificationTests : TestBase
     {
-        private string htmlResponseBody = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/><title>403 - Forbidden: Access is denied.</title></head><body><div id=\"header\"><h1>Server Error</h1></div><div id=\"content\"><div class=\"content-container\"><fieldset><h2>403 - Forbidden: Access is denied.</h2><h3>You do not have permission to view this directory or page using the credentials that you supplied.</h3></fieldset></div></div></body></html>";
-
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
         /// an HTML response body element using an NHamcrest matcher.
@@ -43,7 +41,7 @@ namespace RestAssured.Tests
                 .Get("http://localhost:9876/html-response-body")
                 .Then()
                 .StatusCode(404)
-                .Body(NHamcrest.Is.EqualTo(this.htmlResponseBody));
+                .Body(NHamcrest.Is.EqualTo(this.GetHtmlResponseBody()));
         }
 
         /// <summary>
@@ -64,7 +62,7 @@ namespace RestAssured.Tests
                 .StatusCode(404)
                 .Extract().Response();
 
-            Assert.That(response.Content.ReadAsStringAsync().Result, Is.EqualTo(this.htmlResponseBody));
+            Assert.That(response.Content.ReadAsStringAsync().Result, Is.EqualTo(this.GetHtmlResponseBody()));
         }
 
         /// <summary>
@@ -75,7 +73,7 @@ namespace RestAssured.Tests
             this.Server?.Given(Request.Create().WithPath("/html-response-body").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "text/html")
-                .WithBody(this.htmlResponseBody)
+                .WithBody(this.GetHtmlResponseBody())
                 .WithStatusCode(404));
         }
     }
