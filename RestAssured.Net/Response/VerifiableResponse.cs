@@ -17,11 +17,13 @@ namespace RestAssured.Response
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Net;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Xml;
+    using System.Xml.Schema;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     using Newtonsoft.Json.Schema;
@@ -426,6 +428,60 @@ namespace RestAssured.Response
             if (!response.IsValid(jsonSchema, out IList<string> messages))
             {
                 this.FailVerification($"Response body did not match JSON schema supplied. Error: '{messages.First()}'");
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Verifies that the XML response body matches the supplied XSD.
+        /// </summary>
+        /// <param name="xsd">The XSD to verify the response against</param>
+        /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        public VerifiableResponse MatchesXsd(string xsd)
+        {
+            XmlSchemaSet schemas = new XmlSchemaSet();
+
+            try
+            {
+                schemas.Add(string.Empty, XmlReader.Create(new StringReader(xsd)));
+            }
+            catch (XmlSchemaException xse)
+            {
+                this.FailVerification($"Could not parse supplied XML schema. Error: {xse.Message}");
+            }
+
+            return this.MatchesXsd(schemas);
+        }
+
+        /// <summary>
+        /// Verifies that the XML response body matches the supplied XSD.
+        /// </summary>
+        /// <param name="schemas">The <see cref="XmlSchemaSet"/> to verify the response against</param>
+        /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        public VerifiableResponse MatchesXsd(XmlSchemaSet schemas)
+        {
+            string responseMediaType = this.response.Content.Headers.ContentType?.MediaType ?? string.Empty;
+
+            if (!responseMediaType.Contains("xml"))
+            {
+                this.FailVerification($"Expected response Content-Type header to contain 'xml', but was '{responseMediaType}'");
+            }
+
+            XmlReaderSettings settings = new XmlReaderSettings();
+            settings.ValidationType = ValidationType.Schema;
+            settings.Schemas = schemas;
+
+            string responseXmlAsString = this.response.Content.ReadAsStringAsync().Result;
+            XmlReader reader = XmlReader.Create(new StringReader(responseXmlAsString), settings);
+
+            try
+            {
+                while (reader.Read()) ;
+            }
+            catch (XmlSchemaValidationException xsve)
+            {
+                this.FailVerification($"Response body did not match XML schema supplied. Error: '{xsve.Message}'");
             }
 
             return this;
