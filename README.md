@@ -1,7 +1,7 @@
 # RestAssured.Net
 ![github-actions-ci](https://github.com/basdijkstra/rest-assured-net/actions/workflows/ci.yml/badge.svg) ![Nuget](https://img.shields.io/nuget/v/RestAssured.Net?color=blue) ![Nuget](https://img.shields.io/nuget/dt/RestAssured.Net)
 
-This is a C# .NET version of the original [REST Assured](https://rest-assured.io/).
+RestAssured.Net brings the power of [REST Assured](https://rest-assured.io/) to the C# / .NET ecosystem.
 
 With RestAssured.Net, writing tests for your HTTP APIs is as simple as
 
