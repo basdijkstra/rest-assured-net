@@ -488,6 +488,38 @@ namespace RestAssured.Response
         }
 
         /// <summary>
+        /// Verifies that the XML response body matches the inline DTD.
+        /// </summary>
+        /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        public VerifiableResponse MatchesDtd()
+        {
+            string responseMediaType = this.response.Content.Headers.ContentType?.MediaType ?? string.Empty;
+
+            if (!responseMediaType.Contains("xml"))
+            {
+                this.FailVerification($"Expected response Content-Type header to contain 'xml', but was '{responseMediaType}'");
+            }
+
+            XmlReaderSettings settings = new XmlReaderSettings();
+            settings.DtdProcessing = DtdProcessing.Parse;
+            settings.ValidationType = ValidationType.DTD;
+
+            string responseXmlAsString = this.response.Content.ReadAsStringAsync().Result;
+            XmlReader reader = XmlReader.Create(new StringReader(responseXmlAsString), settings);
+
+            try
+            {
+                while (reader.Read()) ;
+            }
+            catch (XmlSchemaException xse)
+            {
+                this.FailVerification($"Response body did not match inline DTD. Error: '{xse.Message}'");
+            }
+
+            return this;
+        }
+
+        /// <summary>
         /// Deserializes the response content into the specified type and returns it.
         /// </summary>
         /// <param name="type">The object type to deserialize into.</param>

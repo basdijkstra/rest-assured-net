@@ -71,6 +71,24 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for validating a response
+        /// against an inline DTD definition.
+        /// </summary>
+        [Test]
+        public void XmlResponseCanBeVerifiedAgainstInlineDtd()
+        {
+            this.CreateStubForMatchingDtdValidation();
+
+            Given()
+                .When()
+                .Get("http://localhost:9876/matching-dtd-validation")
+                .Then()
+                .StatusCode(200)
+                .And()
+                .MatchesDtd();
+        }
+
+        /// <summary>
         /// A test checking that an XML schema mismatch throws the expected exception.
         /// </summary>
         [Test]
@@ -90,6 +108,28 @@ namespace RestAssured.Tests
             });
 
             Assert.That(rve?.Message, Does.Contain("Response body did not match XML schema supplied."));
+        }
+
+        /// <summary>
+        /// A test checking that an inline DTD mismatch throws the expected exception.
+        /// </summary>
+        [Test]
+        public void MismatchWithInlineDtdThrowsTheExpectedException()
+        {
+            this.CreateStubForNonMatchingDtdValidation();
+
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                    .When()
+                    .Get("http://localhost:9876/non-matching-dtd-validation")
+                    .Then()
+                    .StatusCode(200)
+                    .And()
+                    .MatchesDtd();
+            });
+
+            Assert.That(rve?.Message, Does.Contain("Response body did not match inline DTD."));
         }
 
         /// <summary>
@@ -118,7 +158,7 @@ namespace RestAssured.Tests
         /// A test checking that a response with an unexpected Content-Type throws the expected exception.
         /// </summary>
         [Test]
-        public void UnexpectedResponseContentTypeThrowsTheExpectedException()
+        public void UnexpectedResponseContentTypeThrowsTheExpectedExceptionWhenValidatingXsd()
         {
             this.CreateStubForXmlSchemaUnexpectedResponseContentType();
 
@@ -137,6 +177,28 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test checking that a response with an unexpected Content-Type throws the expected exception.
+        /// </summary>
+        [Test]
+        public void UnexpectedResponseContentTypeThrowsTheExpectedExceptionWhenValidatingDtd()
+        {
+            this.CreateStubForXmlSchemaUnexpectedResponseContentType();
+
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                    .When()
+                    .Get("http://localhost:9876/xml-schema-unexpected-content-type")
+                    .Then()
+                    .StatusCode(200)
+                    .And()
+                    .MatchesDtd();
+            });
+
+            Assert.That(rve?.Message, Is.EqualTo("Expected response Content-Type header to contain 'xml', but was 'application/something'"));
+        }
+
+        /// <summary>
         /// Creates the stub response for the XML schema validation example.
         /// </summary>
         private void CreateStubForXmlSchemaValidation()
@@ -145,6 +207,30 @@ namespace RestAssured.Tests
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/xml")
                 .WithBody(this.GetLocationAsXmlString())
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the matching inline DTD validation example.
+        /// </summary>
+        private void CreateStubForMatchingDtdValidation()
+        {
+            this.Server?.Given(Request.Create().WithPath("/matching-dtd-validation").UsingGet())
+                .RespondWith(Response.Create()
+                .WithHeader("Content-Type", "application/xml")
+                .WithBody(XmlSchemaDefinitions.XmlWithMatchingInlineDtd)
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the non-matching inline DTD validation example.
+        /// </summary>
+        private void CreateStubForNonMatchingDtdValidation()
+        {
+            this.Server?.Given(Request.Create().WithPath("/non-matching-dtd-validation").UsingGet())
+                .RespondWith(Response.Create()
+                .WithHeader("Content-Type", "application/xml")
+                .WithBody(XmlSchemaDefinitions.XmlWithNonMatchingInlineDtd)
                 .WithStatusCode(200));
         }
 

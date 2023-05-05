@@ -112,5 +112,44 @@ namespace RestAssured.Tests.Schemas
                 </xsd:complexType>
               </xsd:banana>
             </xs:schema>";
+
+        /// <summary>
+        /// A sample XML response matching the inline DTD.
+        /// </summary>
+        internal static string XmlWithMatchingInlineDtd { get; } = @"<?xml version=""1.0"" encoding=""utf-8""?>
+            <!DOCTYPE store [
+              <!ELEMENT store (item)*> 
+              <!ELEMENT item (name,dept,price)>
+              <!ATTLIST item type CDATA #REQUIRED>
+              <!ATTLIST item ISBN CDATA #REQUIRED>
+              <!ELEMENT name (#PCDATA)>
+              <!ELEMENT dept (#PCDATA)>
+              <!ELEMENT price (#PCDATA)>]>
+            <store>
+              <item type=""supplies""  ISBN=""2-3631-4"">
+                <name>paint</name>
+                <dept>interior design</dept>
+                <price>16.95</price>
+              </item>
+            </store>";
+
+        /// <summary>
+        /// A sample XML response not matching the inline DTD.
+        /// </summary>
+        internal static string XmlWithNonMatchingInlineDtd { get; } = @"<?xml version=""1.0"" encoding=""utf-8""?>
+            <!DOCTYPE store [
+              <!ELEMENT store (item)*> 
+              <!ELEMENT item (name,dept,price)>
+              <!ATTLIST item type CDATA #REQUIRED>
+              <!ATTLIST item ISBN CDATA #REQUIRED>
+              <!ELEMENT name (#PCDATA)>
+              <!ELEMENT price (#PCDATA)>]>
+            <store>
+              <item type=""supplies""  ISBN=""2-3631-4"">
+                <name>paint</name>
+                <dept>interior design</dept>
+                <price>16.95</price>
+              </item>
+            </store>";
     }
 }
