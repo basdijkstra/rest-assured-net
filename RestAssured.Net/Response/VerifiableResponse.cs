@@ -491,7 +491,7 @@ namespace RestAssured.Response
         /// Verifies that the XML response body matches the inline DTD.
         /// </summary>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
-        public VerifiableResponse MatchesDtd()
+        public VerifiableResponse MatchesInlineDtd()
         {
             string responseMediaType = this.response.Content.Headers.ContentType?.MediaType ?? string.Empty;
 

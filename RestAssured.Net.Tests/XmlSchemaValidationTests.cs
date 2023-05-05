@@ -85,7 +85,7 @@ namespace RestAssured.Tests
                 .Then()
                 .StatusCode(200)
                 .And()
-                .MatchesDtd();
+                .MatchesInlineDtd();
         }
 
         /// <summary>
@@ -126,7 +126,7 @@ namespace RestAssured.Tests
                     .Then()
                     .StatusCode(200)
                     .And()
-                    .MatchesDtd();
+                    .MatchesInlineDtd();
             });
 
             Assert.That(rve?.Message, Does.Contain("Response body did not match inline DTD."));
@@ -192,7 +192,7 @@ namespace RestAssured.Tests
                     .Then()
                     .StatusCode(200)
                     .And()
-                    .MatchesDtd();
+                    .MatchesInlineDtd();
             });
 
             Assert.That(rve?.Message, Is.EqualTo("Expected response Content-Type header to contain 'xml', but was 'application/something'"));
