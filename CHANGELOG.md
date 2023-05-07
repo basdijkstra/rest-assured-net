@@ -9,9 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Added
 
+- Added the ability to validate XML response payloads against an XML schema ([#65](https://github.com/basdijkstra/rest-assured-net/issues/65))
+- Added the ability to validate XML response payloads against an inline DTD ([#65](https://github.com/basdijkstra/rest-assured-net/issues/65))
 - Added the ability to log response details only when the response status code indicates an error (i.e., 4xx or 5xx) ([#64](https://github.com/basdijkstra/rest-assured-net/issues/64))
 - Added the ability to log response details only when a response verification fails ([#63](https://github.com/basdijkstra/rest-assured-net/issues/63))
-- Added the `DeserializeTo()` method alias for response body deserialization 
+- Added the `DeserializeTo()` method alias for response body deserialization
+
+#### Removed
+
+- Removed the `SkipNet7` environment parameter used to skip running tests on .NET 7 ([#69](https://github.com/basdijkstra/rest-assured-net/issues/69))
+
+#### Updated
+
+- Version bumps for Newtonsoft.Json (main project) and WireMock.Net (test project)
 
 ### [2.5.0] - 2023-04-03
 
