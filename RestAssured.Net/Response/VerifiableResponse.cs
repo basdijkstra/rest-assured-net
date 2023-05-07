@@ -24,6 +24,7 @@ namespace RestAssured.Response
     using System.Net.Http.Headers;
     using System.Xml;
     using System.Xml.Schema;
+    using HtmlAgilityPack;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     using Newtonsoft.Json.Schema;
@@ -314,6 +315,31 @@ namespace RestAssured.Response
                     this.FailVerification($"Response element value {xmlElement!.InnerText} cannot be converted to value of type '{typeof(T)}'");
                 }
             }
+            else if (responseMediaType.Contains("html"))
+            {
+                HtmlDocument responseBodyAsHtml = new HtmlDocument();
+                responseBodyAsHtml.LoadHtml(responseBodyAsString);
+                HtmlNode? htmlElement = responseBodyAsHtml.DocumentNode.SelectSingleNode(path);
+
+                if (htmlElement == null)
+                {
+                    this.FailVerification($"XPath expression '{path}' did not yield any results.");
+                }
+
+                // Try and cast the element value to an object of the type used in the matcher
+                try
+                {
+                    T objectFromElementValue = (T)Convert.ChangeType(htmlElement!.InnerText, typeof(T));
+                    if (!matcher.Matches((T)Convert.ChangeType(htmlElement.InnerText, typeof(T))))
+                    {
+                        this.FailVerification($"Expected element selected by '{path}' to match '{matcher}' but was '{htmlElement.InnerText}'");
+                    }
+                }
+                catch (FormatException)
+                {
+                    this.FailVerification($"Response element value {htmlElement!.InnerText} cannot be converted to value of type '{typeof(T)}'");
+                }
+            }
             else
             {
                 this.FailVerification($"Unable to extract elements from response with Content-Type '{responseMediaType}'");
@@ -370,6 +396,31 @@ namespace RestAssured.Response
                     catch (FormatException)
                     {
                         this.FailVerification($"Response element value {xmlElement.InnerText} cannot be converted to object of type {typeof(T)}");
+                    }
+                }
+
+                if (!matcher.Matches(elementValues))
+                {
+                    this.FailVerification($"Expected elements selected by '{path}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
+                }
+            }
+            else if (responseMediaType.Contains("html"))
+            {
+                HtmlDocument htmlDoc = new HtmlDocument();
+                htmlDoc.LoadHtml(responseBodyAsString);
+                HtmlNodeCollection? htmlElements = htmlDoc.DocumentNode.SelectNodes(path);
+
+                // Try and cast the element values to an object of the type used in the matcher
+                foreach (HtmlNode htmlElement in htmlElements!)
+                {
+                    try
+                    {
+                        T objectFromElementValue = (T)Convert.ChangeType(htmlElement.InnerText, typeof(T));
+                        elementValues.Add(objectFromElementValue);
+                    }
+                    catch (FormatException)
+                    {
+                        this.FailVerification($"Response element value {htmlElement.InnerText} cannot be converted to object of type {typeof(T)}");
                     }
                 }
 
@@ -436,7 +487,7 @@ namespace RestAssured.Response
         /// <summary>
         /// Verifies that the XML response body matches the supplied XSD.
         /// </summary>
-        /// <param name="xsd">The XSD to verify the response against</param>
+        /// <param name="xsd">The XSD to verify the response against.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse MatchesXsd(string xsd)
         {
@@ -457,7 +508,7 @@ namespace RestAssured.Response
         /// <summary>
         /// Verifies that the XML response body matches the supplied XSD.
         /// </summary>
-        /// <param name="schemas">The <see cref="XmlSchemaSet"/> to verify the response against</param>
+        /// <param name="schemas">The <see cref="XmlSchemaSet"/> to verify the response against.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse MatchesXsd(XmlSchemaSet schemas)
         {
@@ -477,7 +528,9 @@ namespace RestAssured.Response
 
             try
             {
-                while (reader.Read()) ;
+                while (reader.Read())
+                {
+                }
             }
             catch (XmlSchemaValidationException xsve)
             {
@@ -509,7 +562,9 @@ namespace RestAssured.Response
 
             try
             {
-                while (reader.Read()) ;
+                while (reader.Read())
+                {
+                }
             }
             catch (XmlSchemaException xse)
             {

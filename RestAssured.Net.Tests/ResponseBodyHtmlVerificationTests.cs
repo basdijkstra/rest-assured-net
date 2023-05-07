@@ -17,6 +17,7 @@ namespace RestAssured.Tests
 {
     using System.Net.Http;
     using NUnit.Framework;
+    using RestAssured.Response.Exceptions;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
     using static RestAssured.Dsl;
@@ -29,10 +30,10 @@ namespace RestAssured.Tests
     {
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
-        /// an HTML response body element using an NHamcrest matcher.
+        /// an HTML response body using an NHamcrest matcher.
         /// </summary>
         [Test]
-        public void HtmlResponseBodyElementValueCanBeVerifiedUsingNHamcrestMatcher()
+        public void HtmlResponseBodyCanBeVerifiedUsingNHamcrestMatcher()
         {
             this.CreateStubForHtmlResponseBody();
 
@@ -42,6 +43,68 @@ namespace RestAssured.Tests
                 .Then()
                 .StatusCode(404)
                 .Body(NHamcrest.Is.EqualTo(this.GetHtmlResponseBody()));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// an HTML response body element using an NHamcrest matcher.
+        /// </summary>
+        [Test]
+        public void HtmlResponseBodyElementCanBeVerifiedUsingNHamcrestMatcher()
+        {
+            this.CreateStubForHtmlResponseBody();
+
+            Given()
+                .When()
+                .Get("http://localhost:9876/html-response-body")
+                .Then()
+                .StatusCode(404)
+                .Body("//title", NHamcrest.Is.EqualTo("403 - Forbidden: Access is denied."));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// that the expected exception is thrown when the XPath does not return results.
+        /// </summary>
+        [Test]
+        public void NoXPathResultsThrowsTheExpectedException()
+        {
+            this.CreateStubForHtmlResponseBody();
+
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                    .When()
+                    .Get("http://localhost:9876/html-response-body")
+                    .Then()
+                    .StatusCode(404)
+                    .Body("//DoesNotExist", NHamcrest.Is.EqualTo("Some value"));
+            });
+
+            Assert.That(rve?.Message, Is.EqualTo("XPath expression '//DoesNotExist' did not yield any results."));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// that the expected exception is thrown when the element value returned
+        /// by the XPath does not match the matcher type.
+        /// </summary>
+        [Test]
+        public void ElementValueNotMatchingMatcherTypeThrowsTheExpectedException()
+        {
+            this.CreateStubForHtmlResponseBody();
+
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                    .When()
+                    .Get("http://localhost:9876/html-response-body")
+                    .Then()
+                    .StatusCode(404)
+                    .Body("//title", NHamcrest.Is.GreaterThanOrEqualTo(100));
+            });
+
+            Assert.That(rve?.Message, Is.EqualTo("Response element value 403 - Forbidden: Access is denied. cannot be converted to value of type 'System.Int32'"));
         }
 
         /// <summary>
