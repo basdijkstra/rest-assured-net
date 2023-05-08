@@ -7,8 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+### [2.6.0] - 2023-05-08
+
 #### Added
 
+- Added support for verifying HTML response body elements ([#70](https://github.com/basdijkstra/rest-assured-net/issues/70) by [@workmichsem](https://github.com/workmichsem))
+- Added support for extracting HTML response body elements ([#70](https://github.com/basdijkstra/rest-assured-net/issues/70) by [@workmichsem](https://github.com/workmichsem))
 - Added the ability to validate XML response payloads against an XML schema ([#65](https://github.com/basdijkstra/rest-assured-net/issues/65))
 - Added the ability to validate XML response payloads against an inline DTD ([#65](https://github.com/basdijkstra/rest-assured-net/issues/65))
 - Added the ability to log response details only when the response status code indicates an error (i.e., 4xx or 5xx) ([#64](https://github.com/basdijkstra/rest-assured-net/issues/64))

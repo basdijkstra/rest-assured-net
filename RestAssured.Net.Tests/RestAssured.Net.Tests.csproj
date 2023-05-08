@@ -15,7 +15,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="WireMock.Net" Version="1.5.23" />
+    <PackageReference Include="WireMock.Net" Version="1.5.24" />
   </ItemGroup>
 
   <ItemGroup>
