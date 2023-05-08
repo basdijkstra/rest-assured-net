@@ -1,4 +1,4 @@
-// <copyright file="ResponseBodyHtmlVerificationTests.cs" company="On Test Automation">
+// <copyright file="ResponseHtmlValueExtractionTests.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
 // </copyright>
 namespace RestAssured.Tests
 {
-    using System.Net.Http;
+    using System.Collections.Generic;
     using NUnit.Framework;
     using RestAssured.Response.Exceptions;
     using WireMock.RequestBuilders;
@@ -26,40 +26,47 @@ namespace RestAssured.Tests
     /// Examples of RestAssuredNet usage.
     /// </summary>
     [TestFixture]
-    public class ResponseBodyHtmlVerificationTests : TestBase
+    public class ResponseHtmlValueExtractionTests : TestBase
     {
         /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for verifying
-        /// an HTML response body using an NHamcrest matcher.
+        /// A test demonstrating RestAssuredNet syntax for extracting an
+        /// element value from an HTML response body.
         /// </summary>
         [Test]
-        public void HtmlResponseBodyCanBeVerifiedUsingNHamcrestMatcher()
+        public void HtmlResponseBodyElementValueCanBeExtracted()
         {
             this.CreateStubForHtmlResponseBody();
 
-            Given()
+            string title = (string)Given()
                 .When()
                 .Get("http://localhost:9876/html-response-body")
                 .Then()
                 .StatusCode(404)
-                .Body(NHamcrest.Is.EqualTo(this.GetHtmlResponseBody()));
+                .Extract().Body("//title");
+
+            Assert.That(title, Is.EqualTo("403 - Forbidden: Access is denied."));
         }
 
         /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for verifying
-        /// an HTML response body element using an NHamcrest matcher.
+        /// A test demonstrating RestAssuredNet syntax for extracting a
+        /// list of element values from an XML response body.
         /// </summary>
         [Test]
-        public void HtmlResponseBodyElementCanBeVerifiedUsingNHamcrestMatcher()
+        public void HtmlResponseBodyMultipleElementsCanBeExtracted()
         {
             this.CreateStubForHtmlResponseBody();
 
-            Given()
+            // At least for now, if you want to retrieve multiple
+            // HTML response body element values, they will have to be
+            // stored in an object of type List<string>.
+            List<string> fields = (List<string>)Given()
                 .When()
                 .Get("http://localhost:9876/html-response-body")
                 .Then()
                 .StatusCode(404)
-                .Body("//title", NHamcrest.Is.EqualTo("403 - Forbidden: Access is denied."));
+                .Extract().Body("//fieldset/*");
+
+            Assert.That(fields.Count, Is.EqualTo(2));
         }
 
         /// <summary>
@@ -71,40 +78,17 @@ namespace RestAssured.Tests
         {
             this.CreateStubForHtmlResponseBody();
 
-            var rve = Assert.Throws<ResponseVerificationException>(() =>
+            var ee = Assert.Throws<ExtractionException>(() =>
             {
                 Given()
                     .When()
                     .Get("http://localhost:9876/html-response-body")
                     .Then()
                     .StatusCode(404)
-                    .Body("//DoesNotExist", NHamcrest.Is.EqualTo("Some value"));
+                    .Extract().Body("//DoesNotExist");
             });
 
-            Assert.That(rve?.Message, Is.EqualTo("XPath expression '//DoesNotExist' did not yield any results."));
-        }
-
-        /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for verifying
-        /// that the expected exception is thrown when the element value returned
-        /// by the XPath does not match the matcher type.
-        /// </summary>
-        [Test]
-        public void ElementValueNotMatchingMatcherTypeThrowsTheExpectedException()
-        {
-            this.CreateStubForHtmlResponseBody();
-
-            var rve = Assert.Throws<ResponseVerificationException>(() =>
-            {
-                Given()
-                    .When()
-                    .Get("http://localhost:9876/html-response-body")
-                    .Then()
-                    .StatusCode(404)
-                    .Body("//title", NHamcrest.Is.GreaterThanOrEqualTo(100));
-            });
-
-            Assert.That(rve?.Message, Is.EqualTo("Response element value 403 - Forbidden: Access is denied. cannot be converted to value of type 'System.Int32'"));
+            Assert.That(ee?.Message, Is.EqualTo("XPath expression '//DoesNotExist' did not yield any results."));
         }
 
         /// <summary>

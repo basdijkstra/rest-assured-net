@@ -125,7 +125,7 @@ namespace RestAssured.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
-        /// a JSON response body element collection using an NHamcrest matcher.
+        /// an XML response body element collection using an NHamcrest matcher.
         /// </summary>
         [Test]
         public void XmlResponseBodyElementCollectionCanBeVerifiedUsingNHamcrestMatcher()
@@ -141,8 +141,9 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for verifying
-        /// an XML response body element collection using an NHamcrest matcher.
+        /// A test demonstrating RestAssuredNet syntax for verifying that
+        /// an XML response body element collection not matching the specified
+        /// NHamcrest matcher throws the right exception.
         /// </summary>
         [Test]
         public void XmlResponseBodyElementCollectionNHamcrestMatcherMisMatchThrowsTheExpectedException()

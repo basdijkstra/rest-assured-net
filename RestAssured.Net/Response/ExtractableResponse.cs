@@ -21,6 +21,7 @@ namespace RestAssured.Response
     using System.Linq;
     using System.Net.Http;
     using System.Xml;
+    using HtmlAgilityPack;
     using Newtonsoft.Json.Linq;
     using RestAssured.Response.Deserialization;
     using RestAssured.Response.Exceptions;
@@ -96,6 +97,31 @@ namespace RestAssured.Response
                 foreach (XmlNode xmlElement in xmlElements)
                 {
                     elementValues.Add(xmlElement.InnerText);
+                }
+
+                return elementValues;
+            }
+
+            if (responseMediaType.Contains("html"))
+            {
+                HtmlDocument htmlDoc = new HtmlDocument();
+                htmlDoc.LoadHtml(responseBodyAsString);
+                HtmlNodeCollection? htmlElements = htmlDoc.DocumentNode.SelectNodes(path);
+
+                if (htmlElements == null || htmlElements.Count == 0)
+                {
+                    throw new ExtractionException($"XPath expression '{path}' did not yield any results.");
+                }
+
+                if (htmlElements.Count == 1)
+                {
+                    return htmlElements.First().InnerText;
+                }
+
+                List<string> elementValues = new List<string>();
+                foreach (HtmlNode htmlElement in htmlElements)
+                {
+                    elementValues.Add(htmlElement.InnerText);
                 }
 
                 return elementValues;
