@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+#### Added
+
+- Added ability to override automatically determined deserializer ([#73](https://github.com/basdijkstra/rest-assured-net/issues/73))
+
 ### [2.6.0] - 2023-05-08
 
 #### Added
