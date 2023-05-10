@@ -20,7 +20,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dotnet-version: ['3.1.x', '6.0.x', '7.0.x']
+        dotnet-version: [3.1.x, 6.0.x, 7.0.x]
+        include:
+          - dotnet-version: 3.1.x
+            framework: netcoreapp3.1
+          - dotnet-version: 6.0.x
+            framework: net6.0
+          - dotnet-version: 7.0.x
+            framework: net7.0
 
     steps:
       - uses: actions/checkout@v3
@@ -33,5 +40,22 @@ jobs:
       - name: Restore project dependencies
         run: dotnet restore
 
-      - name: Run tests
-        run: dotnet test --no-restore --verbosity normal
+      - name: Build (${{ matrix.framework }})
+        run: dotnet build --framework ${{ matrix.framework }} --no-restore
+
+      - name: Run tests (${{ matrix.framework }})
+        run: dotnet test --framework ${{ matrix.framework }} --no-restore --no-build --verbosity normal
+
+      - name: Rebuild
+        if: contains(matrix.framework, 'net7.0')
+        run: dotnet build --no-restore
+
+      - name: Ensure NuGet package is generated
+        if: contains(matrix.framework, 'net7.0')
+        run: |
+          FILE=./RestAssured.Net/bin/Debug/RestAssured.Net.*.nupkg
+          if compgen -G $FILE > /dev/null; then
+            echo "$FILE exists."
+          else
+            exit 1;
+          fi
