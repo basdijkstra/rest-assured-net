@@ -17,6 +17,7 @@ namespace RestAssured.Tests
 {
     using System.Linq;
     using NUnit.Framework;
+    using RestAssured.Response.Deserialization;
     using RestAssured.Response.Exceptions;
     using RestAssured.Tests.Models;
     using WireMock.RequestBuilders;
@@ -111,6 +112,32 @@ namespace RestAssured.Tests
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for deserializing
         /// a JSON response into an object when performing an HTTP GET
+        /// using the DeserializeTo() alias method.
+        /// </summary>
+        [Test]
+        public void ObjectCanBeDeserializedFromJsonUsingDeserializeToOverridingContentTypeHeader()
+        {
+            this.CreateStubForJsonResponseBodyWithNonMatchingContentTypeHeader();
+
+            Location responseLocation = (Location)Given()
+                .When()
+                .Get("http://localhost:9876/json-deserialization-header-mismatch")
+                .Then()
+                .DeserializeTo(typeof(Location), DeserializeAs.Json);
+
+            Assert.That(responseLocation.Country, Is.EqualTo("United States"));
+            Assert.That(responseLocation.Places?.Count, Is.EqualTo(2));
+
+            Place firstPlace = responseLocation.Places!.First();
+
+            Assert.That(firstPlace.Name, Is.EqualTo("Sun City"));
+            Assert.That(firstPlace.Inhabitants, Is.EqualTo(100000));
+            Assert.That(firstPlace.IsCapital, Is.True);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for deserializing
+        /// a JSON response into an object when performing an HTTP GET
         /// after performing some initial verifications, using the
         /// DeserializeTo() alias method.
         /// </summary>
@@ -187,6 +214,31 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for deserializing
+        /// a XML response into an object when performing an HTTP GET.
+        /// </summary>
+        [Test]
+        public void ObjectCanBeDeserializedFromXmlUsingDeserializeToOverridingContentTypeHeader()
+        {
+            this.CreateStubForXmlResponseBodyWithNonMatchingContentTypeHeader();
+
+            Location responseLocation = (Location)Given()
+                .When()
+                .Get("http://localhost:9876/xml-deserialization-header-mismatch")
+                .Then()
+                .DeserializeTo(typeof(Location), DeserializeAs.Xml);
+
+            Assert.That(responseLocation.Country, Is.EqualTo("United States"));
+            Assert.That(responseLocation.Places?.Count, Is.EqualTo(2));
+
+            Place firstPlace = responseLocation.Places!.First();
+
+            Assert.That(firstPlace.Name, Is.EqualTo("Sun City"));
+            Assert.That(firstPlace.Inhabitants, Is.EqualTo(100000));
+            Assert.That(firstPlace.IsCapital, Is.True);
+        }
+
+        /// <summary>
         /// Verifies that the correct exception is thrown when the request body
         /// cannot be deserialized based on the Content-Type header value.
         /// </summary>
@@ -219,6 +271,19 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// Creates the stub response for the JSON response body example with
+        /// a Content-Type header that doesn't match the content.
+        /// </summary>
+        private void CreateStubForJsonResponseBodyWithNonMatchingContentTypeHeader()
+        {
+            this.Server?.Given(Request.Create().WithPath("/json-deserialization-header-mismatch").UsingGet())
+                .RespondWith(Response.Create()
+                .WithHeader("Content-Type", "text/plain")
+                .WithBodyAsJson(this.GetLocation())
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
         /// Creates the stub response for the XML response body example.
         /// </summary>
         private void CreateStubForXmlResponseBody()
@@ -226,6 +291,18 @@ namespace RestAssured.Tests
             this.Server?.Given(Request.Create().WithPath("/xml-deserialization").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/xml")
+                .WithBody(this.GetLocationAsXmlString())
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the XML response body example.
+        /// </summary>
+        private void CreateStubForXmlResponseBodyWithNonMatchingContentTypeHeader()
+        {
+            this.Server?.Given(Request.Create().WithPath("/xml-deserialization-header-mismatch").UsingGet())
+                .RespondWith(Response.Create()
+                .WithHeader("Content-Type", "text/plain")
                 .WithBody(this.GetLocationAsXmlString())
                 .WithStatusCode(200));
         }

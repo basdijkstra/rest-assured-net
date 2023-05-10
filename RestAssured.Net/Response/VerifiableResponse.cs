@@ -578,10 +578,22 @@ namespace RestAssured.Response
         /// Deserializes the response content into the specified type and returns it.
         /// </summary>
         /// <param name="type">The object type to deserialize into.</param>
+        /// <param name="deserializeAs">Indicates how to interpret the response content when deserializing.</param>
         /// <returns>The deserialized response object.</returns>
-        public object As(Type type)
+        public object DeserializeTo(Type type, DeserializeAs deserializeAs = DeserializeAs.UseResponseContentTypeHeaderValue)
         {
-            return Deserializer.DeserializeResponseInto(this.response, type);
+            return new ExtractableResponse(this.response).As(type, deserializeAs);
+        }
+
+        /// <summary>
+        /// Deserializes the response content into the specified type and returns it.
+        /// </summary>
+        /// <param name="type">The object type to deserialize into.</param>
+        /// /// <param name="deserializeAs">Indicates how to interpret the response content when deserializing.</param>
+        /// <returns>The deserialized response object.</returns>
+        public object As(Type type, DeserializeAs deserializeAs = DeserializeAs.UseResponseContentTypeHeaderValue)
+        {
+            return Deserializer.DeserializeResponseInto(this.response, type, deserializeAs);
         }
 
         /// <summary>
@@ -618,16 +630,6 @@ namespace RestAssured.Response
         public ExtractableResponse Extract()
         {
             return new ExtractableResponse(this.response);
-        }
-
-        /// <summary>
-        /// Deserializes the response content into the specified type and returns it.
-        /// </summary>
-        /// <param name="type">The object type to deserialize into.</param>
-        /// <returns>The deserialized response object.</returns>
-        public object DeserializeTo(Type type)
-        {
-            return new ExtractableResponse(this.response).As(type);
         }
 
         private void FailVerification(string exceptionMessage)

@@ -152,10 +152,11 @@ namespace RestAssured.Response
         /// Deserializes the response content into the specified type and returns it.
         /// </summary>
         /// <param name="type">The object type to deserialize into.</param>
+        /// /// <param name="deserializeAs">Indicates how to interpret the response content when deserializing.</param>
         /// <returns>The deserialized response object.</returns>
-        public object As(Type type)
+        public object As(Type type, DeserializeAs deserializeAs = DeserializeAs.UseResponseContentTypeHeaderValue)
         {
-            return Deserializer.DeserializeResponseInto(this.response, type);
+            return Deserializer.DeserializeResponseInto(this.response, type, deserializeAs);
         }
 
         /// <summary>

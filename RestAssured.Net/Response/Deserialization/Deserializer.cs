@@ -32,9 +32,10 @@ namespace RestAssured.Response.Deserialization
         /// </summary>
         /// <param name="response">The <see cref="HttpResponseMessage"/> containing the body to be deserialized.</param>
         /// <param name="type">The type to deserialize the response body into.</param>
+        /// /// <param name="deserializeAs">Indicates how to interpret the response content when deserializing.</param>
         /// <returns>The deserialized response body object.</returns>
         /// <exception cref="DeserializationException">Thrown when deserialization of the response body fails.</exception>
-        internal static object DeserializeResponseInto(HttpResponseMessage response, Type type)
+        internal static object DeserializeResponseInto(HttpResponseMessage response, Type type, DeserializeAs deserializeAs)
         {
             string responseBodyAsString = response.Content.ReadAsStringAsync().Result;
 
@@ -43,8 +44,28 @@ namespace RestAssured.Response.Deserialization
                 throw new DeserializationException("Response content is null or empty.");
             }
 
-            // Look at the response Content-Type header to determine how to deserialize
-            string? responseMediaType = response.Content.Headers.ContentType?.MediaType;
+            string? responseMediaType = string.Empty;
+
+            switch (deserializeAs)
+            {
+                case DeserializeAs.UseResponseContentTypeHeaderValue:
+                {
+                        responseMediaType = response.Content.Headers.ContentType?.MediaType;
+                        break;
+                }
+
+                case DeserializeAs.Json:
+                {
+                        responseMediaType = "application/json";
+                        break;
+                }
+
+                case DeserializeAs.Xml:
+                {
+                        responseMediaType = "application/xml";
+                        break;
+                }
+            }
 
             if (responseMediaType == null || responseMediaType.Contains("json"))
             {
