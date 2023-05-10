@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <TargetFrameworks>net6.0;net7.0;netcoreapp3.1</TargetFrameworks>
+    <Nullable>disable</Nullable>
     <RootNamespace>RestAssured.Tests</RootNamespace>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
