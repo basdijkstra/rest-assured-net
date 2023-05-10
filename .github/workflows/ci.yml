@@ -37,6 +37,9 @@ jobs:
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
 
+      - name: List installed .NET SDKs
+        run: dotnet --list-sdks
+
       - name: Restore project dependencies
         run: dotnet restore
 
