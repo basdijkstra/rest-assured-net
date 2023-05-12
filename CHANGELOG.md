@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+### Unreleased
+
+#### Added
+
+- Added ability to override response Content-Type header when verifying response body elements
+ ([#75](https://github.com/basdijkstra/rest-assured-net/issues/75))
+- Added ability to override response Content-Type header when extracting response body elements
+ ([#76](https://github.com/basdijkstra/rest-assured-net/issues/76))
+
 ### [2.7.0] - 2023-05-10
 
 #### Added
