@@ -74,6 +74,12 @@ namespace RestAssured.Response
                         responseMediaType = "application/xml";
                         break;
                     }
+
+                case ExtractAs.Html:
+                    {
+                        responseMediaType = "text/html";
+                        break;
+                    }
             }
 
             if (responseMediaType == string.Empty || responseMediaType.Contains("json"))

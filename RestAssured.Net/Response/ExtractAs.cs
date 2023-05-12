@@ -35,5 +35,10 @@ namespace RestAssured.Response
         /// Interpret response as XML, overriding the response Content-Type header.
         /// </summary>
         Xml = 2,
+
+        /// <summary>
+        /// Interpret response as HTML, overriding the response Content-Type header.
+        /// </summary>
+        Html = 3,
     }
 }

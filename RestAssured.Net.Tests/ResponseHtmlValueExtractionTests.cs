@@ -17,6 +17,7 @@ namespace RestAssured.Tests
 {
     using System.Collections.Generic;
     using NUnit.Framework;
+    using RestAssured.Response;
     using RestAssured.Response.Exceptions;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
@@ -43,6 +44,25 @@ namespace RestAssured.Tests
                 .Then()
                 .StatusCode(404)
                 .Extract().Body("//title");
+
+            Assert.That(title, Is.EqualTo("403 - Forbidden: Access is denied."));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for extracting an
+        /// element value from an HTML response body.
+        /// </summary>
+        [Test]
+        public void HtmlResponseBodyElementValueCanBeExtractedOverridingResponseContentType()
+        {
+            this.CreateStubForHtmlResponseBodyWithResponseContentTypeHeaderMismatch();
+
+            string title = (string)Given()
+                .When()
+                .Get("http://localhost:9876/html-response-body-header-mismatch")
+                .Then()
+                .StatusCode(404)
+                .Extract().Body("//title", ExtractAs.Html);
 
             Assert.That(title, Is.EqualTo("403 - Forbidden: Access is denied."));
         }
@@ -99,6 +119,18 @@ namespace RestAssured.Tests
             this.Server?.Given(Request.Create().WithPath("/html-response-body").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "text/html")
+                .WithBody(this.GetHtmlResponseBody())
+                .WithStatusCode(404));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the HTML response body example.
+        /// </summary>
+        private void CreateStubForHtmlResponseBodyWithResponseContentTypeHeaderMismatch()
+        {
+            this.Server?.Given(Request.Create().WithPath("/html-response-body-header-mismatch").UsingGet())
+                .RespondWith(Response.Create()
+                .WithHeader("Content-Type", "text/plain")
                 .WithBody(this.GetHtmlResponseBody())
                 .WithStatusCode(404));
         }
