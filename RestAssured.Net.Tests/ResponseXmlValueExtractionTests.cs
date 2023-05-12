@@ -17,6 +17,7 @@ namespace RestAssured.Tests
 {
     using System.Collections.Generic;
     using NUnit.Framework;
+    using RestAssured.Response;
     using RestAssured.Response.Exceptions;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
@@ -43,6 +44,27 @@ namespace RestAssured.Tests
                 .Then()
                 .StatusCode(200)
                 .Extract().Body("//Place[1]/Name");
+
+            Assert.That(placeName, Is.EqualTo("Sun City"));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for extracting a
+        /// string element value from an XML response body, overriding
+        /// the default extraction method (determined using the response
+        /// Content-Type header).
+        /// </summary>
+        [Test]
+        public void XmlResponseBodyElementValueCanBeExtractedOverridingResponseContentType()
+        {
+            this.CreateStubForXmlResponseWithResponseContentTypeHeaderMismatch();
+
+            string placeName = (string)Given()
+                .When()
+                .Get("http://localhost:9876/xml-response-body-header-mismatch")
+                .Then()
+                .StatusCode(200)
+                .Extract().Body("//Place[1]/Name", ExtractAs.Xml);
 
             Assert.That(placeName, Is.EqualTo("Sun City"));
         }
@@ -99,6 +121,18 @@ namespace RestAssured.Tests
             this.Server?.Given(Request.Create().WithPath("/xml-response-body").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/xml")
+                .WithBody(this.GetLocationAsXmlString())
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the XML response body example.
+        /// </summary>
+        private void CreateStubForXmlResponseWithResponseContentTypeHeaderMismatch()
+        {
+            this.Server?.Given(Request.Create().WithPath("/xml-response-body-header-mismatch").UsingGet())
+                .RespondWith(Response.Create()
+                .WithHeader("Content-Type", "text/plain")
                 .WithBody(this.GetLocationAsXmlString())
                 .WithStatusCode(200));
         }
