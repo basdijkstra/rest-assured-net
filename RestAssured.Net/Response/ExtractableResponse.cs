@@ -46,14 +46,35 @@ namespace RestAssured.Response
         /// Extracts a response body element value from the response based on a JsonPath expression.
         /// </summary>
         /// <param name="path">The JsonPath or XPath expression pointing to the object to extract.</param>
+        /// <param name="extractAs">Indicates how to interpret the response.</param>
         /// <returns>The element value or values extracted from the response using the JsonPath expression.</returns>
         /// <exception cref="ResponseVerificationException">Thrown when evaluating the JsonPath did not yield any results.</exception>
-        public object Body(string path)
+        public object Body(string path, ExtractAs extractAs = ExtractAs.UseResponseContentTypeHeaderValue)
         {
             string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
 
-            // Look at the response Content-Type header to determine how to deserialize
-            string responseMediaType = this.response.Content.Headers.ContentType?.MediaType ?? string.Empty;
+            string? responseMediaType = string.Empty;
+
+            switch (extractAs)
+            {
+                case ExtractAs.UseResponseContentTypeHeaderValue:
+                    {
+                        responseMediaType = this.response.Content.Headers.ContentType?.MediaType;
+                        break;
+                    }
+
+                case ExtractAs.Json:
+                    {
+                        responseMediaType = "application/json";
+                        break;
+                    }
+
+                case ExtractAs.Xml:
+                    {
+                        responseMediaType = "application/xml";
+                        break;
+                    }
+            }
 
             if (responseMediaType == string.Empty || responseMediaType.Contains("json"))
             {

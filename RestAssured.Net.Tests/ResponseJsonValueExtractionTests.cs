@@ -21,8 +21,8 @@ namespace RestAssured.Tests
     using System.Net;
     using System.Net.Http;
     using NUnit.Framework;
+    using RestAssured.Response;
     using RestAssured.Response.Exceptions;
-    using RestAssured.Tests.Models;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
     using static RestAssured.Dsl;
@@ -54,7 +54,7 @@ namespace RestAssured.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for extracting a
-        /// string element value from a JSON response body.
+        /// integer element value from a JSON response body.
         /// </summary>
         [Test]
         public void JsonResponseBodyElementIntegerValueCanBeExtracted()
@@ -78,7 +78,7 @@ namespace RestAssured.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for extracting a
-        /// string element value from a JSON response body.
+        /// boolean element value from a JSON response body.
         /// </summary>
         [Test]
         public void JsonResponseBodyElementBooleanValueCanBeExtracted()
@@ -97,7 +97,7 @@ namespace RestAssured.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for extracting a
-        /// string element value from a JSON response body.
+        /// list of element values from a JSON response body.
         /// </summary>
         [Test]
         public void JsonResponseBodyMultipleElementsCanBeExtracted()
@@ -115,6 +115,27 @@ namespace RestAssured.Tests
                 .Extract().Body("$.Places[0:].IsCapital");
 
             Assert.That(placeNames.Count, Is.EqualTo(2));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for extracting a
+        /// string element value from a JSON response body, overriding
+        /// the default extraction method (determined using the response
+        /// Content-Type header).
+        /// </summary>
+        [Test]
+        public void JsonResponseBodyElementStringValueCanBeExtractedOverridingResponseContentType()
+        {
+            this.CreateStubForJsonResponseWithResponseContentTypeHeaderMismatch();
+
+            string placeName = (string)Given()
+                .When()
+                .Get("http://localhost:9876/json-response-body-header-mismatch")
+                .Then()
+                .StatusCode(200)
+                .Extract().Body("$.Places[0].Name", ExtractAs.Json);
+
+            Assert.That(placeName, Is.EqualTo("Sun City"));
         }
 
         /// <summary>
@@ -209,6 +230,19 @@ namespace RestAssured.Tests
                 .RespondWith(Response.Create()
                 .WithHeader("custom_header", "custom_header_value")
                 .WithHeader("Content-Type", "application/json")
+                .WithBodyAsJson(this.GetLocation())
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the JSON response body extraction examples.
+        /// </summary>
+        private void CreateStubForJsonResponseWithResponseContentTypeHeaderMismatch()
+        {
+            this.Server?.Given(Request.Create().WithPath("/json-response-body-header-mismatch").UsingGet())
+                .RespondWith(Response.Create()
+                .WithHeader("custom_header", "custom_header_value")
+                .WithHeader("Content-Type", "text/plain")
                 .WithBodyAsJson(this.GetLocation())
                 .WithStatusCode(200));
         }
