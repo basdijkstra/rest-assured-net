@@ -82,7 +82,7 @@ namespace RestAssured.Response
                     }
             }
 
-            if (responseMediaType == string.Empty || responseMediaType.Contains("json"))
+            if (responseMediaType == string.Empty || responseMediaType!.Contains("json"))
             {
                 JObject responseBodyAsJObject = JObject.Parse(responseBodyAsString);
                 IEnumerable<JToken>? resultingElements = responseBodyAsJObject.SelectTokens(path);

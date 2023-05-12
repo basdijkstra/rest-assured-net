@@ -16,6 +16,7 @@
 namespace RestAssured.Tests
 {
     using NUnit.Framework;
+    using RestAssured.Response;
     using RestAssured.Response.Exceptions;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
@@ -76,6 +77,23 @@ namespace RestAssured.Tests
                 .Then()
                 .StatusCode(200)
                 .Body("//Place[1]/IsCapital", NHamcrest.Is.True());
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// an XML response body element using an NHamcrest matcher.
+        /// </summary>
+        [Test]
+        public void XmlResponseBodyElementStringValueCanBeVerifiedOverridingResponseContentTypeHeader()
+        {
+            this.CreateStubForXmlResponseBodyWithResponseContentTypeHeaderMismatch();
+
+            Given()
+                .When()
+                .Get("http://localhost:9876/xml-response-body-header-mismatch")
+                .Then()
+                .StatusCode(200)
+                .Body("//Place[1]/Name", NHamcrest.Is.EqualTo("Sun City"), VerifyAs.Xml);
         }
 
         /// <summary>
@@ -171,6 +189,19 @@ namespace RestAssured.Tests
             this.Server?.Given(Request.Create().WithPath("/xml-response-body").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/xml")
+                .WithBody(this.GetLocationAsXmlString())
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the XML response body example with a non-matching
+        /// response Content-Type header value.
+        /// </summary>
+        private void CreateStubForXmlResponseBodyWithResponseContentTypeHeaderMismatch()
+        {
+            this.Server?.Given(Request.Create().WithPath("/xml-response-body-header-mismatch").UsingGet())
+                .RespondWith(Response.Create()
+                .WithHeader("Content-Type", "text/plain")
                 .WithBody(this.GetLocationAsXmlString())
                 .WithStatusCode(200));
         }

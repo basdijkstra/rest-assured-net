@@ -17,6 +17,7 @@ namespace RestAssured.Tests
 {
     using System.Collections.Generic;
     using NUnit.Framework;
+    using RestAssured.Response;
     using RestAssured.Response.Exceptions;
     using RestAssured.Tests.Models;
     using WireMock.RequestBuilders;
@@ -126,6 +127,24 @@ namespace RestAssured.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a JSON response body string element using an NHamcrest matcher
+        /// overriding the response Content-Type header value.
+        /// </summary>
+        [Test]
+        public void JsonResponseBodyElementStringValueCanBeVerifiedOverridingContentTypeHeaderValue()
+        {
+            this.CreateStubForJsonResponseBodyWithNonMatchingContentTypeHeader();
+
+            Given()
+                .When()
+                .Get("http://localhost:9876/json-response-body-header-mismatch")
+                .Then()
+                .StatusCode(200)
+                .Body("$.Places[0].Name", NHamcrest.Contains.String("City"), VerifyAs.Json);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
         /// that an NHamcrest boolean matcher mismatch throws the expected exception.
         /// </summary>
         [Test]
@@ -215,6 +234,19 @@ namespace RestAssured.Tests
             this.Server?.Given(Request.Create().WithPath("/json-response-body").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/json")
+                .WithBodyAsJson(this.GetLocation())
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the JSON response body example with a non-matching
+        /// response Content-Type header value.
+        /// </summary>
+        private void CreateStubForJsonResponseBodyWithNonMatchingContentTypeHeader()
+        {
+            this.Server?.Given(Request.Create().WithPath("/json-response-body-header-mismatch").UsingGet())
+                .RespondWith(Response.Create()
+                .WithHeader("Content-Type", "text/plain")
                 .WithBodyAsJson(this.GetLocation())
                 .WithStatusCode(200));
         }

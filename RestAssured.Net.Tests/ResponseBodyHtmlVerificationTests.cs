@@ -17,6 +17,7 @@ namespace RestAssured.Tests
 {
     using System.Net.Http;
     using NUnit.Framework;
+    using RestAssured.Response;
     using RestAssured.Response.Exceptions;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
@@ -60,6 +61,24 @@ namespace RestAssured.Tests
                 .Then()
                 .StatusCode(404)
                 .Body("//title", NHamcrest.Is.EqualTo("403 - Forbidden: Access is denied."));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// an HTML response body element using an NHamcrest matcher,
+        /// overriding the response Content-Type header value.
+        /// </summary>
+        [Test]
+        public void HtmlResponseBodyElementCanBeVerifiedUsingNHamcrestMatcherOverridingResponseContentTypeHeader()
+        {
+            this.CreateStubForHtmlResponseBodyWithResponseContentTypeHeaderMismatch();
+
+            Given()
+                .When()
+                .Get("http://localhost:9876/html-response-body-header-mismatch")
+                .Then()
+                .StatusCode(404)
+                .Body("//title", NHamcrest.Is.EqualTo("403 - Forbidden: Access is denied."), VerifyAs.Html);
         }
 
         /// <summary>
@@ -115,6 +134,19 @@ namespace RestAssured.Tests
             this.Server?.Given(Request.Create().WithPath("/html-response-body").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "text/html")
+                .WithBody(this.GetHtmlResponseBody())
+                .WithStatusCode(404));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the HTML response body example with a
+        /// non-matching response Content-Type header value.
+        /// </summary>
+        private void CreateStubForHtmlResponseBodyWithResponseContentTypeHeaderMismatch()
+        {
+            this.Server?.Given(Request.Create().WithPath("/html-response-body-header-mismatch").UsingGet())
+                .RespondWith(Response.Create()
+                .WithHeader("Content-Type", "text/plain")
                 .WithBody(this.GetHtmlResponseBody())
                 .WithStatusCode(404));
         }
