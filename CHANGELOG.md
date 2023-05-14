@@ -9,9 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Added
 
-- Added ability to override response Content-Type header when verifying response body elements
+- Added ability to override automatically determined evaluator (based on response Content-Type header) when verifying response body elements
  ([#75](https://github.com/basdijkstra/rest-assured-net/issues/75))
-- Added ability to override response Content-Type header when extracting response body elements
+- Added ability to override automatically determined evaluator (based on response Content-Type header) when extracting response body elements
  ([#76](https://github.com/basdijkstra/rest-assured-net/issues/76))
 
 ### [2.7.0] - 2023-05-10
