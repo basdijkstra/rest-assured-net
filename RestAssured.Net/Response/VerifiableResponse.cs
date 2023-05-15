@@ -381,17 +381,44 @@ namespace RestAssured.Response
         /// <typeparam name="T">The type of value that the matcher operates on.</typeparam>
         /// <param name="path">The JsonPath expression to evaluate.</param>
         /// <param name="matcher">The NHamcrest matcher to evaluate.</param>
+        /// <param name="verifyAs">Indicates how to interpret the response.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
-        public VerifiableResponse Body<T>(string path, IMatcher<IEnumerable<T>> matcher)
+        public VerifiableResponse Body<T>(string path, IMatcher<IEnumerable<T>> matcher, VerifyAs verifyAs = VerifyAs.UseResponseContentTypeHeaderValue)
         {
             List<T> elementValues = new List<T>();
 
             string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
 
-            // Look at the response Content-Type header to determine how to deserialize
-            string responseMediaType = this.response.Content.Headers.ContentType?.MediaType ?? string.Empty;
+            string? responseMediaType = string.Empty;
 
-            if (responseMediaType.Equals(string.Empty) || responseMediaType.Contains("json"))
+            switch (verifyAs)
+            {
+                case VerifyAs.UseResponseContentTypeHeaderValue:
+                    {
+                        responseMediaType = this.response.Content.Headers.ContentType?.MediaType;
+                        break;
+                    }
+
+                case VerifyAs.Json:
+                    {
+                        responseMediaType = "application/json";
+                        break;
+                    }
+
+                case VerifyAs.Xml:
+                    {
+                        responseMediaType = "application/xml";
+                        break;
+                    }
+
+                case VerifyAs.Html:
+                    {
+                        responseMediaType = "text/html";
+                        break;
+                    }
+            }
+
+            if (responseMediaType!.Equals(string.Empty) || responseMediaType.Contains("json"))
             {
                 JObject responseBodyAsJObject = JObject.Parse(responseBodyAsString);
                 IEnumerable<JToken>? resultingElements = responseBodyAsJObject.SelectTokens(path);

@@ -159,6 +159,23 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// an XML response body element collection using an NHamcrest matcher.
+        /// </summary>
+        [Test]
+        public void XmlResponseBodyElementCollectionCanBeVerifiedUsingNHamcrestMatcherOverridingResponseContentTypeHeader()
+        {
+            this.CreateStubForXmlResponseBodyWithResponseContentTypeHeaderMismatch();
+
+            Given()
+                .When()
+                .Get("http://localhost:9876/xml-response-body-header-mismatch")
+                .Then()
+                .StatusCode(200)
+                .Body("//Place/Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Sun City")), VerifyAs.Xml);
+        }
+
+        /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying that
         /// an XML response body element collection not matching the specified
         /// NHamcrest matcher throws the right exception.

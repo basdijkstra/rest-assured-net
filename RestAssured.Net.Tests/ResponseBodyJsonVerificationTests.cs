@@ -209,6 +209,23 @@ namespace RestAssured.Tests
         /// a JSON response body element collection using an NHamcrest matcher.
         /// </summary>
         [Test]
+        public void JsonResponseBodyElementCollectionCanBeVerifiedUsingNHamcrestMatcherOverridingResponseContentTypeHeader()
+        {
+            this.CreateStubForJsonResponseBodyWithNonMatchingContentTypeHeader();
+
+            Given()
+                .When()
+                .Get("http://localhost:9876/json-response-body-header-mismatch")
+                .Then()
+                .StatusCode(200)
+                .Body("$.Places[0:].Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Sun City")), VerifyAs.Json);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a JSON response body element collection using an NHamcrest matcher.
+        /// </summary>
+        [Test]
         public void JsonResponseBodyElementCollectionNHamcrestMatcherMisMatchThrowsTheExpectedException()
         {
             this.CreateStubForJsonResponseBody();
