@@ -7,12 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Unreleased
 
+### [2.8.0] - 2023-05-15
+
 #### Added
 
 - Added ability to override automatically determined evaluator (based on response Content-Type header) when verifying response body elements
  ([#75](https://github.com/basdijkstra/rest-assured-net/issues/75))
 - Added ability to override automatically determined evaluator (based on response Content-Type header) when extracting response body elements
  ([#76](https://github.com/basdijkstra/rest-assured-net/issues/76))
+ 
+#### Updated
+
+- Version bump for WireMock.Net (test project)
 
 ### [2.7.0] - 2023-05-10
 
