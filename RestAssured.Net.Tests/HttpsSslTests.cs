@@ -17,6 +17,7 @@ namespace RestAssured.Tests
 {
     using NUnit.Framework;
     using RestAssured.Request.Builders;
+    using System.Net;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
     using static RestAssured.Dsl;
@@ -38,6 +39,23 @@ namespace RestAssured.Tests
             this.requestSpecification = new RequestSpecBuilder()
                 .WithRelaxedHttpsValidation()
                 .Build();
+        }
+
+        /// <summary>
+        /// A test demonstrating that RestAssured.Net is able to invoke
+        /// HTTPS endpoint with a valid server-side certificate without having
+        /// to disable SSL checks.
+        /// </summary>
+        [Test]
+        public void RequestTokenAndRetrieveAllInvoices()
+        {
+            Given()
+                .When()
+                .Get("https://jsonplaceholder.typicode.com/users/1")
+                .Then()
+                .StatusCode(HttpStatusCode.OK)
+                .And()
+                .Body("$.name", NHamcrest.Is.EqualTo("Leanne Graham"));
         }
 
         /// <summary>

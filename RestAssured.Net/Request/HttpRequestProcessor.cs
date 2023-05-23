@@ -19,6 +19,8 @@ namespace RestAssured.Request
     using System.Diagnostics;
     using System.Net;
     using System.Net.Http;
+    using System.Net.Security;
+    using System.Security.Cryptography.X509Certificates;
     using System.Threading.Tasks;
     using RestAssured.Request.Exceptions;
     using RestAssured.Response;
@@ -68,12 +70,25 @@ namespace RestAssured.Request
         /// <param name="disableSslCertificateValidation">If set to true, SSL certificate validation is disabled.</param>
         internal HttpRequestProcessor(IWebProxy? proxy, bool disableSslCertificateValidation)
         {
-            this.handler = new HttpClientHandler
+            if (disableSslCertificateValidation)
             {
-                CookieContainer = this.cookieContainer,
-                Proxy = proxy,
-                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => disableSslCertificateValidation,
-            };
+                this.handler = new HttpClientHandler
+                {
+                    CookieContainer = this.cookieContainer,
+                    Proxy = proxy,
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true,
+                };
+            }
+            else
+            {
+                this.handler = new HttpClientHandler
+                {
+                    CookieContainer = this.cookieContainer,
+                    Proxy = proxy,
+                    ServerCertificateCustomValidationCallback = ServerCertificateCustomValidation,
+                };
+            }
+
             this.client = new HttpClient(this.handler);
         }
 
@@ -121,6 +136,11 @@ namespace RestAssured.Request
             {
                 throw new HttpRequestProcessorException(hre.Message, hre);
             }
+        }
+
+        private static bool ServerCertificateCustomValidation(HttpRequestMessage requestMessage, X509Certificate2? certificate, X509Chain? chain, SslPolicyErrors sslErrors)
+        {
+            return sslErrors == SslPolicyErrors.None;
         }
     }
 }
