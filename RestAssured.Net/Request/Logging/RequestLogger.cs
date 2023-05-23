@@ -109,35 +109,6 @@ namespace RestAssured.Request.Logging
             }
         }
 
-        /// <summary>
-        /// Logs request details to the console at the set <see cref="RequestLogLevel"/>.
-        /// </summary>
-        internal void LogToConsole()
-        {
-            HttpRequestMessage request = this.executableRequest.GetRequest();
-
-            if (this.executableRequest.RequestLoggingLevel >= RequestLogLevel.Endpoint)
-            {
-                Console.WriteLine($"{request.Method} {request.RequestUri}");
-            }
-
-            if (this.executableRequest.RequestLoggingLevel == RequestLogLevel.Headers)
-            {
-                LogHeaders(request);
-            }
-
-            if (this.executableRequest.RequestLoggingLevel == RequestLogLevel.Body)
-            {
-                LogBody(request);
-            }
-
-            if (this.executableRequest.RequestLoggingLevel == RequestLogLevel.All)
-            {
-                LogHeaders(request);
-                LogBody(request);
-            }
-        }
-
         private static void LogHeaders(HttpRequestMessage request)
         {
             if (request.Content != null)
