@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Unreleased
 
+### [2.8.1] - 2023-05-23
+
+#### Fixed
+
+- Fixed an issue with server-side certificates not being properly validated ([#77](https://github.com/basdijkstra/rest-assured-net/issues/77) by [@roydekleijn](https://github.com/roydekleijn))
+
+#### Deprecated
+
+- Deprecated `UseRelaxedHttpsValidation()` and other methods and properties for disabling SSL certificate checks in favour of `DisableSslCertificateValidation()` ([#79](https://github.com/basdijkstra/rest-assured-net/issues/79))
+
+#### Updated
+
+- Version bump for Microsoft.NET.Test.Sdk (test project)
+
 ### [2.8.0] - 2023-05-15
 
 #### Added
