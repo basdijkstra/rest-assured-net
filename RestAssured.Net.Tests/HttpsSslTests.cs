@@ -47,7 +47,7 @@ namespace RestAssured.Tests
         /// to disable SSL checks.
         /// </summary>
         [Test]
-        public void RequestTokenAndRetrieveAllInvoices()
+        public void HttpsEndpointsCanBeInvokedWithoutExplicitlyDisablingSslVerification()
         {
             Given()
                 .When()
