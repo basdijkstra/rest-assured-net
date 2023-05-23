@@ -50,6 +50,23 @@ namespace RestAssured.Tests
             this.CreateStubForHttps();
 
             Given()
+                .DisableSslCertificateValidation()
+                .When()
+                .Get("https://localhost:8443/ssl-endpoint")
+                .Then()
+                .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for disabling
+        /// SSL verification using the deprecated method when performing an HTTP call.
+        /// </summary>
+        [Test]
+        public void SslVerificationCanBeDisabledPerRequestUsingDeprecatedMethod()
+        {
+            this.CreateStubForHttps();
+
+            Given()
                 .RelaxedHttpsValidation()
                 .When()
                 .Get("https://localhost:8443/ssl-endpoint")

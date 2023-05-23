@@ -83,9 +83,9 @@ namespace RestAssured.Request.Builders
         public Encoding ContentEncoding { get; set; }
 
         /// <summary>
-        /// When set to true, disables SSL validation on the requests that use this specification.
+        /// When set to true, disables SSL certificate validation on the requests that use this specification.
         /// </summary>
-        public bool UseRelaxedHttpsValidation { get; set; }
+        public bool DisableSslCertificateValidation { get; set; }
 
         /// <summary>
         /// The value for the request logging level when sending the request.
@@ -106,9 +106,9 @@ namespace RestAssured.Request.Builders
         /// <param name="authenticationHeader">The authentication header to add to this request.</param>
         /// <param name="contentType">The Content-Type header value to set for this request.</param>
         /// <param name="contentEncoding">The content encoding to use in this request.</param>
-        /// <param name="useRelaxedHttpsValidation">Flag indicating whether or not to disable SSL checks.</param>
+        /// <param name="disableSslCertificateValidation">Flag indicating whether or not to disable SSL certificate validation.</param>
         /// <param name="requestLogLevel">The request log level to use in this request.</param>
-        public RequestSpecification(string scheme, string host, int port, string basePath, TimeSpan? timeout, ProductInfoHeaderValue? userAgent, IWebProxy proxy, Dictionary<string, object> headers, AuthenticationHeaderValue authenticationHeader, string contentType, Encoding contentEncoding, bool useRelaxedHttpsValidation, RequestLogLevel requestLogLevel)
+        public RequestSpecification(string scheme, string host, int port, string basePath, TimeSpan? timeout, ProductInfoHeaderValue? userAgent, IWebProxy proxy, Dictionary<string, object> headers, AuthenticationHeaderValue authenticationHeader, string contentType, Encoding contentEncoding, bool disableSslCertificateValidation, RequestLogLevel requestLogLevel)
         {
             this.Scheme = scheme;
             this.HostName = host;
@@ -121,7 +121,7 @@ namespace RestAssured.Request.Builders
             this.AuthenticationHeader = authenticationHeader;
             this.ContentType = contentType;
             this.ContentEncoding = contentEncoding;
-            this.UseRelaxedHttpsValidation = useRelaxedHttpsValidation;
+            this.DisableSslCertificateValidation = disableSslCertificateValidation;
             this.RequestLogLevel = requestLogLevel;
         }
     }

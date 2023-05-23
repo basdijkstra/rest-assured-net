@@ -40,7 +40,7 @@ namespace RestAssured.Request.Builders
         private readonly AuthenticationHeaderValue? authenticationHeader;
         private readonly string? contentTypeHeader = null;
         private readonly Encoding? contentEncoding = null;
-        private readonly bool useRelaxedHttpsValidation = false;
+        private readonly bool disableSslCertificateValidation = false;
         private readonly RequestLogLevel requestLogLevel = RequestLogLevel.None;
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace RestAssured.Request.Builders
         /// </summary>
         public RequestSpecBuilder()
         {
-            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.basePath, this.timeout, this.userAgent, this.proxy, this.headers, this.authenticationHeader, this.contentTypeHeader, this.contentEncoding, this.useRelaxedHttpsValidation, this.requestLogLevel);
+            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.basePath, this.timeout, this.userAgent, this.proxy, this.headers, this.authenticationHeader, this.contentTypeHeader, this.contentEncoding, this.disableSslCertificateValidation, this.requestLogLevel);
         }
 
         /// <summary>
@@ -199,12 +199,22 @@ namespace RestAssured.Request.Builders
         }
 
         /// <summary>
-        /// Disables SSL validation for the requests that use this specification.
+        /// Disables SSL certificate validation for the requests that use this specification.
         /// </summary>
         /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
+        [Obsolete("Please use WithDisabledSslCertificateValidation() instead. This method will be removed in version 3.0.0.", false)]
         public RequestSpecBuilder WithRelaxedHttpsValidation()
         {
-            this.requestSpecification.UseRelaxedHttpsValidation = true;
+            return this.WithDisabledSslCertificateValidation();
+        }
+
+        /// <summary>
+        /// Disables SSL certificate validation for the requests that use this specification.
+        /// </summary>
+        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
+        public RequestSpecBuilder WithDisabledSslCertificateValidation()
+        {
+            this.requestSpecification.DisableSslCertificateValidation = true;
             return this;
         }
 

@@ -34,7 +34,7 @@ namespace RestAssured.Tests
         [OneTimeSetUp]
         public void SetRestAssuredNetConfiguration()
         {
-            RestAssuredConfig.UseRelaxedHttpsValidation = true;
+            RestAssuredConfig.DisableSslCertificateValidation = true;
             RestAssuredConfig.RequestLogLevel = RequestLogLevel.All;
             RestAssuredConfig.ResponseLogLevel = ResponseLogLevel.All;
         }

@@ -54,7 +54,7 @@ namespace RestAssured.Request
         private MultipartFormDataContent? multipartFormDataContent = null;
         private TimeSpan? timeout = null;
         private IWebProxy? proxy = null;
-        private bool relaxedHttpsValidation = false;
+        private bool disableSslCertificateValidation = false;
         private bool disposed = false;
 
         /// <summary>
@@ -73,7 +73,10 @@ namespace RestAssured.Request
         /// <param name="config">The <see cref="RestAssuredConfiguration"/> to use for all requests.</param>
         internal ExecutableRequest(RestAssuredConfiguration config)
         {
-            this.relaxedHttpsValidation = config.UseRelaxedHttpsValidation;
+            // Will be true if either the obsolete or the current property is set to true.
+            // Can be simplified again from version 3.0.0 onwards when the obsolete property is removed.
+            this.disableSslCertificateValidation = config.DisableSslCertificateValidation || config.UseRelaxedHttpsValidation;
+
             this.RequestLoggingLevel = config.RequestLogLevel;
             this.ResponseLoggingLevel = config.ResponseLogLevel;
         }
@@ -394,9 +397,19 @@ namespace RestAssured.Request
         /// Disables SSL checking for the request.
         /// </summary>
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        [Obsolete("Please use DisableSslCertificateValidation() instead. This method will be removed in version 3.0.0.", false)]
         public ExecutableRequest RelaxedHttpsValidation()
         {
-            this.relaxedHttpsValidation = true;
+            return this.DisableSslCertificateValidation();
+        }
+
+        /// <summary>
+        /// Disables validation of SSL certificates for this request.
+        /// </summary>
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest DisableSslCertificateValidation()
+        {
+            this.disableSslCertificateValidation = true;
             return this;
         }
 
@@ -602,7 +615,7 @@ namespace RestAssured.Request
             }
 
             // SSL validation can be disabled either in a request or through a RequestSpecification
-            bool disableSslChecks = this.relaxedHttpsValidation || (this.requestSpecification?.UseRelaxedHttpsValidation ?? false);
+            bool disableSslChecks = this.disableSslCertificateValidation || (this.requestSpecification?.DisableSslCertificateValidation ?? false);
 
             // Create the HTTP request processor that sends the request and set its properties
             HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor(this.proxy ?? this.requestSpecification?.Proxy, disableSslChecks);
