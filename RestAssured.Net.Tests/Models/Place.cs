@@ -23,7 +23,7 @@ namespace RestAssured.Tests.Models
         /// <summary>
         /// The name of the place.
         /// </summary>
-        public string? Name { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// The number of inhabitants of the place.

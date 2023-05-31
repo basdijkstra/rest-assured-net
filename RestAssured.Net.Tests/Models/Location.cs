@@ -25,12 +25,12 @@ namespace RestAssured.Tests.Models
         /// <summary>
         /// The country for the country code and zip code.
         /// </summary>
-        public string? Country { get; set; }
+        public string Country { get; set; }
 
         /// <summary>
         /// The state for the country code and zip code.
         /// </summary>
-        public string? State { get; set; }
+        public string State { get; set; }
 
         /// <summary>
         /// The zip code for the country code and zip code.
@@ -40,6 +40,6 @@ namespace RestAssured.Tests.Models
         /// <summary>
         /// The list of places associated with the country code and zip code.
         /// </summary>
-        public List<Place>? Places { get; set; }
+        public List<Place> Places { get; set; }
     }
 }

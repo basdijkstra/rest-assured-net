@@ -31,11 +31,11 @@ namespace RestAssured.Tests
     [TestFixture]
     public class RequestSpecificationTests : TestBase
     {
-        private RequestSpecification? fullRequestSpecification;
-        private RequestSpecification? applyDefaultsRequestSpecification;
-        private RequestSpecification? incorrectHostNameSpecification;
-        private RequestSpecification? headersSpecification;
-        private RequestSpecification? oauthSpecification;
+        private RequestSpecification fullRequestSpecification;
+        private RequestSpecification applyDefaultsRequestSpecification;
+        private RequestSpecification incorrectHostNameSpecification;
+        private RequestSpecification headersSpecification;
+        private RequestSpecification oauthSpecification;
 
         /// <summary>
         /// Creates the <see cref="RequestSpecification"/> instances to be used in the tests in this class.

@@ -28,7 +28,7 @@ namespace RestAssured.Tests
         /// <summary>
         /// The WireMock server instance to which response definitions will be added.
         /// </summary>
-        protected WireMockServer? Server { get; private set; }
+        protected WireMockServer Server { get; private set; }
 
         /// <summary>
         /// Starts the WireMock server before every test.

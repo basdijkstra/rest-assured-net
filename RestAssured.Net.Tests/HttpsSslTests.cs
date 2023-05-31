@@ -15,9 +15,9 @@
 // </copyright>
 namespace RestAssured.Tests
 {
+    using System.Net;
     using NUnit.Framework;
     using RestAssured.Request.Builders;
-    using System.Net;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
     using static RestAssured.Dsl;
@@ -28,7 +28,7 @@ namespace RestAssured.Tests
     [TestFixture]
     public class HttpsSslTests : TestBaseHttps
     {
-        private RequestSpecification? requestSpecification;
+        private RequestSpecification requestSpecification;
 
         /// <summary>
         /// Creates the RequestSpecification before each test in this class.
