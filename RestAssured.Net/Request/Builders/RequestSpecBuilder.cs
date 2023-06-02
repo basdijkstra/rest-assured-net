@@ -153,10 +153,10 @@ namespace RestAssured.Request.Builders
         }
 
         /// <summary>
-        /// Adds a basic authorization header to the request.
+        /// Adds a basic authentication header to the request.
         /// </summary>
-        /// <param name="username">The username to be used for authorization.</param>
-        /// <param name="password">The password to be used for authorization.</param>
+        /// <param name="username">The username to be used for authentication.</param>
+        /// <param name="password">The password to be used for authentication.</param>
         /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
         public RequestSpecBuilder WithBasicAuth(string username, string password)
         {
@@ -166,9 +166,9 @@ namespace RestAssured.Request.Builders
         }
 
         /// <summary>
-        /// Adds an OAuth2 authorization header to the request.
+        /// Adds an OAuth2 authentication header to the request.
         /// </summary>
-        /// <param name="token">The OAuth2 token to be used for authorization.</param>
+        /// <param name="token">The OAuth2 token to be used for authentication.</param>
         /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
         public RequestSpecBuilder WithOAuth2(string token)
         {

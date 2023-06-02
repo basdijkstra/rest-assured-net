@@ -197,10 +197,10 @@ namespace RestAssured.Request
         }
 
         /// <summary>
-        /// Adds a basic authorization header to the request.
+        /// Adds a basic authentication header to the request.
         /// </summary>
-        /// <param name="username">The username to be used for authorization.</param>
-        /// <param name="password">The password to be used for authorization.</param>
+        /// <param name="username">The username to be used for authentication.</param>
+        /// <param name="password">The password to be used for authentication.</param>
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
         public ExecutableRequest BasicAuth(string username, string password)
         {
@@ -210,9 +210,9 @@ namespace RestAssured.Request
         }
 
         /// <summary>
-        /// Adds an OAuth2 authorization token to the request.
+        /// Adds an OAuth2 authentication token to the request.
         /// </summary>
-        /// <param name="token">The OAuth2 token to be added to the request.</param>
+        /// <param name="token">The OAuth2 authentication token to be added to the request.</param>
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
         public ExecutableRequest OAuth2(string token)
         {
