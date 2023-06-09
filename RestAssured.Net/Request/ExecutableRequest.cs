@@ -597,22 +597,7 @@ namespace RestAssured.Request
             // Apply other settings provided in the request specification to the request
             this.request = RequestSpecificationProcessor.Apply(this.requestSpecification!, this.request);
 
-            if (this.multipartFormDataContent != null)
-            {
-                this.request.Content = this.multipartFormDataContent;
-            }
-            else if (this.formData != null)
-            {
-                // Set the request body using the form data specified (will set the Content-Type header automatically)
-                this.request.Content = new FormUrlEncodedContent(this.formData);
-            }
-            else
-            {
-                // Set the request body using the content, encoding and content type specified
-                string requestBodyAsString = this.Serialize(this.requestBody, this.requestSpecification?.ContentType ?? this.contentTypeHeader);
-
-                this.request.Content = new StringContent(requestBodyAsString, this.requestSpecification?.ContentEncoding ?? this.contentEncoding, this.requestSpecification?.ContentType ?? this.contentTypeHeader);
-            }
+            this.request.Content = this.CreateRequestBody();
 
             // SSL validation can be disabled either in a request or through a RequestSpecification
             bool disableSslChecks = this.disableSslCertificateValidation || (this.requestSpecification?.DisableSslCertificateValidation ?? false);
@@ -683,6 +668,27 @@ namespace RestAssured.Request
                 // Windows, relative path
                 return RequestSpecificationProcessor.BuildUriFromRequestSpec(requestSpec, endpoint);
             }
+        }
+
+        /// <summary>
+        /// Creates the body payload for the request.
+        /// </summary>
+        /// <returns>The request body as an object of type <see cref="HttpContent"/>.</returns>
+        private HttpContent CreateRequestBody()
+        {
+            if (this.multipartFormDataContent != null)
+            {
+                return this.multipartFormDataContent;
+            }
+
+            if (this.formData != null)
+            {
+                return new FormUrlEncodedContent(this.formData);
+            }
+
+            string requestBodyAsString = this.Serialize(this.requestBody, this.requestSpecification?.ContentType ?? this.contentTypeHeader);
+
+            return new StringContent(requestBodyAsString, this.requestSpecification?.ContentEncoding ?? this.contentEncoding, this.requestSpecification?.ContentType ?? this.contentTypeHeader);
         }
 
         /// <summary>
