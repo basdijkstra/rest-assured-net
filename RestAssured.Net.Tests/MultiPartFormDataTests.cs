@@ -37,12 +37,7 @@ namespace RestAssured.Tests
 
         private readonly string todoItem = "Watch Office Space";
 
-        private readonly string[] addressItems = new string[]
-        {
-            "Street;Number;ZipCode;City",
-            "Main Street;123;12345;Nothingville",
-            "State Street;987;23456;Sun City",
-        };
+        private readonly string[] addressItems = GetAddressCsv(new Random().Next(1,6));
 
         /// <summary>
         /// Creates the files to be uploaded in these tests.
@@ -184,6 +179,24 @@ namespace RestAssured.Tests
                 .WithBody(new RegexMatcher($".*Addresses.*")))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));
+        }
+
+        private static string GetAddressCsvLine()
+        {
+            return String.Format("{0};{1};{2};{3}",
+                Faker.Address.StreetName(), new Random().Next(1, 9999),
+                Faker.Address.ZipCode(), Faker.Address.City());
+        }
+
+        private static string[] GetAddressCsv(int lines)
+        {
+            string[] csvLines = new string[lines];
+            csvLines[0] = "Street;Number;ZipCode;City";
+            for (int i = 1; i < lines; i++)
+            {
+                csvLines[i] = GetAddressCsvLine();
+            }
+            return csvLines;
         }
     }
 }

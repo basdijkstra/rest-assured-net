@@ -39,6 +39,11 @@ namespace RestAssured.Tests
                 }
             }";
 
+        private readonly string companyName = Faker.Company.Name();
+        private readonly string ceoName = Faker.Name.FullName();
+        private readonly string countryName = Faker.Country.Name();
+        private readonly string rocketName = Faker.Lorem.Words(3).ToString();
+
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for sending
         /// a simple (non-parameterized) request to a GraphQL API.
@@ -58,7 +63,7 @@ namespace RestAssured.Tests
                 .Post(MOCK_SERVER_BASE_URL + "/simple-graphql")
                 .Then()
                 .StatusCode(200)
-                .Body("$.data.company.name", NHamcrest.Is.EqualTo("SpaceX"));
+                .Body("$.data.company.name", NHamcrest.Is.EqualTo(companyName));
         }
 
         /// <summary>
@@ -72,7 +77,7 @@ namespace RestAssured.Tests
 
             Dictionary<string, object> variables = new Dictionary<string, object>
             {
-                { "id", "falcon1" },
+                { "id", rocketName },
             };
 
             GraphQLRequest request = new GraphQLRequestBuilder()
@@ -88,7 +93,7 @@ namespace RestAssured.Tests
                 .Post(MOCK_SERVER_BASE_URL + "/graphql-with-variables")
                 .Then()
                 .StatusCode(200)
-                .Body("$.data.rocket.country", NHamcrest.Is.EqualTo("Republic of the Marshall Islands"));
+                .Body("$.data.rocket.country", NHamcrest.Is.EqualTo(countryName));
         }
 
         /// <summary>
@@ -109,8 +114,8 @@ namespace RestAssured.Tests
                 {
                     company = new
                     {
-                        name = "SpaceX",
-                        ceo = "Elon Musk",
+                        name = companyName,
+                        ceo = ceoName,
                     },
                 },
             };
@@ -135,7 +140,7 @@ namespace RestAssured.Tests
                 operationName = "getRocketData",
                 variables = new
                 {
-                    id = "falcon1",
+                    id = rocketName,
                 },
             };
 
@@ -145,8 +150,8 @@ namespace RestAssured.Tests
                 {
                     rocket = new
                     {
-                        name = "Falcon 1",
-                        country = "Republic of the Marshall Islands",
+                        name = rocketName,
+                        country = countryName,
                     },
                 },
             };
