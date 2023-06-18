@@ -57,7 +57,7 @@ namespace RestAssured.Tests
             Given()
                 .Timeout(TimeSpan.FromSeconds(2))
                 .When()
-                .Get("http://localhost:9876/timeout-ok")
+                .Get(MOCK_SERVER_BASE_URL + "/timeout-ok")
                 .Then()
                 .StatusCode(200);
         }
@@ -74,7 +74,7 @@ namespace RestAssured.Tests
             Given()
                 .Spec(this.requestSpecification!)
                 .When()
-                .Get("http://localhost:9876/timeout-ok")
+                .Get(MOCK_SERVER_BASE_URL + "/timeout-ok")
                 .Then()
                 .StatusCode(200);
         }
@@ -93,7 +93,7 @@ namespace RestAssured.Tests
                 Given()
                     .Timeout(TimeSpan.FromSeconds(2))
                     .When()
-                    .Get("http://localhost:9876/timeout-nok")
+                    .Get(MOCK_SERVER_BASE_URL + "/timeout-nok")
                     .Then()
                     .StatusCode(200);
             });
@@ -115,7 +115,7 @@ namespace RestAssured.Tests
                 Given()
                     .Spec(this.requestSpecification!)
                     .When()
-                    .Get("http://localhost:9876/timeout-nok")
+                    .Get(MOCK_SERVER_BASE_URL + "/timeout-nok")
                     .Then()
                     .StatusCode(200);
             });

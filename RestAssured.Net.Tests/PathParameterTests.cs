@@ -39,7 +39,7 @@ namespace RestAssured.Tests
             Given()
                 .PathParam("userId", 1)
                 .When()
-                .Get("http://localhost:9876/user/{{userId}}")
+                .Get(MOCK_SERVER_BASE_URL + "/user/{{userId}}")
                 .Then()
                 .StatusCode(200);
         }
@@ -57,7 +57,7 @@ namespace RestAssured.Tests
                 .PathParam("userId", 1)
                 .PathParam("accountId", "NL1234")
                 .When()
-                .Get("http://localhost:9876/user/{{userId}}/account/{{accountId}}")
+                .Get(MOCK_SERVER_BASE_URL + "/user/{{userId}}/account/{{accountId}}")
                 .Then()
                 .StatusCode(200);
         }
@@ -80,7 +80,7 @@ namespace RestAssured.Tests
             Given()
                 .PathParams(pathParams)
                 .When()
-                .Get("http://localhost:9876/user/{{userId}}/account/{{accountId}}")
+                .Get(MOCK_SERVER_BASE_URL + "/user/{{userId}}/account/{{accountId}}")
                 .Then()
                 .StatusCode(200);
         }

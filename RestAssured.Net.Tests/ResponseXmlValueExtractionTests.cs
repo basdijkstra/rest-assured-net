@@ -40,7 +40,7 @@ namespace RestAssured.Tests
 
             string placeName = (string)Given()
                 .When()
-                .Get("http://localhost:9876/xml-response-body")
+                .Get(MOCK_SERVER_BASE_URL + "/xml-response-body")
                 .Then()
                 .StatusCode(200)
                 .Extract().Body("//Place[1]/Name");
@@ -61,7 +61,7 @@ namespace RestAssured.Tests
 
             string placeName = (string)Given()
                 .When()
-                .Get("http://localhost:9876/xml-response-body-header-mismatch")
+                .Get(MOCK_SERVER_BASE_URL + "/xml-response-body-header-mismatch")
                 .Then()
                 .StatusCode(200)
                 .Extract().Body("//Place[1]/Name", ExtractAs.Xml);
@@ -83,7 +83,7 @@ namespace RestAssured.Tests
             // stored in an object of type List<string>.
             List<string> placeNames = (List<string>)Given()
                 .When()
-                .Get("http://localhost:9876/xml-response-body")
+                .Get(MOCK_SERVER_BASE_URL + "/xml-response-body")
                 .Then()
                 .StatusCode(200)
                 .Extract().Body("//Place/Name");
@@ -104,7 +104,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get("http://localhost:9876/xml-response-body")
+                    .Get(MOCK_SERVER_BASE_URL + "/xml-response-body")
                     .Then()
                     .StatusCode(200)
                     .Extract().Body("//Place/DoesNotExist");

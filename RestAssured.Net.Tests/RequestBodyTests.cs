@@ -43,7 +43,7 @@ namespace RestAssured.Tests
             Given()
                 .Body(this.plaintextRequestBody)
                 .When()
-                .Post("http://localhost:9876/plaintext-request-body")
+                .Post(MOCK_SERVER_BASE_URL + "/plaintext-request-body")
                 .Then()
                 .StatusCode(201);
         }
@@ -60,7 +60,7 @@ namespace RestAssured.Tests
             Given()
                 .Body(this.jsonStringRequestBody)
                 .When()
-                .Post("http://localhost:9876/json-string-request-body")
+                .Post(MOCK_SERVER_BASE_URL + "/json-string-request-body")
                 .Then()
                 .StatusCode(201);
         }

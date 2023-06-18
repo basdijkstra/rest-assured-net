@@ -41,7 +41,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/json-response-body")
+                .Get(MOCK_SERVER_BASE_URL + "/json-response-body")
                 .Then()
                 .StatusCode(200)
                 .Body("$.Places[0].Name", NHamcrest.Contains.String("City"));
@@ -60,7 +60,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get("http://localhost:9876/json-response-body")
+                    .Get(MOCK_SERVER_BASE_URL + "/json-response-body")
                     .Then()
                     .StatusCode(200)
                     .Body("$.Places[0].Name", NHamcrest.Contains.String("Sin"));
@@ -80,7 +80,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/json-response-body")
+                .Get(MOCK_SERVER_BASE_URL + "/json-response-body")
                 .Then()
                 .StatusCode(200)
                 .Body("$.Places[0].Inhabitants", NHamcrest.Is.GreaterThan(75000));
@@ -99,7 +99,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get("http://localhost:9876/json-response-body")
+                    .Get(MOCK_SERVER_BASE_URL + "/json-response-body")
                     .Then()
                     .StatusCode(200)
                     .Body("$.Places[0].Inhabitants", NHamcrest.Is.GreaterThan(200000));
@@ -119,7 +119,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/json-response-body")
+                .Get(MOCK_SERVER_BASE_URL + "/json-response-body")
                 .Then()
                 .StatusCode(200)
                 .Body("$.Places[0].IsCapital", NHamcrest.Is.True());
@@ -137,7 +137,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/json-response-body-header-mismatch")
+                .Get(MOCK_SERVER_BASE_URL + "/json-response-body-header-mismatch")
                 .Then()
                 .StatusCode(200)
                 .Body("$.Places[0].Name", NHamcrest.Contains.String("City"), VerifyAs.Json);
@@ -156,7 +156,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get("http://localhost:9876/json-response-body")
+                    .Get(MOCK_SERVER_BASE_URL + "/json-response-body")
                     .Then()
                     .StatusCode(200)
                     .Body("$.Places[0].IsCapital", NHamcrest.Is.False());
@@ -178,7 +178,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get("http://localhost:9876/json-response-body")
+                    .Get(MOCK_SERVER_BASE_URL + "/json-response-body")
                     .Then()
                     .StatusCode(200)
                     .Body("$.Places[0].DoesNotExist", NHamcrest.Is.False());
@@ -198,7 +198,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/json-response-body")
+                .Get(MOCK_SERVER_BASE_URL + "/json-response-body")
                 .Then()
                 .StatusCode(200)
                 .Body("$.Places[0:].Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Sun City")));
@@ -215,7 +215,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/json-response-body-header-mismatch")
+                .Get(MOCK_SERVER_BASE_URL + "/json-response-body-header-mismatch")
                 .Then()
                 .StatusCode(200)
                 .Body("$.Places[0:].Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Sun City")), VerifyAs.Json);
@@ -234,7 +234,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get("http://localhost:9876/json-response-body")
+                    .Get(MOCK_SERVER_BASE_URL + "/json-response-body")
                     .Then()
                     .StatusCode(200)
                     .Body("$.Places[0:].Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Atlantis")));

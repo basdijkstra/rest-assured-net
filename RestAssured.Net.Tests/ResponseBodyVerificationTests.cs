@@ -42,7 +42,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/plaintext-response-body")
+                .Get(MOCK_SERVER_BASE_URL + "/plaintext-response-body")
                 .Then()
                 .StatusCode(200)
                 .Body(this.plaintextResponseBody);
@@ -59,7 +59,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/json-string-response-body")
+                .Get(MOCK_SERVER_BASE_URL + "/json-string-response-body")
                 .Then()
                 .StatusCode(200)
                 .Body(this.jsonStringResponseBody);
@@ -76,7 +76,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/json-string-response-body")
+                .Get(MOCK_SERVER_BASE_URL + "/json-string-response-body")
                 .Then()
                 .StatusCode(200)
                 .Body(NHamcrest.Contains.String("John Doe"));
@@ -95,7 +95,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get("http://localhost:9876/plaintext-response-body")
+                    .Get(MOCK_SERVER_BASE_URL + "/plaintext-response-body")
                     .Then()
                     .StatusCode(200)
                     .Body("This is a different plaintext response body.");
@@ -117,7 +117,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get("http://localhost:9876/json-string-response-body")
+                    .Get(MOCK_SERVER_BASE_URL + "/json-string-response-body")
                     .Then()
                     .StatusCode(200)
                     .Body(NHamcrest.Contains.String("Jane Doe"));
@@ -139,7 +139,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get("http://localhost:9876/content-type-cannot-be-processed")
+                    .Get(MOCK_SERVER_BASE_URL + "/content-type-cannot-be-processed")
                     .Then()
                     .StatusCode(200)
                     .Body("$.Places[0].Name", NHamcrest.Contains.String("City"));

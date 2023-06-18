@@ -15,6 +15,7 @@
 // </copyright>
 namespace RestAssured.Tests
 {
+    using System;
     using System.Collections.Generic;
     using NUnit.Framework;
     using RestAssured.Tests.Models;
@@ -30,13 +31,17 @@ namespace RestAssured.Tests
         /// </summary>
         protected WireMockServer Server { get; private set; }
 
+        protected static readonly int MOCK_SERVER_PORT = 9876;
+
+        protected static readonly String MOCK_SERVER_BASE_URL = String.Concat("http://localhost:", MOCK_SERVER_PORT);
+
         /// <summary>
         /// Starts the WireMock server before every test.
         /// </summary>
         [SetUp]
         protected void StartServer()
         {
-            this.Server = WireMockServer.Start(9876);
+            this.Server = WireMockServer.Start(MOCK_SERVER_PORT);
         }
 
         /// <summary>

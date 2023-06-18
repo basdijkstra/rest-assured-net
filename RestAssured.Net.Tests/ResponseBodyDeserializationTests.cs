@@ -41,7 +41,7 @@ namespace RestAssured.Tests
 
             Location responseLocation = (Location)Given()
                 .When()
-                .Get("http://localhost:9876/json-deserialization")
+                .Get(MOCK_SERVER_BASE_URL + "/json-deserialization")
                 .As(typeof(Location));
 
             Assert.That(responseLocation.Country, Is.EqualTo("United States"));
@@ -66,7 +66,7 @@ namespace RestAssured.Tests
 
             Location responseLocation = (Location)Given()
                 .When()
-                .Get("http://localhost:9876/json-deserialization")
+                .Get(MOCK_SERVER_BASE_URL + "/json-deserialization")
                 .Then()
                 .StatusCode(200)
                 .And()
@@ -95,7 +95,7 @@ namespace RestAssured.Tests
 
             Location responseLocation = (Location)Given()
                 .When()
-                .Get("http://localhost:9876/json-deserialization")
+                .Get(MOCK_SERVER_BASE_URL + "/json-deserialization")
                 .Then()
                 .DeserializeTo(typeof(Location));
 
@@ -121,7 +121,7 @@ namespace RestAssured.Tests
 
             Location responseLocation = (Location)Given()
                 .When()
-                .Get("http://localhost:9876/json-deserialization-header-mismatch")
+                .Get(MOCK_SERVER_BASE_URL + "/json-deserialization-header-mismatch")
                 .Then()
                 .DeserializeTo(typeof(Location), DeserializeAs.Json);
 
@@ -148,7 +148,7 @@ namespace RestAssured.Tests
 
             Location responseLocation = (Location)Given()
                 .When()
-                .Get("http://localhost:9876/json-deserialization")
+                .Get(MOCK_SERVER_BASE_URL + "/json-deserialization")
                 .Then()
                 .StatusCode(200)
                 .And()
@@ -175,7 +175,7 @@ namespace RestAssured.Tests
 
             Location responseLocation = (Location)Given()
                 .When()
-                .Get("http://localhost:9876/xml-deserialization")
+                .Get(MOCK_SERVER_BASE_URL + "/xml-deserialization")
                 .As(typeof(Location));
 
             Assert.That(responseLocation.Country, Is.EqualTo("United States"));
@@ -199,7 +199,7 @@ namespace RestAssured.Tests
 
             Location responseLocation = (Location)Given()
                 .When()
-                .Get("http://localhost:9876/xml-deserialization")
+                .Get(MOCK_SERVER_BASE_URL + "/xml-deserialization")
                 .Then()
                 .DeserializeTo(typeof(Location));
 
@@ -224,7 +224,7 @@ namespace RestAssured.Tests
 
             Location responseLocation = (Location)Given()
                 .When()
-                .Get("http://localhost:9876/xml-deserialization-header-mismatch")
+                .Get(MOCK_SERVER_BASE_URL + "/xml-deserialization-header-mismatch")
                 .Then()
                 .DeserializeTo(typeof(Location), DeserializeAs.Xml);
 
@@ -251,7 +251,7 @@ namespace RestAssured.Tests
             {
                 Location responseLocation = (Location)Given()
                     .When()
-                    .Get("http://localhost:9876/xml-deserialization-unrecognized-content-type")
+                    .Get(MOCK_SERVER_BASE_URL + "/xml-deserialization-unrecognized-content-type")
                     .As(typeof(Location));
             });
 

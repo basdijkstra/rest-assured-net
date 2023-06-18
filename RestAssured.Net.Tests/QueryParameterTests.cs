@@ -56,7 +56,7 @@ namespace RestAssured.Tests
             Given()
                 .QueryParam("name", "john")
                 .When()
-                .Get("http://localhost:9876/api/single-query-param")
+                .Get(MOCK_SERVER_BASE_URL + "/api/single-query-param")
                 .Then()
                 .StatusCode(200);
         }
@@ -74,7 +74,7 @@ namespace RestAssured.Tests
                 .QueryParam("name", "john")
                 .QueryParam("id", 12345)
                 .When()
-                .Get("http://localhost:9876/multiple-query-params")
+                .Get(MOCK_SERVER_BASE_URL + "/multiple-query-params")
                 .Then()
                 .StatusCode(200);
         }
@@ -92,7 +92,7 @@ namespace RestAssured.Tests
                 .QueryParam("name", "susan")
                 .QueryParam("name", "john")
                 .When()
-                .Get("http://localhost:9876/api/single-query-param")
+                .Get(MOCK_SERVER_BASE_URL + "/api/single-query-param")
                 .Then()
                 .StatusCode(200);
         }
@@ -115,7 +115,7 @@ namespace RestAssured.Tests
             Given()
                 .QueryParams(queryParams)
                 .When()
-                .Get("http://localhost:9876/multiple-query-params")
+                .Get(MOCK_SERVER_BASE_URL + "/multiple-query-params")
                 .Then()
                 .StatusCode(200);
         }
@@ -139,7 +139,7 @@ namespace RestAssured.Tests
                 .QueryParams(queryParams)
                 .QueryParam("name", "john") // This parameter value will be used
                 .When()
-                .Get("http://localhost:9876/multiple-query-params")
+                .Get(MOCK_SERVER_BASE_URL + "/multiple-query-params")
                 .Then()
                 .StatusCode(200);
         }

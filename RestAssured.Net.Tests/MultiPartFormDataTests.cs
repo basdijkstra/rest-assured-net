@@ -68,7 +68,7 @@ namespace RestAssured.Tests
             Given()
                 .MultiPart(new FileInfo(this.plaintextFileName))
                 .When()
-                .Post("http://localhost:9876/plaintext-multipart-form-data")
+                .Post(MOCK_SERVER_BASE_URL + "/plaintext-multipart-form-data")
                 .Then()
                 .StatusCode(201);
         }
@@ -86,7 +86,7 @@ namespace RestAssured.Tests
             Given()
                 .MultiPart(new FileInfo(this.csvFileName), "customControl", MediaTypeHeaderValue.Parse("text/csv"))
                 .When()
-                .Post("http://localhost:9876/csv-multipart-form-data")
+                .Post(MOCK_SERVER_BASE_URL + "/csv-multipart-form-data")
                 .Then()
                 .StatusCode(201);
         }
@@ -106,7 +106,7 @@ namespace RestAssured.Tests
                 .MultiPart(new FileInfo(this.plaintextFileName))
                 .MultiPart(new FileInfo(this.csvFileName), "customControl", MediaTypeHeaderValue.Parse("text/csv"))
                 .When()
-                .Post("http://localhost:9876/multiple-files-multipart-form-data")
+                .Post(MOCK_SERVER_BASE_URL + "/multiple-files-multipart-form-data")
                 .Then()
                 .StatusCode(201);
         }
@@ -126,7 +126,7 @@ namespace RestAssured.Tests
                 Given()
                 .MultiPart(new FileInfo(@"DoesNotExist.txt"))
                 .When()
-                .Post("http://localhost:9876/plaintext-multipart-form-data")
+                .Post(MOCK_SERVER_BASE_URL + "/plaintext-multipart-form-data")
                 .Then()
                 .StatusCode(201);
             });

@@ -37,7 +37,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/http-get");
+                .Get(MOCK_SERVER_BASE_URL + "/http-get");
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Post("http://localhost:9876/http-post");
+                .Post(MOCK_SERVER_BASE_URL + "/http-post");
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Put("http://localhost:9876/http-put");
+                .Put(MOCK_SERVER_BASE_URL + "/http-put");
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Patch("http://localhost:9876/http-patch");
+                .Patch(MOCK_SERVER_BASE_URL + "/http-patch");
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Delete("http://localhost:9876/http-delete");
+                .Delete(MOCK_SERVER_BASE_URL + "/http-delete");
         }
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Head("http://localhost:9876/http-head");
+                .Head(MOCK_SERVER_BASE_URL + "/http-head");
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Options("http://localhost:9876/http-options");
+                .Options(MOCK_SERVER_BASE_URL + "/http-options");
         }
 
         /// <summary>

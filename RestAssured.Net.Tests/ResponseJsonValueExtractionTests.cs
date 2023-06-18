@@ -44,7 +44,7 @@ namespace RestAssured.Tests
 
             string placeName = (string)Given()
                 .When()
-                .Get("http://localhost:9876/json-response-body")
+                .Get(MOCK_SERVER_BASE_URL + "/json-response-body")
                 .Then()
                 .StatusCode(200)
                 .Extract().Body("$.Places[0].Name");
@@ -66,7 +66,7 @@ namespace RestAssured.Tests
             // into Int64 (=long), not Int32 (= int).
             long numberOfInhabitants = (long)Given()
                 .When()
-                .Get("http://localhost:9876/json-response-body")
+                .Get(MOCK_SERVER_BASE_URL + "/json-response-body")
                 .Then()
                 .StatusCode(200)
                 .Extract().Body("$.Places[0].Inhabitants");
@@ -87,7 +87,7 @@ namespace RestAssured.Tests
 
             bool isCapital = (bool)Given()
                 .When()
-                .Get("http://localhost:9876/json-response-body")
+                .Get(MOCK_SERVER_BASE_URL + "/json-response-body")
                 .Then()
                 .StatusCode(200)
                 .Extract().Body("$.Places[0].IsCapital");
@@ -109,7 +109,7 @@ namespace RestAssured.Tests
             // stored in an object of type List<object>.
             List<object> placeNames = (List<object>)Given()
                 .When()
-                .Get("http://localhost:9876/json-response-body")
+                .Get(MOCK_SERVER_BASE_URL + "/json-response-body")
                 .Then()
                 .StatusCode(200)
                 .Extract().Body("$.Places[0:].IsCapital");
@@ -130,7 +130,7 @@ namespace RestAssured.Tests
 
             string placeName = (string)Given()
                 .When()
-                .Get("http://localhost:9876/json-response-body-header-mismatch")
+                .Get(MOCK_SERVER_BASE_URL + "/json-response-body-header-mismatch")
                 .Then()
                 .StatusCode(200)
                 .Extract().Body("$.Places[0].Name", ExtractAs.Json);
@@ -151,7 +151,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get("http://localhost:9876/json-response-body")
+                    .Get(MOCK_SERVER_BASE_URL + "/json-response-body")
                     .Then()
                     .StatusCode(200)
                     .Extract().Body("$.Places[0].DoesNotExist");
@@ -171,7 +171,7 @@ namespace RestAssured.Tests
 
             string responseHeaderValue = Given()
                 .When()
-                .Get("http://localhost:9876/json-response-body")
+                .Get(MOCK_SERVER_BASE_URL + "/json-response-body")
                 .Then()
                 .StatusCode(200)
                 .Extract().Header("custom_header");
@@ -192,7 +192,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get("http://localhost:9876/json-response-body")
+                    .Get(MOCK_SERVER_BASE_URL + "/json-response-body")
                     .Then()
                     .StatusCode(200)
                     .Extract().Header("does_not_exist");
@@ -212,7 +212,7 @@ namespace RestAssured.Tests
 
             HttpResponseMessage response = Given()
                 .When()
-                .Get("http://localhost:9876/json-response-body")
+                .Get(MOCK_SERVER_BASE_URL + "/json-response-body")
                 .Then()
                 .StatusCode(200)
                 .Extract().Response();

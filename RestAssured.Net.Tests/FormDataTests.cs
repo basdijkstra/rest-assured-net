@@ -46,7 +46,7 @@ namespace RestAssured.Tests
             Given()
                 .FormData(formData)
                 .When()
-                .Post("http://localhost:9876/form-data")
+                .Post(MOCK_SERVER_BASE_URL + "/form-data")
                 .Then()
                 .StatusCode(201);
         }
