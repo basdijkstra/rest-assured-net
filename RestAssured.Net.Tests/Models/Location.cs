@@ -41,5 +41,9 @@ namespace RestAssured.Tests.Models
         /// The list of places associated with the country code and zip code.
         /// </summary>
         public List<Place> Places { get; set; }
+
+        public Location(){
+            this.Places = new List<Place>();
+        }
     }
 }

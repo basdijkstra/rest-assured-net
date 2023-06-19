@@ -38,7 +38,7 @@ namespace RestAssured.Tests.Models
         public BlogPost(){
             this.Id = Faker.RandomNumber.Next();
             this.Title = Faker.Lorem.Sentence(5);
-            this.Body = Faker.Lorem.Sentence(new System.Random().Next(10,20));
+            this.Body = Faker.Lorem.Sentence(Faker.RandomNumber.Next(10,20));
         }
 
         public string getSerializedJson(){

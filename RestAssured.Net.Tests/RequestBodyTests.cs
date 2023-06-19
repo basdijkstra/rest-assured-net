@@ -27,23 +27,26 @@ namespace RestAssured.Tests
     [TestFixture]
     public class RequestBodyTests : TestBase
     {
-        private readonly string plaintextRequestBody = "Here's a plaintext request body.";
+        private string plaintextRequestBody;
 
-        private readonly string jsonStringRequestBody = "{\"id\": 1, \"user\": \"John Doe\"}";
+        private readonly string jsonStringRequestBody = "{\"id\": " + Faker.RandomNumber.Next().ToString()
+                                             + ", \"user\": \""+ Faker.Name.FullName() +"\"}";
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for sending
         /// a plaintext request body when performing an HTTP POST.
         /// </summary>
-        [Test]
-        public void PlaintextRequestBodyCanBeSupplied()
+        [TestCase("small", TestName = "Sending small plaintext request body")]
+        [TestCase("medium", TestName = "Sending medium plaintext request body")]
+        [TestCase("large", TestName = "Sending large plaintext request body")]
+        public void PlaintextRequestBodyCanBeSupplied(string bodySize)
         {
-            this.CreateStubForPlaintextRequestBody();
+            this.CreateStubForPlaintextRequestBody(bodySize);
 
             Given()
                 .Body(this.plaintextRequestBody)
                 .When()
-                .Post(MOCK_SERVER_BASE_URL + "/plaintext-request-body")
+                .Post($"{MOCK_SERVER_BASE_URL}/plaintext-request-body")
                 .Then()
                 .StatusCode(201);
         }
@@ -60,7 +63,7 @@ namespace RestAssured.Tests
             Given()
                 .Body(this.jsonStringRequestBody)
                 .When()
-                .Post(MOCK_SERVER_BASE_URL + "/json-string-request-body")
+                .Post($"{MOCK_SERVER_BASE_URL}/json-string-request-body")
                 .Then()
                 .StatusCode(201);
         }
@@ -68,8 +71,20 @@ namespace RestAssured.Tests
         /// <summary>
         /// Creates the stub response for the JSON string request body example.
         /// </summary>
-        private void CreateStubForPlaintextRequestBody()
+        private void CreateStubForPlaintextRequestBody(string bodySize)
         {
+            switch(bodySize){
+                case "small":
+                    this.plaintextRequestBody = Faker.Lorem.Paragraph(Faker.RandomNumber.Next(5,10));
+                break;
+                case "medium":
+                    this.plaintextRequestBody = Faker.Lorem.Paragraph(Faker.RandomNumber.Next(50,70));
+                break;
+                case "large":
+                    this.plaintextRequestBody = Faker.Lorem.Paragraph(Faker.RandomNumber.Next(300,400));
+                break;
+            }
+
             this.Server?.Given(Request.Create().WithPath("/plaintext-request-body").UsingPost()
                 .WithBody(new ExactMatcher(this.plaintextRequestBody)))
                 .RespondWith(Response.Create()

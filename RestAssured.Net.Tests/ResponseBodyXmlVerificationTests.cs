@@ -39,7 +39,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/xml-response-body")
+                .Get($"{MOCK_SERVER_BASE_URL}/xml-response-body")
                 .Then()
                 .StatusCode(200)
                 .Body("//Place[1]/Name", NHamcrest.Is.EqualTo("Sun City"));
@@ -56,7 +56,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/xml-response-body")
+                .Get($"{MOCK_SERVER_BASE_URL}/xml-response-body")
                 .Then()
                 .StatusCode(200)
                 .Body("//Place[1]/Inhabitants", NHamcrest.Is.GreaterThan(75000));
@@ -73,7 +73,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/xml-response-body")
+                .Get($"{MOCK_SERVER_BASE_URL}/xml-response-body")
                 .Then()
                 .StatusCode(200)
                 .Body("//Place[1]/IsCapital", NHamcrest.Is.True());
@@ -90,7 +90,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/xml-response-body-header-mismatch")
+                .Get($"{MOCK_SERVER_BASE_URL}/xml-response-body-header-mismatch")
                 .Then()
                 .StatusCode(200)
                 .Body("//Place[1]/Name", NHamcrest.Is.EqualTo("Sun City"), VerifyAs.Xml);
@@ -109,7 +109,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get(MOCK_SERVER_BASE_URL + "/xml-response-body")
+                    .Get($"{MOCK_SERVER_BASE_URL}/xml-response-body")
                     .Then()
                     .StatusCode(200)
                     .Body("//Places[0]/DoesNotExist", NHamcrest.Is.EqualTo("Sun City"));
@@ -132,7 +132,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get(MOCK_SERVER_BASE_URL + "/xml-response-body")
+                    .Get($"{MOCK_SERVER_BASE_URL}/xml-response-body")
                     .Then()
                     .StatusCode(200)
                     .Body("//Place[1]/Inhabitants", NHamcrest.Is.True());
@@ -152,7 +152,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/xml-response-body")
+                .Get($"{MOCK_SERVER_BASE_URL}/xml-response-body")
                 .Then()
                 .StatusCode(200)
                 .Body("//Place/Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Sun City")));
@@ -169,7 +169,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/xml-response-body-header-mismatch")
+                .Get($"{MOCK_SERVER_BASE_URL}/xml-response-body-header-mismatch")
                 .Then()
                 .StatusCode(200)
                 .Body("//Place/Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Sun City")), VerifyAs.Xml);
@@ -189,7 +189,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get(MOCK_SERVER_BASE_URL + "/xml-response-body")
+                    .Get($"{MOCK_SERVER_BASE_URL}/xml-response-body")
                     .Then()
                     .StatusCode(200)
                     .Body("//Place/Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Atlantis")));

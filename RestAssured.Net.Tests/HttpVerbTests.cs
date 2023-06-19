@@ -37,7 +37,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/http-get");
+                .Get($"{MOCK_SERVER_BASE_URL}/http-get");
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Post(MOCK_SERVER_BASE_URL + "/http-post");
+                .Post($"{MOCK_SERVER_BASE_URL}/http-post");
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Put(MOCK_SERVER_BASE_URL + "/http-put");
+                .Put($"{MOCK_SERVER_BASE_URL}/http-put");
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Patch(MOCK_SERVER_BASE_URL + "/http-patch");
+                .Patch($"{MOCK_SERVER_BASE_URL}/http-patch");
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Delete(MOCK_SERVER_BASE_URL + "/http-delete");
+                .Delete($"{MOCK_SERVER_BASE_URL}/http-delete");
         }
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Head(MOCK_SERVER_BASE_URL + "/http-head");
+                .Head($"{MOCK_SERVER_BASE_URL}/http-head");
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Options(MOCK_SERVER_BASE_URL + "/http-options");
+                .Options($"{MOCK_SERVER_BASE_URL}/http-options");
         }
 
         /// <summary>

@@ -42,7 +42,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/xml-schema-validation")
+                .Get($"{MOCK_SERVER_BASE_URL}/xml-schema-validation")
                 .Then()
                 .StatusCode(200)
                 .And()
@@ -63,7 +63,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/xml-schema-validation")
+                .Get($"{MOCK_SERVER_BASE_URL}/xml-schema-validation")
                 .Then()
                 .StatusCode(200)
                 .And()
@@ -81,7 +81,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/matching-dtd-validation")
+                .Get($"{MOCK_SERVER_BASE_URL}/matching-dtd-validation")
                 .Then()
                 .StatusCode(200)
                 .And()
@@ -100,7 +100,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get(MOCK_SERVER_BASE_URL + "/xml-schema-validation")
+                    .Get($"{MOCK_SERVER_BASE_URL}/xml-schema-validation")
                     .Then()
                     .StatusCode(200)
                     .And()
@@ -122,7 +122,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get(MOCK_SERVER_BASE_URL + "/non-matching-dtd-validation")
+                    .Get($"{MOCK_SERVER_BASE_URL}/non-matching-dtd-validation")
                     .Then()
                     .StatusCode(200)
                     .And()
@@ -144,7 +144,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get(MOCK_SERVER_BASE_URL + "/xml-schema-validation")
+                    .Get($"{MOCK_SERVER_BASE_URL}/xml-schema-validation")
                     .Then()
                     .StatusCode(200)
                     .And()
@@ -166,7 +166,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get(MOCK_SERVER_BASE_URL + "/xml-schema-unexpected-content-type")
+                    .Get($"{MOCK_SERVER_BASE_URL}/xml-schema-unexpected-content-type")
                     .Then()
                     .StatusCode(200)
                     .And()
@@ -188,7 +188,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get(MOCK_SERVER_BASE_URL + "/xml-schema-unexpected-content-type")
+                    .Get($"{MOCK_SERVER_BASE_URL}/xml-schema-unexpected-content-type")
                     .Then()
                     .StatusCode(200)
                     .And()

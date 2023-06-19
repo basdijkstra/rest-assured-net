@@ -47,7 +47,7 @@ namespace RestAssured.Tests
                 .ContentType("application/json")
                 .Body(this.jsonBody)
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/log-json-response")
+                .Get($"{MOCK_SERVER_BASE_URL}/log-json-response")
                 .Then()
                 .StatusCode(200);
         }
@@ -70,7 +70,7 @@ namespace RestAssured.Tests
                 .ContentType("application/json")
                 .Body(this.jsonBody)
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/log-json-response")
+                .Get($"{MOCK_SERVER_BASE_URL}/log-json-response")
                 .Then()
                 .StatusCode(200);
         }
@@ -89,7 +89,7 @@ namespace RestAssured.Tests
                 .ContentType("application/xml")
                 .Body(this.GetLocationAsXmlString())
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/log-xml-response")
+                .Get($"{MOCK_SERVER_BASE_URL}/log-xml-response")
                 .Then()
                 .StatusCode(200);
         }
@@ -105,7 +105,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/log-json-response")
+                .Get($"{MOCK_SERVER_BASE_URL}/log-json-response")
                 .Then()
                 .Log(ResponseLogLevel.All)
                 .And()
@@ -124,7 +124,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/log-json-response")
+                .Get($"{MOCK_SERVER_BASE_URL}/log-json-response")
                 .Then()
                 .Log().All()
                 .And()
@@ -142,7 +142,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/log-xml-response")
+                .Get($"{MOCK_SERVER_BASE_URL}/log-xml-response")
                 .Then()
                 .Log(ResponseLogLevel.All)
                 .And()
@@ -161,7 +161,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/log-no-response-body")
+                .Get($"{MOCK_SERVER_BASE_URL}/log-no-response-body")
                 .Then()
                 .Log(ResponseLogLevel.All)
                 .And()
@@ -181,7 +181,7 @@ namespace RestAssured.Tests
             Given()
                 .Log(RequestLogLevel.All)
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/log-no-response-body")
+                .Get($"{MOCK_SERVER_BASE_URL}/log-no-response-body")
                 .Then()
                 .StatusCode(200);
         }
@@ -199,7 +199,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/error-response-body")
+                .Get($"{MOCK_SERVER_BASE_URL}/error-response-body")
                 .Then()
                 .Log(ResponseLogLevel.OnError)
                 .StatusCode(404);
@@ -218,7 +218,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/log-json-response")
+                .Get($"{MOCK_SERVER_BASE_URL}/log-json-response")
                 .Then()
                 .Log(ResponseLogLevel.OnError)
                 .StatusCode(200);
@@ -237,7 +237,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/log-json-response")
+                .Get($"{MOCK_SERVER_BASE_URL}/log-json-response")
                 .Then()
                 .Log(ResponseLogLevel.OnVerificationFailure)
                 .StatusCode(200);

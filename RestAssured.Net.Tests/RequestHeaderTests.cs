@@ -41,7 +41,7 @@ namespace RestAssured.Tests
             Given()
                 .Header("my_header", "my_header_value")
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/single-header-value")
+                .Get($"{MOCK_SERVER_BASE_URL}/single-header-value")
                 .Then()
                 .StatusCode(200);
         }
@@ -58,7 +58,7 @@ namespace RestAssured.Tests
             Given()
                 .Header("my_header", new List<string>() { "my_header_value_1", "my_header_value_2" })
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/multiple-header-values")
+                .Get($"{MOCK_SERVER_BASE_URL}/multiple-header-values")
                 .Then()
                 .StatusCode(200);
         }
@@ -75,7 +75,7 @@ namespace RestAssured.Tests
             Given()
                 .ContentType("application/xml")
                 .When()
-                .Post(MOCK_SERVER_BASE_URL + "/content-type-as-string")
+                .Post($"{MOCK_SERVER_BASE_URL}/content-type-as-string")
                 .Then()
                 .StatusCode(201);
         }
@@ -94,7 +94,7 @@ namespace RestAssured.Tests
                 .And() // Example of using the And() syntactic sugar method in request building.
                 .ContentEncoding(Encoding.ASCII)
                 .When()
-                .Post(MOCK_SERVER_BASE_URL + "/content-type-with-encoding")
+                .Post($"{MOCK_SERVER_BASE_URL}/content-type-with-encoding")
                 .Then()
                 .StatusCode(201);
         }
@@ -111,7 +111,7 @@ namespace RestAssured.Tests
             Given()
                 .Accept("application/xml")
                 .When()
-                .Post(MOCK_SERVER_BASE_URL + "/accept-header-as-string")
+                .Post($"{MOCK_SERVER_BASE_URL}/accept-header-as-string")
                 .Then()
                 .StatusCode(201);
         }

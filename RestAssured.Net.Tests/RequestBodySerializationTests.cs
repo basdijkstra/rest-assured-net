@@ -46,7 +46,7 @@ namespace RestAssured.Tests
             Given()
                 .Body(this.GetLocation())
                 .When()
-                .Post(MOCK_SERVER_BASE_URL + "/json-serialization")
+                .Post($"{MOCK_SERVER_BASE_URL}/json-serialization")
                 .Then()
                 .StatusCode(201);
         }
@@ -70,7 +70,7 @@ namespace RestAssured.Tests
             Given()
                 .Body(post)
                 .When()
-                .Post(MOCK_SERVER_BASE_URL + "/object-serialization")
+                .Post($"{MOCK_SERVER_BASE_URL}/object-serialization")
                 .Then()
                 .StatusCode(201);
         }
@@ -94,7 +94,7 @@ namespace RestAssured.Tests
             Given()
                 .Body(post)
                 .When()
-                .Post(MOCK_SERVER_BASE_URL + "/object-serialization")
+                .Post($"{MOCK_SERVER_BASE_URL}/object-serialization")
                 .Then()
                 .StatusCode(201);
         }
@@ -112,7 +112,7 @@ namespace RestAssured.Tests
                 .ContentType("application/xml")
                 .Body(this.GetLocation())
                 .When()
-                .Post(MOCK_SERVER_BASE_URL + "/xml-serialization")
+                .Post($"{MOCK_SERVER_BASE_URL}/xml-serialization")
                 .Then()
                 .StatusCode(201);
         }
@@ -132,7 +132,7 @@ namespace RestAssured.Tests
                     .ContentType("application/something")
                     .Body(this.GetLocation())
                     .When()
-                    .Post(MOCK_SERVER_BASE_URL + "/xml-serialization")
+                    .Post($"{MOCK_SERVER_BASE_URL}/xml-serialization")
                     .Then()
                     .StatusCode(201);
             });

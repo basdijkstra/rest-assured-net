@@ -38,7 +38,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/custom-response-header")
+                .Get($"{MOCK_SERVER_BASE_URL}/custom-response-header")
                 .Then()
                 .StatusCode(200)
                 .And() // Example of using the And() syntactic sugar method in response verification.
@@ -56,7 +56,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/custom-response-header")
+                .Get($"{MOCK_SERVER_BASE_URL}/custom-response-header")
                 .Then()
                 .StatusCode(200)
                 .Header("custom_header_name", NHamcrest.Contains.String("tom_header_val"));
@@ -75,7 +75,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get(MOCK_SERVER_BASE_URL + "/custom-response-header")
+                    .Get($"{MOCK_SERVER_BASE_URL}/custom-response-header")
                     .Then()
                     .StatusCode(200)
                     .Header("header_does_not_exist", "custom_header_value");
@@ -97,7 +97,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get(MOCK_SERVER_BASE_URL + "/custom-response-header")
+                    .Get($"{MOCK_SERVER_BASE_URL}/custom-response-header")
                     .Then()
                     .StatusCode(200)
                     .Header("custom_header_name", "value_does_not_match");
@@ -119,7 +119,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get(MOCK_SERVER_BASE_URL + "/custom-response-header")
+                    .Get($"{MOCK_SERVER_BASE_URL}/custom-response-header")
                     .Then()
                     .StatusCode(200)
                     .Header("custom_header_name", NHamcrest.Contains.String("not_found"));
@@ -139,7 +139,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/custom-multiple-response-headers")
+                .Get($"{MOCK_SERVER_BASE_URL}/custom-multiple-response-headers")
                 .Then()
                 .StatusCode(200)
                 .Header("custom_header_name", "custom_header_value")
@@ -157,7 +157,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/custom-response-content-type-header")
+                .Get($"{MOCK_SERVER_BASE_URL}/custom-response-content-type-header")
                 .Then()
                 .StatusCode(200)
                 .ContentType("application/something");
@@ -174,7 +174,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/custom-response-content-type-header")
+                .Get($"{MOCK_SERVER_BASE_URL}/custom-response-content-type-header")
                 .Then()
                 .StatusCode(200)
                 .ContentType(NHamcrest.Contains.String("something"));
@@ -193,7 +193,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get(MOCK_SERVER_BASE_URL + "/custom-response-content-type-header")
+                    .Get($"{MOCK_SERVER_BASE_URL}/custom-response-content-type-header")
                     .Then()
                     .StatusCode(200)
                     .ContentType("application/something_else");
@@ -215,7 +215,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get(MOCK_SERVER_BASE_URL + "/custom-response-content-type-header")
+                    .Get($"{MOCK_SERVER_BASE_URL}/custom-response-content-type-header")
                     .Then()
                     .StatusCode(200)
                     .ContentType(NHamcrest.Contains.String("not_found"));

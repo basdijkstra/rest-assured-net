@@ -28,7 +28,7 @@ namespace RestAssured.Tests
     [TestFixture]
     public class PathParameterTests : TestBase
     {
-        private readonly int userId = new Random().Next(1,999999);
+        private readonly int userId = Faker.RandomNumber.Next(999999);
         private readonly string accountId = Faker.Name.First().ToUpper() + Faker.RandomNumber.Next().ToString();
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for adding
@@ -42,7 +42,7 @@ namespace RestAssured.Tests
             Given()
                 .PathParam("userId", userId)
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/user/{{userId}}")
+                .Get($"{MOCK_SERVER_BASE_URL}/user/{{userId}}")
                 .Then()
                 .StatusCode(200);
         }
@@ -60,7 +60,7 @@ namespace RestAssured.Tests
                 .PathParam("userId", userId)
                 .PathParam("accountId", accountId)
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/user/{{userId}}/account/{{accountId}}")
+                .Get($"{MOCK_SERVER_BASE_URL}/user/{{userId}}/account/{{accountId}}")
                 .Then()
                 .StatusCode(200);
         }
@@ -83,7 +83,7 @@ namespace RestAssured.Tests
             Given()
                 .PathParams(pathParams)
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/user/{{userId}}/account/{{accountId}}")
+                .Get($"{MOCK_SERVER_BASE_URL}/user/{{userId}}/account/{{accountId}}")
                 .Then()
                 .StatusCode(200);
         }

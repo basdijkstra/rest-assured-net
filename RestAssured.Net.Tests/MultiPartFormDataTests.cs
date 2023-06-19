@@ -37,7 +37,7 @@ namespace RestAssured.Tests
 
         private readonly string todoItem = "Watch Office Space";
 
-        private readonly string[] addressItems = GetAddressCsv(new Random().Next(1,6));
+        private readonly string[] addressItems = GetAddressCsv(Faker.RandomNumber.Next(6));
 
         /// <summary>
         /// Creates the files to be uploaded in these tests.
@@ -63,7 +63,7 @@ namespace RestAssured.Tests
             Given()
                 .MultiPart(new FileInfo(this.plaintextFileName))
                 .When()
-                .Post(MOCK_SERVER_BASE_URL + "/plaintext-multipart-form-data")
+                .Post($"{MOCK_SERVER_BASE_URL}/plaintext-multipart-form-data")
                 .Then()
                 .StatusCode(201);
         }
@@ -81,7 +81,7 @@ namespace RestAssured.Tests
             Given()
                 .MultiPart(new FileInfo(this.csvFileName), "customControl", MediaTypeHeaderValue.Parse("text/csv"))
                 .When()
-                .Post(MOCK_SERVER_BASE_URL + "/csv-multipart-form-data")
+                .Post($"{MOCK_SERVER_BASE_URL}/csv-multipart-form-data")
                 .Then()
                 .StatusCode(201);
         }
@@ -101,7 +101,7 @@ namespace RestAssured.Tests
                 .MultiPart(new FileInfo(this.plaintextFileName))
                 .MultiPart(new FileInfo(this.csvFileName), "customControl", MediaTypeHeaderValue.Parse("text/csv"))
                 .When()
-                .Post(MOCK_SERVER_BASE_URL + "/multiple-files-multipart-form-data")
+                .Post($"{MOCK_SERVER_BASE_URL}/multiple-files-multipart-form-data")
                 .Then()
                 .StatusCode(201);
         }
@@ -121,7 +121,7 @@ namespace RestAssured.Tests
                 Given()
                 .MultiPart(new FileInfo(@"DoesNotExist.txt"))
                 .When()
-                .Post(MOCK_SERVER_BASE_URL + "/plaintext-multipart-form-data")
+                .Post($"{MOCK_SERVER_BASE_URL}/plaintext-multipart-form-data")
                 .Then()
                 .StatusCode(201);
             });
@@ -184,7 +184,7 @@ namespace RestAssured.Tests
         private static string GetAddressCsvLine()
         {
             return String.Format("{0};{1};{2};{3}",
-                Faker.Address.StreetName(), new Random().Next(1, 9999),
+                Faker.Address.StreetName(), Faker.RandomNumber.Next(1, 9999),
                 Faker.Address.ZipCode(), Faker.Address.City());
         }
 

@@ -34,5 +34,11 @@ namespace RestAssured.Tests.Models
         /// Indication whether or not the place is the capital of a region.
         /// </summary>
         public bool IsCapital { get; set; }
+
+        public Place(){
+            Name = Faker.Address.City();
+            Inhabitants = Faker.RandomNumber.Next(10000, 99999999);
+            IsCapital = Faker.Boolean.Random();
+        }
     }
 }

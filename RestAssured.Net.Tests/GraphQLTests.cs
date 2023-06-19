@@ -60,7 +60,7 @@ namespace RestAssured.Tests
             Given()
                 .GraphQL(request)
                 .When()
-                .Post(MOCK_SERVER_BASE_URL + "/simple-graphql")
+                .Post($"{MOCK_SERVER_BASE_URL}/simple-graphql")
                 .Then()
                 .StatusCode(200)
                 .Body("$.data.company.name", NHamcrest.Is.EqualTo(companyName));
@@ -90,7 +90,7 @@ namespace RestAssured.Tests
                 .GraphQL(request)
                 .ContentType("application/graphql+json")
                 .When()
-                .Post(MOCK_SERVER_BASE_URL + "/graphql-with-variables")
+                .Post($"{MOCK_SERVER_BASE_URL}/graphql-with-variables")
                 .Then()
                 .StatusCode(200)
                 .Body("$.data.rocket.country", NHamcrest.Is.EqualTo(countryName));
