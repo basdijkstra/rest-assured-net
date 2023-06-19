@@ -32,11 +32,6 @@ namespace RestAssured.Tests
     {
         private readonly string expectedSerializedObjectWithCustomSettings = "{\"Id\":1,\"Title\":\"My post title\",\"Date\":\"1999-12-31\"}";
 
-        // TODO: add test passing settings using UsingJsonSerializerSettings(settings) in static config
-        // TODO: implement and make all tests pass
-        // TODO: documentation
-        // TODO: close issue and update CHANGELOG
-
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for serializing
         /// an anonymous type to JSON using custom JsonSerializerSettings
