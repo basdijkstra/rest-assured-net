@@ -15,9 +15,11 @@
 // </copyright>
 namespace RestAssured.Tests
 {
+    using System;
     using System.Collections.Generic;
     using NUnit.Framework;
     using RestAssured.Request.Exceptions;
+    using RestAssured.Tests.Models;
     using WireMock.Matchers;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
@@ -30,7 +32,7 @@ namespace RestAssured.Tests
     public class RequestBodySerializationTests : TestBase
     {
         private readonly string expectedSerializedJsonRequestBody = "{\"Country\":\"United States\",\"State\":\"California\",\"ZipCode\":90210,\"Places\":[{\"Name\":\"Sun City\",\"Inhabitants\":100000,\"IsCapital\":true},{\"Name\":\"Pleasure Meadow\",\"Inhabitants\":50000,\"IsCapital\":false}]}";
-        private readonly string expectedSerializedObject = "{\"Id\":1,\"Title\":\"My post title\",\"Body\":\"My post body\"}";
+        private readonly BlogPost blogPost = new BlogPost();
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for serializing
@@ -60,9 +62,9 @@ namespace RestAssured.Tests
 
             Dictionary<string, object> post = new Dictionary<string, object>
             {
-                { "Id", 1 },
-                { "Title", "My post title" },
-                { "Body", "My post body" },
+                { "Id", blogPost.Id },
+                { "Title", blogPost.Title },
+                { "Body", blogPost.Body },
             };
 
             Given()
@@ -84,9 +86,9 @@ namespace RestAssured.Tests
 
             var post = new
             {
-               Id = 1,
-               Title = "My post title",
-               Body = "My post body",
+                Id = blogPost.Id,
+                Title = blogPost.Title,
+                Body = blogPost.Body,
             };
 
             Given()
@@ -155,7 +157,7 @@ namespace RestAssured.Tests
         private void CreateStubForObjectSerialization()
         {
             this.Server?.Given(Request.Create().WithPath("/object-serialization").UsingPost()
-                .WithBody(new JsonMatcher(this.expectedSerializedObject)))
+                .WithBody(new JsonMatcher(getExpectedSerializedObject())))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));
         }
@@ -169,6 +171,11 @@ namespace RestAssured.Tests
                 .WithBody(new XPathMatcher("//Places[count(Place) = 2]")))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));
+        }
+
+        private string getExpectedSerializedObject()
+        {
+            return blogPost.getSerializedJson();
         }
     }
 }

@@ -15,6 +15,7 @@
 // </copyright>
 namespace RestAssured.Tests
 {
+    using System;
     using System.Collections.Generic;
     using NUnit.Framework;
     using WireMock.RequestBuilders;
@@ -27,6 +28,8 @@ namespace RestAssured.Tests
     [TestFixture]
     public class PathParameterTests : TestBase
     {
+        private readonly int userId = new Random().Next(1,999999);
+        private readonly string accountId = Faker.Name.First().ToUpper() + Faker.RandomNumber.Next().ToString();
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for adding
         /// a single query parameter.
@@ -37,7 +40,7 @@ namespace RestAssured.Tests
             this.CreateStubForSinglePathParameter();
 
             Given()
-                .PathParam("userId", 1)
+                .PathParam("userId", userId)
                 .When()
                 .Get(MOCK_SERVER_BASE_URL + "/user/{{userId}}")
                 .Then()
@@ -54,8 +57,8 @@ namespace RestAssured.Tests
             this.CreateStubForMultiplePathParameters();
 
             Given()
-                .PathParam("userId", 1)
-                .PathParam("accountId", "NL1234")
+                .PathParam("userId", userId)
+                .PathParam("accountId", accountId)
                 .When()
                 .Get(MOCK_SERVER_BASE_URL + "/user/{{userId}}/account/{{accountId}}")
                 .Then()
@@ -71,8 +74,8 @@ namespace RestAssured.Tests
         {
             Dictionary<string, object> pathParams = new Dictionary<string, object>
             {
-                { "userId", 1 },
-                { "accountId", "NL1234" },
+                { "userId", userId },
+                { "accountId", accountId },
             };
 
             this.CreateStubForMultiplePathParameters();
@@ -91,7 +94,7 @@ namespace RestAssured.Tests
         private void CreateStubForSinglePathParameter()
         {
             this.Server?.Given(Request.Create()
-                .WithPath("/user/1")
+                .WithPath(string.Format("/user/{0}", userId))
                 .UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
@@ -103,7 +106,7 @@ namespace RestAssured.Tests
         private void CreateStubForMultiplePathParameters()
         {
             this.Server?.Given(Request.Create()
-                .WithPath("/user/1/account/NL1234")
+                .WithPath(string.Format("/user/{0}/account/{1}", userId, accountId))
                 .UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
