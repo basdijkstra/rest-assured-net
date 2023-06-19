@@ -1,4 +1,4 @@
-// <copyright file="RequestBodySerializationTests.cs" company="On Test Automation">
+// <copyright file="JsonRequestBodySerializationTests.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,6 @@ namespace RestAssured.Tests
 {
     using System.Collections.Generic;
     using NUnit.Framework;
-    using RestAssured.Request.Exceptions;
     using WireMock.Matchers;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
@@ -27,11 +26,11 @@ namespace RestAssured.Tests
     /// Examples of RestAssuredNet usage.
     /// </summary>
     [TestFixture]
-    public class RequestBodySerializationTests : TestBase
+    public class JsonRequestBodySerializationTests : TestBase
     {
         private readonly string expectedSerializedJsonRequestBody = "{\"Country\":\"United States\",\"State\":\"California\",\"ZipCode\":90210,\"Places\":[{\"Name\":\"Sun City\",\"Inhabitants\":100000,\"IsCapital\":true},{\"Name\":\"Pleasure Meadow\",\"Inhabitants\":50000,\"IsCapital\":false}]}";
         private readonly string expectedSerializedObject = "{\"Id\":1,\"Title\":\"My post title\",\"Body\":\"My post body\"}";
-
+        
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for serializing
         /// and sending a JSON request body when performing an HTTP POST.
@@ -84,9 +83,9 @@ namespace RestAssured.Tests
 
             var post = new
             {
-               Id = 1,
-               Title = "My post title",
-               Body = "My post body",
+                Id = 1,
+                Title = "My post title",
+                Body = "My post body",
             };
 
             Given()
@@ -95,47 +94,6 @@ namespace RestAssured.Tests
                 .Post("http://localhost:9876/object-serialization")
                 .Then()
                 .StatusCode(201);
-        }
-
-        /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for serializing
-        /// and sending an XML request body when performing an HTTP POST.
-        /// </summary>
-        [Test]
-        public void ObjectCanBeSerializedToXml()
-        {
-            this.CreateStubForXmlRequestBody();
-
-            Given()
-                .ContentType("application/xml")
-                .Body(this.GetLocation())
-                .When()
-                .Post("http://localhost:9876/xml-serialization")
-                .Then()
-                .StatusCode(201);
-        }
-
-        /// <summary>
-        /// Verifies that the correct exception is thrown when the request body
-        /// cannot be serialized based on the Content-Type header value.
-        /// </summary>
-        [Test]
-        public void UnableToSerializeThrowsTheExpectedException()
-        {
-            this.CreateStubForXmlRequestBody();
-
-            var rce = Assert.Throws<RequestCreationException>(() =>
-            {
-                Given()
-                    .ContentType("application/something")
-                    .Body(this.GetLocation())
-                    .When()
-                    .Post("http://localhost:9876/xml-serialization")
-                    .Then()
-                    .StatusCode(201);
-            });
-
-            Assert.That(rce?.Message, Is.EqualTo("Could not determine how to serialize request based on specified content type 'application/something'"));
         }
 
         /// <summary>
@@ -156,17 +114,6 @@ namespace RestAssured.Tests
         {
             this.Server?.Given(Request.Create().WithPath("/object-serialization").UsingPost()
                 .WithBody(new JsonMatcher(this.expectedSerializedObject)))
-                .RespondWith(Response.Create()
-                .WithStatusCode(201));
-        }
-
-        /// <summary>
-        /// Creates the stub response for the XML request body example.
-        /// </summary>
-        private void CreateStubForXmlRequestBody()
-        {
-            this.Server?.Given(Request.Create().WithPath("/xml-serialization").UsingPost()
-                .WithBody(new XPathMatcher("//Places[count(Place) = 2]")))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));
         }
