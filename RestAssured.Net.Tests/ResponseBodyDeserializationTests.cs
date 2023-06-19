@@ -70,8 +70,7 @@ namespace RestAssured.Tests
                 .Then()
                 .StatusCode(200)
                 .And()
-                .Extract()
-                .As(typeof(Location));
+                .DeserializeTo(typeof(Location));
 
             Assert.That(responseLocation.Country, Is.EqualTo("United States"));
             Assert.That(responseLocation.Places?.Count, Is.EqualTo(2));

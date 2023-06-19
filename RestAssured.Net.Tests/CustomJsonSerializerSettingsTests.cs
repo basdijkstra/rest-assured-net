@@ -19,6 +19,7 @@ namespace RestAssured.Tests
     using Newtonsoft.Json;
     using NUnit.Framework;
     using RestAssured.Request.Builders;
+    using RestAssured.Tests.Models;
     using WireMock.Matchers;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
@@ -95,6 +96,31 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for deserializing
+        /// a JSON response into an object using custom JsonSerializerSettings
+        /// when deserializing. With default settings, the exception would not be
+        /// thrown (MissingMemberHandling defaults to Ignore).
+        /// </summary>
+        [Test]
+        public void CustomJsonSerializerSettingsCanBeSuppliedWhenDeserializing()
+        {
+            this.CreateStubForObjectDeserializationWithCustomSettings();
+
+            JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
+            jsonSerializerSettings.MissingMemberHandling = MissingMemberHandling.Error;
+
+            Assert.Throws<JsonSerializationException>(() =>
+            {
+                Place place = (Place)Given()
+                .When()
+                .Get("http://localhost:9876/object-deserialization-custom-settings")
+                .Then()
+                .UsingJsonSerializerSettings(jsonSerializerSettings)
+                .DeserializeTo(typeof(Place));
+            });
+        }
+
+        /// <summary>
         /// Creates the stub response for the object serialization example using custom JsonSerializerSettings.
         /// </summary>
         private void CreateStubForObjectSerializationWithCustomSettings()
@@ -103,6 +129,25 @@ namespace RestAssured.Tests
                 .WithBody(new JsonMatcher(this.expectedSerializedObjectWithCustomSettings)))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the object deserialization example using custom JsonSerializerSettings.
+        /// </summary>
+        private void CreateStubForObjectDeserializationWithCustomSettings()
+        {
+            var responseBody = new
+            {
+                Name = "Beverly Hills",
+                Inhabitants = 100000,
+                IsCapital = false,
+                State = "California",
+            };
+
+            this.Server?.Given(Request.Create().WithPath("/object-deserialization-custom-settings").UsingGet())
+                .RespondWith(Response.Create()
+                .WithStatusCode(200)
+                .WithBodyAsJson(responseBody));
         }
     }
 }
