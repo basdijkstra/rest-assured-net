@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Unreleased
 
+#### Added
+
+- Added ability to specify custom settings for serializing request payloads to JSON in individual tests and through a RequestSpecification ([#84](https://github.com/basdijkstra/rest-assured-net/issues/84))
+
 ### [2.8.1] - 2023-05-23
 
 #### Fixed
