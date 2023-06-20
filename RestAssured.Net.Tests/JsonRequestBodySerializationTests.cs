@@ -34,8 +34,6 @@ namespace RestAssured.Tests
         private readonly string expectedSerializedJsonRequestBody = "{\"Country\":\"United States\",\"State\":\"California\",\"ZipCode\":90210,\"Places\":[{\"Name\":\"Sun City\",\"Inhabitants\":100000,\"IsCapital\":true},{\"Name\":\"Pleasure Meadow\",\"Inhabitants\":50000,\"IsCapital\":false}]}";
         private readonly BlogPost blogPost = new BlogPost();
 
-        private readonly string expectedSerializedObject = "{\"Id\":1,\"Title\":\"My post title\",\"Body\":\"My post body\"}";
-        
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for serializing
         /// and sending a JSON request body when performing an HTTP POST.
@@ -64,9 +62,9 @@ namespace RestAssured.Tests
 
             Dictionary<string, object> post = new Dictionary<string, object>
             {
-                { "Id", blogPost.Id },
-                { "Title", blogPost.Title },
-                { "Body", blogPost.Body },
+                { "Id", this.blogPost.Id },
+                { "Title", this.blogPost.Title },
+                { "Body", this.blogPost.Body },
             };
 
             Given()
@@ -88,12 +86,9 @@ namespace RestAssured.Tests
 
             var post = new
             {
-                Id = blogPost.Id,
-                Title = blogPost.Title,
-                Body = blogPost.Body,
-                /*Id = 1,
-                Title = "My post title",
-                Body = "My post body",*/
+                Id = this.blogPost.Id,
+                Title = this.blogPost.Title,
+                Body = this.blogPost.Body,
             };
 
             Given()
@@ -180,7 +175,7 @@ namespace RestAssured.Tests
 
         private string getExpectedSerializedObject()
         {
-            return blogPost.getSerializedJson();
+            return this.blogPost.getSerializedJson();
         }
     }
 }
