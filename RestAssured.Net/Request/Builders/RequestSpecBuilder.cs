@@ -20,6 +20,7 @@ namespace RestAssured.Request.Builders
     using System.Net;
     using System.Net.Http.Headers;
     using System.Text;
+    using Newtonsoft.Json;
     using RestAssured.Request.Logging;
 
     /// <summary>
@@ -42,13 +43,14 @@ namespace RestAssured.Request.Builders
         private readonly Encoding? contentEncoding = null;
         private readonly bool disableSslCertificateValidation = false;
         private readonly RequestLogLevel requestLogLevel = RequestLogLevel.None;
+        private readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestSpecBuilder"/> class.
         /// </summary>
         public RequestSpecBuilder()
         {
-            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.basePath, this.timeout, this.userAgent, this.proxy, this.headers, this.authenticationHeader, this.contentTypeHeader, this.contentEncoding, this.disableSslCertificateValidation, this.requestLogLevel);
+            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.basePath, this.timeout, this.userAgent, this.proxy, this.headers, this.authenticationHeader, this.contentTypeHeader, this.contentEncoding, this.disableSslCertificateValidation, this.requestLogLevel, this.jsonSerializerSettings);
         }
 
         /// <summary>
@@ -226,6 +228,17 @@ namespace RestAssured.Request.Builders
         public RequestSpecBuilder WithRequestLogLevel(RequestLogLevel requestLogLevel)
         {
             this.requestSpecification.RequestLogLevel = requestLogLevel;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the JSON serializer settings to the specified <see cref="JsonSerializerSettings"/> value.
+        /// </summary>
+        /// <param name="jsonSerializerSettings">The <see cref="JsonSerializerSettings"/> to use in the requests.</param>
+        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
+        public RequestSpecBuilder WithJsonSerializerSettings(JsonSerializerSettings jsonSerializerSettings)
+        {
+            this.requestSpecification.JsonSerializerSettings = jsonSerializerSettings;
             return this;
         }
 

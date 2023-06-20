@@ -54,6 +54,7 @@ namespace RestAssured.Request
         private MultipartFormDataContent? multipartFormDataContent = null;
         private TimeSpan? timeout = null;
         private IWebProxy? proxy = null;
+        private JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
         private bool disableSslCertificateValidation = false;
         private bool disposed = false;
 
@@ -414,6 +415,17 @@ namespace RestAssured.Request
         }
 
         /// <summary>
+        /// Sets the JSON serializer settings to be used when serializing request payloads to JSON.
+        /// </summary>
+        /// <param name="jsonSerializerSettings">The <see cref="JsonSerializerSettings"/> to use when serializing request payloads to JSON.</param>
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest JsonSerializerSettings(JsonSerializerSettings jsonSerializerSettings)
+        {
+            this.jsonSerializerSettings = jsonSerializerSettings;
+            return this;
+        }
+
+        /// <summary>
         /// Logs request details to the standard output.
         /// </summary>
         /// <returns>A <see cref="RequestLogger"/> object, which can be used to log request details to the standard output.</returns>
@@ -706,7 +718,7 @@ namespace RestAssured.Request
 
             if (contentType.Contains("json"))
             {
-                return JsonConvert.SerializeObject(body);
+                return JsonConvert.SerializeObject(body, this.requestSpecification?.JsonSerializerSettings ?? this.jsonSerializerSettings);
             }
 
             if (contentType.Contains("xml"))

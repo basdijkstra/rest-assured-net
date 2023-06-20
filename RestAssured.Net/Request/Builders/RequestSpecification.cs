@@ -20,6 +20,7 @@ namespace RestAssured.Request.Builders
     using System.Net;
     using System.Net.Http.Headers;
     using System.Text;
+    using Newtonsoft.Json;
     using RestAssured.Request.Logging;
 
     /// <summary>
@@ -93,6 +94,11 @@ namespace RestAssured.Request.Builders
         public RequestLogLevel RequestLogLevel { get; set; }
 
         /// <summary>
+        /// Can be used to provide custom serialization settings when working with JSON request payloads.
+        /// </summary>
+        public JsonSerializerSettings JsonSerializerSettings { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="RequestSpecification"/> class.
         /// </summary>
         /// <param name="scheme">The scheme (http, https, ....) to use in this request.</param>
@@ -108,7 +114,8 @@ namespace RestAssured.Request.Builders
         /// <param name="contentEncoding">The content encoding to use in this request.</param>
         /// <param name="disableSslCertificateValidation">Flag indicating whether or not to disable SSL certificate validation.</param>
         /// <param name="requestLogLevel">The request log level to use in this request.</param>
-        public RequestSpecification(string scheme, string host, int port, string basePath, TimeSpan? timeout, ProductInfoHeaderValue? userAgent, IWebProxy proxy, Dictionary<string, object> headers, AuthenticationHeaderValue authenticationHeader, string contentType, Encoding contentEncoding, bool disableSslCertificateValidation, RequestLogLevel requestLogLevel)
+        /// <param name="jsonSerializerSettings">The JSON serializer settings to use in this request.</param>
+        public RequestSpecification(string scheme, string host, int port, string basePath, TimeSpan? timeout, ProductInfoHeaderValue? userAgent, IWebProxy proxy, Dictionary<string, object> headers, AuthenticationHeaderValue authenticationHeader, string contentType, Encoding contentEncoding, bool disableSslCertificateValidation, RequestLogLevel requestLogLevel, JsonSerializerSettings jsonSerializerSettings)
         {
             this.Scheme = scheme;
             this.HostName = host;
@@ -123,6 +130,7 @@ namespace RestAssured.Request.Builders
             this.ContentEncoding = contentEncoding;
             this.DisableSslCertificateValidation = disableSslCertificateValidation;
             this.RequestLogLevel = requestLogLevel;
+            this.JsonSerializerSettings = jsonSerializerSettings;
         }
     }
 }

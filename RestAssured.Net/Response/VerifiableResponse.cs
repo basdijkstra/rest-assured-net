@@ -42,6 +42,7 @@ namespace RestAssured.Response
         private readonly TimeSpan elapsedTime;
 
         private bool logOnVerificationFailure = false;
+        private JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VerifiableResponse"/> class.
@@ -629,6 +630,17 @@ namespace RestAssured.Response
         }
 
         /// <summary>
+        /// Sets the <see cref="JsonSerializerSettings"/> to use when deserializing the response payload to JSON.
+        /// </summary>
+        /// <param name="jsonSerializerSettings">The <see cref="JsonSerializerSettings"/> to apply when deserializing.</param>
+        /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        public VerifiableResponse UsingJsonSerializerSettings(JsonSerializerSettings jsonSerializerSettings)
+        {
+            this.jsonSerializerSettings = jsonSerializerSettings;
+            return this;
+        }
+
+        /// <summary>
         /// Deserializes the response content into the specified type and returns it.
         /// </summary>
         /// <param name="type">The object type to deserialize into.</param>
@@ -636,7 +648,7 @@ namespace RestAssured.Response
         /// <returns>The deserialized response object.</returns>
         public object DeserializeTo(Type type, DeserializeAs deserializeAs = DeserializeAs.UseResponseContentTypeHeaderValue)
         {
-            return new ExtractableResponse(this.response).As(type, deserializeAs);
+            return Deserializer.DeserializeResponseInto(this.response, type, deserializeAs, this.jsonSerializerSettings);
         }
 
         /// <summary>
@@ -645,9 +657,10 @@ namespace RestAssured.Response
         /// <param name="type">The object type to deserialize into.</param>
         /// /// <param name="deserializeAs">Indicates how to interpret the response content when deserializing.</param>
         /// <returns>The deserialized response object.</returns>
+        [Obsolete("Please use DeserializeTo() instead. This method will be removed in version 3.0.0.", false)]
         public object As(Type type, DeserializeAs deserializeAs = DeserializeAs.UseResponseContentTypeHeaderValue)
         {
-            return Deserializer.DeserializeResponseInto(this.response, type, deserializeAs);
+            return this.DeserializeTo(type, deserializeAs);
         }
 
         /// <summary>

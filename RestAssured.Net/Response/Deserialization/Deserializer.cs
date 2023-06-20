@@ -32,10 +32,11 @@ namespace RestAssured.Response.Deserialization
         /// </summary>
         /// <param name="response">The <see cref="HttpResponseMessage"/> containing the body to be deserialized.</param>
         /// <param name="type">The type to deserialize the response body into.</param>
-        /// /// <param name="deserializeAs">Indicates how to interpret the response content when deserializing.</param>
+        /// <param name="deserializeAs">Indicates how to interpret the response content when deserializing.</param>
+        /// <param name="jsonSerializerSettings">The <see cref="JsonSerializerSettings"/> to use when deserializing to JSON.</param>
         /// <returns>The deserialized response body object.</returns>
         /// <exception cref="DeserializationException">Thrown when deserialization of the response body fails.</exception>
-        internal static object DeserializeResponseInto(HttpResponseMessage response, Type type, DeserializeAs deserializeAs)
+        internal static object DeserializeResponseInto(HttpResponseMessage response, Type type, DeserializeAs deserializeAs, JsonSerializerSettings jsonSerializerSettings)
         {
             string responseBodyAsString = response.Content.ReadAsStringAsync().Result;
 
@@ -69,7 +70,7 @@ namespace RestAssured.Response.Deserialization
 
             if (responseMediaType == null || responseMediaType.Contains("json"))
             {
-                return JsonConvert.DeserializeObject(response.Content.ReadAsStringAsync().Result, type) ?? string.Empty;
+                return JsonConvert.DeserializeObject(response.Content.ReadAsStringAsync().Result, type, jsonSerializerSettings) ?? string.Empty;
             }
             else if (responseMediaType.Contains("xml"))
             {

@@ -1,4 +1,4 @@
-// <copyright file="RequestBodySerializationTests.cs" company="On Test Automation">
+// <copyright file="JsonRequestBodySerializationTests.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,11 +29,13 @@ namespace RestAssured.Tests
     /// Examples of RestAssuredNet usage.
     /// </summary>
     [TestFixture]
-    public class RequestBodySerializationTests : TestBase
+    public class JsonRequestBodySerializationTests : TestBase
     {
         private readonly string expectedSerializedJsonRequestBody = "{\"Country\":\"United States\",\"State\":\"California\",\"ZipCode\":90210,\"Places\":[{\"Name\":\"Sun City\",\"Inhabitants\":100000,\"IsCapital\":true},{\"Name\":\"Pleasure Meadow\",\"Inhabitants\":50000,\"IsCapital\":false}]}";
         private readonly BlogPost blogPost = new BlogPost();
 
+        private readonly string expectedSerializedObject = "{\"Id\":1,\"Title\":\"My post title\",\"Body\":\"My post body\"}";
+        
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for serializing
         /// and sending a JSON request body when performing an HTTP POST.
@@ -89,6 +91,9 @@ namespace RestAssured.Tests
                 Id = blogPost.Id,
                 Title = blogPost.Title,
                 Body = blogPost.Body,
+                /*Id = 1,
+                Title = "My post title",
+                Body = "My post body",*/
             };
 
             Given()
