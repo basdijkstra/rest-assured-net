@@ -9,12 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Added
 
-- Added ability to specify custom settings for deserializing request payloads to JSON in individual tests ([#84](https://github.com/basdijkstra/rest-assured-net/issues/84))
+- Added ability to specify custom settings for deserializing request payloads from JSON in individual tests ([#84](https://github.com/basdijkstra/rest-assured-net/issues/84))
 - Added ability to specify custom settings for serializing request payloads to JSON in individual tests and through a RequestSpecification ([#84](https://github.com/basdijkstra/rest-assured-net/issues/84))
 
 #### Deprecated
 
 - Deprecated `As()` for deserializing response payloads in favour of `DeserializeTo()`
+- Deprecated `As()` and `DeserializeTo()` methods in `ExtractableResponse` in favour of deserializing response in `VerifiableResponse` to clean up the library API
 
 ### [2.8.1] - 2023-05-23
 
