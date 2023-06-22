@@ -63,7 +63,7 @@ namespace RestAssured.Tests
                 .Post($"{MOCK_SERVER_BASE_URL}/simple-graphql")
                 .Then()
                 .StatusCode(200)
-                .Body("$.data.company.name", NHamcrest.Is.EqualTo(companyName));
+                .Body("$.data.company.name", NHamcrest.Is.EqualTo(this.companyName));
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace RestAssured.Tests
 
             Dictionary<string, object> variables = new Dictionary<string, object>
             {
-                { "id", rocketName },
+                { "id", this.rocketName },
             };
 
             GraphQLRequest request = new GraphQLRequestBuilder()
@@ -93,7 +93,7 @@ namespace RestAssured.Tests
                 .Post($"{MOCK_SERVER_BASE_URL}/graphql-with-variables")
                 .Then()
                 .StatusCode(200)
-                .Body("$.data.rocket.country", NHamcrest.Is.EqualTo(countryName));
+                .Body("$.data.rocket.country", NHamcrest.Is.EqualTo(this.countryName));
         }
 
         /// <summary>
@@ -114,8 +114,8 @@ namespace RestAssured.Tests
                 {
                     company = new
                     {
-                        name = companyName,
-                        ceo = ceoName,
+                        name = this.companyName,
+                        ceo = this.ceoName,
                     },
                 },
             };
@@ -140,7 +140,7 @@ namespace RestAssured.Tests
                 operationName = "getRocketData",
                 variables = new
                 {
-                    id = rocketName,
+                    id = this.rocketName,
                 },
             };
 
@@ -150,8 +150,8 @@ namespace RestAssured.Tests
                 {
                     rocket = new
                     {
-                        name = rocketName,
-                        country = countryName,
+                        name = this.rocketName,
+                        country = this.countryName,
                     },
                 },
             };

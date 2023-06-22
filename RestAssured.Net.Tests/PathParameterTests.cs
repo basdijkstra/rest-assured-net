@@ -40,7 +40,7 @@ namespace RestAssured.Tests
             this.CreateStubForSinglePathParameter();
 
             Given()
-                .PathParam("userId", userId)
+                .PathParam("userId", this.userId)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/user/{{userId}}")
                 .Then()
@@ -57,8 +57,8 @@ namespace RestAssured.Tests
             this.CreateStubForMultiplePathParameters();
 
             Given()
-                .PathParam("userId", userId)
-                .PathParam("accountId", accountId)
+                .PathParam("userId", this.userId)
+                .PathParam("accountId", this.accountId)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/user/{{userId}}/account/{{accountId}}")
                 .Then()
@@ -74,8 +74,8 @@ namespace RestAssured.Tests
         {
             Dictionary<string, object> pathParams = new Dictionary<string, object>
             {
-                { "userId", userId },
-                { "accountId", accountId },
+                { "userId", this.userId },
+                { "accountId", this.accountId },
             };
 
             this.CreateStubForMultiplePathParameters();
@@ -94,7 +94,7 @@ namespace RestAssured.Tests
         private void CreateStubForSinglePathParameter()
         {
             this.Server?.Given(Request.Create()
-                .WithPath(string.Format("/user/{0}", userId))
+                .WithPath(string.Format("/user/{0}", this.userId))
                 .UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
@@ -106,7 +106,7 @@ namespace RestAssured.Tests
         private void CreateStubForMultiplePathParameters()
         {
             this.Server?.Given(Request.Create()
-                .WithPath(string.Format("/user/{0}/account/{1}", userId, accountId))
+                .WithPath(string.Format("/user/{0}/account/{1}", this.userId, this.accountId))
                 .UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));

@@ -43,8 +43,8 @@ namespace RestAssured.Tests
 
             var formData = new[]
             {
-                new KeyValuePair<string, string>("name", name),
-                new KeyValuePair<string, string>("email", email),
+                new KeyValuePair<string, string>("name", this.name),
+                new KeyValuePair<string, string>("email", this.email),
             };
 
             Given()
@@ -62,7 +62,7 @@ namespace RestAssured.Tests
         {
             this.Server?.Given(Request.Create().WithPath("/form-data").UsingPost()
                 .WithHeader("Content-Type", "application/x-www-form-urlencoded")
-                .WithBody(new ExactMatcher("name=" + HttpUtility.UrlEncode(name) + "&email=" + HttpUtility.UrlEncode(email))))
+                .WithBody(new ExactMatcher("name=" + HttpUtility.UrlEncode(this.name) + "&email=" + HttpUtility.UrlEncode(this.email))))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));
         }
