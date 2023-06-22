@@ -22,6 +22,7 @@ namespace RestAssured.Tests
     using System.Net.Http;
     using NUnit.Framework;
     using RestAssured.Response;
+    using RestAssured.Tests.Models;
     using RestAssured.Response.Exceptions;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
@@ -33,6 +34,41 @@ namespace RestAssured.Tests
     [TestFixture]
     public class ResponseJsonValueExtractionTests : TestBase
     {
+        private Location location = new Location();
+        private Place place = new Place();
+        private string country, state, placeName;
+        private int zipcode, placeInhabitants;
+        private bool isCapital;
+
+        [SetUp]
+        public void setLocation()
+        {
+            this.country = Faker.Country.Name();
+            this.state = Faker.Address.UsState();
+            this.zipcode = Faker.RandomNumber.Next(1000, 99999);
+
+            this.location.Country = country;
+            this.location.State = state;
+            this.location.ZipCode = zipcode;
+
+            this.placeName = Faker.Address.City();
+            this.placeInhabitants = Faker.RandomNumber.Next(100010, 199990);
+            this.isCapital = Faker.Boolean.Random();
+
+            this.place.Name = placeName;
+            this.place.Inhabitants = placeInhabitants;
+            this.place.IsCapital = isCapital;
+
+            this.location.Places.Add(this.place);
+            this.location.Places.Add(new Place());
+        }
+
+        [TearDown]
+        public void clearPlaces()
+        {
+            this.location.Places = new List<Place>();
+        }
+
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for extracting a
         /// string element value from a JSON response body.
@@ -49,7 +85,7 @@ namespace RestAssured.Tests
                 .StatusCode(200)
                 .Extract().Body("$.Places[0].Name");
 
-            Assert.That(placeName, Is.EqualTo("Sun City"));
+            Assert.That(placeName, Is.EqualTo(this.placeName));
         }
 
         /// <summary>
@@ -73,7 +109,7 @@ namespace RestAssured.Tests
 
             int numberOfInhabitantsInt = Convert.ToInt32(numberOfInhabitants);
 
-            Assert.That(numberOfInhabitantsInt, Is.EqualTo(100000));
+            Assert.That(numberOfInhabitantsInt, Is.EqualTo(this.placeInhabitants));
         }
 
         /// <summary>
@@ -85,14 +121,14 @@ namespace RestAssured.Tests
         {
             this.CreateStubForJsonResponseWithBodyAndHeaders();
 
-            bool isCapital = (bool)Given()
+            bool isCapitalResponse = (bool)Given()
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/json-response-body")
                 .Then()
                 .StatusCode(200)
                 .Extract().Body("$.Places[0].IsCapital");
 
-            Assert.That(isCapital, Is.True);
+            Assert.That(isCapitalResponse, Is.EqualTo(this.isCapital));
         }
 
         /// <summary>
@@ -135,7 +171,7 @@ namespace RestAssured.Tests
                 .StatusCode(200)
                 .Extract().Body("$.Places[0].Name", ExtractAs.Json);
 
-            Assert.That(placeName, Is.EqualTo("Sun City"));
+            Assert.That(placeName, Is.EqualTo(this.placeName));
         }
 
         /// <summary>
@@ -230,7 +266,7 @@ namespace RestAssured.Tests
                 .RespondWith(Response.Create()
                 .WithHeader("custom_header", "custom_header_value")
                 .WithHeader("Content-Type", "application/json")
-                .WithBodyAsJson(this.GetLocation())
+                .WithBodyAsJson(this.location)
                 .WithStatusCode(200));
         }
 
@@ -243,7 +279,7 @@ namespace RestAssured.Tests
                 .RespondWith(Response.Create()
                 .WithHeader("custom_header", "custom_header_value")
                 .WithHeader("Content-Type", "text/plain")
-                .WithBodyAsJson(this.GetLocation())
+                .WithBodyAsJson(this.location)
                 .WithStatusCode(200));
         }
     }

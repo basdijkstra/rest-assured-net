@@ -303,5 +303,14 @@ namespace RestAssured.Tests
                 .WithBodyAsJson(this.location)
                 .WithStatusCode(200));
         }
+        
+        /// <summary>
+        /// Returns an XML string representing a <see cref="Location"/>.
+        /// </summary>
+        /// <returns>An XML string representing a <see cref="Location"/>.</returns>
+        private new string GetLocationAsXmlString()
+        {
+            return "<?xml version=\"1.0\" encoding=\"utf-16\"?><Location xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><Country>" + this.country + "</Country><State>" + this.state + "</State><ZipCode>" + this.zipcode + "</ZipCode><Places><Place><Name>" + this.placeName + "</Name><Inhabitants>" + this.placeInhabitants + "</Inhabitants><IsCapital>" + this.isCapital + "</IsCapital></Place><Place><Name>Pleasure Meadow</Name><Inhabitants>50000</Inhabitants><IsCapital>false</IsCapital></Place></Places></Location>";
+        }
     }
 }

@@ -27,6 +27,15 @@ namespace RestAssured.Tests
     [TestFixture]
     public class ResponseHeaderVerificationTests : TestBase
     {
+        private string headerName, headerValue;
+
+        [SetUp]
+        public void InitializeHeaderNameAndValue()
+        {
+            this.headerName = Faker.Lorem.Sentence(Faker.RandomNumber.Next(3, 10)).Replace(".", "").Replace(" ", "-");
+            this.headerValue = "header_val" + Faker.Lorem.Sentence(Faker.RandomNumber.Next(3, 20)).Replace(".", "");
+        }
+
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
         /// a single response header and its value.
@@ -42,7 +51,7 @@ namespace RestAssured.Tests
                 .Then()
                 .StatusCode(200)
                 .And() // Example of using the And() syntactic sugar method in response verification.
-                .Header("custom_header_name", "custom_header_value");
+                .Header(this.headerName, this.headerValue);
         }
 
         /// <summary>
@@ -59,7 +68,7 @@ namespace RestAssured.Tests
                 .Get($"{MOCK_SERVER_BASE_URL}/custom-response-header")
                 .Then()
                 .StatusCode(200)
-                .Header("custom_header_name", NHamcrest.Contains.String("tom_header_val"));
+                .Header(this.headerName, NHamcrest.Contains.String("header_val"));
         }
 
         /// <summary>
@@ -78,7 +87,7 @@ namespace RestAssured.Tests
                     .Get($"{MOCK_SERVER_BASE_URL}/custom-response-header")
                     .Then()
                     .StatusCode(200)
-                    .Header("header_does_not_exist", "custom_header_value");
+                    .Header("header_does_not_exist", this.headerValue);
             });
 
             Assert.That(rve?.Message, Is.EqualTo("Expected header with name 'header_does_not_exist' to be in the response, but it could not be found."));
@@ -100,10 +109,10 @@ namespace RestAssured.Tests
                     .Get($"{MOCK_SERVER_BASE_URL}/custom-response-header")
                     .Then()
                     .StatusCode(200)
-                    .Header("custom_header_name", "value_does_not_match");
+                    .Header(this.headerName, "value_does_not_match");
             });
 
-            Assert.That(rve?.Message, Is.EqualTo("Expected value for response header with name 'custom_header_name' to be 'value_does_not_match', but was 'custom_header_value'."));
+            Assert.That(rve?.Message, Is.EqualTo("Expected value for response header with name '" + this.headerName + "' to be 'value_does_not_match', but was '" + this.headerValue + "'."));
         }
 
         /// <summary>
@@ -122,10 +131,10 @@ namespace RestAssured.Tests
                     .Get($"{MOCK_SERVER_BASE_URL}/custom-response-header")
                     .Then()
                     .StatusCode(200)
-                    .Header("custom_header_name", NHamcrest.Contains.String("not_found"));
+                    .Header(this.headerName, NHamcrest.Contains.String("not_found"));
             });
 
-            Assert.That(rve?.Message, Is.EqualTo("Expected value for response header with name 'custom_header_name' to match 'a string containing \"not_found\"', but was 'custom_header_value'."));
+            Assert.That(rve?.Message, Is.EqualTo("Expected value for response header with name '" + this.headerName + "' to match 'a string containing \"not_found\"', but was '" + this.headerValue + "'."));
         }
 
         /// <summary>
@@ -142,7 +151,7 @@ namespace RestAssured.Tests
                 .Get($"{MOCK_SERVER_BASE_URL}/custom-multiple-response-headers")
                 .Then()
                 .StatusCode(200)
-                .Header("custom_header_name", "custom_header_value")
+                .Header(this.headerName, this.headerValue)
                 .Header("another_header", "another_value");
         }
 
@@ -231,7 +240,7 @@ namespace RestAssured.Tests
         {
             this.Server?.Given(Request.Create().WithPath("/custom-response-header").UsingGet())
                 .RespondWith(Response.Create()
-                .WithHeader("custom_header_name", "custom_header_value")
+                .WithHeader(this.headerName, this.headerValue)
                 .WithStatusCode(200));
         }
 
@@ -253,7 +262,7 @@ namespace RestAssured.Tests
         {
             this.Server?.Given(Request.Create().WithPath("/custom-multiple-response-headers").UsingGet())
                 .RespondWith(Response.Create()
-                .WithHeader("custom_header_name", "custom_header_value")
+                .WithHeader(this.headerName, this.headerValue)
                 .WithHeader("another_header", "another_value")
                 .WithStatusCode(200));
         }
