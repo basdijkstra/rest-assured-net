@@ -41,7 +41,7 @@ namespace RestAssured.Tests
                 .ContentType("application/xml")
                 .Body(this.GetLocation())
                 .When()
-                .Post("http://localhost:9876/xml-serialization")
+                .Post($"{MOCK_SERVER_BASE_URL}/xml-serialization")
                 .Then()
                 .StatusCode(201);
         }
@@ -61,7 +61,7 @@ namespace RestAssured.Tests
                     .ContentType("application/something")
                     .Body(this.GetLocation())
                     .When()
-                    .Post("http://localhost:9876/xml-serialization")
+                    .Post($"{MOCK_SERVER_BASE_URL}/xml-serialization")
                     .Then()
                     .StatusCode(201);
             });

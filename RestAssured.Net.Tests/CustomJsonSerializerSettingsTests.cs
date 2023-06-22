@@ -57,7 +57,7 @@ namespace RestAssured.Tests
                 .JsonSerializerSettings(jsonSerializerSettings)
                 .Body(post)
                 .When()
-                .Post("http://localhost:9876/object-serialization-custom-settings")
+                .Post($"{MOCK_SERVER_BASE_URL}/object-serialization-custom-settings")
                 .Then()
                 .StatusCode(201);
         }
@@ -90,7 +90,7 @@ namespace RestAssured.Tests
                 .Spec(requestSpecification)
                 .Body(post)
                 .When()
-                .Post("http://localhost:9876/object-serialization-custom-settings")
+                .Post($"{MOCK_SERVER_BASE_URL}/object-serialization-custom-settings")
                 .Then()
                 .StatusCode(201);
         }
@@ -113,7 +113,7 @@ namespace RestAssured.Tests
             {
                 Place place = (Place)Given()
                 .When()
-                .Get("http://localhost:9876/object-deserialization-custom-settings")
+                .Get($"{MOCK_SERVER_BASE_URL}/object-deserialization-custom-settings")
                 .Then()
                 .UsingJsonSerializerSettings(jsonSerializerSettings)
                 .DeserializeTo(typeof(Place));
