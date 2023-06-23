@@ -40,7 +40,7 @@ namespace RestAssured.Tests
         private bool isCapital;
 
         [SetUp]
-        public void setLocation()
+        public void SetLocation()
         {
             this.country = Faker.Country.Name();
             this.state = Faker.Address.UsState();
@@ -63,7 +63,7 @@ namespace RestAssured.Tests
         }
 
         [TearDown]
-        public void clearPlaces()
+        public void ClearPlaces()
         {
             this.location.Places = new List<Place>();
         }

@@ -37,7 +37,7 @@ namespace RestAssured.Tests
 
         private readonly string todoItem = "Watch Office Space";
 
-        private readonly string[] addressItems = GetAddressCsv(Faker.RandomNumber.Next(6));
+        private string[] addressItems;
 
         /// <summary>
         /// Creates the files to be uploaded in these tests.
@@ -46,6 +46,7 @@ namespace RestAssured.Tests
         [SetUp]
         public async Task CreateFilesToUpload()
         {
+            this.addressItems = this.GetAddressCsv(Faker.RandomNumber.Next(2, 8));
             await File.WriteAllLinesAsync(this.plaintextFileName, new string[] { this.todoItem });
             await File.WriteAllLinesAsync(this.csvFileName, this.addressItems);
         }
@@ -142,25 +143,25 @@ namespace RestAssured.Tests
             File.Delete(this.csvFileName);
         }
 
-        
-        private static string GetAddressCsvLine()
+        private string GetAddressCsvLine()
         {
-            return String.Format(
+            return string.Format(
                 "{0};{1};{2};{3}",
-                Faker.Address.StreetName(), 
+                Faker.Address.StreetName(),
                 Faker.RandomNumber.Next(1, 9999),
-                Faker.Address.ZipCode(), 
+                Faker.Address.ZipCode(),
                 Faker.Address.City());
         }
 
-        private static string[] GetAddressCsv(int lines)
+        private string[] GetAddressCsv(int lines)
         {
             string[] csvLines = new string[lines];
             csvLines[0] = "Street;Number;ZipCode;City";
             for (int i = 1; i < lines; i++)
             {
-                csvLines[i] = GetAddressCsvLine();
+                csvLines[i] = this.GetAddressCsvLine();
             }
+
             return csvLines;
         }
 

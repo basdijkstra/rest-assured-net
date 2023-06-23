@@ -38,12 +38,13 @@ namespace RestAssured.Tests
         private int zipcode;
         private int placeInhabitants;
         private bool isCapital;
-        
+
         [SetUp]
-        public void setLocation(){
+        public void SetLocation()
+        {
             this.country = Faker.Country.Name();
             this.state = Faker.Address.UsState();
-            this.zipcode = Faker.RandomNumber.Next(1000,99999);
+            this.zipcode = Faker.RandomNumber.Next(1000, 99999);
 
             this.location.Country = this.country;
             this.location.State = this.state;
@@ -62,9 +63,10 @@ namespace RestAssured.Tests
         }
 
         [TearDown]
-        public void clearPlaces(){
+        public void ClearPlaces()
+        {
             this.location.Places = new List<Place>();
-        } 
+        }
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
@@ -102,7 +104,7 @@ namespace RestAssured.Tests
                     .Body("$.Places[0].Name", NHamcrest.Contains.String("Sin"));
             });
 
-            Assert.That(rve?.Message, Is.EqualTo("Expected element selected by '$.Places[0].Name' to match 'a string containing \"Sin\"' but was '"+ this.placeName +"'"));
+            Assert.That(rve?.Message, Is.EqualTo("Expected element selected by '$.Places[0].Name' to match 'a string containing \"Sin\"' but was '" + this.placeName + "'"));
         }
 
         /// <summary>
@@ -141,7 +143,7 @@ namespace RestAssured.Tests
                     .Body("$.Places[0].Inhabitants", NHamcrest.Is.GreaterThan(200000));
             });
 
-            Assert.That(rve?.Message, Is.EqualTo("Expected element selected by '$.Places[0].Inhabitants' to match 'greater than 200000' but was '"+ this.placeInhabitants +"'"));
+            Assert.That(rve?.Message, Is.EqualTo("Expected element selected by '$.Places[0].Inhabitants' to match 'greater than 200000' but was '" + this.placeInhabitants + "'"));
         }
 
         /// <summary>
@@ -306,7 +308,7 @@ namespace RestAssured.Tests
                 .WithBodyAsJson(this.location)
                 .WithStatusCode(200));
         }
-        
+
         /// <summary>
         /// Returns an XML string representing a <see cref="Location"/>.
         /// </summary>

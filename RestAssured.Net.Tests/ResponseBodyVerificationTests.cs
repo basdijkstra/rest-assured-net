@@ -66,7 +66,7 @@ namespace RestAssured.Tests
                 .Get($"{MOCK_SERVER_BASE_URL}/json-string-response-body")
                 .Then()
                 .StatusCode(200)
-                .Body(this.user.getJsonString());
+                .Body(this.user.GetJsonString());
         }
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace RestAssured.Tests
                     .Body(NHamcrest.Contains.String("Jane Doe"));
             });
 
-            Assert.That(rve?.Message, Is.EqualTo($"Actual response body expected to match 'a string containing \"Jane Doe\"' but didn't.\nActual: '{this.user.getJsonString()}'"));
+            Assert.That(rve?.Message, Is.EqualTo($"Actual response body expected to match 'a string containing \"Jane Doe\"' but didn't.\nActual: '{this.user.GetJsonString()}'"));
         }
 
         /// <summary>
@@ -154,20 +154,22 @@ namespace RestAssured.Tests
 
         private void CreateStubForPlaintextResponseBody(string bodySize)
         {
-            switch(bodySize){
+            switch (bodySize)
+            {
                 case "small":
                     this.plaintextResponseBody = Faker.Lorem.Sentence(10).ToString();
-                break;
+                    break;
                 case "medium":
                     this.plaintextResponseBody = Faker.Lorem.Sentence(50).ToString();
-                break;
+                    break;
                 case "large":
                     this.plaintextResponseBody = Faker.Lorem.Paragraph(10).ToString();
-                break;
+                    break;
                 case "xlarge":
                     this.plaintextResponseBody = Faker.Lorem.Paragraph(50).ToString();
-                break;
+                    break;
             }
+
             this.Server?.Given(Request.Create().WithPath("/plaintext-response-body").UsingGet())
                 .RespondWith(Response.Create()
                 .WithBody(this.plaintextResponseBody)
@@ -183,7 +185,7 @@ namespace RestAssured.Tests
 
             this.Server?.Given(Request.Create().WithPath("/json-string-response-body").UsingGet())
                 .RespondWith(Response.Create()
-                .WithBody(this.user.getJsonString())
+                .WithBody(this.user.GetJsonString())
                 .WithStatusCode(200));
         }
 
@@ -193,11 +195,11 @@ namespace RestAssured.Tests
         private void CreateStubForUnknownContentType()
         {
             this.user = new User();
-            
+
             this.Server?.Given(Request.Create().WithPath("/content-type-cannot-be-processed").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/unknown")
-                .WithBody(this.user.getJsonString())
+                .WithBody(this.user.GetJsonString())
                 .WithStatusCode(200));
         }
     }

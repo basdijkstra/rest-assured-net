@@ -37,7 +37,7 @@ namespace RestAssured.Tests
         public void CreateRequestSpecification()
         {
             this.requestSpecification = new RequestSpecBuilder()
-                .WithRelaxedHttpsValidation()
+                .WithDisabledSslCertificateValidation()
                 .Build();
         }
 
@@ -85,7 +85,7 @@ namespace RestAssured.Tests
             this.CreateStubForHttps();
 
             Given()
-                .RelaxedHttpsValidation()
+                .DisableSslCertificateValidation()
                 .When()
                 .Get("https://localhost:8443/ssl-endpoint")
                 .Then()

@@ -41,7 +41,7 @@ namespace RestAssured.Tests
         private bool isCapital;
 
         [SetUp]
-        public void setLocation()
+        public void SetLocation()
         {
             this.country = Faker.Country.Name();
             this.state = Faker.Address.UsState();
@@ -64,11 +64,11 @@ namespace RestAssured.Tests
         }
 
         [TearDown]
-        public void clearPlaces()
+        public void ClearPlaces()
         {
             this.location.Places = new List<Place>();
         }
-        
+
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for deserializing
         /// a JSON response into an object when performing an HTTP GET.
@@ -356,7 +356,7 @@ namespace RestAssured.Tests
                 .WithBody(this.GetLocationAsXmlString())
                 .WithStatusCode(200));
         }
-        
+
         /// <summary>
         /// Returns an XML string representing a <see cref="Location"/>.
         /// </summary>

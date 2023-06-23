@@ -30,13 +30,15 @@ namespace RestAssured.Tests.Models
         /// </summary>
         public string Name { get; set; }
 
-        public User(){
+        public User()
+        {
             this.Id = Faker.RandomNumber.Next(99999);
             this.Name = Faker.Name.FullName();
         }
 
-        public string getJsonString(){
-            return "{\"id\":" + this.Id + 
+        public string GetJsonString()
+        {
+            return "{\"id\":" + this.Id +
                 ",\"user\":\"" + this.Name + "\"}";
         }
     }

@@ -22,8 +22,8 @@ namespace RestAssured.Tests
     using System.Net.Http;
     using NUnit.Framework;
     using RestAssured.Response;
-    using RestAssured.Tests.Models;
     using RestAssured.Response.Exceptions;
+    using RestAssured.Tests.Models;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
     using static RestAssured.Dsl;
@@ -44,7 +44,7 @@ namespace RestAssured.Tests
         private bool isCapital;
 
         [SetUp]
-        public void setLocation()
+        public void SetLocation()
         {
             this.country = Faker.Country.Name();
             this.state = Faker.Address.UsState();
@@ -67,7 +67,7 @@ namespace RestAssured.Tests
         }
 
         [TearDown]
-        public void clearPlaces()
+        public void ClearPlaces()
         {
             this.location.Places = new List<Place>();
         }

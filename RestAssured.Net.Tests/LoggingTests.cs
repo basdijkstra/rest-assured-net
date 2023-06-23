@@ -63,7 +63,7 @@ namespace RestAssured.Tests
             this.CreateStubForLoggingJsonResponse();
 
             Given()
-                .Log().All()
+                .Log(RequestLogLevel.All)
                 .And()
                 .Accept("application/json")
                 .Header("CustomHeader", "custom header value")
@@ -126,7 +126,7 @@ namespace RestAssured.Tests
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/log-json-response")
                 .Then()
-                .Log().All()
+                .Log(ResponseLogLevel.All)
                 .And()
                 .StatusCode(200);
         }

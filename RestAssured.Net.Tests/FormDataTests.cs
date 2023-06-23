@@ -30,8 +30,8 @@ namespace RestAssured.Tests
     public class FormDataTests : TestBase
     {
         private readonly string name = Faker.Name.FullName();
-        private readonly string email = Faker.Internet.Email();        
-        
+        private readonly string email = Faker.Internet.Email();
+
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for including
         /// x-www-form-urlencoded form data when sending an HTTP request.

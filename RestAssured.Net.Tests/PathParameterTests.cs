@@ -31,7 +31,7 @@ namespace RestAssured.Tests
         private readonly int userId = Faker.RandomNumber.Next(999999);
 
         private readonly string accountId = Faker.Name.First().ToUpper() + Faker.RandomNumber.Next().ToString();
-        
+
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for adding
         /// a single query parameter.

@@ -157,7 +157,7 @@ namespace RestAssured.Tests
         private void CreateStubForObjectSerialization()
         {
             this.Server?.Given(Request.Create().WithPath("/object-serialization").UsingPost()
-                .WithBody(new JsonMatcher(this.getExpectedSerializedObject())))
+                .WithBody(new JsonMatcher(this.GetExpectedSerializedObject())))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));
         }
@@ -173,9 +173,9 @@ namespace RestAssured.Tests
                 .WithStatusCode(201));
         }
 
-        private string getExpectedSerializedObject()
+        private string GetExpectedSerializedObject()
         {
-            return this.blogPost.getSerializedJson();
+            return this.blogPost.GetSerializedJson();
         }
     }
 }
