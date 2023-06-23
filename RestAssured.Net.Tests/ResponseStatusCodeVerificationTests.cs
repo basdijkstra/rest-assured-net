@@ -39,7 +39,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/http-status-code-ok")
+                .Get($"{MOCK_SERVER_BASE_URL}/http-status-code-ok")
                 .Then()
                 .AssertThat() // example of using the AssertThat() syntactic sugar method.
                 .StatusCode(200);
@@ -56,7 +56,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/http-status-code-not-found")
+                .Get($"{MOCK_SERVER_BASE_URL}/http-status-code-not-found")
                 .Then()
                 .StatusCode(404);
         }
@@ -72,7 +72,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/http-status-code-service-unavailable")
+                .Get($"{MOCK_SERVER_BASE_URL}/http-status-code-service-unavailable")
                 .Then()
                 .StatusCode(503);
         }
@@ -88,7 +88,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/http-status-code-ok")
+                .Get($"{MOCK_SERVER_BASE_URL}/http-status-code-ok")
                 .Then()
                 .StatusCode(HttpStatusCode.OK);
         }
@@ -104,7 +104,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/http-status-code-ok")
+                .Get($"{MOCK_SERVER_BASE_URL}/http-status-code-ok")
                 .Then()
                 .StatusCode(NHamcrest.Is.EqualTo(200));
         }
@@ -123,7 +123,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get("http://localhost:9876/http-status-code-ok")
+                    .Get($"{MOCK_SERVER_BASE_URL}/http-status-code-ok")
                     .Then()
                     .StatusCode(NHamcrest.Is.GreaterThan(300));
             });

@@ -16,6 +16,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="WireMock.Net" Version="1.5.25" />
+    <PackageReference Include="Faker.Net" Version="2.0.154" />
   </ItemGroup>
 
   <ItemGroup>

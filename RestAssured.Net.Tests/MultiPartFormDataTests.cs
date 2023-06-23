@@ -37,12 +37,7 @@ namespace RestAssured.Tests
 
         private readonly string todoItem = "Watch Office Space";
 
-        private readonly string[] addressItems = new string[]
-        {
-            "Street;Number;ZipCode;City",
-            "Main Street;123;12345;Nothingville",
-            "State Street;987;23456;Sun City",
-        };
+        private string[] addressItems;
 
         /// <summary>
         /// Creates the files to be uploaded in these tests.
@@ -51,6 +46,7 @@ namespace RestAssured.Tests
         [SetUp]
         public async Task CreateFilesToUpload()
         {
+            this.addressItems = this.GetAddressCsv(Faker.RandomNumber.Next(2, 8));
             await File.WriteAllLinesAsync(this.plaintextFileName, new string[] { this.todoItem });
             await File.WriteAllLinesAsync(this.csvFileName, this.addressItems);
         }
@@ -68,7 +64,7 @@ namespace RestAssured.Tests
             Given()
                 .MultiPart(new FileInfo(this.plaintextFileName))
                 .When()
-                .Post("http://localhost:9876/plaintext-multipart-form-data")
+                .Post($"{MOCK_SERVER_BASE_URL}/plaintext-multipart-form-data")
                 .Then()
                 .StatusCode(201);
         }
@@ -86,7 +82,7 @@ namespace RestAssured.Tests
             Given()
                 .MultiPart(new FileInfo(this.csvFileName), "customControl", MediaTypeHeaderValue.Parse("text/csv"))
                 .When()
-                .Post("http://localhost:9876/csv-multipart-form-data")
+                .Post($"{MOCK_SERVER_BASE_URL}/csv-multipart-form-data")
                 .Then()
                 .StatusCode(201);
         }
@@ -106,7 +102,7 @@ namespace RestAssured.Tests
                 .MultiPart(new FileInfo(this.plaintextFileName))
                 .MultiPart(new FileInfo(this.csvFileName), "customControl", MediaTypeHeaderValue.Parse("text/csv"))
                 .When()
-                .Post("http://localhost:9876/multiple-files-multipart-form-data")
+                .Post($"{MOCK_SERVER_BASE_URL}/multiple-files-multipart-form-data")
                 .Then()
                 .StatusCode(201);
         }
@@ -126,7 +122,7 @@ namespace RestAssured.Tests
                 Given()
                 .MultiPart(new FileInfo(@"DoesNotExist.txt"))
                 .When()
-                .Post("http://localhost:9876/plaintext-multipart-form-data")
+                .Post($"{MOCK_SERVER_BASE_URL}/plaintext-multipart-form-data")
                 .Then()
                 .StatusCode(201);
             });
@@ -145,6 +141,28 @@ namespace RestAssured.Tests
 
             File.Delete(this.plaintextFileName);
             File.Delete(this.csvFileName);
+        }
+
+        private string GetAddressCsvLine()
+        {
+            return string.Format(
+                "{0};{1};{2};{3}",
+                Faker.Address.StreetName(),
+                Faker.RandomNumber.Next(1, 9999),
+                Faker.Address.ZipCode(),
+                Faker.Address.City());
+        }
+
+        private string[] GetAddressCsv(int lines)
+        {
+            string[] csvLines = new string[lines];
+            csvLines[0] = "Street;Number;ZipCode;City";
+            for (int i = 1; i < lines; i++)
+            {
+                csvLines[i] = this.GetAddressCsvLine();
+            }
+
+            return csvLines;
         }
 
         /// <summary>

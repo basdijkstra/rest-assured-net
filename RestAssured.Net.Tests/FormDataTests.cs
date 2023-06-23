@@ -16,6 +16,7 @@
 namespace RestAssured.Tests
 {
     using System.Collections.Generic;
+    using System.Web;
     using NUnit.Framework;
     using WireMock.Matchers;
     using WireMock.RequestBuilders;
@@ -28,6 +29,9 @@ namespace RestAssured.Tests
     [TestFixture]
     public class FormDataTests : TestBase
     {
+        private readonly string name = Faker.Name.FullName();
+        private readonly string email = Faker.Internet.Email();
+
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for including
         /// x-www-form-urlencoded form data when sending an HTTP request.
@@ -39,14 +43,14 @@ namespace RestAssured.Tests
 
             var formData = new[]
             {
-                new KeyValuePair<string, string>("name", "John Doe"),
-                new KeyValuePair<string, string>("email", "johndoe@example.com"),
+                new KeyValuePair<string, string>("name", this.name),
+                new KeyValuePair<string, string>("email", this.email),
             };
 
             Given()
                 .FormData(formData)
                 .When()
-                .Post("http://localhost:9876/form-data")
+                .Post($"{MOCK_SERVER_BASE_URL}/form-data")
                 .Then()
                 .StatusCode(201);
         }
@@ -58,7 +62,7 @@ namespace RestAssured.Tests
         {
             this.Server?.Given(Request.Create().WithPath("/form-data").UsingPost()
                 .WithHeader("Content-Type", "application/x-www-form-urlencoded")
-                .WithBody(new ExactMatcher("name=John+Doe&email=johndoe%40example.com")))
+                .WithBody(new ExactMatcher("name=" + HttpUtility.UrlEncode(this.name) + "&email=" + HttpUtility.UrlEncode(this.email))))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));
         }

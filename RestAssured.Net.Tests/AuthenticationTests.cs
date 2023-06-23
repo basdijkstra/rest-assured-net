@@ -39,7 +39,7 @@ namespace RestAssured.Tests
             Given()
                 .BasicAuth("username", "password")
                 .When()
-                .Get("http://localhost:9876/basic-auth")
+                .Get($"{MOCK_SERVER_BASE_URL}/basic-auth")
                 .Then()
                 .StatusCode(200);
         }
@@ -56,7 +56,7 @@ namespace RestAssured.Tests
             Given()
                 .OAuth2("this_is_my_token")
                 .When()
-                .Get("http://localhost:9876/oauth2")
+                .Get($"{MOCK_SERVER_BASE_URL}/oauth2")
                 .Then()
                 .StatusCode(200);
         }

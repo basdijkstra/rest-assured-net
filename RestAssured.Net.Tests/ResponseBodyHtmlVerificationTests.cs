@@ -40,7 +40,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/html-response-body")
+                .Get($"{MOCK_SERVER_BASE_URL}/html-response-body")
                 .Then()
                 .StatusCode(404)
                 .Body(NHamcrest.Is.EqualTo(this.GetHtmlResponseBody()));
@@ -57,7 +57,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/html-response-body")
+                .Get($"{MOCK_SERVER_BASE_URL}/html-response-body")
                 .Then()
                 .StatusCode(404)
                 .Body("//title", NHamcrest.Is.EqualTo("403 - Forbidden: Access is denied."));
@@ -75,7 +75,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/html-response-body-header-mismatch")
+                .Get($"{MOCK_SERVER_BASE_URL}/html-response-body-header-mismatch")
                 .Then()
                 .StatusCode(404)
                 .Body("//title", NHamcrest.Is.EqualTo("403 - Forbidden: Access is denied."), VerifyAs.Html);
@@ -94,7 +94,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get("http://localhost:9876/html-response-body")
+                    .Get($"{MOCK_SERVER_BASE_URL}/html-response-body")
                     .Then()
                     .StatusCode(404)
                     .Body("//DoesNotExist", NHamcrest.Is.EqualTo("Some value"));
@@ -117,7 +117,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get("http://localhost:9876/html-response-body")
+                    .Get($"{MOCK_SERVER_BASE_URL}/html-response-body")
                     .Then()
                     .StatusCode(404)
                     .Body("//title", NHamcrest.Is.GreaterThanOrEqualTo(100));

@@ -40,7 +40,7 @@ namespace RestAssured.Tests
 
             string title = (string)Given()
                 .When()
-                .Get("http://localhost:9876/html-response-body")
+                .Get($"{MOCK_SERVER_BASE_URL}/html-response-body")
                 .Then()
                 .StatusCode(404)
                 .Extract().Body("//title");
@@ -59,7 +59,7 @@ namespace RestAssured.Tests
 
             string title = (string)Given()
                 .When()
-                .Get("http://localhost:9876/html-response-body-header-mismatch")
+                .Get($"{MOCK_SERVER_BASE_URL}/html-response-body-header-mismatch")
                 .Then()
                 .StatusCode(404)
                 .Extract().Body("//title", ExtractAs.Html);
@@ -81,7 +81,7 @@ namespace RestAssured.Tests
             // stored in an object of type List<string>.
             List<string> fields = (List<string>)Given()
                 .When()
-                .Get("http://localhost:9876/html-response-body")
+                .Get($"{MOCK_SERVER_BASE_URL}/html-response-body")
                 .Then()
                 .StatusCode(404)
                 .Extract().Body("//fieldset/*");
@@ -102,7 +102,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get("http://localhost:9876/html-response-body")
+                    .Get($"{MOCK_SERVER_BASE_URL}/html-response-body")
                     .Then()
                     .StatusCode(404)
                     .Extract().Body("//DoesNotExist");

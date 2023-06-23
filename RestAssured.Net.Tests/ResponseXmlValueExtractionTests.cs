@@ -19,6 +19,7 @@ namespace RestAssured.Tests
     using NUnit.Framework;
     using RestAssured.Response;
     using RestAssured.Response.Exceptions;
+    using RestAssured.Tests.Models;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
     using static RestAssured.Dsl;
@@ -29,6 +30,44 @@ namespace RestAssured.Tests
     [TestFixture]
     public class ResponseXmlValueExtractionTests : TestBase
     {
+        private Location location = new Location();
+        private Place place = new Place();
+        private string country;
+        private string state;
+        private string placeName;
+        private int zipcode;
+        private int placeInhabitants;
+        private bool isCapital;
+
+        [SetUp]
+        public void SetLocation()
+        {
+            this.country = Faker.Country.Name();
+            this.state = Faker.Address.UsState();
+            this.zipcode = Faker.RandomNumber.Next(1000, 99999);
+
+            this.location.Country = this.country;
+            this.location.State = this.state;
+            this.location.ZipCode = this.zipcode;
+
+            this.placeName = Faker.Address.City();
+            this.placeInhabitants = Faker.RandomNumber.Next(100010, 199990);
+            this.isCapital = Faker.Boolean.Random();
+
+            this.place.Name = this.placeName;
+            this.place.Inhabitants = this.placeInhabitants;
+            this.place.IsCapital = this.isCapital;
+
+            this.location.Places.Add(this.place);
+            this.location.Places.Add(new Place());
+        }
+
+        [TearDown]
+        public void ClearPlaces()
+        {
+            this.location.Places = new List<Place>();
+        }
+
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for extracting an
         /// element value from an XML response body.
@@ -40,12 +79,12 @@ namespace RestAssured.Tests
 
             string placeName = (string)Given()
                 .When()
-                .Get("http://localhost:9876/xml-response-body")
+                .Get($"{MOCK_SERVER_BASE_URL}/xml-response-body")
                 .Then()
                 .StatusCode(200)
                 .Extract().Body("//Place[1]/Name");
 
-            Assert.That(placeName, Is.EqualTo("Sun City"));
+            Assert.That(placeName, Is.EqualTo(this.placeName));
         }
 
         /// <summary>
@@ -61,12 +100,12 @@ namespace RestAssured.Tests
 
             string placeName = (string)Given()
                 .When()
-                .Get("http://localhost:9876/xml-response-body-header-mismatch")
+                .Get($"{MOCK_SERVER_BASE_URL}/xml-response-body-header-mismatch")
                 .Then()
                 .StatusCode(200)
                 .Extract().Body("//Place[1]/Name", ExtractAs.Xml);
 
-            Assert.That(placeName, Is.EqualTo("Sun City"));
+            Assert.That(placeName, Is.EqualTo(this.placeName));
         }
 
         /// <summary>
@@ -83,7 +122,7 @@ namespace RestAssured.Tests
             // stored in an object of type List<string>.
             List<string> placeNames = (List<string>)Given()
                 .When()
-                .Get("http://localhost:9876/xml-response-body")
+                .Get($"{MOCK_SERVER_BASE_URL}/xml-response-body")
                 .Then()
                 .StatusCode(200)
                 .Extract().Body("//Place/Name");
@@ -104,7 +143,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get("http://localhost:9876/xml-response-body")
+                    .Get($"{MOCK_SERVER_BASE_URL}/xml-response-body")
                     .Then()
                     .StatusCode(200)
                     .Extract().Body("//Place/DoesNotExist");
@@ -135,6 +174,15 @@ namespace RestAssured.Tests
                 .WithHeader("Content-Type", "text/plain")
                 .WithBody(this.GetLocationAsXmlString())
                 .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Returns an XML string representing a <see cref="Location"/>.
+        /// </summary>
+        /// <returns>An XML string representing a <see cref="Location"/>.</returns>
+        private new string GetLocationAsXmlString()
+        {
+            return "<?xml version=\"1.0\" encoding=\"utf-16\"?><Location xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><Country>" + this.country + "</Country><State>" + this.state + "</State><ZipCode>" + this.zipcode + "</ZipCode><Places><Place><Name>" + this.placeName + "</Name><Inhabitants>" + this.placeInhabitants + "</Inhabitants><IsCapital>" + this.isCapital + "</IsCapital></Place><Place><Name>Pleasure Meadow</Name><Inhabitants>50000</Inhabitants><IsCapital>false</IsCapital></Place></Places></Location>";
         }
     }
 }

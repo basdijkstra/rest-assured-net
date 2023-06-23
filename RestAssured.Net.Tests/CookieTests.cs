@@ -39,7 +39,7 @@ namespace RestAssured.Tests
             Given()
                 .Cookie("my_cookie", "my_cookie_value")
                 .When()
-                .Get("http://localhost:9876/single-cookie-value")
+                .Get($"{MOCK_SERVER_BASE_URL}/single-cookie-value")
                 .Then()
                 .StatusCode(200);
         }
@@ -56,7 +56,7 @@ namespace RestAssured.Tests
             Given()
                 .Cookie(new Cookie("my_cookie", "my_cookie_value"))
                 .When()
-                .Get("http://localhost:9876/single-cookie-value")
+                .Get($"{MOCK_SERVER_BASE_URL}/single-cookie-value")
                 .Then()
                 .StatusCode(200);
         }
@@ -78,7 +78,7 @@ namespace RestAssured.Tests
             Given()
                 .Cookie(cookies)
                 .When()
-                .Get("http://localhost:9876/single-cookie-value")
+                .Get($"{MOCK_SERVER_BASE_URL}/single-cookie-value")
                 .Then()
                 .StatusCode(200);
         }

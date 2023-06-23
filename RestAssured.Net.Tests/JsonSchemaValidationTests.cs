@@ -42,7 +42,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/json-schema-validation")
+                .Get($"{MOCK_SERVER_BASE_URL}/json-schema-validation")
                 .Then()
                 .StatusCode(200)
                 .And()
@@ -62,7 +62,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/json-schema-validation")
+                .Get($"{MOCK_SERVER_BASE_URL}/json-schema-validation")
                 .Then()
                 .StatusCode(200)
                 .And()
@@ -81,7 +81,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get("http://localhost:9876/json-schema-validation-mismatch")
+                    .Get($"{MOCK_SERVER_BASE_URL}/json-schema-validation-mismatch")
                     .Then()
                     .StatusCode(200)
                     .And()
@@ -103,7 +103,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get("http://localhost:9876/json-schema-validation-mismatch")
+                    .Get($"{MOCK_SERVER_BASE_URL}/json-schema-validation-mismatch")
                     .Then()
                     .StatusCode(200)
                     .And()
@@ -125,7 +125,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get("http://localhost:9876/json-schema-unexpected-content-type")
+                    .Get($"{MOCK_SERVER_BASE_URL}/json-schema-unexpected-content-type")
                     .Then()
                     .StatusCode(200)
                     .And()

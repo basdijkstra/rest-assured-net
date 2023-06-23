@@ -28,6 +28,9 @@ namespace RestAssured.Tests
     [TestFixture]
     public class QueryParameterTests : TestBase
     {
+        private readonly string originalName = Faker.Name.First();
+        private readonly string overrideName = Faker.Name.Last();
+        private readonly int queryId = Faker.RandomNumber.Next();
         private RequestSpecification requestSpecification;
 
         /// <summary>
@@ -40,7 +43,7 @@ namespace RestAssured.Tests
                 .WithScheme("http")
                 .WithHostName("localhost")
                 .WithBasePath("api")
-                .WithPort(9876)
+                .WithPort(MOCK_SERVER_PORT)
                 .Build();
         }
 
@@ -54,9 +57,9 @@ namespace RestAssured.Tests
             this.CreateStubForSingleQueryParameter();
 
             Given()
-                .QueryParam("name", "john")
+                .QueryParam("name", this.originalName)
                 .When()
-                .Get("http://localhost:9876/api/single-query-param")
+                .Get($"{MOCK_SERVER_BASE_URL}/api/single-query-param")
                 .Then()
                 .StatusCode(200);
         }
@@ -71,10 +74,10 @@ namespace RestAssured.Tests
             this.CreateStubForMultipleQueryParameters();
 
             Given()
-                .QueryParam("name", "john")
-                .QueryParam("id", 12345)
+                .QueryParam("name", this.originalName)
+                .QueryParam("id", this.queryId)
                 .When()
-                .Get("http://localhost:9876/multiple-query-params")
+                .Get($"{MOCK_SERVER_BASE_URL}/multiple-query-params")
                 .Then()
                 .StatusCode(200);
         }
@@ -89,10 +92,10 @@ namespace RestAssured.Tests
             this.CreateStubForSingleQueryParameter();
 
             Given()
-                .QueryParam("name", "susan")
-                .QueryParam("name", "john")
+                .QueryParam("name", this.overrideName)
+                .QueryParam("name", this.originalName)
                 .When()
-                .Get("http://localhost:9876/api/single-query-param")
+                .Get($"{MOCK_SERVER_BASE_URL}/api/single-query-param")
                 .Then()
                 .StatusCode(200);
         }
@@ -106,8 +109,8 @@ namespace RestAssured.Tests
         {
             Dictionary<string, object> queryParams = new Dictionary<string, object>
             {
-                { "name", "john" },
-                { "id", 12345 },
+                { "name", this.originalName },
+                { "id", this.queryId },
             };
 
             this.CreateStubForMultipleQueryParameters();
@@ -115,7 +118,7 @@ namespace RestAssured.Tests
             Given()
                 .QueryParams(queryParams)
                 .When()
-                .Get("http://localhost:9876/multiple-query-params")
+                .Get($"{MOCK_SERVER_BASE_URL}/multiple-query-params")
                 .Then()
                 .StatusCode(200);
         }
@@ -129,17 +132,17 @@ namespace RestAssured.Tests
         {
             Dictionary<string, object> queryParams = new Dictionary<string, object>
             {
-                { "name", "susan" }, // This parameter value will be overwritten
-                { "id", 12345 },
+                { "name", this.overrideName }, // This parameter value will be overwritten
+                { "id", this.queryId },
             };
 
             this.CreateStubForMultipleQueryParameters();
 
             Given()
                 .QueryParams(queryParams)
-                .QueryParam("name", "john") // This parameter value will be used
+                .QueryParam("name", this.originalName) // This parameter value will be used
                 .When()
-                .Get("http://localhost:9876/multiple-query-params")
+                .Get($"{MOCK_SERVER_BASE_URL}/multiple-query-params")
                 .Then()
                 .StatusCode(200);
         }
@@ -156,7 +159,7 @@ namespace RestAssured.Tests
 
             Given()
                 .Spec(this.requestSpecification!)
-                .QueryParam("name", "john")
+                .QueryParam("name", this.originalName)
                 .When()
                 .Get("/single-query-param")
                 .Then()
@@ -170,7 +173,7 @@ namespace RestAssured.Tests
         {
             this.Server?.Given(Request.Create()
                 .WithPath("/api/single-query-param")
-                .WithParam("name", "john")
+                .WithParam("name", this.originalName)
                 .UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
@@ -183,8 +186,8 @@ namespace RestAssured.Tests
         {
             this.Server?.Given(Request.Create()
                 .WithPath("/multiple-query-params")
-                .WithParam("name", "john")
-                .WithParam("id", "12345")
+                .WithParam("name", this.originalName)
+                .WithParam("id", this.queryId.ToString())
                 .UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));

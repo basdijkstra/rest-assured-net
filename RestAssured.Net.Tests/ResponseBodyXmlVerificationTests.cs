@@ -15,9 +15,11 @@
 // </copyright>
 namespace RestAssured.Tests
 {
+    using System.Collections.Generic;
     using NUnit.Framework;
     using RestAssured.Response;
     using RestAssured.Response.Exceptions;
+    using RestAssured.Tests.Models;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
     using static RestAssured.Dsl;
@@ -28,6 +30,44 @@ namespace RestAssured.Tests
     [TestFixture]
     public class ResponseBodyXmlVerificationTests : TestBase
     {
+        private Location location = new Location();
+        private Place place = new Place();
+        private string country;
+        private string state;
+        private string placeName;
+        private int zipcode;
+        private int placeInhabitants;
+        private bool isCapital;
+
+        [SetUp]
+        public void SetLocation()
+        {
+            this.country = Faker.Country.Name();
+            this.state = Faker.Address.UsState();
+            this.zipcode = Faker.RandomNumber.Next(1000, 99999);
+
+            this.location.Country = this.country;
+            this.location.State = this.state;
+            this.location.ZipCode = this.zipcode;
+
+            this.placeName = Faker.Address.City();
+            this.placeInhabitants = Faker.RandomNumber.Next(100010, 199990);
+            this.isCapital = Faker.Boolean.Random();
+
+            this.place.Name = this.placeName;
+            this.place.Inhabitants = this.placeInhabitants;
+            this.place.IsCapital = this.isCapital;
+
+            this.location.Places.Add(this.place);
+            this.location.Places.Add(new Place());
+        }
+
+        [TearDown]
+        public void ClearPlaces()
+        {
+            this.location.Places = new List<Place>();
+        }
+
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
         /// an XML response body element using an NHamcrest matcher.
@@ -39,10 +79,10 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/xml-response-body")
+                .Get($"{MOCK_SERVER_BASE_URL}/xml-response-body")
                 .Then()
                 .StatusCode(200)
-                .Body("//Place[1]/Name", NHamcrest.Is.EqualTo("Sun City"));
+                .Body("//Place[1]/Name", NHamcrest.Is.EqualTo(this.placeName));
         }
 
         /// <summary>
@@ -56,7 +96,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/xml-response-body")
+                .Get($"{MOCK_SERVER_BASE_URL}/xml-response-body")
                 .Then()
                 .StatusCode(200)
                 .Body("//Place[1]/Inhabitants", NHamcrest.Is.GreaterThan(75000));
@@ -73,10 +113,10 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/xml-response-body")
+                .Get($"{MOCK_SERVER_BASE_URL}/xml-response-body")
                 .Then()
                 .StatusCode(200)
-                .Body("//Place[1]/IsCapital", NHamcrest.Is.True());
+                .Body("//Place[1]/IsCapital", NHamcrest.Is.EqualTo(this.isCapital));
         }
 
         /// <summary>
@@ -90,10 +130,10 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/xml-response-body-header-mismatch")
+                .Get($"{MOCK_SERVER_BASE_URL}/xml-response-body-header-mismatch")
                 .Then()
                 .StatusCode(200)
-                .Body("//Place[1]/Name", NHamcrest.Is.EqualTo("Sun City"), VerifyAs.Xml);
+                .Body("//Place[1]/Name", NHamcrest.Is.EqualTo(this.placeName), VerifyAs.Xml);
         }
 
         /// <summary>
@@ -109,10 +149,10 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get("http://localhost:9876/xml-response-body")
+                    .Get($"{MOCK_SERVER_BASE_URL}/xml-response-body")
                     .Then()
                     .StatusCode(200)
-                    .Body("//Places[0]/DoesNotExist", NHamcrest.Is.EqualTo("Sun City"));
+                    .Body("//Places[0]/DoesNotExist", NHamcrest.Is.EqualTo(this.placeName));
             });
 
             Assert.That(rve?.Message, Is.EqualTo("XPath expression '//Places[0]/DoesNotExist' did not yield any results."));
@@ -132,13 +172,13 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get("http://localhost:9876/xml-response-body")
+                    .Get($"{MOCK_SERVER_BASE_URL}/xml-response-body")
                     .Then()
                     .StatusCode(200)
                     .Body("//Place[1]/Inhabitants", NHamcrest.Is.True());
             });
 
-            Assert.That(rve?.Message, Is.EqualTo("Response element value 100000 cannot be converted to value of type 'System.Boolean'"));
+            Assert.That(rve?.Message, Is.EqualTo("Response element value " + this.placeInhabitants + " cannot be converted to value of type 'System.Boolean'"));
         }
 
         /// <summary>
@@ -152,10 +192,10 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/xml-response-body")
+                .Get($"{MOCK_SERVER_BASE_URL}/xml-response-body")
                 .Then()
                 .StatusCode(200)
-                .Body("//Place/Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Sun City")));
+                .Body("//Place/Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo(this.placeName)));
         }
 
         /// <summary>
@@ -169,10 +209,10 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/xml-response-body-header-mismatch")
+                .Get($"{MOCK_SERVER_BASE_URL}/xml-response-body-header-mismatch")
                 .Then()
                 .StatusCode(200)
-                .Body("//Place/Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Sun City")), VerifyAs.Xml);
+                .Body("//Place/Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo(this.placeName)), VerifyAs.Xml);
         }
 
         /// <summary>
@@ -185,17 +225,20 @@ namespace RestAssured.Tests
         {
             this.CreateStubForXmlResponseBody();
 
+            string placeNamesInLocation = this.placeName + ", " + this.location.Places[1].Name;
+            string mismatchCityName = Faker.Address.UkCounty();
+
             var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
                     .When()
-                    .Get("http://localhost:9876/xml-response-body")
+                    .Get($"{MOCK_SERVER_BASE_URL}/xml-response-body")
                     .Then()
                     .StatusCode(200)
-                    .Body("//Place/Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Atlantis")));
+                    .Body("//Place/Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo(mismatchCityName)));
             });
 
-            Assert.That(rve?.Message, Is.EqualTo($"Expected elements selected by '//Place/Name' to match 'a collection containing \"Atlantis\"', but was [Sun City, Pleasure Meadow]"));
+            Assert.That(rve?.Message, Is.EqualTo($"Expected elements selected by '//Place/Name' to match 'a collection containing \"" + mismatchCityName + "\"', but was [" + placeNamesInLocation + "]"));
         }
 
         /// <summary>
@@ -221,6 +264,15 @@ namespace RestAssured.Tests
                 .WithHeader("Content-Type", "text/plain")
                 .WithBody(this.GetLocationAsXmlString())
                 .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Returns an XML string representing a <see cref="Location"/>.
+        /// </summary>
+        /// <returns>An XML string representing a <see cref="Location"/>.</returns>
+        private new string GetLocationAsXmlString()
+        {
+            return "<?xml version=\"1.0\" encoding=\"utf-16\"?><Location xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><Country>" + this.country + "</Country><State>" + this.state + "</State><ZipCode>" + this.zipcode + "</ZipCode><Places><Place><Name>" + this.placeName + "</Name><Inhabitants>" + this.placeInhabitants + "</Inhabitants><IsCapital>" + this.isCapital + "</IsCapital></Place><Place><Name>" + this.location.Places[1].Name + "</Name><Inhabitants>50000</Inhabitants><IsCapital>false</IsCapital></Place></Places></Location>";
         }
     }
 }

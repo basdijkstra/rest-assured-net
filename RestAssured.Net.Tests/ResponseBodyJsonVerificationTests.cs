@@ -30,6 +30,44 @@ namespace RestAssured.Tests
     [TestFixture]
     public class ResponseBodyJsonVerificationTests : TestBase
     {
+        private Location location = new Location();
+        private Place place = new Place();
+        private string country;
+        private string state;
+        private string placeName;
+        private int zipcode;
+        private int placeInhabitants;
+        private bool isCapital;
+
+        [SetUp]
+        public void SetLocation()
+        {
+            this.country = Faker.Country.Name();
+            this.state = Faker.Address.UsState();
+            this.zipcode = Faker.RandomNumber.Next(1000, 99999);
+
+            this.location.Country = this.country;
+            this.location.State = this.state;
+            this.location.ZipCode = this.zipcode;
+
+            this.placeName = Faker.Address.City();
+            this.placeInhabitants = Faker.RandomNumber.Next(100010, 199990);
+            this.isCapital = Faker.Boolean.Random();
+
+            this.place.Name = this.placeName;
+            this.place.Inhabitants = this.placeInhabitants;
+            this.place.IsCapital = this.isCapital;
+
+            this.location.Places.Add(this.place);
+            this.location.Places.Add(new Place());
+        }
+
+        [TearDown]
+        public void ClearPlaces()
+        {
+            this.location.Places = new List<Place>();
+        }
+
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
         /// a JSON response body string element using an NHamcrest matcher.
@@ -41,10 +79,10 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/json-response-body")
+                .Get($"{MOCK_SERVER_BASE_URL}/json-response-body")
                 .Then()
                 .StatusCode(200)
-                .Body("$.Places[0].Name", NHamcrest.Contains.String("City"));
+                .Body("$.Places[0].Name", NHamcrest.Core.IsEqualMatcher<string>.EqualTo(this.placeName));
         }
 
         /// <summary>
@@ -60,13 +98,13 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get("http://localhost:9876/json-response-body")
+                    .Get($"{MOCK_SERVER_BASE_URL}/json-response-body")
                     .Then()
                     .StatusCode(200)
                     .Body("$.Places[0].Name", NHamcrest.Contains.String("Sin"));
             });
 
-            Assert.That(rve?.Message, Is.EqualTo("Expected element selected by '$.Places[0].Name' to match 'a string containing \"Sin\"' but was 'Sun City'"));
+            Assert.That(rve?.Message, Is.EqualTo("Expected element selected by '$.Places[0].Name' to match 'a string containing \"Sin\"' but was '" + this.placeName + "'"));
         }
 
         /// <summary>
@@ -80,7 +118,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/json-response-body")
+                .Get($"{MOCK_SERVER_BASE_URL}/json-response-body")
                 .Then()
                 .StatusCode(200)
                 .Body("$.Places[0].Inhabitants", NHamcrest.Is.GreaterThan(75000));
@@ -99,13 +137,13 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get("http://localhost:9876/json-response-body")
+                    .Get($"{MOCK_SERVER_BASE_URL}/json-response-body")
                     .Then()
                     .StatusCode(200)
                     .Body("$.Places[0].Inhabitants", NHamcrest.Is.GreaterThan(200000));
             });
 
-            Assert.That(rve?.Message, Is.EqualTo("Expected element selected by '$.Places[0].Inhabitants' to match 'greater than 200000' but was '100000'"));
+            Assert.That(rve?.Message, Is.EqualTo("Expected element selected by '$.Places[0].Inhabitants' to match 'greater than 200000' but was '" + this.placeInhabitants + "'"));
         }
 
         /// <summary>
@@ -119,10 +157,10 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/json-response-body")
+                .Get($"{MOCK_SERVER_BASE_URL}/json-response-body")
                 .Then()
                 .StatusCode(200)
-                .Body("$.Places[0].IsCapital", NHamcrest.Is.True());
+                .Body("$.Places[0].IsCapital", NHamcrest.Is.EqualTo(this.isCapital));
         }
 
         /// <summary>
@@ -137,10 +175,10 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/json-response-body-header-mismatch")
+                .Get($"{MOCK_SERVER_BASE_URL}/json-response-body-header-mismatch")
                 .Then()
                 .StatusCode(200)
-                .Body("$.Places[0].Name", NHamcrest.Contains.String("City"), VerifyAs.Json);
+                .Body("$.Places[0].Name", NHamcrest.Is.EqualTo(this.placeName), VerifyAs.Json);
         }
 
         /// <summary>
@@ -156,13 +194,13 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get("http://localhost:9876/json-response-body")
+                    .Get($"{MOCK_SERVER_BASE_URL}/json-response-body")
                     .Then()
                     .StatusCode(200)
-                    .Body("$.Places[0].IsCapital", NHamcrest.Is.False());
+                    .Body("$.Places[0].IsCapital", NHamcrest.Is.EqualTo(!this.isCapital));
             });
 
-            Assert.That(rve?.Message, Is.EqualTo("Expected element selected by '$.Places[0].IsCapital' to match 'False' but was 'True'"));
+            Assert.That(rve?.Message, Is.EqualTo("Expected element selected by '$.Places[0].IsCapital' to match '" + !this.isCapital + "' but was '" + this.isCapital + "'"));
         }
 
         /// <summary>
@@ -178,7 +216,7 @@ namespace RestAssured.Tests
             {
                 Given()
                     .When()
-                    .Get("http://localhost:9876/json-response-body")
+                    .Get($"{MOCK_SERVER_BASE_URL}/json-response-body")
                     .Then()
                     .StatusCode(200)
                     .Body("$.Places[0].DoesNotExist", NHamcrest.Is.False());
@@ -198,10 +236,10 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/json-response-body")
+                .Get($"{MOCK_SERVER_BASE_URL}/json-response-body")
                 .Then()
                 .StatusCode(200)
-                .Body("$.Places[0:].Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Sun City")));
+                .Body("$.Places[0:].Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo(this.placeName)));
         }
 
         /// <summary>
@@ -215,10 +253,10 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("http://localhost:9876/json-response-body-header-mismatch")
+                .Get($"{MOCK_SERVER_BASE_URL}/json-response-body-header-mismatch")
                 .Then()
                 .StatusCode(200)
-                .Body("$.Places[0:].Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Sun City")), VerifyAs.Json);
+                .Body("$.Places[0:].Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo(this.placeName)), VerifyAs.Json);
         }
 
         /// <summary>
@@ -230,17 +268,20 @@ namespace RestAssured.Tests
         {
             this.CreateStubForJsonResponseBody();
 
+            string placeNamesInLocation = this.placeName + ", " + this.location.Places[1].Name;
+            string mismatchCityName = Faker.Address.UkCounty();
+
             var rve = Assert.Throws<ResponseVerificationException>(() =>
             {
                 Given()
                     .When()
-                    .Get("http://localhost:9876/json-response-body")
+                    .Get($"{MOCK_SERVER_BASE_URL}/json-response-body")
                     .Then()
                     .StatusCode(200)
-                    .Body("$.Places[0:].Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Atlantis")));
+                    .Body("$.Places[0:].Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo(mismatchCityName)));
             });
 
-            Assert.That(rve?.Message, Is.EqualTo($"Expected elements selected by '$.Places[0:].Name' to match 'a collection containing \"Atlantis\"', but was [Sun City, Pleasure Meadow]"));
+            Assert.That(rve?.Message, Is.EqualTo($"Expected elements selected by '$.Places[0:].Name' to match 'a collection containing \"" + mismatchCityName + "\"', but was [" + placeNamesInLocation + "]"));
         }
 
         /// <summary>
@@ -251,7 +292,7 @@ namespace RestAssured.Tests
             this.Server?.Given(Request.Create().WithPath("/json-response-body").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/json")
-                .WithBodyAsJson(this.GetLocation())
+                .WithBodyAsJson(this.location)
                 .WithStatusCode(200));
         }
 
@@ -264,8 +305,17 @@ namespace RestAssured.Tests
             this.Server?.Given(Request.Create().WithPath("/json-response-body-header-mismatch").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "text/plain")
-                .WithBodyAsJson(this.GetLocation())
+                .WithBodyAsJson(this.location)
                 .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Returns an XML string representing a <see cref="Location"/>.
+        /// </summary>
+        /// <returns>An XML string representing a <see cref="Location"/>.</returns>
+        private new string GetLocationAsXmlString()
+        {
+            return "<?xml version=\"1.0\" encoding=\"utf-16\"?><Location xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><Country>" + this.country + "</Country><State>" + this.state + "</State><ZipCode>" + this.zipcode + "</ZipCode><Places><Place><Name>" + this.placeName + "</Name><Inhabitants>" + this.placeInhabitants + "</Inhabitants><IsCapital>" + this.isCapital + "</IsCapital></Place><Place><Name>Pleasure Meadow</Name><Inhabitants>50000</Inhabitants><IsCapital>false</IsCapital></Place></Places></Location>";
         }
     }
 }

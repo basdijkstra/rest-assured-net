@@ -1,4 +1,4 @@
-﻿// <copyright file="Place.cs" company="On Test Automation">
+// <copyright file="BlogPost.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,30 +16,37 @@
 namespace RestAssured.Tests.Models
 {
     /// <summary>
-    /// A POCO representing a place on earth.
+    /// A POCO representing a blog post.
     /// </summary>
-    public class Place
+    public class BlogPost
     {
         /// <summary>
-        /// The name of the place.
+        /// The id of the blog post.
         /// </summary>
-        public string Name { get; set; }
+        public int Id { get; set; }
+
+        /// <summary>
+        /// The title of the blog post.
+        /// </summary>
+        public string Title { get; set; }
 
         /// <summary>
         /// The number of inhabitants of the place.
         /// </summary>
-        public int Inhabitants { get; set; }
+        public string Body { get; set; }
 
-        /// <summary>
-        /// Indication whether or not the place is the capital of a region.
-        /// </summary>
-        public bool IsCapital { get; set; }
-
-        public Place()
+        public BlogPost()
         {
-            this.Name = Faker.Address.City();
-            this.Inhabitants = Faker.RandomNumber.Next(10000, 99999999);
-            this.IsCapital = Faker.Boolean.Random();
+            this.Id = Faker.RandomNumber.Next();
+            this.Title = Faker.Lorem.Sentence(5);
+            this.Body = Faker.Lorem.Sentence(Faker.RandomNumber.Next(10, 20));
+        }
+
+        public string GetSerializedJson()
+        {
+            return "{\"Id\":" + this.Id +
+                ",\"Title\":\"" + this.Title +
+                "\",\"Body\":\"" + this.Body + "\"}";
         }
     }
 }

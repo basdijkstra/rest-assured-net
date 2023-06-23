@@ -56,7 +56,7 @@ namespace RestAssured.Tests
             Given()
                 .UserAgent(new ProductInfoHeaderValue("MyUserAgent", "1.0"))
                 .When()
-                .Get("http://localhost:9876/user-agent")
+                .Get($"{MOCK_SERVER_BASE_URL}/user-agent")
                 .Then()
                 .StatusCode(200);
         }
@@ -73,7 +73,7 @@ namespace RestAssured.Tests
             Given()
                 .UserAgent("MyUserAgent", "1.0")
                 .When()
-                .Get("http://localhost:9876/user-agent")
+                .Get($"{MOCK_SERVER_BASE_URL}/user-agent")
                 .Then()
                 .StatusCode(200);
         }

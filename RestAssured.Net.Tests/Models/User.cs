@@ -1,4 +1,4 @@
-﻿// <copyright file="Place.cs" company="On Test Automation">
+// <copyright file="User.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,30 +16,30 @@
 namespace RestAssured.Tests.Models
 {
     /// <summary>
-    /// A POCO representing a place on earth.
+    /// A POCO representing a blog post.
     /// </summary>
-    public class Place
+    public class User
     {
         /// <summary>
-        /// The name of the place.
+        /// The id of the blog post.
+        /// </summary>
+        public int Id { get; set; }
+
+        /// <summary>
+        /// The Name of the user.
         /// </summary>
         public string Name { get; set; }
 
-        /// <summary>
-        /// The number of inhabitants of the place.
-        /// </summary>
-        public int Inhabitants { get; set; }
-
-        /// <summary>
-        /// Indication whether or not the place is the capital of a region.
-        /// </summary>
-        public bool IsCapital { get; set; }
-
-        public Place()
+        public User()
         {
-            this.Name = Faker.Address.City();
-            this.Inhabitants = Faker.RandomNumber.Next(10000, 99999999);
-            this.IsCapital = Faker.Boolean.Random();
+            this.Id = Faker.RandomNumber.Next(99999);
+            this.Name = Faker.Name.FullName();
+        }
+
+        public string GetJsonString()
+        {
+            return "{\"id\":" + this.Id +
+                ",\"user\":\"" + this.Name + "\"}";
         }
     }
 }
