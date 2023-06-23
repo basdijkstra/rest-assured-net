@@ -28,11 +28,11 @@ namespace RestAssured.Tests
     [TestFixture]
     public class QueryParameterTests : TestBase
     {
-        private RequestSpecification requestSpecification;
-
         private readonly string originalName = Faker.Name.First();
         private readonly string overrideName = Faker.Name.Last();
         private readonly int queryId = Faker.RandomNumber.Next();
+        private RequestSpecification requestSpecification;
+
 
         /// <summary>
         /// Creates the <see cref="RequestSpecification"/> instances to be used in the tests in this class.

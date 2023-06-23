@@ -142,6 +142,28 @@ namespace RestAssured.Tests
             File.Delete(this.csvFileName);
         }
 
+        
+        private static string GetAddressCsvLine()
+        {
+            return String.Format(
+                "{0};{1};{2};{3}",
+                Faker.Address.StreetName(), 
+                Faker.RandomNumber.Next(1, 9999),
+                Faker.Address.ZipCode(), 
+                Faker.Address.City());
+        }
+
+        private static string[] GetAddressCsv(int lines)
+        {
+            string[] csvLines = new string[lines];
+            csvLines[0] = "Street;Number;ZipCode;City";
+            for (int i = 1; i < lines; i++)
+            {
+                csvLines[i] = GetAddressCsvLine();
+            }
+            return csvLines;
+        }
+
         /// <summary>
         /// Creates the stub response for the plaintext form data example.
         /// </summary>
@@ -179,24 +201,6 @@ namespace RestAssured.Tests
                 .WithBody(new RegexMatcher($".*Addresses.*")))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));
-        }
-
-        private static string GetAddressCsvLine()
-        {
-            return String.Format("{0};{1};{2};{3}",
-                Faker.Address.StreetName(), Faker.RandomNumber.Next(1, 9999),
-                Faker.Address.ZipCode(), Faker.Address.City());
-        }
-
-        private static string[] GetAddressCsv(int lines)
-        {
-            string[] csvLines = new string[lines];
-            csvLines[0] = "Street;Number;ZipCode;City";
-            for (int i = 1; i < lines; i++)
-            {
-                csvLines[i] = GetAddressCsvLine();
-            }
-            return csvLines;
         }
     }
 }

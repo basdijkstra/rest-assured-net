@@ -27,13 +27,14 @@ namespace RestAssured.Tests
     [TestFixture]
     public class ResponseHeaderVerificationTests : TestBase
     {
-        private string headerName, headerValue;
+        private string headerName;
+        private string headerValue;
 
         [SetUp]
         public void InitializeHeaderNameAndValue()
         {
-            this.headerName = Faker.Lorem.Sentence(Faker.RandomNumber.Next(3, 10)).Replace(".", "").Replace(" ", "-");
-            this.headerValue = "header_val" + Faker.Lorem.Sentence(Faker.RandomNumber.Next(3, 20)).Replace(".", "");
+            this.headerName = Faker.Lorem.Sentence(Faker.RandomNumber.Next(3, 10)).Replace(".", string.Empty).Replace(" ", "-");
+            this.headerValue = "header_val" + Faker.Lorem.Sentence(Faker.RandomNumber.Next(3, 20)).Replace(".", string.Empty);
         }
 
         /// <summary>

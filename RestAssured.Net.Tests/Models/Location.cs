@@ -42,7 +42,8 @@ namespace RestAssured.Tests.Models
         /// </summary>
         public List<Place> Places { get; set; }
 
-        public Location(){
+        public Location()
+        {
             this.Places = new List<Place>();
         }
     }

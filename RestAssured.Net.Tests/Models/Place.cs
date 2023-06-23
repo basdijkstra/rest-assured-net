@@ -36,9 +36,9 @@ namespace RestAssured.Tests.Models
         public bool IsCapital { get; set; }
 
         public Place(){
-            Name = Faker.Address.City();
-            Inhabitants = Faker.RandomNumber.Next(10000, 99999999);
-            IsCapital = Faker.Boolean.Random();
+            this.Name = Faker.Address.City();
+            this.Inhabitants = Faker.RandomNumber.Next(10000, 99999999);
+            this.IsCapital = Faker.Boolean.Random();
         }
     }
 }

@@ -1,4 +1,4 @@
-// <copyright file="Place.cs" company="On Test Automation">
+// <copyright file="User.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");

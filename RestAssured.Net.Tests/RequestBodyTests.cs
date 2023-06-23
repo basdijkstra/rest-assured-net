@@ -27,10 +27,10 @@ namespace RestAssured.Tests
     [TestFixture]
     public class RequestBodyTests : TestBase
     {
-        private string plaintextRequestBody;
-
         private readonly string jsonStringRequestBody = "{\"id\": " + Faker.RandomNumber.Next().ToString()
-                                             + ", \"user\": \""+ Faker.Name.FullName() +"\"}";
+                                             + ", \"user\": \"" + Faker.Name.FullName() + "\"}";
+
+        private string plaintextRequestBody;
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for sending
@@ -73,16 +73,17 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForPlaintextRequestBody(string bodySize)
         {
-            switch(bodySize){
+            switch (bodySize)
+            {
                 case "small":
-                    this.plaintextRequestBody = Faker.Lorem.Paragraph(Faker.RandomNumber.Next(5,10));
-                break;
+                    this.plaintextRequestBody = Faker.Lorem.Paragraph(Faker.RandomNumber.Next(5, 10));
+                    break;
                 case "medium":
-                    this.plaintextRequestBody = Faker.Lorem.Paragraph(Faker.RandomNumber.Next(50,70));
-                break;
+                    this.plaintextRequestBody = Faker.Lorem.Paragraph(Faker.RandomNumber.Next(50, 70));
+                    break;
                 case "large":
-                    this.plaintextRequestBody = Faker.Lorem.Paragraph(Faker.RandomNumber.Next(300,400));
-                break;
+                    this.plaintextRequestBody = Faker.Lorem.Paragraph(Faker.RandomNumber.Next(300, 400));
+                    break;
             }
 
             this.Server?.Given(Request.Create().WithPath("/plaintext-request-body").UsingPost()

@@ -36,8 +36,11 @@ namespace RestAssured.Tests
     {
         private Location location = new Location();
         private Place place = new Place();
-        private string country, state, placeName;
-        private int zipcode, placeInhabitants;
+        private string country;
+        private string state;
+        private string placeName;
+        private int zipcode;
+        private int placeInhabitants;
         private bool isCapital;
 
         [SetUp]
@@ -47,17 +50,17 @@ namespace RestAssured.Tests
             this.state = Faker.Address.UsState();
             this.zipcode = Faker.RandomNumber.Next(1000, 99999);
 
-            this.location.Country = country;
-            this.location.State = state;
-            this.location.ZipCode = zipcode;
+            this.location.Country = this.country;
+            this.location.State = this.state;
+            this.location.ZipCode = this.zipcode;
 
             this.placeName = Faker.Address.City();
             this.placeInhabitants = Faker.RandomNumber.Next(100010, 199990);
             this.isCapital = Faker.Boolean.Random();
 
-            this.place.Name = placeName;
-            this.place.Inhabitants = placeInhabitants;
-            this.place.IsCapital = isCapital;
+            this.place.Name = this.placeName;
+            this.place.Inhabitants = this.placeInhabitants;
+            this.place.IsCapital = this.isCapital;
 
             this.location.Places.Add(this.place);
             this.location.Places.Add(new Place());
