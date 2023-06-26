@@ -49,13 +49,13 @@ namespace RestAssured.Tests
         [Test]
         public void HttpsEndpointsCanBeInvokedWithoutExplicitlyDisablingSslVerification()
         {
+            this.CreateStubForHttps();
+
             Given()
                 .When()
-                .Get("https://jsonplaceholder.typicode.com/users/1")
+                .Get("https://localhost:8443/ssl-endpoint")
                 .Then()
-                .StatusCode(HttpStatusCode.OK)
-                .And()
-                .Body("$.name", NHamcrest.Is.EqualTo("Leanne Graham"));
+                .StatusCode(HttpStatusCode.OK);
         }
 
         /// <summary>
