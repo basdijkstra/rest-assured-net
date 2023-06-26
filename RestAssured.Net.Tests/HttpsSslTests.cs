@@ -50,11 +50,9 @@ namespace RestAssured.Tests
         public void HttpsEndpointsCanBeInvokedWithoutExplicitlyDisablingSslVerification()
         {
             Given()
-                .Log(RestAssured.Request.Logging.RequestLogLevel.All)
                 .When()
                 .Get("https://api.zippopotam.us/us/90210")
                 .Then()
-                .Log(RestAssured.Response.Logging.ResponseLogLevel.All)
                 .StatusCode(HttpStatusCode.OK)
                 .And()
                 .Body("$.country", NHamcrest.Is.EqualTo("United States"));
