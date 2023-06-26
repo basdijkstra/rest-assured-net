@@ -36,6 +36,7 @@ namespace RestAssured.Request
     using RestAssured.Response.Logging;
     using Stubble.Core;
     using Stubble.Core.Builders;
+    using Stubble.Core.Classes;
 
     /// <summary>
     /// The request to be sent.
@@ -596,7 +597,9 @@ namespace RestAssured.Request
             // Replace any path parameter placeholders that have been specified with their values
             if (this.pathParams.Count > 0)
             {
-                StubbleVisitorRenderer renderer = new StubbleBuilder().Build();
+                StubbleVisitorRenderer renderer = new StubbleBuilder()
+                    .Configure(builder => builder.SetDefaultTags(new Tags("[", "]")))
+                    .Build();
                 endpoint = renderer.Render(endpoint, this.pathParams);
             }
 

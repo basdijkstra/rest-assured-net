@@ -17,6 +17,7 @@ namespace RestAssured.Tests
 {
     using System;
     using System.Collections.Generic;
+    using Humanizer.DateTimeHumanizeStrategy;
     using NUnit.Framework;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
@@ -44,7 +45,7 @@ namespace RestAssured.Tests
             Given()
                 .PathParam("userId", this.userId)
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/user/{{userId}}")
+                .Get($"{MOCK_SERVER_BASE_URL}/user/[userId]")
                 .Then()
                 .StatusCode(200);
         }
@@ -62,7 +63,7 @@ namespace RestAssured.Tests
                 .PathParam("userId", this.userId)
                 .PathParam("accountId", this.accountId)
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/user/{{userId}}/account/{{accountId}}")
+                .Get($"{MOCK_SERVER_BASE_URL}/user/[userId]/account/[accountId]")
                 .Then()
                 .StatusCode(200);
         }
@@ -85,7 +86,7 @@ namespace RestAssured.Tests
             Given()
                 .PathParams(pathParams)
                 .When()
-                .Get(MOCK_SERVER_BASE_URL + "/user/{{userId}}/account/{{accountId}}")
+                .Get($"{MOCK_SERVER_BASE_URL}/user/[userId]/account/[accountId]")
                 .Then()
                 .StatusCode(200);
         }
@@ -96,7 +97,7 @@ namespace RestAssured.Tests
         private void CreateStubForSinglePathParameter()
         {
             this.Server?.Given(Request.Create()
-                .WithPath(string.Format("/user/{0}", this.userId))
+                .WithPath($"/user/{this.userId}")
                 .UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
@@ -108,7 +109,7 @@ namespace RestAssured.Tests
         private void CreateStubForMultiplePathParameters()
         {
             this.Server?.Given(Request.Create()
-                .WithPath(string.Format("/user/{0}/account/{1}", this.userId, this.accountId))
+                .WithPath($"/user/{this.userId}/account/{this.accountId}")
                 .UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
