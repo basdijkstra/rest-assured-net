@@ -50,9 +50,11 @@ namespace RestAssured.Tests
         public void HttpsEndpointsCanBeInvokedWithoutExplicitlyDisablingSslVerification()
         {
             Given()
+                .Log(RestAssured.Request.Logging.RequestLogLevel.All)
                 .When()
                 .Get("https://jsonplaceholder.typicode.com/users/1")
                 .Then()
+                .Log(RestAssured.Response.Logging.ResponseLogLevel.All)
                 .StatusCode(HttpStatusCode.OK)
                 .And()
                 .Body("$.name", NHamcrest.Is.EqualTo("Leanne Graham"));
