@@ -52,12 +52,12 @@ namespace RestAssured.Tests
             Given()
                 .Log(RestAssured.Request.Logging.RequestLogLevel.All)
                 .When()
-                .Get("https://jsonplaceholder.typicode.com/users/1")
+                .Get("https://api.zippopotam.us/us/90210")
                 .Then()
                 .Log(RestAssured.Response.Logging.ResponseLogLevel.All)
                 .StatusCode(HttpStatusCode.OK)
                 .And()
-                .Body("$.name", NHamcrest.Is.EqualTo("Leanne Graham"));
+                .Body("$.country", NHamcrest.Is.EqualTo("United States"));
         }
 
         /// <summary>
