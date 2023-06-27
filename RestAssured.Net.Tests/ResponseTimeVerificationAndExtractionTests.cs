@@ -35,6 +35,45 @@ namespace RestAssured.Tests
     public class ResponseTimeVerificationAndExtractionTests : TestBase
     {
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// the response time for a response.
+        /// </summary>
+        [Test]
+        public void ResponseTimeCanBeVerified()
+        {
+            this.CreateStubForDelayedResponse();
+
+            Given()
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/delayed-response")
+                .Then()
+                .StatusCode(200)
+                .ResponseTime(NHamcrest.Is.GreaterThan(TimeSpan.FromMilliseconds(200)));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// the response time for a response.
+        /// </summary>
+        [Test]
+        public void FailingResponseTimeVerificationThrowsTheExpectedException()
+        {
+            this.CreateStubForDelayedResponse();
+
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/delayed-response")
+                .Then()
+                .StatusCode(200)
+                .ResponseTime(NHamcrest.Is.LessThan(TimeSpan.FromMilliseconds(200)));
+            });
+
+            Assert.That(rve?.Message, Does.Contain("Expected response time to match 'less than 00:00:00.2000000' but was '"));
+        }
+
+        /// <summary>
         /// A test demonstrating RestAssuredNet syntax for extracting
         /// the response time for a response.
         /// </summary>

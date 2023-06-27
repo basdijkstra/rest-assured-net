@@ -630,6 +630,21 @@ namespace RestAssured.Response
         }
 
         /// <summary>
+        /// Verifies that the response time matches the specified NHamcrest matcher.
+        /// </summary>
+        /// <param name="matcher">The NHamcrest matcher to match against the response time.</param>
+        /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        public VerifiableResponse ResponseTime(IMatcher<TimeSpan> matcher)
+        {
+            if (!matcher.Matches(this.elapsedTime))
+            {
+                this.FailVerification($"Expected response time to match '{matcher}' but was '{this.elapsedTime}'");
+            }
+
+            return this;
+        }
+
+        /// <summary>
         /// Sets the <see cref="JsonSerializerSettings"/> to use when deserializing the response payload to JSON.
         /// </summary>
         /// <param name="jsonSerializerSettings">The <see cref="JsonSerializerSettings"/> to apply when deserializing.</param>
