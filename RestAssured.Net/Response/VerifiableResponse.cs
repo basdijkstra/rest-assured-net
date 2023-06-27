@@ -696,7 +696,7 @@ namespace RestAssured.Response
         /// <returns>An <see cref="ExtractableResponse"/> object from which values can then be extracted.</returns>
         public ExtractableResponse Extract()
         {
-            return new ExtractableResponse(this.response);
+            return new ExtractableResponse(this.response, this.elapsedTime);
         }
 
         private void FailVerification(string exceptionMessage)

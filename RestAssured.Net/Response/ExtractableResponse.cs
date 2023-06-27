@@ -33,14 +33,17 @@ namespace RestAssured.Response
     public class ExtractableResponse
     {
         private readonly HttpResponseMessage response;
+        private readonly TimeSpan elapsedTime;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExtractableResponse"/> class.
         /// </summary>
         /// <param name="response">The <see cref="HttpResponseMessage"/> object from which values should be extracted.</param>
-        public ExtractableResponse(HttpResponseMessage response)
+        /// <param name="elapsedTime">The time elapsed between sending a request and receiving a response. Not to be used for performance tests.</param>
+        public ExtractableResponse(HttpResponseMessage response, TimeSpan elapsedTime)
         {
             this.response = response;
+            this.elapsedTime = elapsedTime;
         }
 
         /// <summary>
@@ -207,6 +210,15 @@ namespace RestAssured.Response
         public HttpResponseMessage Response()
         {
             return this.response;
+        }
+
+        /// <summary>
+        /// Returns the time elapsed between sending the request and receiving the response. Not to be used for performance testing purposes.
+        /// </summary>
+        /// <returns>The time elapsed between sending the request and receiving the response.</returns>
+        public TimeSpan ResponseTime()
+        {
+            return this.elapsedTime;
         }
     }
 }
