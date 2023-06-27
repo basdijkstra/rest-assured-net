@@ -27,12 +27,6 @@ namespace RestAssured.Configuration
         /// <summary>
         /// Setting to disable SSL certificate validation for requests.
         /// </summary>
-        [Obsolete("Please use .DisableSslCertificateValidation instead. This property will be removed in version 3.0.0.", false)]
-        public bool UseRelaxedHttpsValidation { get; set; } = false;
-
-        /// <summary>
-        /// Setting to disable SSL certificate validation for requests.
-        /// </summary>
         public bool DisableSslCertificateValidation { get; set; } = false;
 
         /// <summary>

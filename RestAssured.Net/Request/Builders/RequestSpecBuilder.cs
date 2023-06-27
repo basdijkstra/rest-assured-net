@@ -204,16 +204,6 @@ namespace RestAssured.Request.Builders
         /// Disables SSL certificate validation for the requests that use this specification.
         /// </summary>
         /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
-        [Obsolete("Please use WithDisabledSslCertificateValidation() instead. This method will be removed in version 3.0.0.", false)]
-        public RequestSpecBuilder WithRelaxedHttpsValidation()
-        {
-            return this.WithDisabledSslCertificateValidation();
-        }
-
-        /// <summary>
-        /// Disables SSL certificate validation for the requests that use this specification.
-        /// </summary>
-        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
         public RequestSpecBuilder WithDisabledSslCertificateValidation()
         {
             this.requestSpecification.DisableSslCertificateValidation = true;

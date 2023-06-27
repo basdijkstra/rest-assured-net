@@ -75,9 +75,7 @@ namespace RestAssured.Request
         /// <param name="config">The <see cref="RestAssuredConfiguration"/> to use for all requests.</param>
         internal ExecutableRequest(RestAssuredConfiguration config)
         {
-            // Will be true if either the obsolete or the current property is set to true.
-            // Can be simplified again from version 3.0.0 onwards when the obsolete property is removed.
-            this.disableSslCertificateValidation = config.DisableSslCertificateValidation || config.UseRelaxedHttpsValidation;
+            this.disableSslCertificateValidation = config.DisableSslCertificateValidation;
 
             this.RequestLoggingLevel = config.RequestLogLevel;
             this.ResponseLoggingLevel = config.ResponseLogLevel;
@@ -296,45 +294,6 @@ namespace RestAssured.Request
         }
 
         /// <summary>
-        /// Adds multipart form data (multipart/form-data) to the request. Useful for file uploads.
-        /// </summary>
-        /// <param name="controlName">The control name associated with the multipart file to be uploaded.</param>
-        /// <param name="fileName">The path to the file that is to be uploaded with the request.</param>
-        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
-        [Obsolete("Please use Multipart(FileInfo fileName, string controlName, MediaTypeHeaderValue contentType) instead. This method will be removed in version 3.0.0.", false)]
-        public ExecutableRequest MultiPart(string controlName, string fileName)
-        {
-            this.multipartFormDataContent = new MultipartFormDataContent();
-
-            try
-            {
-                string contentType = this.GetContentTypeForFile(fileName);
-
-                StreamContent fileContents = new StreamContent(File.OpenRead(fileName));
-                fileContents.Headers.ContentType = MediaTypeHeaderValue.Parse(contentType);
-
-                this.multipartFormDataContent.Add(fileContents, controlName, fileName);
-            }
-            catch (IOException ioe)
-            {
-                throw new RequestCreationException(ioe.Message);
-            }
-
-            return this;
-        }
-
-        /// <summary>
-        /// Adds multipart form data (multipart/form-data) to the request. Useful for file uploads.
-        /// </summary>
-        /// <param name="fileName">The path to the file that is to be uploaded with the request.</param>
-        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
-        [Obsolete("Please use Multipart(FileInfo fileName, string controlName, MediaTypeHeaderValue contentType) instead. This method will be removed in version 3.0.0.", false)]
-        public ExecutableRequest MultiPart(string fileName)
-        {
-            return this.MultiPart("file", fileName);
-        }
-
-        /// <summary>
         /// Forms a GraphQL request to be POSTed to a GraphQL API endpoint.
         /// </summary>
         /// <param name="graphQLRequest">The <see cref="GraphQLRequest"/> object to use in constructing the request.</param>
@@ -396,16 +355,6 @@ namespace RestAssured.Request
         }
 
         /// <summary>
-        /// Disables SSL checking for the request.
-        /// </summary>
-        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
-        [Obsolete("Please use DisableSslCertificateValidation() instead. This method will be removed in version 3.0.0.", false)]
-        public ExecutableRequest RelaxedHttpsValidation()
-        {
-            return this.DisableSslCertificateValidation();
-        }
-
-        /// <summary>
         /// Disables validation of SSL certificates for this request.
         /// </summary>
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
@@ -424,16 +373,6 @@ namespace RestAssured.Request
         {
             this.jsonSerializerSettings = jsonSerializerSettings;
             return this;
-        }
-
-        /// <summary>
-        /// Logs request details to the standard output.
-        /// </summary>
-        /// <returns>A <see cref="RequestLogger"/> object, which can be used to log request details to the standard output.</returns>
-        [Obsolete("Please use Log(RequestLogLevel requestLogLevel) instead. This method will be removed in version 3.0.0.", false)]
-        public RequestLogger Log()
-        {
-            return new RequestLogger(this);
         }
 
         /// <summary>

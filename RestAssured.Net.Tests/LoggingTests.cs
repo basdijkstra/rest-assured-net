@@ -54,29 +54,6 @@ namespace RestAssured.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for logging
-        /// JSON request details to the standard output.
-        /// Uses the deprecated way to log request details.
-        /// </summary>
-        [Test]
-        public void RequestDetailsCanBeWrittenToStandardOutputForJsonUsingObsoleteMethod()
-        {
-            this.CreateStubForLoggingJsonResponse();
-
-            Given()
-                .Log(RequestLogLevel.All)
-                .And()
-                .Accept("application/json")
-                .Header("CustomHeader", "custom header value")
-                .ContentType("application/json")
-                .Body(this.jsonBody)
-                .When()
-                .Get($"{MOCK_SERVER_BASE_URL}/log-json-response")
-                .Then()
-                .StatusCode(200);
-        }
-
-        /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for logging
         /// XML request details to the standard output.
         /// </summary>
         [Test]
@@ -100,25 +77,6 @@ namespace RestAssured.Tests
         /// </summary>
         [Test]
         public void ResponseDetailsCanBeWrittenToStandardOutputForJson()
-        {
-            this.CreateStubForLoggingJsonResponse();
-
-            Given()
-                .When()
-                .Get($"{MOCK_SERVER_BASE_URL}/log-json-response")
-                .Then()
-                .Log(ResponseLogLevel.All)
-                .And()
-                .StatusCode(200);
-        }
-
-        /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for logging
-        /// JSON response details to the standard output.
-        /// Uses the deprecated way to log response details.
-        /// </summary>
-        [Test]
-        public void ResponseDetailsCanBeWrittenToStandardOutputForJsonUsingObsoleteMethod()
         {
             this.CreateStubForLoggingJsonResponse();
 

@@ -652,28 +652,6 @@ namespace RestAssured.Response
         }
 
         /// <summary>
-        /// Deserializes the response content into the specified type and returns it.
-        /// </summary>
-        /// <param name="type">The object type to deserialize into.</param>
-        /// /// <param name="deserializeAs">Indicates how to interpret the response content when deserializing.</param>
-        /// <returns>The deserialized response object.</returns>
-        [Obsolete("Please use DeserializeTo() instead. This method will be removed in version 3.0.0.", false)]
-        public object As(Type type, DeserializeAs deserializeAs = DeserializeAs.UseResponseContentTypeHeaderValue)
-        {
-            return this.DeserializeTo(type, deserializeAs);
-        }
-
-        /// <summary>
-        /// Logs response details to the standard output.
-        /// </summary>
-        /// <returns>A <see cref="ResponseLogger"/> object, which can be used to log response details.</returns>
-        [Obsolete("Please use Log(ResponseLogLevel responseLogLevel) instead. This method will be removed in version 3.0.0.", false)]
-        public ResponseLogger Log()
-        {
-            return new ResponseLogger(this.response, this.elapsedTime);
-        }
-
-        /// <summary>
         /// Logs response details to the standard output.
         /// </summary>
         /// <param name="responseLogLevel">The required log level.</param>

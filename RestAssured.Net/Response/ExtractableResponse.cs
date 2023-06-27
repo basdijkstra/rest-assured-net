@@ -180,30 +180,6 @@ namespace RestAssured.Response
         }
 
         /// <summary>
-        /// Deserializes the response content into the specified type and returns it.
-        /// </summary>
-        /// <param name="type">The object type to deserialize into.</param>
-        /// /// <param name="deserializeAs">Indicates how to interpret the response content when deserializing.</param>
-        /// <returns>The deserialized response object.</returns>
-        [Obsolete("Please DeserializeTo() instead of Extract().As(). This method will be removed in version 3.0.0.", false)]
-        public object As(Type type, DeserializeAs deserializeAs = DeserializeAs.UseResponseContentTypeHeaderValue)
-        {
-            return this.DeserializeTo(type, deserializeAs);
-        }
-
-        /// <summary>
-        /// Deserializes the response content into the specified type and returns it.
-        /// </summary>
-        /// <param name="type">The object type to deserialize into.</param>
-        /// /// <param name="deserializeAs">Indicates how to interpret the response content when deserializing.</param>
-        /// <returns>The deserialized response object.</returns>
-        [Obsolete("Please use DeserializeTo() instead of Extract().DeserializeTo(). This method will be removed in version 3.0.0.", false)]
-        public object DeserializeTo(Type type, DeserializeAs deserializeAs = DeserializeAs.UseResponseContentTypeHeaderValue)
-        {
-            return Deserializer.DeserializeResponseInto(this.response, type, deserializeAs, new JsonSerializerSettings());
-        }
-
-        /// <summary>
         /// Returns the entire HttpResponseMessage.
         /// </summary>
         /// <returns>The current <see cref="HttpResponseMessage"/> response object.</returns>

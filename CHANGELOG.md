@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added ability to specify custom settings for deserializing request payloads from JSON in individual tests ([#84](https://github.com/basdijkstra/rest-assured-net/issues/84))
 - Added ability to specify custom settings for serializing request payloads to JSON in individual tests and through a RequestSpecification ([#84](https://github.com/basdijkstra/rest-assured-net/issues/84))
+- Added ability to extract the response time into a `TimeSpan` ([#91](https://github.com/basdijkstra/rest-assured-net/issues/91) by [@christiaanwvermaak](https://github.com/christiaanwvermaak))
 
 #### Deprecated
 

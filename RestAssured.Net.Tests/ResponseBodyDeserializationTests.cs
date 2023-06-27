@@ -40,6 +40,9 @@ namespace RestAssured.Tests
         private int placeInhabitants;
         private bool isCapital;
 
+        /// <summary>
+        /// Initializes the <see cref="Location"/> object used in these tests.
+        /// </summary>
         [SetUp]
         public void SetLocation()
         {
@@ -63,6 +66,9 @@ namespace RestAssured.Tests
             this.location.Places.Add(new Place());
         }
 
+        /// <summary>
+        /// Clears the <see cref="Place"/> objects.
+        /// </summary>
         [TearDown]
         public void ClearPlaces()
         {
@@ -127,32 +133,6 @@ namespace RestAssured.Tests
         /// using the DeserializeTo() alias method.
         /// </summary>
         [Test]
-        public void ObjectCanBeDeserializedFromJsonUsingDeserializeTo()
-        {
-            this.CreateStubForJsonResponseBody();
-
-            Location responseLocation = (Location)Given()
-                .When()
-                .Get($"{MOCK_SERVER_BASE_URL}/json-deserialization")
-                .Then()
-                .DeserializeTo(typeof(Location));
-
-            Assert.That(responseLocation.Country, Is.EqualTo(this.country));
-            Assert.That(responseLocation.Places?.Count, Is.EqualTo(2));
-
-            Place firstPlace = responseLocation.Places!.First();
-
-            Assert.That(firstPlace.Name, Is.EqualTo(this.placeName));
-            Assert.That(firstPlace.Inhabitants, Is.EqualTo(this.placeInhabitants));
-            Assert.That(firstPlace.IsCapital, Is.EqualTo(this.isCapital));
-        }
-
-        /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for deserializing
-        /// a JSON response into an object when performing an HTTP GET
-        /// using the DeserializeTo() alias method.
-        /// </summary>
-        [Test]
         public void ObjectCanBeDeserializedFromJsonUsingDeserializeToOverridingContentTypeHeader()
         {
             this.CreateStubForJsonResponseBodyWithNonMatchingContentTypeHeader();
@@ -175,63 +155,10 @@ namespace RestAssured.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for deserializing
-        /// a JSON response into an object when performing an HTTP GET
-        /// after performing some initial verifications, using the
-        /// DeserializeTo() alias method.
-        /// </summary>
-        [Test]
-        public void ObjectCanBeDeserializedFromJsonAfterVerificationsUsingDeserializeTo()
-        {
-            this.CreateStubForJsonResponseBody();
-
-            Location responseLocation = (Location)Given()
-                .When()
-                .Get($"{MOCK_SERVER_BASE_URL}/json-deserialization")
-                .Then()
-                .StatusCode(200)
-                .And()
-                .DeserializeTo(typeof(Location));
-
-            Assert.That(responseLocation.Country, Is.EqualTo(this.country));
-            Assert.That(responseLocation.Places?.Count, Is.EqualTo(2));
-
-            Place firstPlace = responseLocation.Places!.First();
-
-            Assert.That(firstPlace.Name, Is.EqualTo(this.placeName));
-            Assert.That(firstPlace.Inhabitants, Is.EqualTo(this.placeInhabitants));
-            Assert.That(firstPlace.IsCapital, Is.EqualTo(this.isCapital));
-        }
-
-        /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for deserializing
         /// a XML response into an object when performing an HTTP GET.
         /// </summary>
         [Test]
         public void ObjectCanBeDeserializedFromXml()
-        {
-            this.CreateStubForXmlResponseBody();
-
-            Location responseLocation = (Location)Given()
-                .When()
-                .Get($"{MOCK_SERVER_BASE_URL}/xml-deserialization")
-                .DeserializeTo(typeof(Location));
-
-            Assert.That(responseLocation.Country, Is.EqualTo(this.country));
-            Assert.That(responseLocation.Places?.Count, Is.EqualTo(2));
-
-            Place firstPlace = responseLocation.Places!.First();
-
-            Assert.That(firstPlace.Name, Is.EqualTo(this.placeName));
-            Assert.That(firstPlace.Inhabitants, Is.EqualTo(this.placeInhabitants));
-            Assert.That(firstPlace.IsCapital, Is.EqualTo(this.isCapital));
-        }
-
-        /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for deserializing
-        /// a XML response into an object when performing an HTTP GET.
-        /// </summary>
-        [Test]
-        public void ObjectCanBeDeserializedFromXmlUsingDeserializeTo()
         {
             this.CreateStubForXmlResponseBody();
 
