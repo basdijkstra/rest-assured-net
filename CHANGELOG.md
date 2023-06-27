@@ -13,10 +13,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added ability to specify custom settings for serializing request payloads to JSON in individual tests and through a RequestSpecification ([#84](https://github.com/basdijkstra/rest-assured-net/issues/84))
 - Added ability to extract the response time into a `TimeSpan` ([#91](https://github.com/basdijkstra/rest-assured-net/issues/91) by [@christiaanwvermaak](https://github.com/christiaanwvermaak))
 
-#### Deprecated
+#### Changed
 
-- Deprecated `As()` for deserializing response payloads in favour of `DeserializeTo()`
-- Deprecated `As()` and `DeserializeTo()` methods in `ExtractableResponse` in favour of deserializing response in `VerifiableResponse` to clean up the library API
+- (BREAKING CHANGE) Changed delimiters for path parameter placeholders from `{{` and `}}` to `[` and `]`, respectively, to enable path parameter usage in combination with C# string interpolation ([#89](https://github.com/basdijkstra/rest-assured-net/issues/89))
+
+#### Removed
+
+- Removed `As()` for deserializing response payloads in favour of `DeserializeTo()`
+- Removed `As()` and `DeserializeTo()` methods in `ExtractableResponse` in favour of deserializing response in `VerifiableResponse` to clean up the library API
+- Removed `UseRelaxedHttpsValidation()` and other methods and properties for disabling SSL certificate checks in favour of `DisableSslCertificateValidation()` ([#79](https://github.com/basdijkstra/rest-assured-net/issues/79))
+- Removed `Log().All()` and other methods for request logging in favour of `Log(RequestLogLevel requestLogLevel)`.
+- Removed `Log().All()` and other methods for response logging in favour of `Log(ResponseLogLevel responseLogLevel)`.
 
 ### [2.8.1] - 2023-05-23
 
