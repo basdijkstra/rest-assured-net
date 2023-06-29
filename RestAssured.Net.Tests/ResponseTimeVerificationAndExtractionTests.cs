@@ -16,14 +16,8 @@
 namespace RestAssured.Tests
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Net;
-    using System.Net.Http;
     using NUnit.Framework;
-    using RestAssured.Response;
     using RestAssured.Response.Exceptions;
-    using RestAssured.Tests.Models;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
     using static RestAssured.Dsl;
