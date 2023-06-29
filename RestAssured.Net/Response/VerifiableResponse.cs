@@ -645,6 +645,23 @@ namespace RestAssured.Response
         }
 
         /// <summary>
+        /// Verifies that the response body length (in bytes) matches the specified NHamcrest matcher.
+        /// </summary>
+        /// <param name="matcher">The NHamcrest matcher to match against the response body length (in bytes).</param>
+        /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        public VerifiableResponse ResponseBodyLength(IMatcher<int> matcher)
+        {
+            string responseContentAsString = this.response.Content.ReadAsStringAsync().Result;
+
+            if (!matcher.Matches(responseContentAsString.Length))
+            {
+                this.FailVerification($"Expected response body length to match '{matcher}' but was '{responseContentAsString.Length}'");
+            }
+
+            return this;
+        }
+
+        /// <summary>
         /// Sets the <see cref="JsonSerializerSettings"/> to use when deserializing the response payload to JSON.
         /// </summary>
         /// <param name="jsonSerializerSettings">The <see cref="JsonSerializerSettings"/> to apply when deserializing.</param>

@@ -17,14 +17,11 @@ namespace RestAssured.Response
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
     using System.Net.Http;
     using System.Xml;
     using HtmlAgilityPack;
-    using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
-    using RestAssured.Response.Deserialization;
     using RestAssured.Response.Exceptions;
 
     /// <summary>
@@ -44,6 +41,15 @@ namespace RestAssured.Response
         {
             this.response = response;
             this.elapsedTime = elapsedTime;
+        }
+
+        /// <summary>
+        /// Extracts the entire response body as a string.
+        /// </summary>
+        /// <returns>The element value or values extracted from the response using the JsonPath expression.</returns>
+        public string Body()
+        {
+            return this.response.Content.ReadAsStringAsync().Result;
         }
 
         /// <summary>
