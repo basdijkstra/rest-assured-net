@@ -486,6 +486,17 @@ namespace RestAssured.Request
         }
 
         /// <summary>
+        /// Sends the request to the specified endpoint using the specified HTTP method.
+        /// </summary>
+        /// <param name="endpoint">The endpoint to invoke in the request.</param>
+        /// <param name="httpMethod">The <see cref="HttpMethod"/> to use in the request.</param>
+        /// <returns>The HTTP response object.</returns>
+        public VerifiableResponse Invoke(string endpoint, HttpMethod httpMethod)
+        {
+            return this.Send(httpMethod, endpoint);
+        }
+
+        /// <summary>
         /// Implements Dispose() method of IDisposable interface.
         /// </summary>
         public void Dispose()
