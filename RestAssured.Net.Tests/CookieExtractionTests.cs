@@ -17,6 +17,7 @@ namespace RestAssured.Tests
 {
     using System.Net;
     using NUnit.Framework;
+    using RestAssured.Response.Exceptions;
     using RestAssured.Response.Logging;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
@@ -47,6 +48,30 @@ namespace RestAssured.Tests
                 .Extract().Cookie("Auth");
 
             Assert.That(authCookieValue, Is.EqualTo("123"));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for including
+        /// a cookie with a single value when sending an HTTP request.
+        /// </summary>
+        [Test]
+        public void CookieNotFoundThrowsTheExpectedException()
+        {
+            this.CreateStubForHttpOnlySecureCookie();
+
+            ExtractionException ee = Assert.Throws<ExtractionException>(() =>
+            {
+                Given()
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/response-with-httponly-secure-cookie")
+                .Then()
+                .Log(ResponseLogLevel.All)
+                .StatusCode(200)
+                .And()
+                .Extract().Cookie("not_found");
+            });
+
+            Assert.That(ee.Message, Is.EqualTo("Cookie with name 'not_found' could not be found in the response."));
         }
 
         /// <summary>
