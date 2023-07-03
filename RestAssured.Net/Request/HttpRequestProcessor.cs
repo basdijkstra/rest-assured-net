@@ -130,7 +130,7 @@ namespace RestAssured.Request
                 HttpResponseMessage response = await this.client.SendAsync(request);
                 stopwatch.Stop();
 
-                return new VerifiableResponse(response, stopwatch.Elapsed);
+                return new VerifiableResponse(response, this.handler.CookieContainer, stopwatch.Elapsed);
             }
             catch (HttpRequestException hre)
             {

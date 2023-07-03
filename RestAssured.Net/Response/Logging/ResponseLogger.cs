@@ -18,6 +18,7 @@ namespace RestAssured.Response.Logging
 {
     using System;
     using System.Collections.Generic;
+    using System.Net;
     using System.Net.Http;
     using System.Xml.Linq;
     using Newtonsoft.Json;
@@ -28,16 +29,19 @@ namespace RestAssured.Response.Logging
     public class ResponseLogger
     {
         private readonly HttpResponseMessage response;
+        private readonly CookieContainer cookieContainer;
         private readonly TimeSpan elapsedTime;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ResponseLogger"/> class.
         /// </summary>
         /// <param name="response">The <see cref="HttpResponseMessage"/> object to log details of.</param>
+        /// <param name="cookieContainer">The <see cref="CookieContainer"/> used by the HTTP client.</param>
         /// <param name="elapsedTime">The time elapsed for between sending a request and receiving a response.</param>
-        public ResponseLogger(HttpResponseMessage response, TimeSpan elapsedTime)
+        public ResponseLogger(HttpResponseMessage response, CookieContainer cookieContainer, TimeSpan elapsedTime)
         {
             this.response = response;
+            this.cookieContainer = cookieContainer;
             this.elapsedTime = elapsedTime;
         }
 
@@ -48,7 +52,7 @@ namespace RestAssured.Response.Logging
         public VerifiableResponse Status()
         {
             this.LogStatusCode();
-            return new VerifiableResponse(this.response, this.elapsedTime);
+            return new VerifiableResponse(this.response, this.cookieContainer, this.elapsedTime);
         }
 
         /// <summary>
@@ -59,7 +63,7 @@ namespace RestAssured.Response.Logging
         {
             this.LogStatusCode();
             this.LogHeaders();
-            return new VerifiableResponse(this.response, this.elapsedTime);
+            return new VerifiableResponse(this.response, this.cookieContainer, this.elapsedTime);
         }
 
         /// <summary>
@@ -70,7 +74,7 @@ namespace RestAssured.Response.Logging
         {
             this.LogStatusCode();
             this.LogBody();
-            return new VerifiableResponse(this.response, this.elapsedTime);
+            return new VerifiableResponse(this.response, this.cookieContainer, this.elapsedTime);
         }
 
         /// <summary>
@@ -81,7 +85,7 @@ namespace RestAssured.Response.Logging
         {
             this.LogStatusCode();
             this.LogTime();
-            return new VerifiableResponse(this.response, this.elapsedTime);
+            return new VerifiableResponse(this.response, this.cookieContainer, this.elapsedTime);
         }
 
         /// <summary>
@@ -94,7 +98,7 @@ namespace RestAssured.Response.Logging
             this.LogHeaders();
             this.LogBody();
             this.LogTime();
-            return new VerifiableResponse(this.response, this.elapsedTime);
+            return new VerifiableResponse(this.response, this.cookieContainer, this.elapsedTime);
         }
 
         /// <summary>

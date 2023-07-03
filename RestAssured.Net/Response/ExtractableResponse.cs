@@ -18,6 +18,7 @@ namespace RestAssured.Response
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net;
     using System.Net.Http;
     using System.Xml;
     using HtmlAgilityPack;
@@ -30,16 +31,19 @@ namespace RestAssured.Response
     public class ExtractableResponse
     {
         private readonly HttpResponseMessage response;
+        private readonly CookieContainer cookieContainer;
         private readonly TimeSpan elapsedTime;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExtractableResponse"/> class.
         /// </summary>
         /// <param name="response">The <see cref="HttpResponseMessage"/> object from which values should be extracted.</param>
+        /// <param name="cookieContainer">The <see cref="CookieContainer"/> used by the HTTP client.</param>
         /// <param name="elapsedTime">The time elapsed between sending a request and receiving a response. Not to be used for performance tests.</param>
-        public ExtractableResponse(HttpResponseMessage response, TimeSpan elapsedTime)
+        public ExtractableResponse(HttpResponseMessage response, CookieContainer cookieContainer, TimeSpan elapsedTime)
         {
             this.response = response;
+            this.cookieContainer = cookieContainer;
             this.elapsedTime = elapsedTime;
         }
 
@@ -183,6 +187,27 @@ namespace RestAssured.Response
             {
                 throw new ExtractionException($"Header with name '{name}' could not be found in the response.");
             }
+        }
+
+        /// <summary>
+        /// Returns the value of the cookie with the specified name.
+        /// </summary>
+        /// <param name="name">The name of the cookie to return.</param>
+        /// <returns>The value of the cookie.</returns>
+        public string Cookie(string name)
+        {
+            var cookies = this.cookieContainer.GetAllCookies().GetEnumerator();
+
+            while (cookies.MoveNext())
+            {
+                Cookie cookie = (Cookie)cookies.Current;
+                if (cookie.Name.Equals(name))
+                {
+                    return cookie.Value;
+                }
+            }
+
+            throw new ExtractionException($"Cookie with name '{name}' could not be found in the response.");
         }
 
         /// <summary>
