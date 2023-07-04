@@ -39,6 +39,7 @@ namespace RestAssured.Response
     public class VerifiableResponse
     {
         private readonly HttpResponseMessage response;
+        private readonly CookieContainer cookieContainer;
         private readonly TimeSpan elapsedTime;
 
         private bool logOnVerificationFailure = false;
@@ -48,10 +49,12 @@ namespace RestAssured.Response
         /// Initializes a new instance of the <see cref="VerifiableResponse"/> class.
         /// </summary>
         /// <param name="response">The <see cref="HttpResponseMessage"/> returned by the HTTP client.</param>
+        /// <param name="cookieContainer">The <see cref="CookieContainer"/> used by the HTTP client.</param>
         /// <param name="elapsedTime">The time elapsed between sending the request and receiving the response.</param>
-        public VerifiableResponse(HttpResponseMessage response, TimeSpan elapsedTime)
+        public VerifiableResponse(HttpResponseMessage response, CookieContainer cookieContainer, TimeSpan elapsedTime)
         {
             this.response = response;
+            this.cookieContainer = cookieContainer;
             this.elapsedTime = elapsedTime;
         }
 
@@ -706,7 +709,7 @@ namespace RestAssured.Response
         /// <returns>An <see cref="ExtractableResponse"/> object from which values can then be extracted.</returns>
         public ExtractableResponse Extract()
         {
-            return new ExtractableResponse(this.response, this.elapsedTime);
+            return new ExtractableResponse(this.response, this.cookieContainer, this.elapsedTime);
         }
 
         private void FailVerification(string exceptionMessage)
