@@ -729,7 +729,7 @@ namespace RestAssured.Response
                 return this;
             }
 
-            ResponseLogger.Log(this.response, responseLogLevel, this.elapsedTime);
+            ResponseLogger.Log(this.response, this.cookieContainer, responseLogLevel, this.elapsedTime);
             return this;
         }
 
@@ -746,7 +746,7 @@ namespace RestAssured.Response
         {
             if (this.logOnVerificationFailure)
             {
-                ResponseLogger.Log(this.response, ResponseLogLevel.All, this.elapsedTime);
+                ResponseLogger.Log(this.response, this.cookieContainer, ResponseLogLevel.All, this.elapsedTime);
             }
 
             throw new ResponseVerificationException(exceptionMessage);

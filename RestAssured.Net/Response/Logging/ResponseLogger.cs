@@ -28,86 +28,14 @@ namespace RestAssured.Response.Logging
     /// </summary>
     public class ResponseLogger
     {
-        private readonly HttpResponseMessage response;
-        private readonly CookieContainer cookieContainer;
-        private readonly TimeSpan elapsedTime;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ResponseLogger"/> class.
-        /// </summary>
-        /// <param name="response">The <see cref="HttpResponseMessage"/> object to log details of.</param>
-        /// <param name="cookieContainer">The <see cref="CookieContainer"/> used by the HTTP client.</param>
-        /// <param name="elapsedTime">The time elapsed for between sending a request and receiving a response.</param>
-        public ResponseLogger(HttpResponseMessage response, CookieContainer cookieContainer, TimeSpan elapsedTime)
-        {
-            this.response = response;
-            this.cookieContainer = cookieContainer;
-            this.elapsedTime = elapsedTime;
-        }
-
-        /// <summary>
-        /// Logs the status code and code description to the console.
-        /// </summary>
-        /// <returns>A <see cref="VerifiableResponse"/> that can be used for further response verification.</returns>
-        public VerifiableResponse Status()
-        {
-            this.LogStatusCode();
-            return new VerifiableResponse(this.response, this.cookieContainer, this.elapsedTime);
-        }
-
-        /// <summary>
-        /// Logs the status code and all response headers to the console.
-        /// </summary>
-        /// <returns>A <see cref="VerifiableResponse"/> that can be used for further response verification.</returns>
-        public VerifiableResponse Headers()
-        {
-            this.LogStatusCode();
-            this.LogHeaders();
-            return new VerifiableResponse(this.response, this.cookieContainer, this.elapsedTime);
-        }
-
-        /// <summary>
-        /// Logs the status code and the response body to the console.
-        /// </summary>
-        /// <returns>A <see cref="VerifiableResponse"/> that can be used for further response verification.</returns>
-        public VerifiableResponse Body()
-        {
-            this.LogStatusCode();
-            this.LogBody();
-            return new VerifiableResponse(this.response, this.cookieContainer, this.elapsedTime);
-        }
-
-        /// <summary>
-        /// Logs the status code and the response body to the console.
-        /// </summary>
-        /// <returns>A <see cref="VerifiableResponse"/> that can be used for further response verification.</returns>
-        public VerifiableResponse Time()
-        {
-            this.LogStatusCode();
-            this.LogTime();
-            return new VerifiableResponse(this.response, this.cookieContainer, this.elapsedTime);
-        }
-
-        /// <summary>
-        /// Logs the status code, all response headers and the response body to the console.
-        /// </summary>
-        /// <returns>A <see cref="VerifiableResponse"/> that can be used for further response verification.</returns>
-        public VerifiableResponse All()
-        {
-            this.LogStatusCode();
-            this.LogHeaders();
-            this.LogBody();
-            this.LogTime();
-            return new VerifiableResponse(this.response, this.cookieContainer, this.elapsedTime);
-        }
-
         /// <summary>
         /// Logs the response to the console with the requested <see cref="ResponseLogLevel"/>.
         /// </summary>
         /// <param name="response">The response to be logged to the console.</param>
+        /// <param name="cookieContainer">The <see cref="CookieContainer"/> containing the cookies associated with the response.</param>
         /// <param name="responseLogLevel">The <see cref="ResponseLogLevel"/> to use.</param>
         /// <param name="elapsedTime">The time elapsed between sending a request and returning a response.</param>
-        internal static void Log(HttpResponseMessage response, ResponseLogLevel responseLogLevel, TimeSpan elapsedTime)
+        internal static void Log(HttpResponseMessage response, CookieContainer cookieContainer, ResponseLogLevel responseLogLevel, TimeSpan elapsedTime)
         {
             if (responseLogLevel == ResponseLogLevel.OnVerificationFailure)
             {
@@ -135,6 +63,7 @@ namespace RestAssured.Response.Logging
             if (responseLogLevel == ResponseLogLevel.Headers)
             {
                 LogHeaders(response);
+                LogCookies(cookieContainer);
             }
 
             if (responseLogLevel == ResponseLogLevel.Body)
@@ -150,6 +79,7 @@ namespace RestAssured.Response.Logging
             if (responseLogLevel == ResponseLogLevel.All)
             {
                 LogHeaders(response);
+                LogCookies(cookieContainer);
                 LogBody(response);
                 LogTime(elapsedTime);
             }
@@ -172,6 +102,18 @@ namespace RestAssured.Response.Logging
             foreach (KeyValuePair<string, IEnumerable<string>> header in response.Headers)
             {
                 Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
+            }
+        }
+
+        private static void LogCookies(CookieContainer cookieContainer)
+        {
+            var cookies = cookieContainer.GetAllCookies().GetEnumerator();
+
+            while (cookies.MoveNext())
+            {
+                Cookie cookie = (Cookie)cookies.Current;
+
+                Console.WriteLine($"Cookie: {cookie.Name}={cookie.Value}, Domain: {cookie.Domain}, HTTP-only: {cookie.HttpOnly}, Secure: {cookie.Secure}");
             }
         }
 
@@ -200,51 +142,6 @@ namespace RestAssured.Response.Logging
         private static void LogTime(TimeSpan elapsedTime)
         {
             Console.WriteLine($"Response time: {elapsedTime.TotalMilliseconds} ms");
-        }
-
-        private void LogStatusCode()
-        {
-            Console.WriteLine($"HTTP {(int)this.response.StatusCode} ({this.response.StatusCode})");
-        }
-
-        private void LogHeaders()
-        {
-            foreach (KeyValuePair<string, IEnumerable<string>> header in this.response.Content.Headers)
-            {
-                Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
-            }
-
-            foreach (KeyValuePair<string, IEnumerable<string>> header in this.response.Headers)
-            {
-                Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
-            }
-        }
-
-        private void LogTime()
-        {
-            Console.WriteLine($"Response time: {this.elapsedTime.TotalMilliseconds} ms");
-        }
-
-        private void LogBody()
-        {
-            string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
-
-            string responseMediaType = this.response.Content.Headers.ContentType?.MediaType ?? string.Empty;
-
-            if (responseMediaType.Equals(string.Empty) || responseMediaType.Contains("json"))
-            {
-                object jsonPayload = JsonConvert.DeserializeObject(responseBodyAsString, typeof(object)) ?? "Could not read response payload";
-                Console.WriteLine(JsonConvert.SerializeObject(jsonPayload, Formatting.Indented));
-            }
-            else if (responseMediaType.Contains("xml"))
-            {
-                XDocument doc = XDocument.Parse(responseBodyAsString);
-                Console.WriteLine(doc.ToString());
-            }
-            else
-            {
-                Console.WriteLine(responseBodyAsString);
-            }
         }
     }
 }

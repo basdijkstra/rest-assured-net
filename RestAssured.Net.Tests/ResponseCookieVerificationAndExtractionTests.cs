@@ -28,8 +28,8 @@ namespace RestAssured.Tests
     public class ResponseCookieVerificationAndExtractionTests : TestBase
     {
         /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for including
-        /// a cookie with a single value when sending an HTTP request.
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a generic cookie in a response.
         /// </summary>
         [Test]
         public void GenericCookieValueCanBeVerified()
@@ -46,8 +46,8 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for including
-        /// a cookie with a single value when sending an HTTP request.
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// an HTTP-only, secure cookie in a response.
         /// </summary>
         [Test]
         public void HttpOnlySecureCookieValueCanBeVerified()
@@ -64,8 +64,8 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for including
-        /// a cookie with a single value when sending an HTTP request.
+        /// A test demonstrating RestAssuredNet syntax for extracting
+        /// a generic cookie from a response.
         /// </summary>
         [Test]
         public void GenericCookieValueCanBeExtracted()
@@ -84,8 +84,8 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for including
-        /// a cookie with a single value when sending an HTTP request.
+        /// A test demonstrating RestAssuredNet syntax for extracting
+        /// an HTTP-only, secure cookie from a response.
         /// </summary>
         [Test]
         public void HttpOnlySecureCookieValueCanBeExtracted()
@@ -104,8 +104,8 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for including
-        /// a cookie with a single value when sending an HTTP request.
+        /// A test checking that a cookie value verification mismatch
+        /// throws the expected exception.
         /// </summary>
         [Test]
         public void CookieValueMismatchThrowsTheExpectedExceptionWhenVerifying()
@@ -127,8 +127,8 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for including
-        /// a cookie with a single value when sending an HTTP request.
+        /// A test checking that a cookie not being found when verifying
+        /// throws the expected exception.
         /// </summary>
         [Test]
         public void CookieNotFoundThrowsTheExpectedExceptionWhenVerifying()
@@ -150,8 +150,8 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for including
-        /// a cookie with a single value when sending an HTTP request.
+        /// A test checking that a cookie not being found when extracting
+        /// throws the expected exception.
         /// </summary>
         [Test]
         public void CookieNotFoundThrowsTheExpectedExceptionWhenExtracting()

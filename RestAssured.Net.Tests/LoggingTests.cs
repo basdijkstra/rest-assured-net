@@ -202,6 +202,23 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for logging
+        /// response details, including an HTTP-only, secure cookie.
+        /// </summary>
+        [Test]
+        public void ResponseCookieDetailsAreLogged()
+        {
+            this.CreateStubForLoggingResponseWithCookie();
+
+            Given()
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/log-response-cookie")
+                .Then()
+                .Log(ResponseLogLevel.All)
+                .StatusCode(200);
+        }
+
+        /// <summary>
         /// Creates the stub response for the JSON response body example.
         /// </summary>
         private void CreateStubForLoggingJsonResponse()
@@ -245,6 +262,19 @@ namespace RestAssured.Tests
                 .WithStatusCode(404)
                 .WithHeader("Content-Type", "text/plain")
                 .WithBody("The resource you requested was not found on this server."));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the response with cookie example.
+        /// </summary>
+        private void CreateStubForLoggingResponseWithCookie()
+        {
+            this.Server?.Given(Request.Create().WithPath("/log-response-cookie").UsingGet())
+                .RespondWith(Response.Create()
+                .WithStatusCode(200)
+                .WithHeader("Set-Cookie", "Auth=123; httponly; secure")
+                .WithHeader("Content-Type", "text/plain")
+                .WithBody("Cookies are nice!"));
         }
     }
 }
