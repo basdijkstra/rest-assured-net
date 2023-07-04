@@ -7,11 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Unreleased
 
+### [3.0.0] - 2023-07-04
+
 #### Added
 
+- Added ability to verify response cookie values ([#90](https://github.com/basdijkstra/rest-assured-net/issues/90) by [@workmichsem](https://github.com/workmichsem))
+- Added ability to extract response cookie values as a string ([#90](https://github.com/basdijkstra/rest-assured-net/issues/90) by [@workmichsem](https://github.com/workmichsem))
+- Added logging of response cookie details when using `ResponseLogLevel.All` or `ResponseLogLevel.Headers` ([#90](https://github.com/basdijkstra/rest-assured-net/issues/90) by [@workmichsem](https://github.com/workmichsem))
 - Added `Invoke()` method allowing you to easily make the same call with different HTTP methods ([#82](https://github.com/basdijkstra/rest-assured-net/issues/82))
 - Added ability to specify custom settings for deserializing request payloads from JSON in individual tests ([#84](https://github.com/basdijkstra/rest-assured-net/issues/84))
 - Added ability to specify custom settings for serializing request payloads to JSON in individual tests and through a RequestSpecification ([#84](https://github.com/basdijkstra/rest-assured-net/issues/84))
+- Added ability to verify the response time using an NHamcrest matcher ([#91](https://github.com/basdijkstra/rest-assured-net/issues/91) by [@christiaanwvermaak](https://github.com/christiaanwvermaak))
 - Added ability to extract the response time into a `TimeSpan` ([#91](https://github.com/basdijkstra/rest-assured-net/issues/91) by [@christiaanwvermaak](https://github.com/christiaanwvermaak))
 - Added ability to verify the response body length using an NHamcrest matcher ([#92](https://github.com/basdijkstra/rest-assured-net/issues/92) by [@christiaanwvermaak](https://github.com/christiaanwvermaak))
 - Added ability to extract the entire response body as a string ([#92](https://github.com/basdijkstra/rest-assured-net/issues/92) by [@christiaanwvermaak](https://github.com/christiaanwvermaak))
@@ -22,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Removed
 
+- (BREAKING CHANGE) Removed support for .NET Core 3.1
 - Removed `As()` for deserializing response payloads in favour of `DeserializeTo()`
 - Removed `As()` and `DeserializeTo()` methods in `ExtractableResponse` in favour of deserializing response in `VerifiableResponse` to clean up the library API
 - Removed `UseRelaxedHttpsValidation()` and other methods and properties for disabling SSL certificate checks in favour of `DisableSslCertificateValidation()` ([#79](https://github.com/basdijkstra/rest-assured-net/issues/79))
