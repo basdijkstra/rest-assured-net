@@ -23,6 +23,7 @@ namespace RestAssured.Response
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Xml;
+    using System.Xml.Linq;
     using System.Xml.Schema;
     using HtmlAgilityPack;
     using Newtonsoft.Json;
@@ -225,6 +226,35 @@ namespace RestAssured.Response
             {
                 this.FailVerification($"Expected value for response Content-Type header to match '{matcher}', but was '{actualContentType}'.");
             }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Verifies that the value of the cookie with the specified name matches a given NHamcrest matcher.
+        /// </summary>
+        /// <param name="name">The name of the cookie to verify.</param>
+        /// <param name="matcher">The NHamcrest matcher to evaluate.</param>
+        /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        public VerifiableResponse Cookie(string name, IMatcher<string> matcher)
+        {
+            var cookies = this.cookieContainer.GetAllCookies().GetEnumerator();
+
+            while (cookies.MoveNext())
+            {
+                Cookie cookie = (Cookie)cookies.Current;
+                if (cookie.Name.Equals(name))
+                {
+                    if (!matcher.Matches(cookie.Value))
+                    {
+                        this.FailVerification($"Expected value for cookie with name '{name}' to match '{matcher}', but was '{cookie.Value}'.");
+                    }
+
+                    return this;
+                }
+            }
+
+            this.FailVerification($"Cookie with name '{name}' could not be found in the response.");
 
             return this;
         }
