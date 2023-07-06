@@ -23,13 +23,13 @@ namespace RestAssured.Response
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Xml;
-    using System.Xml.Linq;
     using System.Xml.Schema;
     using HtmlAgilityPack;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
-    using Newtonsoft.Json.Schema;
     using NHamcrest;
+    using NJsonSchema;
+    using NJsonSchema.Validation;
     using RestAssured.Response.Deserialization;
     using RestAssured.Response.Exceptions;
     using RestAssured.Response.Logging;
@@ -533,18 +533,20 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when can't parse supplied JSON schema.</exception>
         public VerifiableResponse MatchesJsonSchema(string jsonSchema)
         {
-            JSchema parsedSchema;
-
             try
             {
-                parsedSchema = JSchema.Parse(jsonSchema);
+                JsonSchema parsedSchema = JsonSchema.FromJsonAsync(jsonSchema).Result;
                 return this.MatchesJsonSchema(parsedSchema);
             }
-            catch (JsonReaderException jre)
+            catch (AggregateException ae)
             {
-                this.FailVerification($"Could not parse supplied JSON schema. Error: {jre.Message}");
-                return this;
+                foreach (Exception ex in ae.InnerExceptions)
+                {
+                    this.FailVerification($"Could not parse supplied JSON schema. Error: {ex.Message}");
+                }
             }
+
+            return this;
         }
 
         /// <summary>
@@ -553,7 +555,7 @@ namespace RestAssured.Response
         /// <param name="jsonSchema">The JSON schema to verify the response against.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         /// <exception cref="ResponseVerificationException">Thrown when "Content-Type" doesn't contain "json" or when body doesn't match JSON schema supplied.</exception>
-        public VerifiableResponse MatchesJsonSchema(JSchema jsonSchema)
+        public VerifiableResponse MatchesJsonSchema(JsonSchema jsonSchema)
         {
             string responseMediaType = this.response.Content.Headers.ContentType?.MediaType ?? string.Empty;
 
@@ -562,11 +564,13 @@ namespace RestAssured.Response
                 this.FailVerification($"Expected response Content-Type header to contain 'json', but was '{responseMediaType}'");
             }
 
-            JObject response = JObject.Parse(this.response.Content.ReadAsStringAsync().Result);
+            string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
 
-            if (!response.IsValid(jsonSchema, out IList<string> messages))
+            ICollection<ValidationError> schemaValidationErrors = jsonSchema.Validate(responseBodyAsString);
+
+            if (schemaValidationErrors.Count > 0)
             {
-                this.FailVerification($"Response body did not match JSON schema supplied. Error: '{messages.First()}'");
+                this.FailVerification($"Response body did not match JSON schema supplied. Error: '{schemaValidationErrors.First()}'");
             }
 
             return this;
