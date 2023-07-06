@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Unreleased
 
+- Replaced `Newtonsoft.Json.Schema` with `NJsonSchema` due to restrictive licensing of the former ([#96](https://github.com/basdijkstra/rest-assured-net/issues/96) by [@aaschmid](https://github.com/aaschmid))
+
 ### [3.0.0] - 2023-07-04
 
 #### Added
