@@ -15,7 +15,7 @@
 // </copyright>
 namespace RestAssured.Tests
 {
-    using Newtonsoft.Json.Schema;
+    using NJsonSchema;
     using NUnit.Framework;
     using RestAssured.Response.Exceptions;
     using WireMock.RequestBuilders;
@@ -51,14 +51,14 @@ namespace RestAssured.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for validating a response
-        /// against a JSON schema supplied as a JSchema.
+        /// against a JSON schema supplied as a JsonSchema.
         /// </summary>
         [Test]
-        public void JsonSchemaCanBeSuppliedAndVerifiedAsJSchema()
+        public void JsonSchemaCanBeSuppliedAndVerifiedAsJsonSchema()
         {
             this.CreateStubForJsonSchemaValidation();
 
-            JSchema parsedSchema = JSchema.Parse(this.jsonSchema);
+            JsonSchema parsedSchema = JsonSchema.FromJsonAsync(this.jsonSchema).Result;
 
             Given()
                 .When()
@@ -88,7 +88,7 @@ namespace RestAssured.Tests
                     .MatchesJsonSchema(this.jsonSchema);
             });
 
-            Assert.That(rve?.Message, Does.Contain("Response body did not match JSON schema supplied. Error: 'Invalid type. Expected String but got Integer."));
+            Assert.That(rve?.Message, Does.Contain("Response body did not match JSON schema supplied. Error: 'StringExpected: #/name'"));
         }
 
         /// <summary>
