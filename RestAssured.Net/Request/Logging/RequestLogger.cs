@@ -85,7 +85,8 @@ namespace RestAssured.Request.Logging
         /// </summary>
         /// <param name="request">The <see cref="HttpRequestMessage"/> to be logged to the console.</param>
         /// <param name="requestLogLevel">the <see cref="RequestLogLevel"/> to use when logging request details.</param>
-        internal static void LogToConsole(HttpRequestMessage request, RequestLogLevel requestLogLevel)
+        /// <param name="sensitiveRequestHeadersAndCookies">A list of sensitive request headers and cookies to be masked when logging.</param>
+        internal static void LogToConsole(HttpRequestMessage request, RequestLogLevel requestLogLevel, List<string> sensitiveRequestHeadersAndCookies)
         {
             if (requestLogLevel >= RequestLogLevel.Endpoint)
             {
@@ -94,7 +95,7 @@ namespace RestAssured.Request.Logging
 
             if (requestLogLevel == RequestLogLevel.Headers)
             {
-                LogHeaders(request);
+                LogHeaders(request, sensitiveRequestHeadersAndCookies);
             }
 
             if (requestLogLevel == RequestLogLevel.Body)
@@ -104,12 +105,12 @@ namespace RestAssured.Request.Logging
 
             if (requestLogLevel == RequestLogLevel.All)
             {
-                LogHeaders(request);
+                LogHeaders(request, sensitiveRequestHeadersAndCookies);
                 LogBody(request);
             }
         }
 
-        private static void LogHeaders(HttpRequestMessage request)
+        private static void LogHeaders(HttpRequestMessage request, List<string> sensitiveRequestHeadersAndCookies)
         {
             if (request.Content != null)
             {
@@ -119,7 +120,14 @@ namespace RestAssured.Request.Logging
 
             foreach (KeyValuePair<string, IEnumerable<string>> header in request.Headers)
             {
-                Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
+                if (sensitiveRequestHeadersAndCookies.Contains(header.Key))
+                {
+                    Console.WriteLine($"{header.Key}: *****");
+                }
+                else
+                {
+                    Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
+                }
             }
         }
 
