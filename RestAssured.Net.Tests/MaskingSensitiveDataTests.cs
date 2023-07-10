@@ -17,6 +17,7 @@ namespace RestAssured.Tests
 {
     using System.Collections.Generic;
     using NUnit.Framework;
+    using RestAssured.Request.Builders;
     using RestAssured.Request.Logging;
     using RestAssured.Response.Logging;
     using WireMock.RequestBuilders;
@@ -29,6 +30,20 @@ namespace RestAssured.Tests
     [TestFixture]
     public class MaskingSensitiveDataTests : TestBase
     {
+        private RequestSpecification requestSpecification;
+
+        /// <summary>
+        /// Creates the <see cref="RequestSpecification"/> instance to be used in the tests in this class.
+        /// </summary>
+        [SetUp]
+        public void CreateRequestSpecification()
+        {
+            this.requestSpecification = new RequestSpecBuilder()
+                .WithPort(9876)
+                .WithMaskingOfHeadersAndCookies(new List<string>() { "SensitiveRequestHeader", "SensitiveRequestCookie" })
+                .Build();
+        }
+
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for masking
         /// sensitive headers when logging request details.
@@ -105,6 +120,26 @@ namespace RestAssured.Tests
                 .Header("NonsensitiveRequestHeader", "This one is printed")
                 .Header("SensitiveRequestHeader", "This one is masked")
                 .Header("AnotherSensitiveRequestHeader", "This one is masked as well")
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/masking-sensitive-data")
+                .Then()
+                .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for masking
+        /// sensitive headers when logging request details.
+        /// </summary>
+        [Test]
+        public void SensitiveHeaderAndCookieNamesCanBeDefinedInRequestSpecification()
+        {
+            this.CreateStubForMaskingSensitiveData();
+
+            Given()
+                .Spec(this.requestSpecification)
+                .Header("NonsensitiveRequestHeader", "This one is printed")
+                .Header("SensitiveRequestHeader", "This one is masked")
+                .Log(RequestLogLevel.All)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/masking-sensitive-data")
                 .Then()

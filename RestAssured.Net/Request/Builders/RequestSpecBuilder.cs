@@ -44,13 +44,14 @@ namespace RestAssured.Request.Builders
         private readonly bool disableSslCertificateValidation = false;
         private readonly RequestLogLevel requestLogLevel = RequestLogLevel.None;
         private readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
+        private readonly List<string> sensitiveRequestHeadersAndCookies = new List<string>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestSpecBuilder"/> class.
         /// </summary>
         public RequestSpecBuilder()
         {
-            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.basePath, this.timeout, this.userAgent, this.proxy, this.headers, this.authenticationHeader, this.contentTypeHeader, this.contentEncoding, this.disableSslCertificateValidation, this.requestLogLevel, this.jsonSerializerSettings);
+            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.basePath, this.timeout, this.userAgent, this.proxy, this.headers, this.authenticationHeader, this.contentTypeHeader, this.contentEncoding, this.disableSslCertificateValidation, this.requestLogLevel, this.jsonSerializerSettings, this.sensitiveRequestHeadersAndCookies);
         }
 
         /// <summary>
@@ -229,6 +230,28 @@ namespace RestAssured.Request.Builders
         public RequestSpecBuilder WithJsonSerializerSettings(JsonSerializerSettings jsonSerializerSettings)
         {
             this.requestSpecification.JsonSerializerSettings = jsonSerializerSettings;
+            return this;
+        }
+
+        /// <summary>
+        /// Adds a single request header or cookie name that should be masked when logging to the list.
+        /// </summary>
+        /// <param name="sensitiveHeaderOrCookieName">The name of the request header or cookie to be masked when logging.</param>
+        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
+        public RequestSpecBuilder WithMaskingOfHeadersAndCookies(string sensitiveHeaderOrCookieName)
+        {
+            this.requestSpecification.SensitiveRequestHeadersAndCookies.Add(sensitiveHeaderOrCookieName);
+            return this;
+        }
+
+        /// <summary>
+        /// Adds a list of request header or cookie names that should be masked when logging to the list.
+        /// </summary>
+        /// <param name="sensitiveHeaderOrCookieNames">The names of the request headers or cookies to be masked when logging.</param>
+        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
+        public RequestSpecBuilder WithMaskingOfHeadersAndCookies(List<string> sensitiveHeaderOrCookieNames)
+        {
+            this.requestSpecification.SensitiveRequestHeadersAndCookies.AddRange(sensitiveHeaderOrCookieNames);
             return this;
         }
 

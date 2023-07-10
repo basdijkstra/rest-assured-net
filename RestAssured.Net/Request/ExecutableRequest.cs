@@ -607,6 +607,12 @@ namespace RestAssured.Request
                 }
             }
 
+            // Add header and cookie values to be masked specified in RequestSpecification to the list
+            if (this.requestSpecification != null)
+            {
+                this.sensitiveRequestHeadersAndCookies.AddRange(this.requestSpecification.SensitiveRequestHeadersAndCookies);
+            }
+
             RequestLogger.LogToConsole(this.request, this.RequestLoggingLevel, this.cookieCollection, this.sensitiveRequestHeadersAndCookies);
 
             try
