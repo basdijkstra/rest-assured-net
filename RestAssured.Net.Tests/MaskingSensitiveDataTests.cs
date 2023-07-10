@@ -52,6 +52,27 @@ namespace RestAssured.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for masking
+        /// sensitive cookies when logging request details.
+        /// </summary>
+        [Test]
+        public void SingleSensitiveRequestCookieIsMasked()
+        {
+            this.CreateStubForMaskingSensitiveData();
+
+            Given()
+                .Log(RequestLogLevel.All)
+                .Mask("SensitiveRequestCookie")
+                .And()
+                .Cookie("NonsensitiveRequestCookie", "This one is printed")
+                .Cookie("SensitiveRequestCookie", "This one is masked")
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/masking-sensitive-data")
+                .Then()
+                .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for masking
         /// sensitive headers when logging request details.
         /// </summary>
         [Test]

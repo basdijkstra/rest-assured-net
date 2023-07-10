@@ -607,7 +607,7 @@ namespace RestAssured.Request
                 }
             }
 
-            RequestLogger.LogToConsole(this.request, this.RequestLoggingLevel, this.sensitiveRequestHeadersAndCookies);
+            RequestLogger.LogToConsole(this.request, this.RequestLoggingLevel, this.cookieCollection, this.sensitiveRequestHeadersAndCookies);
 
             try
             {

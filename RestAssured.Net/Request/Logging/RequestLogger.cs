@@ -19,6 +19,7 @@ namespace RestAssured.Request.Logging
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net;
     using System.Net.Http;
     using System.Threading.Tasks;
     using System.Xml.Linq;
@@ -84,9 +85,10 @@ namespace RestAssured.Request.Logging
         /// Logs request details to the console at the set <see cref="RequestLogLevel"/>.
         /// </summary>
         /// <param name="request">The <see cref="HttpRequestMessage"/> to be logged to the console.</param>
-        /// <param name="requestLogLevel">the <see cref="RequestLogLevel"/> to use when logging request details.</param>
+        /// <param name="requestLogLevel">The <see cref="RequestLogLevel"/> to use when logging request details.</param>
+        /// <param name="cookieCollection">The <see cref="CookieCollection"/> associated with this request.</param>
         /// <param name="sensitiveRequestHeadersAndCookies">A list of sensitive request headers and cookies to be masked when logging.</param>
-        internal static void LogToConsole(HttpRequestMessage request, RequestLogLevel requestLogLevel, List<string> sensitiveRequestHeadersAndCookies)
+        internal static void LogToConsole(HttpRequestMessage request, RequestLogLevel requestLogLevel, CookieCollection cookieCollection, List<string> sensitiveRequestHeadersAndCookies)
         {
             if (requestLogLevel >= RequestLogLevel.Endpoint)
             {
@@ -96,6 +98,7 @@ namespace RestAssured.Request.Logging
             if (requestLogLevel == RequestLogLevel.Headers)
             {
                 LogHeaders(request, sensitiveRequestHeadersAndCookies);
+                LogCookies(cookieCollection, sensitiveRequestHeadersAndCookies);
             }
 
             if (requestLogLevel == RequestLogLevel.Body)
@@ -106,6 +109,7 @@ namespace RestAssured.Request.Logging
             if (requestLogLevel == RequestLogLevel.All)
             {
                 LogHeaders(request, sensitiveRequestHeadersAndCookies);
+                LogCookies(cookieCollection, sensitiveRequestHeadersAndCookies);
                 LogBody(request);
             }
         }
@@ -127,6 +131,21 @@ namespace RestAssured.Request.Logging
                 else
                 {
                     Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
+                }
+            }
+        }
+
+        private static void LogCookies(CookieCollection cookieCollection, List<string> sensitiveRequestHeadersAndCookies)
+        {
+            foreach (Cookie cookie in cookieCollection)
+            {
+                if (sensitiveRequestHeadersAndCookies.Contains(cookie.Name))
+                {
+                    Console.WriteLine($"Cookie: {cookie.Name}=*****, Domain: {cookie.Domain}, HTTP-only: {cookie.HttpOnly}, Secure: {cookie.Secure}");
+                }
+                else
+                {
+                    Console.WriteLine($"Cookie: {cookie.Name}={cookie.Value}, Domain: {cookie.Domain}, HTTP-only: {cookie.HttpOnly}, Secure: {cookie.Secure}");
                 }
             }
         }
