@@ -45,6 +45,7 @@ namespace RestAssured.Response
 
         private bool logOnVerificationFailure = false;
         private JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
+        private List<string> sensitiveResponseHeadersAndCookies = new List<string>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VerifiableResponse"/> class.
@@ -667,6 +668,28 @@ namespace RestAssured.Response
         }
 
         /// <summary>
+        /// Adds a single response header or cookie name that should be masked when logging to the list.
+        /// </summary>
+        /// <param name="sensitiveHeaderOrCookieName">The name of the response header or cookie to be masked when logging.</param>
+        /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        public VerifiableResponse Mask(string sensitiveHeaderOrCookieName)
+        {
+            this.sensitiveResponseHeadersAndCookies.Add(sensitiveHeaderOrCookieName);
+            return this;
+        }
+
+        /// <summary>
+        /// Adds a list of response header or cookie names that should be masked when logging to the list.
+        /// </summary>
+        /// <param name="sensitiveHeaderOrCookieNames">The names of the response headers or cookies to be masked when logging.</param>
+        /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        public VerifiableResponse Mask(List<string> sensitiveHeaderOrCookieNames)
+        {
+            this.sensitiveResponseHeadersAndCookies.AddRange(sensitiveHeaderOrCookieNames);
+            return this;
+        }
+
+        /// <summary>
         /// Verifies that the response time matches the specified NHamcrest matcher.
         /// </summary>
         /// <param name="matcher">The NHamcrest matcher to match against the response time.</param>
@@ -733,7 +756,7 @@ namespace RestAssured.Response
                 return this;
             }
 
-            ResponseLogger.Log(this.response, this.cookieContainer, responseLogLevel, this.elapsedTime);
+            ResponseLogger.Log(this.response, this.cookieContainer, responseLogLevel, this.sensitiveResponseHeadersAndCookies, this.elapsedTime);
             return this;
         }
 
@@ -750,7 +773,7 @@ namespace RestAssured.Response
         {
             if (this.logOnVerificationFailure)
             {
-                ResponseLogger.Log(this.response, this.cookieContainer, ResponseLogLevel.All, this.elapsedTime);
+                ResponseLogger.Log(this.response, this.cookieContainer, ResponseLogLevel.All, this.sensitiveResponseHeadersAndCookies, this.elapsedTime);
             }
 
             throw new ResponseVerificationException(exceptionMessage);

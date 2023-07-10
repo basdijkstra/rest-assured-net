@@ -52,6 +52,24 @@ namespace RestAssured.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for masking
+        /// sensitive headers when logging response details.
+        /// </summary>
+        [Test]
+        public void SingleSensitiveResponseHeaderIsMasked()
+        {
+            this.CreateStubForMaskingSensitiveData();
+
+            Given()
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/masking-sensitive-data")
+                .Then()
+                .Mask(new List<string>() { "SensitiveResponseHeader", "SensitiveResponseCookie" })
+                .Log(ResponseLogLevel.All)
+                .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for masking
         /// sensitive cookies when logging request details.
         /// </summary>
         [Test]
@@ -101,6 +119,8 @@ namespace RestAssured.Tests
             this.Server?.Given(Request.Create().WithPath("/masking-sensitive-data").UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200)
+                .WithHeader("Set-Cookie", "NonSensitiveResponseCookie=123")
+                .WithHeader("Set-Cookie", "SensitiveResponseCookie=some_secret_value")
                 .WithHeader("NonSensitiveResponseHeader", "This one is printed")
                 .WithHeader("SensitiveResponseHeader", "This one is masked")
                 .WithHeader("Content-Type", "text/plain")

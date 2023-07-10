@@ -34,8 +34,9 @@ namespace RestAssured.Response.Logging
         /// <param name="response">The response to be logged to the console.</param>
         /// <param name="cookieContainer">The <see cref="CookieContainer"/> containing the cookies associated with the response.</param>
         /// <param name="responseLogLevel">The <see cref="ResponseLogLevel"/> to use.</param>
+        /// <param name="sensitiveResponseHeadersAndCookies">A list of sensitive response headers and cookies to be masked when logging.</param>
         /// <param name="elapsedTime">The time elapsed between sending a request and returning a response.</param>
-        internal static void Log(HttpResponseMessage response, CookieContainer cookieContainer, ResponseLogLevel responseLogLevel, TimeSpan elapsedTime)
+        internal static void Log(HttpResponseMessage response, CookieContainer cookieContainer, ResponseLogLevel responseLogLevel, List<string> sensitiveResponseHeadersAndCookies, TimeSpan elapsedTime)
         {
             if (responseLogLevel == ResponseLogLevel.OnVerificationFailure)
             {
@@ -47,7 +48,8 @@ namespace RestAssured.Response.Logging
                 if ((int)response.StatusCode >= 400)
                 {
                     LogStatusCode(response);
-                    LogHeaders(response);
+                    LogHeaders(response, sensitiveResponseHeadersAndCookies);
+                    LogCookies(cookieContainer, sensitiveResponseHeadersAndCookies);
                     LogBody(response);
                     LogTime(elapsedTime);
                 }
@@ -62,8 +64,8 @@ namespace RestAssured.Response.Logging
 
             if (responseLogLevel == ResponseLogLevel.Headers)
             {
-                LogHeaders(response);
-                LogCookies(cookieContainer);
+                LogHeaders(response, sensitiveResponseHeadersAndCookies);
+                LogCookies(cookieContainer, sensitiveResponseHeadersAndCookies);
             }
 
             if (responseLogLevel == ResponseLogLevel.Body)
@@ -78,8 +80,8 @@ namespace RestAssured.Response.Logging
 
             if (responseLogLevel == ResponseLogLevel.All)
             {
-                LogHeaders(response);
-                LogCookies(cookieContainer);
+                LogHeaders(response, sensitiveResponseHeadersAndCookies);
+                LogCookies(cookieContainer, sensitiveResponseHeadersAndCookies);
                 LogBody(response);
                 LogTime(elapsedTime);
             }
@@ -90,22 +92,28 @@ namespace RestAssured.Response.Logging
             Console.WriteLine($"HTTP {(int)response.StatusCode} ({response.StatusCode})");
         }
 
-        private static void LogHeaders(HttpResponseMessage response)
+        private static void LogHeaders(HttpResponseMessage response, List<string> sensitiveResponseHeadersAndCookies)
         {
             if (response.Content != null)
             {
-                // TODO: Add other headers to log
                 Console.WriteLine($"Content-Type: {response.Content.Headers.ContentType}");
                 Console.WriteLine($"Content-Length: {response.Content.Headers.ContentLength}");
             }
 
             foreach (KeyValuePair<string, IEnumerable<string>> header in response.Headers)
             {
-                Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
+                if (sensitiveResponseHeadersAndCookies.Contains(header.Key))
+                {
+                    Console.WriteLine($"{header.Key}: *****");
+                }
+                else
+                {
+                    Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
+                }
             }
         }
 
-        private static void LogCookies(CookieContainer cookieContainer)
+        private static void LogCookies(CookieContainer cookieContainer, List<string> sensitiveResponseHeadersAndCookies)
         {
             var cookies = cookieContainer.GetAllCookies().GetEnumerator();
 
@@ -113,7 +121,14 @@ namespace RestAssured.Response.Logging
             {
                 Cookie cookie = (Cookie)cookies.Current;
 
-                Console.WriteLine($"Cookie: {cookie.Name}={cookie.Value}, Domain: {cookie.Domain}, HTTP-only: {cookie.HttpOnly}, Secure: {cookie.Secure}");
+                if (sensitiveResponseHeadersAndCookies.Contains(cookie.Name))
+                {
+                    Console.WriteLine($"Cookie: {cookie.Name}=*****, Domain: {cookie.Domain}, HTTP-only: {cookie.HttpOnly}, Secure: {cookie.Secure}");
+                }
+                else
+                {
+                    Console.WriteLine($"Cookie: {cookie.Name}={cookie.Value}, Domain: {cookie.Domain}, HTTP-only: {cookie.HttpOnly}, Secure: {cookie.Secure}");
+                }
             }
         }
 
