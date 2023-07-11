@@ -7,7 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Unreleased
 
-- Replaced `Newtonsoft.Json.Schema` with `NJsonSchema` due to restrictive licensing of the former ([#96](https://github.com/basdijkstra/rest-assured-net/issues/96) by [@aaschmid](https://github.com/aaschmid))
+Nothing yet.
+
+### [4.0.0] - 2023-07-11
+
+#### Added
+
+- Added ability to mask sensitive values for request and response headers and cookies in logging ([#93](https://github.com/basdijkstra/rest-assured-net/issues/93))
+
+#### Fixed
+
+- Fixed issue with request cookies not being logged ([#98](https://github.com/basdijkstra/rest-assured-net/issues/98))
+
+#### Changed
+
+- (BREAKING CHANGE) Replaced `Newtonsoft.Json.Schema` with `NJsonSchema` due to restrictive licensing of the former ([#96](https://github.com/basdijkstra/rest-assured-net/issues/96) by [@aaschmid](https://github.com/aaschmid))
 
 ### [3.0.0] - 2023-07-04
 
