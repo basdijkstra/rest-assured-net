@@ -234,17 +234,6 @@ namespace RestAssured.Request.Builders
         }
 
         /// <summary>
-        /// Adds a single request header or cookie name that should be masked when logging to the list.
-        /// </summary>
-        /// <param name="sensitiveHeaderOrCookieName">The name of the request header or cookie to be masked when logging.</param>
-        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
-        public RequestSpecBuilder WithMaskingOfHeadersAndCookies(string sensitiveHeaderOrCookieName)
-        {
-            this.requestSpecification.SensitiveRequestHeadersAndCookies.Add(sensitiveHeaderOrCookieName);
-            return this;
-        }
-
-        /// <summary>
         /// Adds a list of request header or cookie names that should be masked when logging to the list.
         /// </summary>
         /// <param name="sensitiveHeaderOrCookieNames">The names of the request headers or cookies to be masked when logging.</param>

@@ -377,35 +377,20 @@ namespace RestAssured.Request
         }
 
         /// <summary>
-        /// Adds a single request header or cookie name that should be masked when logging to the list.
-        /// </summary>
-        /// <param name="sensitiveHeaderOrCookieName">The name of the request header or cookie to be masked when logging.</param>
-        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
-        public ExecutableRequest Mask(string sensitiveHeaderOrCookieName)
-        {
-            this.sensitiveRequestHeadersAndCookies.Add(sensitiveHeaderOrCookieName);
-            return this;
-        }
-
-        /// <summary>
-        /// Adds a list of request header or cookie names that should be masked when logging to the list.
-        /// </summary>
-        /// <param name="sensitiveHeaderOrCookieNames">The names of the request headers or cookies to be masked when logging.</param>
-        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
-        public ExecutableRequest Mask(List<string> sensitiveHeaderOrCookieNames)
-        {
-            this.sensitiveRequestHeadersAndCookies.AddRange(sensitiveHeaderOrCookieNames);
-            return this;
-        }
-
-        /// <summary>
         /// Logs request details to the standard output.
         /// </summary>
         /// <param name="requestLogLevel">The desired request log level.</param>
+        /// <param name="sensitiveHeaderOrCookieNames">The names of the request headers or cookies to be masked when logging.</param>
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
-        public ExecutableRequest Log(RequestLogLevel requestLogLevel)
+        public ExecutableRequest Log(RequestLogLevel requestLogLevel, List<string>? sensitiveHeaderOrCookieNames = null)
         {
             this.RequestLoggingLevel = requestLogLevel;
+
+            if (sensitiveHeaderOrCookieNames != null)
+            {
+                this.sensitiveRequestHeadersAndCookies.AddRange(sensitiveHeaderOrCookieNames);
+            }
+
             return this;
         }
 

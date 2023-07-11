@@ -54,8 +54,7 @@ namespace RestAssured.Tests
             this.CreateStubForMaskingSensitiveData();
 
             Given()
-                .Log(RequestLogLevel.All)
-                .Mask("SensitiveRequestHeader")
+                .Log(RequestLogLevel.All, new List<string>() { "SensitiveRequestHeader" })
                 .And()
                 .Header("NonsensitiveRequestHeader", "This one is printed")
                 .Header("SensitiveRequestHeader", "This one is masked")
@@ -67,10 +66,10 @@ namespace RestAssured.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for masking
-        /// sensitive headers when logging response details.
+        /// sensitive headers and cookies when logging response details.
         /// </summary>
         [Test]
-        public void SingleSensitiveResponseHeaderIsMasked()
+        public void SensitiveResponseHeadersAndCookiesAreMasked()
         {
             this.CreateStubForMaskingSensitiveData();
 
@@ -78,8 +77,7 @@ namespace RestAssured.Tests
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/masking-sensitive-data")
                 .Then()
-                .Mask(new List<string>() { "SensitiveResponseHeader", "SensitiveResponseCookie" })
-                .Log(ResponseLogLevel.All)
+                .Log(ResponseLogLevel.All, new List<string>() { "SensitiveResponseHeader", "SensitiveResponseCookie" })
                 .StatusCode(200);
         }
 
@@ -93,8 +91,7 @@ namespace RestAssured.Tests
             this.CreateStubForMaskingSensitiveData();
 
             Given()
-                .Log(RequestLogLevel.All)
-                .Mask("SensitiveRequestCookie")
+                .Log(RequestLogLevel.All, new List<string>() { "SensitiveRequestCookie" })
                 .And()
                 .Cookie("NonsensitiveRequestCookie", "This one is printed")
                 .Cookie("SensitiveRequestCookie", "This one is masked")
@@ -114,8 +111,7 @@ namespace RestAssured.Tests
             this.CreateStubForMaskingSensitiveData();
 
             Given()
-                .Log(RequestLogLevel.All)
-                .Mask(new List<string>() { "SensitiveRequestHeader", "AnotherSensitiveRequestHeader" })
+                .Log(RequestLogLevel.All, new List<string>() { "SensitiveRequestHeader", "AnotherSensitiveRequestHeader" })
                 .And()
                 .Header("NonsensitiveRequestHeader", "This one is printed")
                 .Header("SensitiveRequestHeader", "This one is masked")
