@@ -30,57 +30,6 @@ namespace RestAssured.Request.Logging
     /// </summary>
     public class RequestLogger
     {
-        private readonly ExecutableRequest executableRequest;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RequestLogger"/> class.
-        /// </summary>
-        /// <param name="request">The <see cref="ExecutableRequest"/> object to log details of.</param>
-        public RequestLogger(ExecutableRequest request)
-        {
-            this.executableRequest = request;
-        }
-
-        /// <summary>
-        /// Logs the HTTP method and endpoint to the console.
-        /// </summary>
-        /// <returns>An <see cref="ExecutableRequest"/> that can be used for further request building and processing.</returns>
-        public ExecutableRequest Endpoint()
-        {
-            this.executableRequest.RequestLoggingLevel = RequestLogLevel.Endpoint;
-            return this.executableRequest;
-        }
-
-        /// <summary>
-        /// Logs all request headers to the console.
-        /// </summary>
-        /// <returns>An <see cref="ExecutableRequest"/> that can be used for further request building and processing.</returns>
-        public ExecutableRequest Headers()
-        {
-            this.executableRequest.RequestLoggingLevel = RequestLogLevel.Headers;
-            return this.executableRequest;
-        }
-
-        /// <summary>
-        /// Logs the request body to the console.
-        /// </summary>
-        /// <returns>An <see cref="ExecutableRequest"/> that can be used for further request building and processing.</returns>
-        public ExecutableRequest Body()
-        {
-            this.executableRequest.RequestLoggingLevel = RequestLogLevel.Body;
-            return this.executableRequest;
-        }
-
-        /// <summary>
-        /// Logs all request details to the console.
-        /// </summary>
-        /// <returns>An <see cref="ExecutableRequest"/> that can be used for further request building and processing.</returns>
-        public ExecutableRequest All()
-        {
-            this.executableRequest.RequestLoggingLevel = RequestLogLevel.All;
-            return this.executableRequest;
-        }
-
         /// <summary>
         /// Logs request details to the console at the set <see cref="RequestLogLevel"/>.
         /// </summary>
