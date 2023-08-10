@@ -106,10 +106,12 @@ namespace RestAssured.Request.Logging
                 return;
             }
 
-            Task<string> readAsStringTask = request.Content.ReadAsStringAsync();
-            readAsStringTask.Wait();
+            string requestBodyAsString = request.Content.ReadAsStringAsync().Result;
 
-            string requestBodyAsString = readAsStringTask.Result;
+            if (requestBodyAsString.Equals(string.Empty))
+            {
+                return;
+            }
 
             string requestMediaType = request.Content.Headers.ContentType?.MediaType ?? string.Empty;
 

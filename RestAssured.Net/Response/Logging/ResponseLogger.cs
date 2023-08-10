@@ -134,7 +134,17 @@ namespace RestAssured.Response.Logging
 
         private static void LogBody(HttpResponseMessage response)
         {
+            if (response.Content == null)
+            {
+                return;
+            }
+
             string responseBodyAsString = response.Content.ReadAsStringAsync().Result;
+
+            if (responseBodyAsString.Equals(string.Empty))
+            {
+                return;
+            }
 
             string responseMediaType = response.Content.Headers.ContentType?.MediaType ?? string.Empty;
 
