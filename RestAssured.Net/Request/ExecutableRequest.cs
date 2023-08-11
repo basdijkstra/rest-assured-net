@@ -152,14 +152,14 @@ namespace RestAssured.Request
         }
 
         /// <summary>
-        /// Adds a query parameter to the endpoint when the request is sent.
+        /// Adds the specified query parameter with all of its values to the endpoint when the request is sent.
         /// </summary>
         /// <param name="key">The query parameter name.</param>
-        /// <param name="value">The associated query parameter value.</param>
+        /// <param name="values">The associated query parameter values.</param>
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
-        public ExecutableRequest QueryParam(string key, object value)
+        public ExecutableRequest QueryParam(string key, params object[] values)
         {
-            this.queryParams[key] = value.ToString() ?? string.Empty;
+            this.queryParams[key] = string.Join(",", values);
             return this;
         }
 

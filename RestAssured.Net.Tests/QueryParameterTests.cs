@@ -31,6 +31,9 @@ namespace RestAssured.Tests
         private readonly string originalName = Faker.Name.First();
         private readonly string overrideName = Faker.Name.Last();
         private readonly int queryId = Faker.RandomNumber.Next();
+        private readonly int firstId = Faker.RandomNumber.Next();
+        private readonly int secondId = Faker.RandomNumber.Next();
+        private readonly int thirdId = Faker.RandomNumber.Next();
         private RequestSpecification requestSpecification;
 
         /// <summary>
@@ -124,6 +127,22 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test to verify that when a query parameter can be given multiple values.
+        /// </summary>
+        [Test]
+        public void MultipleQueryParameterValuesCanBeSpecified()
+        {
+            this.CreateStubForMultipleQueryParameterValues();
+
+            Given()
+                .QueryParam("id", this.firstId, this.secondId, this.thirdId)
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/multiple-query-param-values")
+                .Then()
+                .StatusCode(200);
+        }
+
+        /// <summary>
         /// A test to verify that when a query parameter is specified more than once,
         /// the last value specified will be used.
         /// </summary>
@@ -188,6 +207,19 @@ namespace RestAssured.Tests
                 .WithPath("/multiple-query-params")
                 .WithParam("name", this.originalName)
                 .WithParam("id", this.queryId.ToString())
+                .UsingGet())
+                .RespondWith(Response.Create()
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the multiple query parameter values example.
+        /// </summary>
+        private void CreateStubForMultipleQueryParameterValues()
+        {
+            this.Server?.Given(Request.Create()
+                .WithPath("/multiple-query-param-values")
+                .WithParam("id", this.firstId.ToString(), this.secondId.ToString(), this.thirdId.ToString())
                 .UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
