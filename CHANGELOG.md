@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Improved logging of empty request and response bodies ([#104](https://github.com/basdijkstra/rest-assured-net/issues/104))
 
+#### Updated
+
+- Version bumps for HtmlAgilityPack, NHamcrest (main project), Microsoft.NET.Test.Sdk, NUnit3TestAdapter and WireMock.NET (test project)
+
 ### [4.0.0] - 2023-07-11
 
 #### Added
