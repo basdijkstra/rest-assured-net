@@ -49,7 +49,7 @@ namespace RestAssured.Request
         private object requestBody = string.Empty;
         private string contentTypeHeader = "application/json";
         private Encoding contentEncoding = Encoding.UTF8;
-        private Dictionary<string, string> queryParams = new Dictionary<string, string>();
+        private IEnumerable<KeyValuePair<string, string>> queryParams = new List<KeyValuePair<string, string>>();
         private Dictionary<string, string> pathParams = new Dictionary<string, string>();
         private IEnumerable<KeyValuePair<string, string>>? formData = null;
         private MultipartFormDataContent? multipartFormDataContent = null;
@@ -159,7 +159,11 @@ namespace RestAssured.Request
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
         public ExecutableRequest QueryParam(string key, params object[] values)
         {
-            this.queryParams[key] = string.Join(",", values);
+            foreach (object value in values)
+            {
+                this.queryParams = this.queryParams.Append(new KeyValuePair<string, string>(key, value.ToString() ?? string.Empty));
+            }
+
             return this;
         }
 
@@ -168,9 +172,20 @@ namespace RestAssured.Request
         /// </summary>
         /// <param name="queryParams">A <see cref="Dictionary{TKey, TValue}"/> containing the query parameters to be added.</param>
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        [Obsolete("Please use QueryParams(IEnumerable<KeyValuePair<string, object>>) instead. This method will be removed in version 5.0.0")]
         public ExecutableRequest QueryParams(Dictionary<string, object> queryParams)
         {
-            queryParams.ToList().ForEach(param => this.queryParams[param.Key] = param.Value.ToString() ?? string.Empty);
+            return this.QueryParams((IEnumerable<KeyValuePair<string, object>>)queryParams);
+        }
+
+        /// <summary>
+        /// Adds the specified query parameters to the endpoint when the request is sent.
+        /// </summary>
+        /// <param name="queryParams">A <see cref="IEnumerable{T}"/> containing the query parameters to be added.</param>
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest QueryParams(IEnumerable<KeyValuePair<string, object>> queryParams)
+        {
+            queryParams.ToList().ForEach(param => this.queryParams = this.queryParams.Append(new KeyValuePair<string, string>(param.Key, string.Join(",", param.Value))));
             return this;
         }
 
@@ -565,7 +580,10 @@ namespace RestAssured.Request
             this.request.RequestUri = this.BuildUri(this.requestSpecification!, endpoint);
 
             // Add any query parameters that have been specified and create the endpoint
-            this.request.RequestUri = new Uri(QueryHelpers.AddQueryString(this.request.RequestUri.ToString(), this.queryParams));
+            foreach (KeyValuePair<string, string> param in this.queryParams)
+            {
+                this.request.RequestUri = new Uri(QueryHelpers.AddQueryString(this.request.RequestUri.ToString(), param.Key, param.Value));
+            }
 
             // Apply other settings provided in the request specification to the request
             this.request = RequestSpecificationProcessor.Apply(this.requestSpecification!, this.request);

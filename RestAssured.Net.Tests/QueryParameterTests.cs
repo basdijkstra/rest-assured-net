@@ -15,6 +15,7 @@
 // </copyright>
 namespace RestAssured.Tests
 {
+    using System;
     using System.Collections.Generic;
     using NUnit.Framework;
     using RestAssured.Request.Builders;
@@ -28,9 +29,7 @@ namespace RestAssured.Tests
     [TestFixture]
     public class QueryParameterTests : TestBase
     {
-        private readonly string originalName = Faker.Name.First();
-        private readonly string overrideName = Faker.Name.Last();
-        private readonly int queryId = Faker.RandomNumber.Next();
+        private readonly string name = Faker.Name.Last();
         private readonly int firstId = Faker.RandomNumber.Next();
         private readonly int secondId = Faker.RandomNumber.Next();
         private readonly int thirdId = Faker.RandomNumber.Next();
@@ -60,9 +59,27 @@ namespace RestAssured.Tests
             this.CreateStubForSingleQueryParameter();
 
             Given()
-                .QueryParam("name", this.originalName)
+                .QueryParam("name", this.name)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/api/single-query-param")
+                .Then()
+                .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for adding
+        /// a single query parameter with comma-separated values.
+        /// </summary>
+        [Test]
+        [Ignore("https://github.com/WireMock-Net/WireMock.Net/issues/991")]
+        public void SingleQueryParameterWithCommaSeparatedValuesCanBeSpecified()
+        {
+            this.CreateStubForSingleQueryParameterWithCommaSeparatedValues();
+
+            Given()
+                .QueryParam("id", string.Join(",", 1, 2, 3))
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/api/single-query-param-csv")
                 .Then()
                 .StatusCode(200);
         }
@@ -77,28 +94,10 @@ namespace RestAssured.Tests
             this.CreateStubForMultipleQueryParameters();
 
             Given()
-                .QueryParam("name", this.originalName)
-                .QueryParam("id", this.queryId)
+                .QueryParam("name", this.name)
+                .QueryParam("id", this.firstId)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/multiple-query-params")
-                .Then()
-                .StatusCode(200);
-        }
-
-        /// <summary>
-        /// A test to verify that when a query parameter is specified more than once,
-        /// the last value specified will be used.
-        /// </summary>
-        [Test]
-        public void SpecifyingTheSameSingleQueryParameterMoreThanOnceIsNotAProblem()
-        {
-            this.CreateStubForSingleQueryParameter();
-
-            Given()
-                .QueryParam("name", this.overrideName)
-                .QueryParam("name", this.originalName)
-                .When()
-                .Get($"{MOCK_SERVER_BASE_URL}/api/single-query-param")
                 .Then()
                 .StatusCode(200);
         }
@@ -112,8 +111,31 @@ namespace RestAssured.Tests
         {
             Dictionary<string, object> queryParams = new Dictionary<string, object>
             {
-                { "name", this.originalName },
-                { "id", this.queryId },
+                { "name", this.name },
+                { "id", this.firstId },
+            };
+
+            this.CreateStubForMultipleQueryParameters();
+
+            Given()
+                .QueryParams(queryParams)
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/multiple-query-params")
+                .Then()
+                .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test to verify that when a query parameter is specified more than once,
+        /// the last value specified will be used.
+        /// </summary>
+        [Test]
+        public void MultipleQueryParametersCanBeSpecifiedUsingAListOfKeyValuePairs()
+        {
+            List<KeyValuePair<string, object>> queryParams = new List<KeyValuePair<string, object>>()
+            {
+                new KeyValuePair<string, object>("name", this.name),
+                new KeyValuePair<string, object>("id", this.firstId),
             };
 
             this.CreateStubForMultipleQueryParameters();
@@ -143,30 +165,6 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
-        /// A test to verify that when a query parameter is specified more than once,
-        /// the last value specified will be used.
-        /// </summary>
-        [Test]
-        public void SpecifyingTheSameQueryParametersMoreThanOnceUsingADictionaryIsNotAProblem()
-        {
-            Dictionary<string, object> queryParams = new Dictionary<string, object>
-            {
-                { "name", this.overrideName }, // This parameter value will be overwritten
-                { "id", this.queryId },
-            };
-
-            this.CreateStubForMultipleQueryParameters();
-
-            Given()
-                .QueryParams(queryParams)
-                .QueryParam("name", this.originalName) // This parameter value will be used
-                .When()
-                .Get($"{MOCK_SERVER_BASE_URL}/multiple-query-params")
-                .Then()
-                .StatusCode(200);
-        }
-
-        /// <summary>
         /// A test demonstrating that RestAssured.Net adds query parameters
         /// correctly to a relative path (i.e., when using a <see cref="RequestSpecification"/>.
         /// From https://github.com/basdijkstra/rest-assured-net/issues/47.
@@ -178,7 +176,7 @@ namespace RestAssured.Tests
 
             Given()
                 .Spec(this.requestSpecification!)
-                .QueryParam("name", this.originalName)
+                .QueryParam("name", this.name)
                 .When()
                 .Get("/single-query-param")
                 .Then()
@@ -192,7 +190,21 @@ namespace RestAssured.Tests
         {
             this.Server?.Given(Request.Create()
                 .WithPath("/api/single-query-param")
-                .WithParam("name", this.originalName)
+                .WithParam("name", this.name)
+                .UsingGet())
+                .RespondWith(Response.Create()
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the single query parameter with
+        /// comma-separated values example.
+        /// </summary>
+        private void CreateStubForSingleQueryParameterWithCommaSeparatedValues()
+        {
+            this.Server?.Given(Request.Create()
+                .WithPath("/api/single-query-param-csv")
+                .WithParam("id", string.Join(",", 1, 2, 3))
                 .UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
@@ -205,8 +217,8 @@ namespace RestAssured.Tests
         {
             this.Server?.Given(Request.Create()
                 .WithPath("/multiple-query-params")
-                .WithParam("name", this.originalName)
-                .WithParam("id", this.queryId.ToString())
+                .WithParam("name", this.name)
+                .WithParam("id", this.firstId.ToString())
                 .UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));

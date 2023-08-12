@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Unreleased
 
+#### Added
+
+- Added support for supplying multiple query parameter values ([#105](https://github.com/basdijkstra/rest-assured-net/issues/105) by [@lorszi456](https://github.com/lorszi456))
+
 #### Fixed
 
 - Improved logging of empty request and response bodies ([#104](https://github.com/basdijkstra/rest-assured-net/issues/104))
