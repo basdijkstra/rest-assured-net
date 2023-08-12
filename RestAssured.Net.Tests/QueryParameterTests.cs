@@ -71,15 +71,14 @@ namespace RestAssured.Tests
         /// a single query parameter with comma-separated values.
         /// </summary>
         [Test]
-        [Ignore("https://github.com/WireMock-Net/WireMock.Net/issues/991")]
         public void SingleQueryParameterWithCommaSeparatedValuesCanBeSpecified()
         {
-            this.CreateStubForSingleQueryParameterWithCommaSeparatedValues();
+            this.CreateStubForMultipleQueryParameterValues();
 
             Given()
-                .QueryParam("id", string.Join(",", 1, 2, 3))
+                .QueryParam("id", string.Join(",", this.firstId, this.secondId, this.thirdId))
                 .When()
-                .Get($"{MOCK_SERVER_BASE_URL}/api/single-query-param-csv")
+                .Get($"{MOCK_SERVER_BASE_URL}/multiple-query-param-values")
                 .Then()
                 .StatusCode(200);
         }
@@ -191,20 +190,6 @@ namespace RestAssured.Tests
             this.Server?.Given(Request.Create()
                 .WithPath("/api/single-query-param")
                 .WithParam("name", this.name)
-                .UsingGet())
-                .RespondWith(Response.Create()
-                .WithStatusCode(200));
-        }
-
-        /// <summary>
-        /// Creates the stub response for the single query parameter with
-        /// comma-separated values example.
-        /// </summary>
-        private void CreateStubForSingleQueryParameterWithCommaSeparatedValues()
-        {
-            this.Server?.Given(Request.Create()
-                .WithPath("/api/single-query-param-csv")
-                .WithParam("id", string.Join(",", 1, 2, 3))
                 .UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
