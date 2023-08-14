@@ -17,6 +17,7 @@ namespace RestAssured
 {
     using RestAssured.Configuration;
     using RestAssured.Request;
+    using System.Net.Http;
 
     /// <summary>
     /// Entry point to the RestAssured code and writing tests for HTTP-based APIs.
@@ -31,10 +32,11 @@ namespace RestAssured
         /// <summary>
         /// Used to start writing a new test.
         /// </summary>
+        /// <param name="httpClient">The <see cref="HttpClient"/> to use when submitting the request.</param>
         /// <returns>A <see cref="ExecutableRequest"/> object containing all relevant request properties.</returns>
-        public static ExecutableRequest Given()
+        public static ExecutableRequest Given(HttpClient? httpClient = null)
         {
-            return new ExecutableRequest(RestAssuredConfig);
+            return new ExecutableRequest(RestAssuredConfig, httpClient);
         }
     }
 }

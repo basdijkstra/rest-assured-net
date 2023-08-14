@@ -43,6 +43,7 @@ namespace RestAssured.Request
     /// </summary>
     public class ExecutableRequest : IDisposable
     {
+        private readonly HttpClient? httpClient;
         private HttpRequestMessage request = new HttpRequestMessage();
         private CookieCollection cookieCollection = new CookieCollection();
         private RequestSpecification? requestSpecification;
@@ -74,12 +75,15 @@ namespace RestAssured.Request
         /// Initializes a new instance of the <see cref="ExecutableRequest"/> class.
         /// </summary>
         /// <param name="config">The <see cref="RestAssuredConfiguration"/> to use for all requests.</param>
-        internal ExecutableRequest(RestAssuredConfiguration config)
+        /// <param name="httpClient">The <see cref="HttpClient"/> to use when sending requests.</param>
+        internal ExecutableRequest(RestAssuredConfiguration config, HttpClient? httpClient)
         {
             this.disableSslCertificateValidation = config.DisableSslCertificateValidation;
 
             this.RequestLoggingLevel = config.RequestLogLevel;
             this.ResponseLoggingLevel = config.ResponseLogLevel;
+
+            this.httpClient = httpClient;
         }
 
         /// <summary>
@@ -594,7 +598,7 @@ namespace RestAssured.Request
             bool disableSslChecks = this.disableSslCertificateValidation || (this.requestSpecification?.DisableSslCertificateValidation ?? false);
 
             // Create the HTTP request processor that sends the request and set its properties
-            HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor(this.proxy ?? this.requestSpecification?.Proxy, disableSslChecks);
+            HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor(this.httpClient, this.proxy ?? this.requestSpecification?.Proxy, disableSslChecks);
 
             // Timeout set in test has precedence over timeout set in request specification
             // If both are null, use default timeout for HttpClient (= 100.000 milliseconds).

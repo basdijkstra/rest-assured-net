@@ -30,8 +30,8 @@ namespace RestAssured.Request
     /// </summary>
     internal class HttpRequestProcessor : IDisposable
     {
-        private readonly HttpClientHandler handler;
-        private readonly HttpClient client;
+        private readonly HttpClientHandler httpClientHandler;
+        private readonly HttpClient httpClient;
         private CookieContainer cookieContainer = new CookieContainer();
         private bool disposed = false;
 
@@ -58,21 +58,22 @@ namespace RestAssured.Request
                 return;
             }
 
-            this.client.Dispose();
-            this.handler.Dispose();
+            this.httpClient.Dispose();
+            this.httpClientHandler.Dispose();
             this.disposed = true;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HttpRequestProcessor"/> class.
         /// </summary>
+        /// <param name="httpClient">The <see cref="HttpClient"/> to use when sending requests.</param>
         /// <param name="proxy">The <see cref="IWebProxy"/> to set on the <see cref="HttpClientHandler"/> used with the <see cref="HttpClient"/>.</param>
         /// <param name="disableSslCertificateValidation">If set to true, SSL certificate validation is disabled.</param>
-        internal HttpRequestProcessor(IWebProxy? proxy, bool disableSslCertificateValidation)
+        internal HttpRequestProcessor(HttpClient? httpClient, IWebProxy? proxy, bool disableSslCertificateValidation)
         {
             if (disableSslCertificateValidation)
             {
-                this.handler = new HttpClientHandler
+                this.httpClientHandler = new HttpClientHandler
                 {
                     CookieContainer = this.cookieContainer,
                     Proxy = proxy,
@@ -81,7 +82,7 @@ namespace RestAssured.Request
             }
             else
             {
-                this.handler = new HttpClientHandler
+                this.httpClientHandler = new HttpClientHandler
                 {
                     CookieContainer = this.cookieContainer,
                     Proxy = proxy,
@@ -89,7 +90,7 @@ namespace RestAssured.Request
                 };
             }
 
-            this.client = new HttpClient(this.handler);
+            this.httpClient = httpClient ?? new HttpClient(this.httpClientHandler);
         }
 
         /// <summary>
@@ -98,7 +99,7 @@ namespace RestAssured.Request
         /// <param name="timeout">The timeout to set on the HTTP client.</param>
         internal void SetTimeout(TimeSpan timeout)
         {
-            this.client.Timeout = timeout;
+            this.httpClient.Timeout = timeout;
         }
 
         /// <summary>
@@ -127,10 +128,10 @@ namespace RestAssured.Request
                 Stopwatch stopwatch = new Stopwatch();
 
                 stopwatch.Start();
-                HttpResponseMessage response = await this.client.SendAsync(request);
+                HttpResponseMessage response = await this.httpClient.SendAsync(request);
                 stopwatch.Stop();
 
-                return new VerifiableResponse(response, this.handler.CookieContainer, stopwatch.Elapsed);
+                return new VerifiableResponse(response, this.httpClientHandler.CookieContainer, stopwatch.Elapsed);
             }
             catch (HttpRequestException hre)
             {
