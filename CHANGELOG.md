@@ -7,8 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Unreleased
 
+Nothing yet.
+
+### [4.1.0] - 2023-08-15
+
 #### Added
 
+- Added support for supplying custom `System.Net.Http.HttpClient` to be used instead of the one created by RestAssured .Net ([#103](https://github.com/basdijkstra/rest-assured-net/issues/103) by [@JoeBatt1989](https://github.com/JoeBatt1989))
 - Added support for supplying multiple query parameter values ([#105](https://github.com/basdijkstra/rest-assured-net/issues/105) by [@lorszi456](https://github.com/lorszi456))
 
 #### Fixed
