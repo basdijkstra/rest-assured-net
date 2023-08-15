@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestAssured.Net", "RestAssu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestAssured.Net.Tests", "RestAssured.Net.Tests\RestAssured.Net.Tests.csproj", "{1F99FD38-A8CD-4985-8947-BBEEA1AB522B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestAssured.Net.DemoService", "RestAssured.Net.DemoService\RestAssured.Net.DemoService.csproj", "{A48EB92A-EA4A-4B58-874C-10E71AE5BD13}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{1F99FD38-A8CD-4985-8947-BBEEA1AB522B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F99FD38-A8CD-4985-8947-BBEEA1AB522B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F99FD38-A8CD-4985-8947-BBEEA1AB522B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A48EB92A-EA4A-4B58-874C-10E71AE5BD13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A48EB92A-EA4A-4B58-874C-10E71AE5BD13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A48EB92A-EA4A-4B58-874C-10E71AE5BD13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A48EB92A-EA4A-4B58-874C-10E71AE5BD13}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
