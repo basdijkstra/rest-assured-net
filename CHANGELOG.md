@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Unreleased
 
-Nothing yet.
+- Added support for returning extracted values as a list, even if there's only a single extraction result ([#100](https://github.com/basdijkstra/rest-assured-net/issues/109))
 
 ### [4.1.0] - 2023-08-15
 
