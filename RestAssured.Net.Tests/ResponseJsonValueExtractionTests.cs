@@ -35,41 +35,34 @@ namespace RestAssured.Tests
     public class ResponseJsonValueExtractionTests : TestBase
     {
         private Location location = new Location();
-        private Place place = new Place();
-        private string country;
-        private string state;
-        private string placeName;
-        private int zipcode;
-        private int placeInhabitants;
-        private bool isCapital;
 
+        /// <summary>
+        /// Sets the test data for the JSON response body value extraction tests.
+        /// </summary>
         [SetUp]
         public void SetLocation()
         {
-            this.country = Faker.Country.Name();
-            this.state = Faker.Address.UsState();
-            this.zipcode = Faker.RandomNumber.Next(1000, 99999);
+            var firstPlace = new Place()
+            {
+                Name = "Atlantic City",
+                Inhabitants = 500000,
+                IsCapital = true,
+            };
 
-            this.location.Country = this.country;
-            this.location.State = this.state;
-            this.location.ZipCode = this.zipcode;
+            var secondPlace = new Place()
+            {
+                Name = "Smalltown",
+                Inhabitants = 1000,
+                IsCapital = false,
+            };
 
-            this.placeName = Faker.Address.City();
-            this.placeInhabitants = Faker.RandomNumber.Next(100010, 199990);
-            this.isCapital = Faker.Boolean.Random();
-
-            this.place.Name = this.placeName;
-            this.place.Inhabitants = this.placeInhabitants;
-            this.place.IsCapital = this.isCapital;
-
-            this.location.Places.Add(this.place);
-            this.location.Places.Add(new Place());
-        }
-
-        [TearDown]
-        public void ClearPlaces()
-        {
-            this.location.Places = new List<Place>();
+            this.location = new Location()
+            {
+                Country = "United States",
+                State = "Oregon",
+                ZipCode = 54321,
+                Places = { firstPlace, secondPlace },
+            };
         }
 
         /// <summary>
@@ -88,7 +81,7 @@ namespace RestAssured.Tests
                 .StatusCode(200)
                 .Extract().Body("$.Places[0].Name");
 
-            Assert.That(placeName, Is.EqualTo(this.placeName));
+            Assert.That(placeName, Is.EqualTo("Atlantic City"));
         }
 
         /// <summary>
@@ -112,7 +105,7 @@ namespace RestAssured.Tests
 
             int numberOfInhabitantsInt = Convert.ToInt32(numberOfInhabitants);
 
-            Assert.That(numberOfInhabitantsInt, Is.EqualTo(this.placeInhabitants));
+            Assert.That(numberOfInhabitantsInt, Is.EqualTo(500000));
         }
 
         /// <summary>
@@ -131,7 +124,7 @@ namespace RestAssured.Tests
                 .StatusCode(200)
                 .Extract().Body("$.Places[0].IsCapital");
 
-            Assert.That(isCapitalResponse, Is.EqualTo(this.isCapital));
+            Assert.That(isCapitalResponse, Is.EqualTo(true));
         }
 
         /// <summary>
@@ -174,7 +167,27 @@ namespace RestAssured.Tests
                 .StatusCode(200)
                 .Extract().Body("$.Places[0].Name", ExtractAs.Json);
 
-            Assert.That(placeName, Is.EqualTo(this.placeName));
+            Assert.That(placeName, Is.EqualTo("Atlantic City"));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for extracting an
+        /// element value as a list with a single item from a JSON response body
+        /// (useful when the exact number of results is variable).
+        /// </summary>
+        [Test]
+        public void JsonResponseBodyElementValueCanBeExtractedAsListWithSingleItem()
+        {
+            this.CreateStubForJsonResponseWithBodyAndHeaders();
+
+            List<object> placeName = (List<object>)Given()
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/json-response-body")
+                .Then()
+                .StatusCode(200)
+                .Extract().Body("$.Places[0].Name", returnAs: ReturnAs.List);
+
+            Assert.That(placeName.First(), Is.EqualTo("Atlantic City"));
         }
 
         /// <summary>

@@ -31,41 +31,34 @@ namespace RestAssured.Tests
     public class ResponseXmlValueExtractionTests : TestBase
     {
         private Location location = new Location();
-        private Place place = new Place();
-        private string country;
-        private string state;
-        private string placeName;
-        private int zipcode;
-        private int placeInhabitants;
-        private bool isCapital;
 
+        /// <summary>
+        /// Sets the test data for the XML response body value extraction tests.
+        /// </summary>
         [SetUp]
         public void SetLocation()
         {
-            this.country = Faker.Country.Name();
-            this.state = Faker.Address.UsState();
-            this.zipcode = Faker.RandomNumber.Next(1000, 99999);
+            var firstPlace = new Place()
+            {
+                Name = "Atlantic City",
+                Inhabitants = 500000,
+                IsCapital = true,
+            };
 
-            this.location.Country = this.country;
-            this.location.State = this.state;
-            this.location.ZipCode = this.zipcode;
+            var secondPlace = new Place()
+            {
+                Name = "Smalltown",
+                Inhabitants = 1000,
+                IsCapital = false,
+            };
 
-            this.placeName = Faker.Address.City();
-            this.placeInhabitants = Faker.RandomNumber.Next(100010, 199990);
-            this.isCapital = Faker.Boolean.Random();
-
-            this.place.Name = this.placeName;
-            this.place.Inhabitants = this.placeInhabitants;
-            this.place.IsCapital = this.isCapital;
-
-            this.location.Places.Add(this.place);
-            this.location.Places.Add(new Place());
-        }
-
-        [TearDown]
-        public void ClearPlaces()
-        {
-            this.location.Places = new List<Place>();
+            this.location = new Location()
+            {
+                Country = "United States",
+                State = "Oregon",
+                ZipCode = 54321,
+                Places = { firstPlace, secondPlace },
+            };
         }
 
         /// <summary>
@@ -84,7 +77,7 @@ namespace RestAssured.Tests
                 .StatusCode(200)
                 .Extract().Body("//Place[1]/Name");
 
-            Assert.That(placeName, Is.EqualTo(this.placeName));
+            Assert.That(placeName, Is.EqualTo("Sun City"));
         }
 
         /// <summary>
@@ -105,7 +98,7 @@ namespace RestAssured.Tests
                 .StatusCode(200)
                 .Extract().Body("//Place[1]/Name", ExtractAs.Xml);
 
-            Assert.That(placeName, Is.EqualTo(this.placeName));
+            Assert.That(placeName, Is.EqualTo("Sun City"));
         }
 
         /// <summary>
@@ -128,6 +121,29 @@ namespace RestAssured.Tests
                 .Extract().Body("//Place/Name");
 
             Assert.That(placeNames.Count, Is.EqualTo(2));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for extracting an
+        /// element value as a list with a single item from a JSON response body
+        /// (useful when the exact number of results is variable).
+        /// </summary>
+        [Test]
+        public void XmlResponseBodyElementValueCanBeExtractedAsListWithSingleItem()
+        {
+            this.CreateStubForXmlResponseWithBodyAndHeaders();
+
+            // At least for now, if you want to retrieve multiple
+            // XML response body element values, they will have to be
+            // stored in an object of type List<string>.
+            List<string> placeNames = (List<string>)Given()
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/xml-response-body")
+                .Then()
+                .StatusCode(200)
+                .Extract().Body("//Place[1]/Name", returnAs: ReturnAs.List);
+
+            Assert.That(placeNames[0], Is.EqualTo("Sun City"));
         }
 
         /// <summary>
@@ -174,15 +190,6 @@ namespace RestAssured.Tests
                 .WithHeader("Content-Type", "text/plain")
                 .WithBody(this.GetLocationAsXmlString())
                 .WithStatusCode(200));
-        }
-
-        /// <summary>
-        /// Returns an XML string representing a <see cref="Location"/>.
-        /// </summary>
-        /// <returns>An XML string representing a <see cref="Location"/>.</returns>
-        private new string GetLocationAsXmlString()
-        {
-            return "<?xml version=\"1.0\" encoding=\"utf-16\"?><Location xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><Country>" + this.country + "</Country><State>" + this.state + "</State><ZipCode>" + this.zipcode + "</ZipCode><Places><Place><Name>" + this.placeName + "</Name><Inhabitants>" + this.placeInhabitants + "</Inhabitants><IsCapital>" + this.isCapital + "</IsCapital></Place><Place><Name>Pleasure Meadow</Name><Inhabitants>50000</Inhabitants><IsCapital>false</IsCapital></Place></Places></Location>";
         }
     }
 }

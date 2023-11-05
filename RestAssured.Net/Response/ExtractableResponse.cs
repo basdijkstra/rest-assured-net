@@ -61,9 +61,10 @@ namespace RestAssured.Response
         /// </summary>
         /// <param name="path">The JsonPath or XPath expression pointing to the object to extract.</param>
         /// <param name="extractAs">Indicates how to interpret the response.</param>
+        /// <param name="returnAs">Indicates how to return singular extracted values.</param>
         /// <returns>The element value or values extracted from the response using the JsonPath expression.</returns>
         /// <exception cref="ResponseVerificationException">Thrown when evaluating the JsonPath did not yield any results.</exception>
-        public object Body(string path, ExtractAs extractAs = ExtractAs.UseResponseContentTypeHeaderValue)
+        public object Body(string path, ExtractAs extractAs = ExtractAs.UseResponseContentTypeHeaderValue, ReturnAs returnAs = ReturnAs.Singular)
         {
             string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
 
@@ -110,7 +111,7 @@ namespace RestAssured.Response
                     throw new ResponseVerificationException($"JsonPath expression '{path}' did not yield any results.");
                 }
 
-                if (elementValues.Count == 1)
+                if (elementValues.Count == 1 && returnAs.Equals(ReturnAs.Singular))
                 {
                     return elementValues.First() !;
                 }
@@ -129,7 +130,7 @@ namespace RestAssured.Response
                     throw new ExtractionException($"XPath expression '{path}' did not yield any results.");
                 }
 
-                if (xmlElements.Count == 1)
+                if (xmlElements.Count == 1 && returnAs.Equals(ReturnAs.Singular))
                 {
                     return xmlElements.Item(0) !.InnerText;
                 }
@@ -154,7 +155,7 @@ namespace RestAssured.Response
                     throw new ExtractionException($"XPath expression '{path}' did not yield any results.");
                 }
 
-                if (htmlElements.Count == 1)
+                if (htmlElements.Count == 1 && returnAs.Equals(ReturnAs.Singular))
                 {
                     return htmlElements.First().InnerText;
                 }
