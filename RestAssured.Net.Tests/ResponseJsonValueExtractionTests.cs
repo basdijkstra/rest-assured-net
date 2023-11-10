@@ -199,7 +199,7 @@ namespace RestAssured.Tests
         {
             this.CreateStubForJsonResponseWithBodyAndHeaders();
 
-            var rve = Assert.Throws<ResponseVerificationException>(() =>
+            var ee = Assert.Throws<ExtractionException>(() =>
             {
                 Given()
                     .When()
@@ -209,7 +209,7 @@ namespace RestAssured.Tests
                     .Extract().Body("$.Places[0].DoesNotExist");
             });
 
-            Assert.That(rve?.Message, Is.EqualTo("JsonPath expression '$.Places[0].DoesNotExist' did not yield any results."));
+            Assert.That(ee?.Message, Is.EqualTo("JsonPath expression '$.Places[0].DoesNotExist' did not yield any results."));
         }
 
         /// <summary>
