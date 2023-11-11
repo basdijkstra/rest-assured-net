@@ -49,6 +49,11 @@ namespace RestAssured.Request.Builders
         public string BasePath { get; set; }
 
         /// <summary>
+        /// Query parameters to be appended to the endpoint when constructing the request.
+        /// </summary>
+        public IEnumerable<KeyValuePair<string, string>> QueryParams { get; set; }
+
+        /// <summary>
         /// The timeout to be used when sending the request.
         /// </summary>
         public TimeSpan? Timeout { get; set; }
@@ -110,6 +115,7 @@ namespace RestAssured.Request.Builders
         /// <param name="host">The host name to use in this request.</param>
         /// <param name="port">The port number to use in this request.</param>
         /// <param name="basePath">The base path to use in this request.</param>
+        /// <param name="queryParams">Query parameters to use in this request.</param>
         /// <param name="timeout">The timeout to use for this request.</param>
         /// <param name="userAgent">The user agent to use for this request.</param>
         /// <param name="proxy">The proxy to use for this request.</param>
@@ -121,12 +127,13 @@ namespace RestAssured.Request.Builders
         /// <param name="requestLogLevel">The request log level to use in this request.</param>
         /// <param name="jsonSerializerSettings">The JSON serializer settings to use in this request.</param>
         /// <param name="sensitiveRequestHeadersAndCookies">A list of sensitive header and cookie names (to be masked when logging request details.</param>
-        public RequestSpecification(string scheme, string host, int port, string basePath, TimeSpan? timeout, ProductInfoHeaderValue? userAgent, IWebProxy proxy, Dictionary<string, object> headers, AuthenticationHeaderValue authenticationHeader, string contentType, Encoding contentEncoding, bool disableSslCertificateValidation, RequestLogLevel requestLogLevel, JsonSerializerSettings jsonSerializerSettings, List<string> sensitiveRequestHeadersAndCookies)
+        public RequestSpecification(string scheme, string host, int port, string basePath, IEnumerable<KeyValuePair<string, string>> queryParams, TimeSpan? timeout, ProductInfoHeaderValue? userAgent, IWebProxy proxy, Dictionary<string, object> headers, AuthenticationHeaderValue authenticationHeader, string contentType, Encoding contentEncoding, bool disableSslCertificateValidation, RequestLogLevel requestLogLevel, JsonSerializerSettings jsonSerializerSettings, List<string> sensitiveRequestHeadersAndCookies)
         {
             this.Scheme = scheme;
             this.HostName = host;
             this.Port = port;
             this.BasePath = basePath;
+            this.QueryParams = queryParams;
             this.Timeout = timeout;
             this.UserAgent = userAgent;
             this.Proxy = proxy;

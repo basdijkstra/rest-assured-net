@@ -17,6 +17,7 @@ namespace RestAssured.Request.Builders
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net;
     using System.Net.Http.Headers;
     using System.Text;
@@ -34,6 +35,7 @@ namespace RestAssured.Request.Builders
         private readonly string host = "localhost";
         private readonly int port = -1;  // -1 means the default port for the scheme will be chosen
         private readonly string basePath = string.Empty;
+        private readonly IEnumerable<KeyValuePair<string, string>> queryParams = new List<KeyValuePair<string, string>>();
         private readonly TimeSpan? timeout;
         private readonly ProductInfoHeaderValue? userAgent;
         private readonly IWebProxy? proxy;
@@ -51,7 +53,7 @@ namespace RestAssured.Request.Builders
         /// </summary>
         public RequestSpecBuilder()
         {
-            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.basePath, this.timeout, this.userAgent, this.proxy, this.headers, this.authenticationHeader, this.contentTypeHeader, this.contentEncoding, this.disableSslCertificateValidation, this.requestLogLevel, this.jsonSerializerSettings, this.sensitiveRequestHeadersAndCookies);
+            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.basePath, this.queryParams, this.timeout, this.userAgent, this.proxy, this.headers, this.authenticationHeader, this.contentTypeHeader, this.contentEncoding, this.disableSslCertificateValidation, this.requestLogLevel, this.jsonSerializerSettings, this.sensitiveRequestHeadersAndCookies);
         }
 
         /// <summary>
@@ -95,6 +97,22 @@ namespace RestAssured.Request.Builders
         public RequestSpecBuilder WithBasePath(string basePath)
         {
             this.requestSpecification.BasePath = basePath;
+            return this;
+        }
+
+        /// <summary>
+        /// Adds the specified query parameter to the <see cref="RequestSpecification"/> to build.
+        /// </summary>
+        /// <param name="key">The query parameter name.</param>
+        /// <param name="values">The associated query parameter values.</param>
+        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
+        public RequestSpecBuilder WithQueryParam(string key, params object[] values)
+        {
+            foreach (object value in values)
+            {
+                this.requestSpecification.QueryParams = this.requestSpecification.QueryParams.Append(new KeyValuePair<string, string>(key, value.ToString() ?? string.Empty));
+            }
+
             return this;
         }
 

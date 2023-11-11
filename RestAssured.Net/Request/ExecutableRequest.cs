@@ -584,6 +584,14 @@ namespace RestAssured.Request
             this.request.RequestUri = this.BuildUri(this.requestSpecification!, endpoint);
 
             // Add any query parameters that have been specified and create the endpoint
+            if (this.requestSpecification != null)
+            {
+                foreach (KeyValuePair<string, string> param in this.requestSpecification.QueryParams)
+                {
+                    this.request.RequestUri = new Uri(QueryHelpers.AddQueryString(this.request.RequestUri.ToString(), param.Key, param.Value));
+                }
+            }
+
             foreach (KeyValuePair<string, string> param in this.queryParams)
             {
                 this.request.RequestUri = new Uri(QueryHelpers.AddQueryString(this.request.RequestUri.ToString(), param.Key, param.Value));

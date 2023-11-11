@@ -48,6 +48,8 @@ namespace RestAssured.Tests
                 .WithHostName("localhost")
                 .WithBasePath("api")
                 .WithPort(9876)
+                .WithQueryParam("param_name", "param_value")
+                .WithQueryParam("another_param_name", "another_param_value")
                 .WithRequestLogLevel(RequestLogLevel.All)
                 .Build();
 
@@ -102,11 +104,11 @@ namespace RestAssured.Tests
         /// a request specification with default values applied.
         /// </summary>
         /// <param name="endpoint">The endpoint to use in the HTTP call.</param>
-        [TestCase("/api/request-specification", TestName = "Works with a leading / in the endpoint")]
-        [TestCase("api/request-specification", TestName = "Works without a leading / in the endpoint")]
+        [TestCase("/api/request-specification-no-query-params", TestName = "Works with a leading / in the endpoint")]
+        [TestCase("api/request-specification-no-query-params", TestName = "Works without a leading / in the endpoint")]
         public void DefaultValuesAppliedRequestSpecificationCanBeUsed(string endpoint)
         {
-            this.CreateStubForRequestSpecification();
+            this.CreateStubForRequestSpecificationWithoutQueryParams();
 
             Given()
                 .Spec(this.applyDefaultsRequestSpecification!)
@@ -179,7 +181,21 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForRequestSpecification()
         {
-            this.Server?.Given(Request.Create().WithPath("/api/request-specification").UsingGet())
+            this.Server?.Given(Request.Create().WithPath("/api/request-specification")
+                .WithParam("param_name", "param_value")
+                .WithParam("another_param_name", "another_param_value")
+                .UsingGet())
+                .RespondWith(Response.Create()
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the request specification tests, without query parameters.
+        /// </summary>
+        private void CreateStubForRequestSpecificationWithoutQueryParams()
+        {
+            this.Server?.Given(Request.Create().WithPath("/api/request-specification-no-query-params")
+                .UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
         }
