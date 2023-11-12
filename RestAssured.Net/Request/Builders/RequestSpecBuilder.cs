@@ -22,6 +22,7 @@ namespace RestAssured.Request.Builders
     using System.Net.Http.Headers;
     using System.Text;
     using Newtonsoft.Json;
+    using RestAssured.Request.Exceptions;
     using RestAssured.Request.Logging;
 
     /// <summary>
@@ -34,6 +35,7 @@ namespace RestAssured.Request.Builders
         private readonly string scheme = "http";
         private readonly string host = "localhost";
         private readonly int port = -1;  // -1 means the default port for the scheme will be chosen
+        private readonly string baseUri = "http://localhost:-1";
         private readonly string basePath = string.Empty;
         private readonly IEnumerable<KeyValuePair<string, string>> queryParams = new List<KeyValuePair<string, string>>();
         private readonly TimeSpan? timeout;
@@ -53,7 +55,7 @@ namespace RestAssured.Request.Builders
         /// </summary>
         public RequestSpecBuilder()
         {
-            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.basePath, this.queryParams, this.timeout, this.userAgent, this.proxy, this.headers, this.authenticationHeader, this.contentTypeHeader, this.contentEncoding, this.disableSslCertificateValidation, this.requestLogLevel, this.jsonSerializerSettings, this.sensitiveRequestHeadersAndCookies);
+            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.baseUri, this.basePath, this.queryParams, this.timeout, this.userAgent, this.proxy, this.headers, this.authenticationHeader, this.contentTypeHeader, this.contentEncoding, this.disableSslCertificateValidation, this.requestLogLevel, this.jsonSerializerSettings, this.sensitiveRequestHeadersAndCookies);
         }
 
         /// <summary>
@@ -61,6 +63,7 @@ namespace RestAssured.Request.Builders
         /// </summary>
         /// <param name="scheme">The scheme to use in the request.</param>
         /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
+        [Obsolete("Please use WithBaseUri() instead. This method will be removed in RestAssured.Net 5.0.0")]
         public RequestSpecBuilder WithScheme(string scheme)
         {
             this.requestSpecification.Scheme = scheme;
@@ -72,6 +75,7 @@ namespace RestAssured.Request.Builders
         /// </summary>
         /// <param name="host">The host name to use in the requests.</param>
         /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
+        [Obsolete("Please use WithBaseUri() instead. This method will be removed in RestAssured.Net 5.0.0")]
         public RequestSpecBuilder WithHostName(string host)
         {
             this.requestSpecification.HostName = host;
@@ -86,6 +90,28 @@ namespace RestAssured.Request.Builders
         public RequestSpecBuilder WithPort(int port)
         {
             this.requestSpecification.Port = port;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the base URI on the <see cref="RequestSpecification"/> to build.
+        /// </summary>
+        /// <param name="baseUri">The base URI to use in the requests.</param>
+        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
+        public RequestSpecBuilder WithBaseUri(string baseUri)
+        {
+            try
+            {
+                Uri uri = new Uri(baseUri);
+                this.requestSpecification.Scheme = uri.Scheme;
+                this.requestSpecification.HostName = uri.Host;
+                this.requestSpecification.Port = uri.Port;
+            }
+            catch (UriFormatException)
+            {
+                throw new RequestCreationException($"Supplied value '{baseUri}' is not a valid URI");
+            }
+
             return this;
         }
 

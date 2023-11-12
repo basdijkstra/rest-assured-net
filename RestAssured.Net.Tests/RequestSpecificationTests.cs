@@ -31,55 +31,6 @@ namespace RestAssured.Tests
     [TestFixture]
     public class RequestSpecificationTests : TestBase
     {
-        private RequestSpecification fullRequestSpecification;
-        private RequestSpecification applyDefaultsRequestSpecification;
-        private RequestSpecification incorrectHostNameSpecification;
-        private RequestSpecification headersSpecification;
-        private RequestSpecification oauthSpecification;
-
-        /// <summary>
-        /// Creates the <see cref="RequestSpecification"/> instances to be used in the tests in this class.
-        /// </summary>
-        [SetUp]
-        public void CreateRequestSpecifications()
-        {
-            this.fullRequestSpecification = new RequestSpecBuilder()
-                .WithScheme("http")
-                .WithHostName("localhost")
-                .WithBasePath("api")
-                .WithPort(9876)
-                .WithQueryParam("param_name", "param_value")
-                .WithQueryParam("another_param_name", "another_param_value")
-                .WithRequestLogLevel(RequestLogLevel.All)
-                .Build();
-
-            this.applyDefaultsRequestSpecification = new RequestSpecBuilder()
-                .WithPort(9876) // We need to set this because the default is 80 / 443
-                .Build();
-
-            this.incorrectHostNameSpecification = new RequestSpecBuilder()
-                .WithHostName("http://localhost")
-                .WithPort(9876)
-                .Build();
-
-            this.headersSpecification = new RequestSpecBuilder()
-                .WithScheme("http")
-                .WithHostName("localhost")
-                .WithPort(9876)
-                .WithBasicAuth("username", "password")
-                .WithContentType("application/xml")
-                .WithContentEncoding(Encoding.ASCII)
-                .WithHeader("custom_header", "custom_header_value")
-                .Build();
-
-            this.oauthSpecification = new RequestSpecBuilder()
-                .WithScheme("http")
-                .WithHostName("localhost")
-                .WithPort(9876)
-                .WithOAuth2("this_is_my_token")
-                .Build();
-        }
-
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for including
         /// a request specification with all values set.
@@ -89,10 +40,18 @@ namespace RestAssured.Tests
         [TestCase("request-specification", TestName = "With base path in request specification, works without a leading /")]
         public void FullRequestSpecificationCanBeUsed(string endpoint)
         {
+            var fullRequestSpecification = new RequestSpecBuilder()
+                .WithBaseUri("http://localhost:9876")
+                .WithBasePath("api")
+                .WithQueryParam("param_name", "param_value")
+                .WithQueryParam("another_param_name", "another_param_value")
+                .WithRequestLogLevel(RequestLogLevel.All)
+                .Build();
+
             this.CreateStubForRequestSpecification();
 
             Given()
-                .Spec(this.fullRequestSpecification!)
+                .Spec(fullRequestSpecification)
                 .When()
                 .Get(endpoint)
                 .Then()
@@ -108,10 +67,14 @@ namespace RestAssured.Tests
         [TestCase("api/request-specification-no-query-params", TestName = "Works without a leading / in the endpoint")]
         public void DefaultValuesAppliedRequestSpecificationCanBeUsed(string endpoint)
         {
+            var applyDefaultsRequestSpecification = new RequestSpecBuilder()
+                .WithPort(9876) // We need to set this because the default is 80 / 443
+                .Build();
+
             this.CreateStubForRequestSpecificationWithoutQueryParams();
 
             Given()
-                .Spec(this.applyDefaultsRequestSpecification!)
+                .Spec(applyDefaultsRequestSpecification)
                 .When()
                 .Get(endpoint)
                 .Then()
@@ -125,10 +88,18 @@ namespace RestAssured.Tests
         [Test]
         public void RequestSpecificationWithHeadersCanBeUsed()
         {
+            var headersSpecification = new RequestSpecBuilder()
+                .WithBaseUri("http://localhost:9876")
+                .WithBasicAuth("username", "password")
+                .WithContentType("application/xml")
+                .WithContentEncoding(Encoding.ASCII)
+                .WithHeader("custom_header", "custom_header_value")
+                .Build();
+
             this.CreateStubForRequestSpecificationWithHeaders();
 
             Given()
-                .Spec(this.headersSpecification!)
+                .Spec(headersSpecification)
                 .Header("another_header", "another_header_value")
                 .When()
                 .Get("/request-specification-with-headers")
@@ -143,10 +114,15 @@ namespace RestAssured.Tests
         [Test]
         public void RequestSpecificationWithOAuth2CanBeUsed()
         {
+            var oauthSpecification = new RequestSpecBuilder()
+                .WithBaseUri("http://localhost:9876")
+                .WithOAuth2("this_is_my_token")
+                .Build();
+
             this.CreateStubForRequestSpecificationWithOAuth2();
 
             Given()
-                .Spec(this.oauthSpecification!)
+                .Spec(oauthSpecification)
                 .When()
                 .Get("/request-specification-with-oauth2")
                 .Then()
@@ -161,12 +137,17 @@ namespace RestAssured.Tests
         [Test]
         public void UsingSchemeInHostNameThrowsTheExpectedException()
         {
+            var incorrectHostNameSpecification = new RequestSpecBuilder()
+                .WithHostName("http://localhost")
+                .WithPort(9876)
+                .Build();
+
             this.CreateStubForRequestSpecification();
 
             var rce = Assert.Throws<RequestCreationException>(() =>
             {
                 Given()
-                    .Spec(this.incorrectHostNameSpecification!)
+                    .Spec(incorrectHostNameSpecification)
                     .When()
                     .Get("/api/request-specification")
                     .Then()
@@ -174,6 +155,23 @@ namespace RestAssured.Tests
             });
 
             Assert.That(rce?.Message, Is.EqualTo("Supplied base URI 'http://http://localhost:9876' is invalid."));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax showing that
+        /// using an incorrect value for the base URI throws the expected exception.
+        /// </summary>
+        [Test]
+        public void InvalidBaseUriThrowsTheExpectedException()
+        {
+            var rce = Assert.Throws<RequestCreationException>(() =>
+            {
+                var invalidBaseUriSpecification = new RequestSpecBuilder()
+                    .WithBaseUri("not-valid")
+                    .Build();
+            });
+
+            Assert.That(rce?.Message, Is.EqualTo("Supplied value 'not-valid' is not a valid URI"));
         }
 
         /// <summary>
@@ -221,6 +219,16 @@ namespace RestAssured.Tests
         {
             this.Server?.Given(Request.Create().WithPath("/request-specification-with-oauth2").UsingGet()
                 .WithHeader("Authorization", new ExactMatcher("Bearer this_is_my_token")))
+                .RespondWith(Response.Create()
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the request specification with an OAuth2 token tests.
+        /// </summary>
+        private void CreateStubForRequestSpecificationWithBaseUri()
+        {
+            this.Server?.Given(Request.Create().WithPath("/request-specification-with-baseuri").UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
         }
