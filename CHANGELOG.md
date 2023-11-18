@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added support for specifying the base URI in a `RequestSpecification` ([#113](https://github.com/basdijkstra/rest-assured-net/issues/113))
 - Added support for specifying query parameters in a `RequestSpecification` ([#112](https://github.com/basdijkstra/rest-assured-net/issues/112))
 - Added support for returning extracted values as a list, even if there's only a single extraction result ([#109](https://github.com/basdijkstra/rest-assured-net/issues/109))
+- Added more flexible ways to upload multipart content in a request ([#110](https://github.com/basdijkstra/rest-assured-net/issues/110) by [@RipaBogdan](https://github.com/RipaBogdan))
 
 #### Fixed
 
