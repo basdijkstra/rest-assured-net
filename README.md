@@ -1,5 +1,5 @@
 # RestAssured.Net
-![github-actions-ci](https://github.com/basdijkstra/rest-assured-net/actions/workflows/ci.yml/badge.svg) [![CodeQL security scan](https://github.com/basdijkstra/rest-assured-net/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/basdijkstra/rest-assured-net/actions/workflows/codeql-analysis.yml) ![Nuget](https://img.shields.io/nuget/v/RestAssured.Net?color=blue) ![Nuget](https://img.shields.io/nuget/dt/RestAssured.Net)
+![github-actions-ci](https://github.com/basdijkstra/rest-assured-net/actions/workflows/ci-net8.yml/badge.svg) [![CodeQL security scan](https://github.com/basdijkstra/rest-assured-net/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/basdijkstra/rest-assured-net/actions/workflows/codeql-analysis.yml) ![Nuget](https://img.shields.io/nuget/v/RestAssured.Net?color=blue) ![Nuget](https://img.shields.io/nuget/dt/RestAssured.Net)
 
 RestAssured.Net brings the power of <a href="https://rest-assured.io" target="_blank">REST Assured</a> to the C# / .NET ecosystem.
 
