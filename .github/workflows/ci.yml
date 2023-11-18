@@ -20,12 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dotnet-version: [6.0.x, 7.0.x, 8.0.x]
+        dotnet-version: [8.0.x]
         include:
-          - dotnet-version: 6.0.x
-            framework: net6.0
-          - dotnet-version: 7.0.x
-            framework: net7.0
           - dotnet-version: 8.0.x
             framework: net8.0
 
