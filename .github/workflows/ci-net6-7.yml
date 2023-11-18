@@ -1,6 +1,6 @@
 # based on https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 
-name: CI - .NET 6 and 7
+name: CI - .NET 6 and .NET 7
 
 on:
   push:
@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dotnet-version: [6.0.x], 7.0.x
+        dotnet-version: [6.0.x, 7.0.x]
         include:
           - dotnet-version: 6.0.x
             framework: net6.0
