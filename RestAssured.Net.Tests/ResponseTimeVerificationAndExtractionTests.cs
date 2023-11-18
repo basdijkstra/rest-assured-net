@@ -95,7 +95,7 @@ namespace RestAssured.Tests
             this.Server?.Given(Request.Create().WithPath("/delayed-response").UsingGet())
                 .RespondWith(Response.Create()
                 .WithStatusCode(200)
-                .WithDelay(TimeSpan.FromMilliseconds(200)));
+                .WithDelay(TimeSpan.FromMilliseconds(250)));
         }
     }
 }
