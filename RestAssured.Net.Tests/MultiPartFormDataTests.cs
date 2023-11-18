@@ -16,7 +16,9 @@
 namespace RestAssured.Tests
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
+    using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Threading.Tasks;
     using NUnit.Framework;
@@ -131,6 +133,49 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for including
+        /// multipart form data with additional fields in the request.
+        /// </summary>
+        [Test]
+        public void AdditionalFieldsCanBeUploadedWithAFileAsIndividualComponents()
+        {
+            this.CreateStubForCsvMultiPartFormDataWithAdditionalFields();
+
+            Given()
+                .MultiPart(new FileInfo(this.csvFileName))
+                .MultiPart(new StringContent("PROJECT-1234"), "projectId")
+                .MultiPart(new StringContent("MyProject"), "projectName")
+                .When()
+                .Post($"{MOCK_SERVER_BASE_URL}/csv-multipart-form-data-additional-fields")
+                .Then()
+                .StatusCode(201);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for including
+        /// multipart form data with additional fields in the request.
+        /// </summary>
+        [Test]
+        public void AdditionalFieldsCanBeUploadedWithAFileUsingADictionary()
+        {
+            this.CreateStubForCsvMultiPartFormDataWithAdditionalFields();
+
+            Dictionary<string, HttpContent> additionalMultipartPayload = new Dictionary<string, HttpContent>()
+            {
+                { "projectId", new StringContent("PROJECT-1234") },
+                { "projectName", new StringContent("MyProject") },
+            };
+
+            Given()
+                .MultiPart(new FileInfo(this.csvFileName))
+                .MultiPart(additionalMultipartPayload)
+                .When()
+                .Post($"{MOCK_SERVER_BASE_URL}/csv-multipart-form-data-additional-fields")
+                .Then()
+                .StatusCode(201);
+        }
+
+        /// <summary>
         /// Deletes the file created for test execution.
         /// </summary>
         [TearDown]
@@ -187,6 +232,22 @@ namespace RestAssured.Tests
                 .WithHeader("Content-Type", new RegexMatcher("multipart/form-data; boundary=.*"))
                 .WithBody(new RegexMatcher($".*text/csv.*"))
                 .WithBody(new RegexMatcher($".*name=customControl.*")))
+                .RespondWith(Response.Create()
+                .WithStatusCode(201));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the csv form data with additional fields example.
+        /// </summary>
+        private void CreateStubForCsvMultiPartFormDataWithAdditionalFields()
+        {
+            this.Server?.Given(Request.Create().WithPath("/csv-multipart-form-data-additional-fields").UsingPost()
+                .WithHeader("Content-Type", new RegexMatcher("multipart/form-data; boundary=.*"))
+                .WithBody(new RegexMatcher($".*text/csv.*"))
+                .WithBody(new RegexMatcher($".*name=projectId.*"))
+                .WithBody(new RegexMatcher($".*PROJECT-1234.*"))
+                .WithBody(new RegexMatcher($".*name=projectName.*"))
+                .WithBody(new RegexMatcher($".*MyProject.*")))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));
         }

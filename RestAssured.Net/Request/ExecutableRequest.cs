@@ -298,10 +298,8 @@ namespace RestAssured.Request
 
             try
             {
-                contentType ??= this.GetContentTypeForFile(fileName);
-
                 StreamContent fileContents = new StreamContent(fileName.OpenRead());
-                fileContents.Headers.ContentType = contentType;
+                fileContents.Headers.ContentType = contentType ??= this.GetContentTypeForFile(fileName);
 
                 this.multipartFormDataContent.Add(fileContents, controlName, fileName.Name);
             }
@@ -309,6 +307,35 @@ namespace RestAssured.Request
             {
                 throw new RequestCreationException(ioe.Message);
             }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Adds multipart form data (multipart/form-data) to the request.
+        /// </summary>
+        /// <param name="content">The <see cref="HttpContent"/> to be uploaded with the request.</param>
+        /// <param name="name">The name associated with the <see cref="HttpContent"/> in the request.</param>
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest MultiPart(HttpContent content, string name)
+        {
+            this.multipartFormDataContent ??= new MultipartFormDataContent();
+
+            this.multipartFormDataContent.Add(content, name);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Adds multipart form data (multipart/form-data) to the request.
+        /// </summary>
+        /// <param name="content">A <see cref="Dictionary{TKey, TValue}"/> containing the <see cref="HttpContent"/> to be uploaded with the request.</param>
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest MultiPart(Dictionary<string, HttpContent> content)
+        {
+            this.multipartFormDataContent ??= new MultipartFormDataContent();
+
+            content.ToList().ForEach(entry => this.multipartFormDataContent.Add(entry.Value, entry.Key));
 
             return this;
         }
@@ -744,20 +771,6 @@ namespace RestAssured.Request
             }
 
             return MediaTypeHeaderValue.Parse(contentType);
-        }
-
-        private string GetContentTypeForFile(string fileName)
-        {
-            FileExtensionContentTypeProvider provider = new FileExtensionContentTypeProvider();
-
-            string contentType;
-
-            if (!provider.TryGetContentType(fileName, out contentType))
-            {
-                contentType = "application/octet-stream";
-            }
-
-            return contentType;
         }
     }
 }
