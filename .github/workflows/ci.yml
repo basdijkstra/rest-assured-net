@@ -1,6 +1,6 @@
 # based on https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 
-name: CI - .NET 6 and .NET 7
+name: CI
 
 on:
   push:
@@ -20,12 +20,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dotnet-version: [6.0.x, 7.0.x]
+        dotnet-version: [6.0.x, 7.0.x, 8.0.x]
         include:
           - dotnet-version: 6.0.x
             framework: net6.0
           - dotnet-version: 7.0.x
             framework: net7.0
+          - dotnet-version: 8.0.x
+            framework: net8.0
 
     steps:
       - uses: actions/checkout@v3
@@ -39,7 +41,7 @@ jobs:
         run: dotnet --list-sdks
 
       - name: Restore project dependencies
-        run: dotnet restore
+        run: dotnet restore -p:TargetFramework=${{ matrix.framework }}
 
       - name: Build (${{ matrix.framework }})
         run: dotnet build --framework ${{ matrix.framework }} --no-restore
@@ -48,11 +50,11 @@ jobs:
         run: dotnet test --framework ${{ matrix.framework }} --no-restore --no-build --verbosity normal
 
       - name: Rebuild
-        if: contains(matrix.framework, 'net7.0')
+        if: contains(matrix.framework, 'net8.0')
         run: dotnet build --no-restore
 
       - name: Ensure NuGet package is generated
-        if: contains(matrix.framework, 'net7.0')
+        if: contains(matrix.framework, 'net8.0')
         run: |
           FILE=./RestAssured.Net/bin/Debug/RestAssured.Net.*.nupkg
           if compgen -G $FILE > /dev/null; then
