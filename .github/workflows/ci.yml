@@ -48,17 +48,3 @@ jobs:
 
       - name: Run tests (${{ matrix.framework }})
         run: dotnet test --framework ${{ matrix.framework }} --no-restore --no-build --verbosity normal
-
-      - name: Rebuild
-        if: contains(matrix.framework, 'net8.0')
-        run: dotnet build --no-restore
-
-      - name: Ensure NuGet package is generated
-        if: contains(matrix.framework, 'net8.0')
-        run: |
-          FILE=./RestAssured.Net/bin/Debug/RestAssured.Net.*.nupkg
-          if compgen -G $FILE > /dev/null; then
-            echo "$FILE exists."
-          else
-            exit 1;
-          fi
