@@ -51,7 +51,7 @@ jobs:
 
       - name: Rebuild
         if: contains(matrix.framework, 'net8.0')
-        run: dotnet build --no-restore
+        run: dotnet build --framework ${{ matrix.framework }} --no-restore
 
       - name: Ensure NuGet package is generated
         if: contains(matrix.framework, 'net8.0')
