@@ -314,10 +314,10 @@ namespace RestAssured.Request
         /// <summary>
         /// Adds multipart form data (multipart/form-data) to the request.
         /// </summary>
-        /// <param name="content">The <see cref="HttpContent"/> to be uploaded with the request.</param>
         /// <param name="name">The name associated with the <see cref="HttpContent"/> in the request.</param>
+        /// <param name="content">The <see cref="HttpContent"/> to be uploaded with the request.</param>
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
-        public ExecutableRequest MultiPart(HttpContent content, string name)
+        public ExecutableRequest MultiPart(string name, HttpContent content)
         {
             this.multipartFormDataContent ??= new MultipartFormDataContent();
 

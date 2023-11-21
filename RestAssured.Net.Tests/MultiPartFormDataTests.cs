@@ -143,8 +143,8 @@ namespace RestAssured.Tests
 
             Given()
                 .MultiPart(new FileInfo(this.csvFileName))
-                .MultiPart(new StringContent("PROJECT-1234"), "projectId")
-                .MultiPart(new StringContent("MyProject"), "projectName")
+                .MultiPart("projectId", new StringContent("PROJECT-1234"))
+                .MultiPart("projectName", new StringContent("MyProject"))
                 .When()
                 .Post($"{MOCK_SERVER_BASE_URL}/csv-multipart-form-data-additional-fields")
                 .Then()
