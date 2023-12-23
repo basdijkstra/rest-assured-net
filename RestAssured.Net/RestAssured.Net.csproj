@@ -31,13 +31,15 @@
 
   <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.54" />
-    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NHamcrest" Version="3.4.0" />
     <PackageReference Include="NJsonSchema" Version="10.9.0" />
     <PackageReference Include="Stubble.Core" Version="1.10.8" />
     <PackageReference Include="System.Text.Encodings.Web" Version="6.0.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
 </Project>
