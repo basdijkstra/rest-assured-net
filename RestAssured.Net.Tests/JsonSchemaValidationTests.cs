@@ -18,6 +18,7 @@ namespace RestAssured.Tests
     using NJsonSchema;
     using NUnit.Framework;
     using RestAssured.Response.Exceptions;
+    using RestAssured.Tests.Schemas;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
     using static RestAssured.Dsl;
@@ -28,9 +29,6 @@ namespace RestAssured.Tests
     [TestFixture]
     public class JsonSchemaValidationTests : TestBase
     {
-        private readonly string jsonSchema = @"{ 'type': 'object', 'properties': { 'name': { 'type':'string'}, 'hobbies': { 'type': 'array', 'items': { 'type': 'string' } } } }";
-        private readonly string invalidJsonSchema = @"{ 'object', 'properties': { 'name': { 'type':'string'}, 'hobbies': { 'type': 'array', 'items': { 'type': 'string' } } } }";
-
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for validating a response
         /// against a JSON schema supplied as a string.
@@ -46,7 +44,7 @@ namespace RestAssured.Tests
                 .Then()
                 .StatusCode(200)
                 .And()
-                .MatchesJsonSchema(this.jsonSchema);
+                .MatchesJsonSchema(JsonSchemaDefinitions.MatchingJsonSchema);
         }
 
         /// <summary>
@@ -58,7 +56,7 @@ namespace RestAssured.Tests
         {
             this.CreateStubForJsonSchemaValidation();
 
-            JsonSchema parsedSchema = JsonSchema.FromJsonAsync(this.jsonSchema).Result;
+            JsonSchema parsedSchema = JsonSchema.FromJsonAsync(JsonSchemaDefinitions.MatchingJsonSchema).Result;
 
             Given()
                 .When()
@@ -85,7 +83,7 @@ namespace RestAssured.Tests
                     .Then()
                     .StatusCode(200)
                     .And()
-                    .MatchesJsonSchema(this.jsonSchema);
+                    .MatchesJsonSchema(JsonSchemaDefinitions.MatchingJsonSchema);
             });
 
             Assert.That(rve?.Message, Does.Contain("Response body did not match JSON schema supplied. Error: 'StringExpected: #/name'"));
@@ -107,7 +105,7 @@ namespace RestAssured.Tests
                     .Then()
                     .StatusCode(200)
                     .And()
-                    .MatchesJsonSchema(this.invalidJsonSchema);
+                    .MatchesJsonSchema(JsonSchemaDefinitions.InvalidJsonSchemaAsString);
             });
 
             Assert.That(rve?.Message, Does.Contain("Could not parse supplied JSON schema. Error:"));
@@ -129,7 +127,7 @@ namespace RestAssured.Tests
                     .Then()
                     .StatusCode(200)
                     .And()
-                    .MatchesJsonSchema(this.jsonSchema);
+                    .MatchesJsonSchema(JsonSchemaDefinitions.MatchingJsonSchema);
             });
 
             Assert.That(rve?.Message, Is.EqualTo("Expected response Content-Type header to contain 'json', but was 'application/something'"));
