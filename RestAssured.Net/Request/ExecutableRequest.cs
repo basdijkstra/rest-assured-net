@@ -765,7 +765,7 @@ namespace RestAssured.Request
 
             string contentType;
 
-            if (!provider.TryGetContentType(fileName.FullName, out contentType))
+            if (!provider.TryGetContentType(fileName.FullName, out contentType!))
             {
                 contentType = "application/octet-stream";
             }
