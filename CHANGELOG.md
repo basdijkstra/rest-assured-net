@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Unreleased
 
+- Nothing yet.
+
+### [4.2.1] - 2023-12-31
+
 #### Fixed
 
 - Removed references to deprecated libraries by replacing them with reference to ASP.NET Core framework ([#72](https://github.com/basdijkstra/rest-assured-net/issues/72))
