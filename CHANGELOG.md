@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Unreleased
 
-- Nothing yet.
+#### Updated
+
+- Version bumps for HtmlAgilityPack, NJsonSchema (main project), Microsoft.AspNetCore.Mvc.Testing, NUnit, Faker.NET and WireMock.NET (test project)
 
 ### [4.2.1] - 2023-12-31
 
