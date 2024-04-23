@@ -213,6 +213,44 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for extracting an
+        /// element value as a single item from a JSON array response body.
+        /// </summary>
+        [Test]
+        public void JsonArrayResponseBodyElementValueCanBeExtracted()
+        {
+            this.CreateStubForJsonArrayResponseBody();
+
+            string todoItem = (string)Given()
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/json-array-response-body")
+                .Then()
+                .StatusCode(200)
+                .Extract().Body("$[1].text");
+
+            Assert.That(todoItem, Is.EqualTo("Clean out the trash"));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for extracting an
+        /// element value as a single item from a JSON array response body.
+        /// </summary>
+        [Test]
+        public void JsonArrayResponseBodyMultipleElementValuesCanBeExtracted()
+        {
+            this.CreateStubForJsonArrayResponseBody();
+
+            List<object> todoItems = (List<object>)Given()
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/json-array-response-body")
+                .Then()
+                .StatusCode(200)
+                .Extract().Body("$[0:].text");
+
+            Assert.That(todoItems.Count, Is.EqualTo(3));
+        }
+
+        /// <summary>
         /// A test demonstrating RestAssuredNet syntax for extracting a
         /// response header value.
         /// </summary>
@@ -296,6 +334,37 @@ namespace RestAssured.Tests
                 .WithHeader("custom_header", "custom_header_value")
                 .WithHeader("Content-Type", "text/plain")
                 .WithBodyAsJson(this.location)
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the JSON array response body example.
+        /// </summary>
+        private void CreateStubForJsonArrayResponseBody()
+        {
+            var todoItems = new[]
+            {
+                new
+                {
+                    id = 1,
+                    text = "Do the dishes",
+                },
+                new
+                {
+                    id = 2,
+                    text = "Clean out the trash",
+                },
+                new
+                {
+                    id = 3,
+                    text = "Read the newspaper",
+                },
+            };
+
+            this.Server?.Given(Request.Create().WithPath("/json-array-response-body").UsingGet())
+                .RespondWith(Response.Create()
+                .WithHeader("Content-Type", "application/json")
+                .WithBodyAsJson(todoItems)
                 .WithStatusCode(200));
         }
     }

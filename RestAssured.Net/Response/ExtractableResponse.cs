@@ -99,8 +99,7 @@ namespace RestAssured.Response
 
             if (responseMediaType == string.Empty || responseMediaType!.Contains("json"))
             {
-                JObject responseBodyAsJObject = JObject.Parse(responseBodyAsString);
-                IEnumerable<JToken>? resultingElements = responseBodyAsJObject.SelectTokens(path);
+                IEnumerable<JToken>? resultingElements = JToken.Parse(responseBodyAsString).SelectTokens(path);
 
                 List<object?> elementValues = resultingElements
                     .Select(element => element.ToObject<object>())

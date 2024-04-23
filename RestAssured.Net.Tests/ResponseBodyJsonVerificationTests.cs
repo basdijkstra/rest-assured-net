@@ -39,6 +39,9 @@ namespace RestAssured.Tests
         private int placeInhabitants;
         private bool isCapital;
 
+        /// <summary>
+        /// Initializes the Location test data object used in these tests.
+        /// </summary>
         [SetUp]
         public void SetLocation()
         {
@@ -62,6 +65,9 @@ namespace RestAssured.Tests
             this.location.Places.Add(new Place());
         }
 
+        /// <summary>
+        /// Clean up our test data afterwards.
+        /// </summary>
         [TearDown]
         public void ClearPlaces()
         {
@@ -314,7 +320,6 @@ namespace RestAssured.Tests
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/json-array-response-body")
                 .Then()
-                .Log(RestAssured.Response.Logging.ResponseLogLevel.All)
                 .StatusCode(200)
                 .Body("$[0:].text", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Read the newspaper")));
         }
