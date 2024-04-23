@@ -285,6 +285,41 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a JSON array response body element using an NHamcrest matcher.
+        /// </summary>
+        [Test]
+        public void JsonArrayResponseBodyElementCanBeVerifiedUsingNHamcrestMatcher()
+        {
+            this.CreateStubForJsonArrayResponseBody();
+
+            Given()
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/json-array-response-body")
+                .Then()
+                .StatusCode(200)
+                .Body("$[1].text", NHamcrest.Is.EqualTo("Clean out the trash"));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a JSON array response body element collection using an NHamcrest matcher.
+        /// </summary>
+        [Test]
+        public void JsonArrayResponseBodyElementCollectionCanBeVerifiedUsingNHamcrestMatcher()
+        {
+            this.CreateStubForJsonArrayResponseBody();
+
+            Given()
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/json-array-response-body")
+                .Then()
+                .Log(RestAssured.Response.Logging.ResponseLogLevel.All)
+                .StatusCode(200)
+                .Body("$[0:].text", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Read the newspaper")));
+        }
+
+        /// <summary>
         /// Creates the stub response for the JSON response body example.
         /// </summary>
         private void CreateStubForJsonResponseBody()
@@ -293,6 +328,37 @@ namespace RestAssured.Tests
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/json")
                 .WithBodyAsJson(this.location)
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the JSON array response body example.
+        /// </summary>
+        private void CreateStubForJsonArrayResponseBody()
+        {
+            var todoItems = new[]
+            {
+                new
+                {
+                    id = 1,
+                    text = "Do the dishes",
+                },
+                new
+                {
+                    id = 2,
+                    text = "Clean out the trash",
+                },
+                new
+                {
+                    id = 3,
+                    text = "Read the newspaper",
+                },
+            };
+
+            this.Server?.Given(Request.Create().WithPath("/json-array-response-body").UsingGet())
+                .RespondWith(Response.Create()
+                .WithHeader("Content-Type", "application/json")
+                .WithBodyAsJson(todoItems)
                 .WithStatusCode(200));
         }
 
@@ -307,15 +373,6 @@ namespace RestAssured.Tests
                 .WithHeader("Content-Type", "text/plain")
                 .WithBodyAsJson(this.location)
                 .WithStatusCode(200));
-        }
-
-        /// <summary>
-        /// Returns an XML string representing a <see cref="Location"/>.
-        /// </summary>
-        /// <returns>An XML string representing a <see cref="Location"/>.</returns>
-        private new string GetLocationAsXmlString()
-        {
-            return "<?xml version=\"1.0\" encoding=\"utf-16\"?><Location xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><Country>" + this.country + "</Country><State>" + this.state + "</State><ZipCode>" + this.zipcode + "</ZipCode><Places><Place><Name>" + this.placeName + "</Name><Inhabitants>" + this.placeInhabitants + "</Inhabitants><IsCapital>" + this.isCapital + "</IsCapital></Place><Place><Name>Pleasure Meadow</Name><Inhabitants>50000</Inhabitants><IsCapital>false</IsCapital></Place></Places></Location>";
         }
     }
 }
