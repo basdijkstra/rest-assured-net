@@ -339,9 +339,7 @@ namespace RestAssured.Response
 
             if (responseMediaType!.Equals(string.Empty) || responseMediaType.Contains("json"))
             {
-                var parsedResponseBody = this.ParseJsonResponseBody(responseBodyAsString);
-
-                JToken? resultingElement = parsedResponseBody.SelectToken(path);
+                JToken? resultingElement = JToken.Parse(responseBodyAsString).SelectToken(path);
 
                 if (resultingElement == null)
                 {
@@ -456,9 +454,7 @@ namespace RestAssured.Response
 
             if (responseMediaType!.Equals(string.Empty) || responseMediaType.Contains("json"))
             {
-                var parsedResponseBody = this.ParseJsonResponseBody(responseBodyAsString);
-
-                IEnumerable<JToken>? resultingElements = parsedResponseBody.SelectTokens(path);
+                IEnumerable<JToken>? resultingElements = JToken.Parse(responseBodyAsString).SelectTokens(path);
 
                 foreach (JToken element in resultingElements)
                 {
@@ -758,22 +754,6 @@ namespace RestAssured.Response
             }
 
             throw new ResponseVerificationException(exceptionMessage);
-        }
-
-        private JToken ParseJsonResponseBody(string responseBodyAsString)
-        {
-            JToken result;
-
-            try
-            {
-                result = JObject.Parse(responseBodyAsString);
-            }
-            catch (JsonReaderException)
-            {
-                result = JArray.Parse(responseBodyAsString);
-            }
-
-            return result;
         }
     }
 }
