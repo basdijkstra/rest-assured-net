@@ -34,7 +34,7 @@ namespace RestAssured.Tests
         [SetUp]
         public void StartServer()
         {
-            this.Server = WireMockServer.Start(port: 8443, ssl: true);
+            this.Server = WireMockServer.Start(port: 8443, useSSL: true);
         }
 
         /// <summary>
