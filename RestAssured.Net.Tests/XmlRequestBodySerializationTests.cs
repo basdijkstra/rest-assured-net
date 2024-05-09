@@ -46,6 +46,37 @@ namespace RestAssured.Tests
                 .StatusCode(201);
         }
 
+        public record BlogPostRecord(int id, string title, string body)
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="BlogPostRecord"/> class.
+            /// </summary>
+            public BlogPostRecord()
+                : this(0, string.Empty, string.Empty)
+            {
+            }
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for serializing
+        /// and sending an XML request body when performing an HTTP POST.
+        /// </summary>
+        [Test]
+        public void RecordCanBeSerializedToXml()
+        {
+            this.CreateStubForXmlRequestBodyFromRecord();
+
+            var post = new BlogPostRecord(123, "My blog post title", "My blog post body");
+
+            Given()
+                .ContentType("application/xml")
+                .Body(post)
+                .When()
+                .Post($"{MOCK_SERVER_BASE_URL}/xml-serialization-from-record")
+                .Then()
+                .StatusCode(201);
+        }
+
         /// <summary>
         /// Verifies that the correct exception is thrown when the request body
         /// cannot be serialized based on the Content-Type header value.
@@ -76,6 +107,17 @@ namespace RestAssured.Tests
         {
             this.Server?.Given(Request.Create().WithPath("/xml-serialization").UsingPost()
                 .WithBody(new XPathMatcher("//Places[count(Place) = 2]")))
+                .RespondWith(Response.Create()
+                .WithStatusCode(201));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the XML request body example using a record.
+        /// </summary>
+        private void CreateStubForXmlRequestBodyFromRecord()
+        {
+            this.Server?.Given(Request.Create().WithPath("/xml-serialization-from-record").UsingPost()
+                .WithBody(new XPathMatcher("//BlogPostRecord/id[text()='123']")))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));
         }
