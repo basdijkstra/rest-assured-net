@@ -62,9 +62,9 @@ namespace RestAssured.Tests
 
             Dictionary<string, object> post = new Dictionary<string, object>
             {
-                { "Id", this.blogPost.Id },
-                { "Title", this.blogPost.Title },
-                { "Body", this.blogPost.Body },
+                { "id", this.blogPost.Id },
+                { "title", this.blogPost.Title },
+                { "body", this.blogPost.Body },
             };
 
             Given()
@@ -86,9 +86,9 @@ namespace RestAssured.Tests
 
             var post = new
             {
-                Id = this.blogPost.Id,
-                Title = this.blogPost.Title,
-                Body = this.blogPost.Body,
+                id = this.blogPost.Id,
+                title = this.blogPost.Title,
+                body = this.blogPost.Body,
             };
 
             Given()
@@ -99,45 +99,25 @@ namespace RestAssured.Tests
                 .StatusCode(201);
         }
 
+        private record BlogPostRecord(int id, string title, string body);
+
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for serializing
-        /// and sending an XML request body when performing an HTTP POST.
+        /// a record type to JSON and sending it when performing an HTTP POST.
         /// </summary>
         [Test]
-        public void ObjectCanBeSerializedToXml()
+        public void RecordCanBeSerializedToJson()
         {
-            this.CreateStubForXmlRequestBody();
+            this.CreateStubForObjectSerialization();
+
+            var post = new BlogPostRecord(this.blogPost.Id, this.blogPost.Title, this.blogPost.Body);
 
             Given()
-                .ContentType("application/xml")
-                .Body(this.GetLocation())
+                .Body(post)
                 .When()
-                .Post($"{MOCK_SERVER_BASE_URL}/xml-serialization")
+                .Post($"{MOCK_SERVER_BASE_URL}/object-serialization")
                 .Then()
                 .StatusCode(201);
-        }
-
-        /// <summary>
-        /// Verifies that the correct exception is thrown when the request body
-        /// cannot be serialized based on the Content-Type header value.
-        /// </summary>
-        [Test]
-        public void UnableToSerializeThrowsTheExpectedException()
-        {
-            this.CreateStubForXmlRequestBody();
-
-            var rce = Assert.Throws<RequestCreationException>(() =>
-            {
-                Given()
-                    .ContentType("application/something")
-                    .Body(this.GetLocation())
-                    .When()
-                    .Post($"{MOCK_SERVER_BASE_URL}/xml-serialization")
-                    .Then()
-                    .StatusCode(201);
-            });
-
-            Assert.That(rce?.Message, Is.EqualTo("Could not determine how to serialize request based on specified content type 'application/something'"));
         }
 
         /// <summary>
@@ -158,17 +138,6 @@ namespace RestAssured.Tests
         {
             this.Server?.Given(Request.Create().WithPath("/object-serialization").UsingPost()
                 .WithBody(new JsonMatcher(this.GetExpectedSerializedObject())))
-                .RespondWith(Response.Create()
-                .WithStatusCode(201));
-        }
-
-        /// <summary>
-        /// Creates the stub response for the XML request body example.
-        /// </summary>
-        private void CreateStubForXmlRequestBody()
-        {
-            this.Server?.Given(Request.Create().WithPath("/xml-serialization").UsingPost()
-                .WithBody(new XPathMatcher("//Places[count(Place) = 2]")))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));
         }

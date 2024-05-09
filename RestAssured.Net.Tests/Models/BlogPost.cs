@@ -35,6 +35,9 @@ namespace RestAssured.Tests.Models
         /// </summary>
         public string Body { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BlogPost"/> class.
+        /// </summary>
         public BlogPost()
         {
             this.Id = Faker.RandomNumber.Next();
@@ -42,11 +45,15 @@ namespace RestAssured.Tests.Models
             this.Body = Faker.Lorem.Sentence(Faker.RandomNumber.Next(10, 20));
         }
 
+        /// <summary>
+        /// Returns a JSON string representation of the <see cref="BlogPost"/> instance.
+        /// </summary>
+        /// <returns>A JSON string representation of the <see cref="BlogPost"/> instance.</returns>
         public string GetSerializedJson()
         {
-            return "{\"Id\":" + this.Id +
-                ",\"Title\":\"" + this.Title +
-                "\",\"Body\":\"" + this.Body + "\"}";
+            return "{\"id\":" + this.Id +
+                ",\"title\":\"" + this.Title +
+                "\",\"body\":\"" + this.Body + "\"}";
         }
     }
 }
