@@ -58,6 +58,7 @@ namespace RestAssured.Request
         private IWebProxy? proxy = null;
         private JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
         private List<string> sensitiveRequestHeadersAndCookies = new List<string>();
+        private HttpCompletionOption httpCompletionOption = HttpCompletionOption.ResponseContentRead;
         private bool disableSslCertificateValidation = false;
         private bool disposed = false;
 
@@ -452,6 +453,18 @@ namespace RestAssured.Request
         }
 
         /// <summary>
+        /// Sets the <see cref="HttpCompletionOption"/> value to be used when sending the request.
+        /// See https://learn.microsoft.com/en-us/dotnet/api/system.net.http.httpcompletionoption for more details.
+        /// </summary>
+        /// <param name="httpCompletionOption">The <see cref="HttpCompletionOption"/> value to use in this request.</param>
+        /// <returns>The current <see cref="ExecutableRequest"/>.</returns>
+        public ExecutableRequest UseHttpCompletionOption(HttpCompletionOption httpCompletionOption)
+        {
+            this.httpCompletionOption = httpCompletionOption;
+            return this;
+        }
+
+        /// <summary>
         /// Syntactic sugar that makes tests read more like natural language.
         /// </summary>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
@@ -659,7 +672,7 @@ namespace RestAssured.Request
 
             try
             {
-                Task<VerifiableResponse> task = httpRequestProcessor.Send(this.request, this.cookieCollection);
+                Task<VerifiableResponse> task = httpRequestProcessor.Send(this.request, this.cookieCollection, this.httpCompletionOption);
                 VerifiableResponse verifiableResponse = task.Result;
                 verifiableResponse.Log(this.ResponseLoggingLevel);
                 return verifiableResponse;

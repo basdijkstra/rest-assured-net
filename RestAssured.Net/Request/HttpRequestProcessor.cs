@@ -107,9 +107,10 @@ namespace RestAssured.Request
         /// </summary>
         /// <param name="request">The HTTP request message object to be sent.</param>
         /// <param name="cookieCollection">The <see cref="CookieCollection"/> to add to the request before it is sent.</param>
+        /// <param name="httpCompletionOption">The <see cref="HttpCompletionOption"/> setting to use when sending the request.</param>
         /// <returns>The HTTP response.</returns>
         /// <exception cref="HttpRequestProcessorException">Thrown whenever the HTTP request fails.</exception>
-        internal async Task<VerifiableResponse> Send(HttpRequestMessage request, CookieCollection cookieCollection)
+        internal async Task<VerifiableResponse> Send(HttpRequestMessage request, CookieCollection cookieCollection, HttpCompletionOption httpCompletionOption)
         {
             foreach (Cookie cookie in cookieCollection)
             {
@@ -128,7 +129,7 @@ namespace RestAssured.Request
                 Stopwatch stopwatch = new Stopwatch();
 
                 stopwatch.Start();
-                HttpResponseMessage response = await this.httpClient.SendAsync(request);
+                HttpResponseMessage response = await this.httpClient.SendAsync(request, httpCompletionOption);
                 stopwatch.Stop();
 
                 return new VerifiableResponse(response, this.httpClientHandler.CookieContainer, stopwatch.Elapsed);
