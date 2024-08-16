@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Unreleased
 
+Nothing yet.
+
+### [4.3.0] - 2024-08-16
+
+#### Added
+
+- Added support for specifying the `HttpCompletionOption` to use when waiting for the response ([#126](ttps://github.com/basdijkstra/rest-assured-net/issues/119) by [@RothAndrew](https://github.com/RothAndrew))
+
 #### Updated
 
 - Version bumps for HtmlAgilityPack (main project), Microsoft.NET.Test.Sdk, Microsoft.AspNetCore.Mvc.Testing, WireMock.Net (test project)
