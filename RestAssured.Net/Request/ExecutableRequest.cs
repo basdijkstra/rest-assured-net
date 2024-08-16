@@ -83,6 +83,7 @@ namespace RestAssured.Request
 
             this.RequestLoggingLevel = config.RequestLogLevel;
             this.ResponseLoggingLevel = config.ResponseLogLevel;
+            this.httpCompletionOption = config.HttpCompletionOption;
 
             this.httpClient = httpClient;
         }
@@ -660,6 +661,13 @@ namespace RestAssured.Request
                 {
                     httpRequestProcessor.SetTimeout((TimeSpan)this.requestSpecification.Timeout);
                 }
+            }
+
+            // HttpCompletionOption set in the test takes precedence over the value in the RequestSpecification
+            // Only if it's still the default (so not set in the test), overwrite it with the value in the RequestSpecification.
+            if (this.requestSpecification != null && this.httpCompletionOption.Equals(HttpCompletionOption.ResponseContentRead))
+            {
+                this.httpCompletionOption = this.requestSpecification.HttpCompletionOption;
             }
 
             // Add header and cookie values to be masked specified in RequestSpecification to the list

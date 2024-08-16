@@ -15,7 +15,7 @@
 // </copyright>
 namespace RestAssured.Configuration
 {
-    using System;
+    using System.Net.Http;
     using RestAssured.Request.Logging;
     using RestAssured.Response.Logging;
 
@@ -38,5 +38,10 @@ namespace RestAssured.Configuration
         /// Setting to configure response logging level for all tests.
         /// </summary>
         public ResponseLogLevel ResponseLogLevel { get; set; } = ResponseLogLevel.None;
+
+        /// <summary>
+        /// Setting to configure the <see cref="HttpCompletionOption"/> for all tests.
+        /// </summary>
+        public HttpCompletionOption HttpCompletionOption { get; set; } = HttpCompletionOption.ResponseContentRead;
     }
 }

@@ -222,15 +222,5 @@ namespace RestAssured.Tests
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
         }
-
-        /// <summary>
-        /// Creates the stub response for the request specification with an OAuth2 token tests.
-        /// </summary>
-        private void CreateStubForRequestSpecificationWithBaseUri()
-        {
-            this.Server?.Given(Request.Create().WithPath("/request-specification-with-baseuri").UsingGet())
-                .RespondWith(Response.Create()
-                .WithStatusCode(200));
-        }
     }
 }

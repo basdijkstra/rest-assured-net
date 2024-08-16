@@ -18,6 +18,7 @@ namespace RestAssured.Request.Builders
     using System;
     using System.Collections.Generic;
     using System.Net;
+    using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Text;
     using Newtonsoft.Json;
@@ -114,6 +115,11 @@ namespace RestAssured.Request.Builders
         public List<string> SensitiveRequestHeadersAndCookies { get; set; }
 
         /// <summary>
+        /// Can be used to indicate whether the <see cref="HttpClient"/> should wait for the request body to be sent.
+        /// </summary>
+        public HttpCompletionOption HttpCompletionOption { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="RequestSpecification"/> class.
         /// </summary>
         /// <param name="scheme">The scheme (http, https, ....) to use in this request.</param>
@@ -133,7 +139,8 @@ namespace RestAssured.Request.Builders
         /// <param name="requestLogLevel">The request log level to use in this request.</param>
         /// <param name="jsonSerializerSettings">The JSON serializer settings to use in this request.</param>
         /// <param name="sensitiveRequestHeadersAndCookies">A list of sensitive header and cookie names (to be masked when logging request details.</param>
-        public RequestSpecification(string scheme, string host, int port, string baseUri, string basePath, IEnumerable<KeyValuePair<string, string>> queryParams, TimeSpan? timeout, ProductInfoHeaderValue? userAgent, IWebProxy proxy, Dictionary<string, object> headers, AuthenticationHeaderValue authenticationHeader, string contentType, Encoding contentEncoding, bool disableSslCertificateValidation, RequestLogLevel requestLogLevel, JsonSerializerSettings jsonSerializerSettings, List<string> sensitiveRequestHeadersAndCookies)
+        /// <param name="httpCompletionOption">Indicates whether the HttpClient should wait for the request body to be sent.</param>
+        public RequestSpecification(string scheme, string host, int port, string baseUri, string basePath, IEnumerable<KeyValuePair<string, string>> queryParams, TimeSpan? timeout, ProductInfoHeaderValue? userAgent, IWebProxy proxy, Dictionary<string, object> headers, AuthenticationHeaderValue authenticationHeader, string contentType, Encoding contentEncoding, bool disableSslCertificateValidation, RequestLogLevel requestLogLevel, JsonSerializerSettings jsonSerializerSettings, List<string> sensitiveRequestHeadersAndCookies, HttpCompletionOption httpCompletionOption)
         {
             this.Scheme = scheme;
             this.HostName = host;
@@ -152,6 +159,7 @@ namespace RestAssured.Request.Builders
             this.RequestLogLevel = requestLogLevel;
             this.JsonSerializerSettings = jsonSerializerSettings;
             this.SensitiveRequestHeadersAndCookies = sensitiveRequestHeadersAndCookies;
+            this.HttpCompletionOption = httpCompletionOption;
         }
     }
 }

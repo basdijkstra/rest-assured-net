@@ -19,6 +19,7 @@ namespace RestAssured.Request.Builders
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
+    using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Text;
     using Newtonsoft.Json;
@@ -49,13 +50,14 @@ namespace RestAssured.Request.Builders
         private readonly RequestLogLevel requestLogLevel = RequestLogLevel.None;
         private readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
         private readonly List<string> sensitiveRequestHeadersAndCookies = new List<string>();
+        private readonly HttpCompletionOption httpCompletionOption = HttpCompletionOption.ResponseContentRead;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestSpecBuilder"/> class.
         /// </summary>
         public RequestSpecBuilder()
         {
-            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.baseUri, this.basePath, this.queryParams, this.timeout, this.userAgent, this.proxy, this.headers, this.authenticationHeader, this.contentTypeHeader, this.contentEncoding, this.disableSslCertificateValidation, this.requestLogLevel, this.jsonSerializerSettings, this.sensitiveRequestHeadersAndCookies);
+            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.baseUri, this.basePath, this.queryParams, this.timeout, this.userAgent, this.proxy, this.headers, this.authenticationHeader, this.contentTypeHeader, this.contentEncoding, this.disableSslCertificateValidation, this.requestLogLevel, this.jsonSerializerSettings, this.sensitiveRequestHeadersAndCookies, this.httpCompletionOption);
         }
 
         /// <summary>
@@ -285,6 +287,17 @@ namespace RestAssured.Request.Builders
         public RequestSpecBuilder WithMaskingOfHeadersAndCookies(List<string> sensitiveHeaderOrCookieNames)
         {
             this.requestSpecification.SensitiveRequestHeadersAndCookies.AddRange(sensitiveHeaderOrCookieNames);
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the <see cref="HttpCompletionOption"/> to be used by the <see cref="HttpClient"/> when waiting for response completion.
+        /// </summary>
+        /// <param name="httpCompletionOption">The <see cref="HttpCompletionOption"/> value to use.</param>
+        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
+        public RequestSpecBuilder WithHttpCompletionOption(HttpCompletionOption httpCompletionOption)
+        {
+            this.requestSpecification.HttpCompletionOption = httpCompletionOption;
             return this;
         }
 
