@@ -17,7 +17,7 @@ Nothing yet.
 
 #### Updated
 
-- Version bumps for HtmlAgilityPack (main project), Microsoft.NET.Test.Sdk, Microsoft.AspNetCore.Mvc.Testing, WireMock.Net (test project)
+- Version bumps for HtmlAgilityPack, NJsonSchema (main project), Microsoft.NET.Test.Sdk, Microsoft.AspNetCore.Mvc.Testing, NUnit3TestAdapter, WireMock.Net (test project)
 
 ### [4.2.2] - 2024-04-23
 
