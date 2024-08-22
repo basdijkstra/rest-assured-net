@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+### [4.3.1] - 2024-08-22
+
+#### Fixed
+
+- Fixed an issue where trying to verify an element to be an empty array threw an exception ([#122](https://github.com/basdijkstra/rest-assured-net/issues/122))
+
 ### [4.3.0] - 2024-08-16
 
 #### Added
