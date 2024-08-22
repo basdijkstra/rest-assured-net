@@ -15,6 +15,7 @@
 // </copyright>
 namespace RestAssured.Tests
 {
+    using System;
     using System.Collections.Generic;
     using NUnit.Framework;
     using RestAssured.Response;
@@ -274,7 +275,7 @@ namespace RestAssured.Tests
         {
             this.CreateStubForJsonResponseBody();
 
-            string placeNamesInLocation = this.placeName + ", " + this.location.Places[1].Name;
+            string placeNamesInLocation = $"{this.placeName}, {this.location.Places[1].Name}";
             string mismatchCityName = Faker.Address.UkCounty();
 
             var rve = Assert.Throws<ResponseVerificationException>(() =>
@@ -287,7 +288,7 @@ namespace RestAssured.Tests
                     .Body("$.Places[0:].Name", NHamcrest.Has.Item(NHamcrest.Is.EqualTo(mismatchCityName)));
             });
 
-            Assert.That(rve?.Message, Is.EqualTo($"Expected elements selected by '$.Places[0:].Name' to match 'a collection containing \"" + mismatchCityName + "\"', but was [" + placeNamesInLocation + "]"));
+            Assert.That(rve?.Message, Is.EqualTo($"Expected elements selected by '$.Places[0:].Name' to match 'a collection containing \"{mismatchCityName}\"', but was [{placeNamesInLocation}]"));
         }
 
         /// <summary>
@@ -322,6 +323,45 @@ namespace RestAssured.Tests
                 .Then()
                 .StatusCode(200)
                 .Body("$[0:].text", NHamcrest.Has.Item(NHamcrest.Is.EqualTo("Read the newspaper")));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a JSON array response body element collection using an NHamcrest matcher.
+        /// </summary>
+        [Test]
+        public void JsonResponseBodyElementEmptyArrayValueCanBeVerifiedUsingNHamcrestMatcher()
+        {
+            this.CreateStubForJsonEmptyArrayResponseBody();
+
+            Given()
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/json-empty-array-response-body")
+                .Then()
+                .StatusCode(200)
+                .Body("$.errors", NHamcrest.Is.OfLength(0));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a JSON array response body element collection using an NHamcrest matcher.
+        /// </summary>
+        [Test]
+        public void JsonResponseBodyElementEmptyArrayValueMismatchThrowsExpectedException()
+        {
+            this.CreateStubForJsonEmptyArrayResponseBody();
+
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                    .When()
+                    .Get($"{MOCK_SERVER_BASE_URL}/json-empty-array-response-body")
+                    .Then()
+                    .StatusCode(200)
+                    .Body("$.errors", NHamcrest.Is.OfLength(1));
+             });
+
+            Assert.That(rve?.Message, Is.EqualTo($"Expected element selected by '$.errors' to match 'NHamcrest.Core.LengthMatcher`1[System.Collections.ICollection]' but was '[]'"));
         }
 
         /// <summary>
@@ -377,6 +417,25 @@ namespace RestAssured.Tests
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "text/plain")
                 .WithBodyAsJson(this.location)
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the JSON response body example with an element with
+        /// an empty array value.
+        /// </summary>
+        private void CreateStubForJsonEmptyArrayResponseBody()
+        {
+            var responseBody = new
+            {
+                success = true,
+                errors = Array.Empty<string>(),
+            };
+
+            this.Server?.Given(Request.Create().WithPath("/json-empty-array-response-body").UsingGet())
+                .RespondWith(Response.Create()
+                .WithHeader("Content-Type", "application/json")
+                .WithBodyAsJson(responseBody)
                 .WithStatusCode(200));
         }
     }

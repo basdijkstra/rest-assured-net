@@ -346,9 +346,21 @@ namespace RestAssured.Response
                     this.FailVerification($"JsonPath expression '{path}' did not yield any results.");
                 }
 
-                if (!matcher.Matches(resultingElement!.ToObject<T>() !))
+                bool useCollectionMatcher = resultingElement!.GetType().Equals(typeof(JArray));
+
+                if (useCollectionMatcher)
                 {
-                    this.FailVerification($"Expected element selected by '{path}' to match '{matcher}' but was '{resultingElement}'");
+                    if (!matcher.Matches((T)resultingElement!.ToObject<ICollection<T>>() !))
+                    {
+                        this.FailVerification($"Expected element selected by '{path}' to match '{matcher}' but was '{resultingElement}'");
+                    }
+                }
+                else
+                {
+                    if (!matcher.Matches(resultingElement!.ToObject<T>() !))
+                    {
+                        this.FailVerification($"Expected element selected by '{path}' to match '{matcher}' but was '{resultingElement}'");
+                    }
                 }
             }
             else if (responseMediaType.Contains("xml"))
