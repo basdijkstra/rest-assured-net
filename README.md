@@ -31,6 +31,6 @@ You can add RestAssured.Net to your project using [NuGet](https://www.nuget.org/
 RestAssured.Net is also available through [GitHub Packages](https://github.com/basdijkstra/rest-assured-net/pkgs/nuget/RestAssured.Net).
 
 ### Want to contribute?
-I'm mostly looking for people who want to give the library a spin and let me know what they think, what issues they found and what they're still missing.
+That's awesome! Before you get to work and submit a Pull Request, though, I'd appreciate you [telling me a little more about your idea](https://github.com/basdijkstra/rest-assured-net/discussions).
 
-Feel free to submit an issue on this repo if you see any room for improvement.
+Oh, and if you find a bug, or think something is missing from RestAssured.Net, feel free to [submit an issue](https://github.com/basdijkstra/rest-assured-net/issues).
