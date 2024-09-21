@@ -577,15 +577,6 @@ namespace RestAssured.Request
         }
 
         /// <summary>
-        /// Returns the associated <see cref="HttpRequestMessage"/> (for logging purposes).
-        /// </summary>
-        /// <returns>The <see cref="HttpRequestMessage"/> associated with this request.</returns>
-        internal HttpRequestMessage GetRequest()
-        {
-            return this.request;
-        }
-
-        /// <summary>
         /// Implements Dispose(bool) method of IDisposable interface.
         /// </summary>
         /// <param name="disposing">Flag indicating whether objects should be disposed.</param>
