@@ -19,7 +19,7 @@ Nothing yet.
 
 #### Added
 
-- Added support for specifying the `HttpCompletionOption` to use when waiting for the response ([#126](ttps://github.com/basdijkstra/rest-assured-net/issues/119) by [@RothAndrew](https://github.com/RothAndrew))
+- Added support for specifying the `HttpCompletionOption` to use when waiting for the response ([#126](https://github.com/basdijkstra/rest-assured-net/issues/126) by [@RothAndrew](https://github.com/RothAndrew))
 
 #### Updated
 
