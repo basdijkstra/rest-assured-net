@@ -69,7 +69,8 @@ namespace RestAssured.Request
         /// <param name="httpClient">The <see cref="HttpClient"/> to use when sending requests.</param>
         /// <param name="proxy">The <see cref="IWebProxy"/> to set on the <see cref="HttpClientHandler"/> used with the <see cref="HttpClient"/>.</param>
         /// <param name="disableSslCertificateValidation">If set to true, SSL certificate validation is disabled.</param>
-        internal HttpRequestProcessor(HttpClient? httpClient, IWebProxy? proxy, bool disableSslCertificateValidation)
+        /// <param name="networkCredential">The <see cref="NetworkCredential"/> to add to the <see cref="HttpClientHandler"/> to use in the request.</param>
+        internal HttpRequestProcessor(HttpClient? httpClient, IWebProxy? proxy, bool disableSslCertificateValidation, NetworkCredential networkCredential)
         {
             if (disableSslCertificateValidation)
             {
@@ -77,6 +78,7 @@ namespace RestAssured.Request
                 {
                     CookieContainer = this.cookieContainer,
                     Proxy = proxy,
+                    Credentials = networkCredential,
                     ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true,
                 };
             }
@@ -86,6 +88,7 @@ namespace RestAssured.Request
                 {
                     CookieContainer = this.cookieContainer,
                     Proxy = proxy,
+                    Credentials = networkCredential,
                     ServerCertificateCustomValidationCallback = ServerCertificateCustomValidation,
                 };
             }

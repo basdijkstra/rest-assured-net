@@ -59,6 +59,7 @@ namespace RestAssured.Request
         private JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
         private List<string> sensitiveRequestHeadersAndCookies = new List<string>();
         private HttpCompletionOption httpCompletionOption = HttpCompletionOption.ResponseContentRead;
+        private NetworkCredential? networkCredential = null;
         private bool disableSslCertificateValidation = false;
         private bool disposed = false;
 
@@ -239,6 +240,29 @@ namespace RestAssured.Request
         public ExecutableRequest OAuth2(string token)
         {
             this.request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            return this;
+        }
+
+        /// <summary>
+        /// Adds NTLM authentication to the request using cached default network credentials.
+        /// </summary>
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest Ntlm()
+        {
+            this.networkCredential = CredentialCache.DefaultNetworkCredentials;
+            return this;
+        }
+
+        /// <summary>
+        /// Adds NTLM authentication to the request using specified NTLM credentials.
+        /// </summary>
+        /// <param name="username">The username to use when authenticating via NTLM.</param>
+        /// <param name="password">The password to use when authenticating via NTLM.</param>
+        /// <param name="domain">The domain to use when authenticating via NTLM.</param>
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest Ntlm(string username = "", string password = "", string domain = "")
+        {
+            this.networkCredential = new NetworkCredential(username, password, domain);
             return this;
         }
 
@@ -638,7 +662,7 @@ namespace RestAssured.Request
             bool disableSslChecks = this.disableSslCertificateValidation || (this.requestSpecification?.DisableSslCertificateValidation ?? false);
 
             // Create the HTTP request processor that sends the request and set its properties
-            HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor(this.httpClient, this.proxy ?? this.requestSpecification?.Proxy, disableSslChecks);
+            HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor(this.httpClient, this.proxy ?? this.requestSpecification?.Proxy, disableSslChecks, this.networkCredential);
 
             // Timeout set in test has precedence over timeout set in request specification
             // If both are null, use default timeout for HttpClient (= 100.000 milliseconds).
