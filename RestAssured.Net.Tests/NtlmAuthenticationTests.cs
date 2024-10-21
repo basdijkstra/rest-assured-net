@@ -37,7 +37,7 @@ namespace RestAssured.Tests
             this.CreateStubForNtlmAuthenticationVerification();
 
             Given()
-                .Ntlm()
+                .NtlmAuth()
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/ntlm-authentication")
                 .Then()
@@ -54,7 +54,7 @@ namespace RestAssured.Tests
             this.CreateStubForNtlmAuthenticationVerification();
 
             Given()
-                .Ntlm("username", "password", "domain")
+                .NtlmAuth("username", "password", "domain")
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/ntlm-authentication")
                 .Then()

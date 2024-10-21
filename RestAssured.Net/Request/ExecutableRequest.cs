@@ -247,7 +247,7 @@ namespace RestAssured.Request
         /// Adds NTLM authentication to the request using cached default network credentials.
         /// </summary>
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
-        public ExecutableRequest Ntlm()
+        public ExecutableRequest NtlmAuth()
         {
             this.networkCredential = CredentialCache.DefaultNetworkCredentials;
             return this;
@@ -260,7 +260,7 @@ namespace RestAssured.Request
         /// <param name="password">The password to use when authenticating via NTLM.</param>
         /// <param name="domain">The domain to use when authenticating via NTLM.</param>
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
-        public ExecutableRequest Ntlm(string username = "", string password = "", string domain = "")
+        public ExecutableRequest NtlmAuth(string username = "", string password = "", string domain = "")
         {
             this.networkCredential = new NetworkCredential(username, password, domain);
             return this;
