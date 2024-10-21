@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+### [4.4.0] - 2024-10-21
+
+#### Added
+
+- Added support for NTML authentication ([#130](https://github.com/basdijkstra/rest-assured-net/issues/130) by [@espy19](https://github.com/espy19))
+
+#### Updated
+
+- Version bumps for HtmlAgilityPack (main project), Microsoft.NET.Test.Sdk, Microsoft.AspNetCore.Mvc.Testing, NUnit, WireMock.Net (test project)
+
 ### [4.3.1] - 2024-08-22
 
 #### Fixed
