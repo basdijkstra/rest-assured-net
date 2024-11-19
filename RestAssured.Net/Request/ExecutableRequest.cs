@@ -88,6 +88,7 @@ namespace RestAssured.Request
 
             this.RequestLoggingLevel = config.RequestLogLevel;
             this.ResponseLoggingLevel = config.ResponseLogLevel;
+            this.LogConfiguration = config.LogConfiguration;
             this.httpCompletionOption = config.HttpCompletionOption;
 
             this.httpClient = httpClient;

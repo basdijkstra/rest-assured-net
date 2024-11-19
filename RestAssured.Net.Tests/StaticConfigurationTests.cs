@@ -16,8 +16,7 @@
 namespace RestAssured.Tests
 {
     using NUnit.Framework;
-    using RestAssured.Request.Logging;
-    using RestAssured.Response.Logging;
+    using RestAssured.Logging;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
     using static RestAssured.Dsl;
@@ -34,9 +33,13 @@ namespace RestAssured.Tests
         [OneTimeSetUp]
         public void SetRestAssuredNetConfiguration()
         {
+            var logConfig = new LogConfiguration
+            {
+                RequestLogLevel = RequestLogLevel.All,
+            };
+
+            RestAssuredConfig.LogConfiguration = logConfig;
             RestAssuredConfig.DisableSslCertificateValidation = true;
-            RestAssuredConfig.RequestLogLevel = RequestLogLevel.All;
-            RestAssuredConfig.ResponseLogLevel = ResponseLogLevel.All;
         }
 
         /// <summary>

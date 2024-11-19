@@ -32,7 +32,7 @@ namespace RestAssured.Configuration
         /// <summary>
         /// Configuration for be used when logging request and response details.
         /// </summary>
-        public LogConfiguration LogConfiguration { get; set; } = new LogConfiguration();
+        public LogConfiguration? LogConfiguration { get; set; }
 
         /// <summary>
         /// Setting to configure request logging level for all tests.
