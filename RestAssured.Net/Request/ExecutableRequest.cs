@@ -715,7 +715,14 @@ namespace RestAssured.Request
                 SensitiveResponseHeadersAndCookies = new List<string>(),
             };
 
-            RequestResponseLogger logger = new RequestResponseLogger(this.LogConfiguration ?? legacyLogConfiguration);
+            if (this.requestSpecification != null)
+            {
+                // Apply logging settings from the request specification,
+                // but only if they haven't been set for this specific request.
+                this.LogConfiguration ??= this.requestSpecification.LogConfiguration;
+            }
+
+            var logger = new RequestResponseLogger(this.LogConfiguration ?? legacyLogConfiguration);
 
             // RequestLogger.LogToConsole(this.request, this.RequestLoggingLevel, this.cookieCollection, this.sensitiveRequestHeadersAndCookies);
             logger.LogRequest(this.request, this.cookieCollection);
@@ -724,7 +731,7 @@ namespace RestAssured.Request
             {
                 Task<VerifiableResponse> task = httpRequestProcessor.Send(this.request, this.cookieCollection, this.httpCompletionOption);
                 VerifiableResponse verifiableResponse = task.Result;
-                logger.LogResponse(verifiableResponse);
+                verifiableResponse = logger.LogResponse(verifiableResponse);
                 return verifiableResponse;
             }
             catch (AggregateException ae)

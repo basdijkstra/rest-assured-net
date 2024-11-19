@@ -287,6 +287,33 @@ namespace RestAssured.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for logging
+        /// response details to the standard output, setting logging configuration
+        /// in a request specification.
+        /// </summary>
+        [Test]
+        public void ResponseBodyDetailsAreLoggedCorrectlyUsingRequestSpecificationSettings()
+        {
+            this.CreateStubForLoggingJsonResponse();
+
+            var logConfig = new LogConfiguration
+            {
+                ResponseLogLevel = Logging.ResponseLogLevel.All,
+            };
+
+            var requestSpecification = new RequestSpecBuilder()
+                .WithLogConfiguration(logConfig)
+                .Build();
+
+            Given()
+                .Spec(requestSpecification)
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/log-json-response")
+                .Then()
+                .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for logging
         /// response details to the standard output, overwriting logging details from
         /// a request specification with specific settings.
         /// </summary>

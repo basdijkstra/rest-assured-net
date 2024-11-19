@@ -18,8 +18,6 @@ namespace RestAssured.Configuration
     using System;
     using System.Net.Http;
     using RestAssured.Logging;
-    using RestAssured.Request.Logging;
-    using RestAssured.Response.Logging;
 
     /// <summary>
     /// Contains static method for global RestAssured.Net configuration.

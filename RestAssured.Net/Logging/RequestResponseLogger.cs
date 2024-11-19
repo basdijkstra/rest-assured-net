@@ -75,11 +75,13 @@ namespace RestAssured.Logging
         /// Logs response details to the console.
         /// </summary>
         /// <param name="verifiableResponse">The <see cref="VerifiableResponse"/> to log to the console.</param>
-        public void LogResponse(VerifiableResponse verifiableResponse)
+        /// <returns>The supplied <see cref="VerifiableResponse"/>, with the LogOnVerificationFailure flag set.</returns>
+        public VerifiableResponse LogResponse(VerifiableResponse verifiableResponse)
         {
             if (this.logConfiguration.ResponseLogLevel == ResponseLogLevel.OnVerificationFailure)
             {
-                return;
+                verifiableResponse.LogOnVerificationFailure = true;
+                return verifiableResponse;
             }
 
             if (this.logConfiguration.ResponseLogLevel == ResponseLogLevel.OnError)
@@ -93,7 +95,7 @@ namespace RestAssured.Logging
                     LogResponseTime(verifiableResponse.ElapsedTime);
                 }
 
-                return;
+                return verifiableResponse;
             }
 
             if (this.logConfiguration.ResponseLogLevel > ResponseLogLevel.None)
@@ -124,6 +126,8 @@ namespace RestAssured.Logging
                 LogResponseBody(verifiableResponse.Response);
                 LogResponseTime(verifiableResponse.ElapsedTime);
             }
+
+            return verifiableResponse;
         }
 
         private static void LogRequestHeaders(HttpRequestMessage request, List<string> sensitiveRequestHeadersAndCookies)

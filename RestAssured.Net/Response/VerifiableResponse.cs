@@ -30,6 +30,7 @@ namespace RestAssured.Response
     using NHamcrest;
     using NJsonSchema;
     using NJsonSchema.Validation;
+    using RestAssured.Logging;
     using RestAssured.Response.Deserialization;
     using RestAssured.Response.Exceptions;
     using RestAssured.Response.Logging;
@@ -54,7 +55,11 @@ namespace RestAssured.Response
         /// </summary>
         public TimeSpan ElapsedTime { internal get; init; }
 
-        private bool logOnVerificationFailure = false;
+        /// <summary>
+        /// A boolean flag indicating whether response details should be logged to the console on verification failure.
+        /// </summary>
+        public bool LogOnVerificationFailure { get; internal set; } = false;
+
         private JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
         private List<string> sensitiveResponseHeadersAndCookies = new List<string>();
 
@@ -749,11 +754,11 @@ namespace RestAssured.Response
         /// <param name="sensitiveHeaderOrCookieNames">The names of the response headers or cookies to be masked when logging.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         [Obsolete("Use Log(LogConfiguration logConfiguration) in ExecutableRequest instead. This method will be removed in RestAssured.Net 5.0.0")]
-        public VerifiableResponse Log(ResponseLogLevel responseLogLevel, List<string>? sensitiveHeaderOrCookieNames = null)
+        public VerifiableResponse Log(Logging.ResponseLogLevel responseLogLevel, List<string>? sensitiveHeaderOrCookieNames = null)
         {
-            if (responseLogLevel == ResponseLogLevel.OnVerificationFailure)
+            if (responseLogLevel == Logging.ResponseLogLevel.OnVerificationFailure)
             {
-                this.logOnVerificationFailure = true;
+                this.LogOnVerificationFailure = true;
                 return this;
             }
 
@@ -772,9 +777,15 @@ namespace RestAssured.Response
 
         private void FailVerification(string exceptionMessage)
         {
-            if (this.logOnVerificationFailure)
+            if (this.LogOnVerificationFailure)
             {
-                ResponseLogger.Log(this.Response, this.CookieContainer, ResponseLogLevel.All, this.sensitiveResponseHeadersAndCookies, this.ElapsedTime);
+                var logConfiguration = new LogConfiguration
+                {
+                    ResponseLogLevel = RestAssured.Logging.ResponseLogLevel.All,
+                };
+
+                var logger = new RequestResponseLogger(logConfiguration);
+                logger.LogResponse(this);
             }
 
             throw new ResponseVerificationException(exceptionMessage);
