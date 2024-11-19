@@ -23,6 +23,7 @@ namespace RestAssured.Request.Builders
     using System.Net.Http.Headers;
     using System.Text;
     using Newtonsoft.Json;
+    using RestAssured.Logging;
     using RestAssured.Request.Exceptions;
     using RestAssured.Request.Logging;
 
@@ -47,7 +48,8 @@ namespace RestAssured.Request.Builders
         private readonly string? contentTypeHeader = null;
         private readonly Encoding? contentEncoding = null;
         private readonly bool disableSslCertificateValidation = false;
-        private readonly RequestLogLevel requestLogLevel = RequestLogLevel.None;
+        private readonly LogConfiguration logConfiguration = new LogConfiguration();
+        private readonly Logging.RequestLogLevel requestLogLevel = Logging.RequestLogLevel.None;
         private readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
         private readonly List<string> sensitiveRequestHeadersAndCookies = new List<string>();
         private readonly HttpCompletionOption httpCompletionOption = HttpCompletionOption.ResponseContentRead;
@@ -57,7 +59,7 @@ namespace RestAssured.Request.Builders
         /// </summary>
         public RequestSpecBuilder()
         {
-            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.baseUri, this.basePath, this.queryParams, this.timeout, this.userAgent, this.proxy, this.headers, this.authenticationHeader, this.contentTypeHeader, this.contentEncoding, this.disableSslCertificateValidation, this.requestLogLevel, this.jsonSerializerSettings, this.sensitiveRequestHeadersAndCookies, this.httpCompletionOption);
+            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.baseUri, this.basePath, this.queryParams, this.timeout, this.userAgent, this.proxy, this.headers, this.authenticationHeader, this.contentTypeHeader, this.contentEncoding, this.disableSslCertificateValidation, this.logConfiguration, this.requestLogLevel, this.jsonSerializerSettings, this.sensitiveRequestHeadersAndCookies, this.httpCompletionOption);
         }
 
         /// <summary>
@@ -258,11 +260,23 @@ namespace RestAssured.Request.Builders
         }
 
         /// <summary>
+        /// Sets the log configuration to the specified <see cref="LogConfiguration"/> values.
+        /// </summary>
+        /// <param name="logConfiguration">The <see cref="LogConfiguration"/> to apply when logging request and response details.</param>
+        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
+        public RequestSpecBuilder WithLogConfiguration(LogConfiguration logConfiguration)
+        {
+            this.requestSpecification.LogConfiguration = logConfiguration;
+            return this;
+        }
+
+        /// <summary>
         /// Sets the request log level to the specified <see cref="RequestLogLevel"/> value.
         /// </summary>
         /// <param name="requestLogLevel">The <see cref="RequestLogLevel"/> to apply to the requests.</param>
         /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
-        public RequestSpecBuilder WithRequestLogLevel(RequestLogLevel requestLogLevel)
+        [Obsolete("Please use WithLogConfiguration(LogConfiguration logConfiguration) instead. This method will be removed in RestAssured.Net 5.0.0")]
+        public RequestSpecBuilder WithRequestLogLevel(Logging.RequestLogLevel requestLogLevel)
         {
             this.requestSpecification.RequestLogLevel = requestLogLevel;
             return this;

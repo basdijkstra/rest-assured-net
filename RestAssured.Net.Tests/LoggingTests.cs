@@ -16,6 +16,8 @@
 namespace RestAssured.Tests
 {
     using NUnit.Framework;
+    using RestAssured.Logging;
+    using RestAssured.Request.Builders;
     using RestAssured.Request.Logging;
     using RestAssured.Response.Logging;
     using WireMock.RequestBuilders;
@@ -39,8 +41,35 @@ namespace RestAssured.Tests
         {
             this.CreateStubForLoggingJsonResponse();
 
+            var logConfig = new LogConfiguration
+            {
+                RequestLogLevel = Logging.RequestLogLevel.All,
+            };
+
             Given()
-                .Log(RequestLogLevel.All)
+                .Log(logConfig)
+                .And()
+                .Accept("application/json")
+                .Header("CustomHeader", "custom header value")
+                .ContentType("application/json")
+                .Body(this.jsonBody)
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/log-json-response")
+                .Then()
+                .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for logging
+        /// JSON request details to the standard output.
+        /// </summary>
+        [Test]
+        public void RequestLogLevelCanBeSpecifiedUsingObsoleteMethod()
+        {
+            this.CreateStubForLoggingJsonResponse();
+
+            Given()
+                .Log(RestAssured.Request.Logging.RequestLogLevel.All)
                 .And()
                 .Accept("application/json")
                 .Header("CustomHeader", "custom header value")
@@ -61,8 +90,13 @@ namespace RestAssured.Tests
         {
             this.CreateStubForLoggingXmlResponse();
 
+            var logConfig = new LogConfiguration
+            {
+                RequestLogLevel = Logging.RequestLogLevel.All,
+            };
+
             Given()
-                .Log(RequestLogLevel.All)
+                .Log(logConfig)
                 .ContentType("application/xml")
                 .Body(this.GetLocationAsXmlString())
                 .When()
@@ -80,11 +114,33 @@ namespace RestAssured.Tests
         {
             this.CreateStubForLoggingJsonResponse();
 
+            var logConfig = new LogConfiguration
+            {
+                ResponseLogLevel = Logging.ResponseLogLevel.All,
+            };
+
             Given()
+                .Log(logConfig)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/log-json-response")
                 .Then()
-                .Log(ResponseLogLevel.All)
+                .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for logging
+        /// XML response details to the standard output.
+        /// </summary>
+        [Test]
+        public void ResponseDetailsCanBeWrittenToStandardOutputForXmlUsingObsoleteMethod()
+        {
+            this.CreateStubForLoggingXmlResponse();
+
+            Given()
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/log-xml-response")
+                .Then()
+                .Log(RestAssured.Response.Logging.ResponseLogLevel.All)
                 .And()
                 .StatusCode(200);
         }
@@ -98,12 +154,16 @@ namespace RestAssured.Tests
         {
             this.CreateStubForLoggingXmlResponse();
 
+            var logConfig = new LogConfiguration
+            {
+                ResponseLogLevel = Logging.ResponseLogLevel.All,
+            };
+
             Given()
+                .Log(logConfig)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/log-xml-response")
                 .Then()
-                .Log(ResponseLogLevel.All)
-                .And()
                 .StatusCode(200);
         }
 
@@ -117,12 +177,16 @@ namespace RestAssured.Tests
         {
             this.CreateStubForLoggingResponseWithoutBody();
 
+            var logConfig = new LogConfiguration
+            {
+                ResponseLogLevel = Logging.ResponseLogLevel.All,
+            };
+
             Given()
+                .Log(logConfig)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/log-no-response-body")
                 .Then()
-                .Log(ResponseLogLevel.All)
-                .And()
                 .StatusCode(200);
         }
 
@@ -136,8 +200,13 @@ namespace RestAssured.Tests
         {
             this.CreateStubForLoggingResponseWithoutBody();
 
+            var logConfig = new LogConfiguration
+            {
+                RequestLogLevel = Logging.RequestLogLevel.All,
+            };
+
             Given()
-                .Log(RequestLogLevel.All)
+                .Log(logConfig)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/log-no-response-body")
                 .Then()
@@ -155,11 +224,16 @@ namespace RestAssured.Tests
         {
             this.CreateStubForErrorResponse();
 
+            var logConfig = new LogConfiguration
+            {
+                ResponseLogLevel = Logging.ResponseLogLevel.OnError,
+            };
+
             Given()
+                .Log(logConfig)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/error-response-body")
                 .Then()
-                .Log(ResponseLogLevel.OnError)
                 .StatusCode(404);
         }
 
@@ -174,11 +248,16 @@ namespace RestAssured.Tests
         {
             this.CreateStubForLoggingJsonResponse();
 
+            var logConfig = new LogConfiguration
+            {
+                ResponseLogLevel = Logging.ResponseLogLevel.OnError,
+            };
+
             Given()
+                .Log(logConfig)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/log-json-response")
                 .Then()
-                .Log(ResponseLogLevel.OnError)
                 .StatusCode(200);
         }
 
@@ -193,11 +272,49 @@ namespace RestAssured.Tests
         {
             this.CreateStubForLoggingJsonResponse();
 
+            var logConfig = new LogConfiguration
+            {
+                ResponseLogLevel = Logging.ResponseLogLevel.OnVerificationFailure,
+            };
+
             Given()
+                .Log(logConfig)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/log-json-response")
                 .Then()
-                .Log(ResponseLogLevel.OnVerificationFailure)
+                .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for logging
+        /// response details to the standard output, overwriting logging details from
+        /// a request specification with specific settings.
+        /// </summary>
+        [Test]
+        public void ResponseBodyDetailsAreLoggedCorrectlyOverwritingRequestSpecificationSettings()
+        {
+            this.CreateStubForLoggingJsonResponse();
+
+            var originalLogConfig = new LogConfiguration
+            {
+                ResponseLogLevel = Logging.ResponseLogLevel.All,
+            };
+
+            var requestSpecification = new RequestSpecBuilder()
+                .WithLogConfiguration(originalLogConfig)
+                .Build();
+
+            var logConfig = new LogConfiguration
+            {
+                ResponseLogLevel = Logging.ResponseLogLevel.ResponseTime,
+            };
+
+            Given()
+                .Spec(requestSpecification)
+                .Log(logConfig)
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/log-json-response")
+                .Then()
                 .StatusCode(200);
         }
 
@@ -210,11 +327,16 @@ namespace RestAssured.Tests
         {
             this.CreateStubForLoggingResponseWithCookie();
 
+            var logConfig = new LogConfiguration
+            {
+                ResponseLogLevel = Logging.ResponseLogLevel.All,
+            };
+
             Given()
+                .Log(logConfig)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/log-response-cookie")
                 .Then()
-                .Log(ResponseLogLevel.All)
                 .StatusCode(200);
         }
 

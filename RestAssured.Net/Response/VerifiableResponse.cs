@@ -39,9 +39,20 @@ namespace RestAssured.Response
     /// </summary>
     public class VerifiableResponse
     {
-        private readonly HttpResponseMessage response;
-        private readonly CookieContainer cookieContainer;
-        private readonly TimeSpan elapsedTime;
+        /// <summary>
+        /// The wrapped <see cref="HttpResponseMessage"/> contained in this <see cref="VerifiableResponse"/>.
+        /// </summary>
+        public HttpResponseMessage Response { internal get; init; }
+
+        /// <summary>
+        /// The <see cref="CookieContainer"/> associated with the current <see cref="VerifiableResponse"/>.
+        /// </summary>
+        public CookieContainer CookieContainer { internal get; init; }
+
+        /// <summary>
+        /// The <see cref="TimeSpan"/> elapsed between sending a request and receiving this <see cref="VerifiableResponse"/>.
+        /// </summary>
+        public TimeSpan ElapsedTime { internal get; init; }
 
         private bool logOnVerificationFailure = false;
         private JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
@@ -51,13 +62,13 @@ namespace RestAssured.Response
         /// Initializes a new instance of the <see cref="VerifiableResponse"/> class.
         /// </summary>
         /// <param name="response">The <see cref="HttpResponseMessage"/> returned by the HTTP client.</param>
-        /// <param name="cookieContainer">The <see cref="CookieContainer"/> used by the HTTP client.</param>
+        /// <param name="cookieContainer">The <see cref="System.Net.CookieContainer"/> used by the HTTP client.</param>
         /// <param name="elapsedTime">The time elapsed between sending the request and receiving the response.</param>
         public VerifiableResponse(HttpResponseMessage response, CookieContainer cookieContainer, TimeSpan elapsedTime)
         {
-            this.response = response;
-            this.cookieContainer = cookieContainer;
-            this.elapsedTime = elapsedTime;
+            this.Response = response;
+            this.CookieContainer = cookieContainer;
+            this.ElapsedTime = elapsedTime;
         }
 
         /// <summary>
@@ -95,9 +106,9 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when the actual status code does not match the expected one.</exception>
         public VerifiableResponse StatusCode(int expectedStatusCode)
         {
-            if (expectedStatusCode != (int)this.response.StatusCode)
+            if (expectedStatusCode != (int)this.Response.StatusCode)
             {
-                this.FailVerification($"Expected status code to be {expectedStatusCode}, but was {(int)this.response.StatusCode}");
+                this.FailVerification($"Expected status code to be {expectedStatusCode}, but was {(int)this.Response.StatusCode}");
             }
 
             return this;
@@ -111,9 +122,9 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when the actual status code does not match the expected one.</exception>
         public VerifiableResponse StatusCode(HttpStatusCode expectedStatusCode)
         {
-            if (!expectedStatusCode.Equals(this.response.StatusCode))
+            if (!expectedStatusCode.Equals(this.Response.StatusCode))
             {
-                this.FailVerification($"Expected status code to be {expectedStatusCode}, but was {this.response.StatusCode}");
+                this.FailVerification($"Expected status code to be {expectedStatusCode}, but was {this.Response.StatusCode}");
             }
 
             return this;
@@ -127,9 +138,9 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when the actual status code does not match the expected one.</exception>
         public VerifiableResponse StatusCode(IMatcher<int> matcher)
         {
-            if (!matcher.Matches((int)this.response.StatusCode))
+            if (!matcher.Matches((int)this.Response.StatusCode))
             {
-                this.FailVerification($"Expected response status code to match '{matcher}', but was {(int)this.response.StatusCode}");
+                this.FailVerification($"Expected response status code to match '{matcher}', but was {(int)this.Response.StatusCode}");
             }
 
             return this;
@@ -144,7 +155,7 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when the header does not exist, or when the header value does not equal the supplied expected value.</exception>
         public VerifiableResponse Header(string name, string expectedValue)
         {
-            if (!this.response.Headers.TryGetValues(name, out IEnumerable<string>? values))
+            if (!this.Response.Headers.TryGetValues(name, out IEnumerable<string>? values))
             {
                 this.FailVerification($"Expected header with name '{name}' to be in the response, but it could not be found.");
             }
@@ -168,7 +179,7 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when the header does not exist, or when the header value does not equal the supplied expected value.</exception>
         public VerifiableResponse Header(string name, IMatcher<string> matcher)
         {
-            if (this.response.Headers.TryGetValues(name, out IEnumerable<string>? values))
+            if (this.Response.Headers.TryGetValues(name, out IEnumerable<string>? values))
             {
                 string firstValue = values.First();
 
@@ -193,7 +204,7 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when the "Content-Type" header does not exist, or when the header value does not equal the supplied expected value.</exception>
         public VerifiableResponse ContentType(string expectedContentType)
         {
-            MediaTypeHeaderValue? actualContentType = this.response.Content.Headers.ContentType;
+            MediaTypeHeaderValue? actualContentType = this.Response.Content.Headers.ContentType;
 
             if (actualContentType == null)
             {
@@ -216,7 +227,7 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when the "Content-Type" header does not exist, or when the header value does not equal the supplied expected value.</exception>
         public VerifiableResponse ContentType(IMatcher<string> matcher)
         {
-            MediaTypeHeaderValue? actualContentType = this.response.Content.Headers.ContentType;
+            MediaTypeHeaderValue? actualContentType = this.Response.Content.Headers.ContentType;
 
             if (actualContentType == null)
             {
@@ -239,7 +250,7 @@ namespace RestAssured.Response
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse Cookie(string name, IMatcher<string> matcher)
         {
-            var cookies = this.cookieContainer.GetAllCookies().GetEnumerator();
+            var cookies = this.CookieContainer.GetAllCookies().GetEnumerator();
 
             while (cookies.MoveNext())
             {
@@ -268,7 +279,7 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when the actual response body does not match the expected one.</exception>
         public VerifiableResponse Body(string expectedResponseBody)
         {
-            string actualResponseBody = this.response.Content.ReadAsStringAsync().Result;
+            string actualResponseBody = this.Response.Content.ReadAsStringAsync().Result;
 
             if (!actualResponseBody.Equals(expectedResponseBody))
             {
@@ -286,7 +297,7 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when the actual response body does not match the expected one.</exception>
         public VerifiableResponse Body(IMatcher<string> matcher)
         {
-            string actualResponseBody = this.response.Content.ReadAsStringAsync().Result;
+            string actualResponseBody = this.Response.Content.ReadAsStringAsync().Result;
 
             if (!matcher.Matches(actualResponseBody))
             {
@@ -306,7 +317,7 @@ namespace RestAssured.Response
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse Body<T>(string path, IMatcher<T> matcher, VerifyAs verifyAs = VerifyAs.UseResponseContentTypeHeaderValue)
         {
-            string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
+            string responseBodyAsString = this.Response.Content.ReadAsStringAsync().Result;
 
             string? responseMediaType = string.Empty;
 
@@ -314,7 +325,7 @@ namespace RestAssured.Response
             {
                 case VerifyAs.UseResponseContentTypeHeaderValue:
                     {
-                        responseMediaType = this.response.Content.Headers.ContentType?.MediaType;
+                        responseMediaType = this.Response.Content.Headers.ContentType?.MediaType;
                         break;
                     }
 
@@ -433,7 +444,7 @@ namespace RestAssured.Response
         {
             List<T> elementValues = new List<T>();
 
-            string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
+            string responseBodyAsString = this.Response.Content.ReadAsStringAsync().Result;
 
             string? responseMediaType = string.Empty;
 
@@ -441,7 +452,7 @@ namespace RestAssured.Response
             {
                 case VerifyAs.UseResponseContentTypeHeaderValue:
                     {
-                        responseMediaType = this.response.Content.Headers.ContentType?.MediaType;
+                        responseMediaType = this.Response.Content.Headers.ContentType?.MediaType;
                         break;
                     }
 
@@ -568,14 +579,14 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when "Content-Type" doesn't contain "json" or when body doesn't match JSON schema supplied.</exception>
         public VerifiableResponse MatchesJsonSchema(JsonSchema jsonSchema)
         {
-            string responseMediaType = this.response.Content.Headers.ContentType?.MediaType ?? string.Empty;
+            string responseMediaType = this.Response.Content.Headers.ContentType?.MediaType ?? string.Empty;
 
             if (!responseMediaType.Contains("json"))
             {
                 this.FailVerification($"Expected response Content-Type header to contain 'json', but was '{responseMediaType}'");
             }
 
-            string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
+            string responseBodyAsString = this.Response.Content.ReadAsStringAsync().Result;
 
             ICollection<ValidationError> schemaValidationErrors = jsonSchema.Validate(responseBodyAsString);
 
@@ -615,7 +626,7 @@ namespace RestAssured.Response
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse MatchesXsd(XmlSchemaSet schemas)
         {
-            string responseMediaType = this.response.Content.Headers.ContentType?.MediaType ?? string.Empty;
+            string responseMediaType = this.Response.Content.Headers.ContentType?.MediaType ?? string.Empty;
 
             if (!responseMediaType.Contains("xml"))
             {
@@ -626,7 +637,7 @@ namespace RestAssured.Response
             settings.ValidationType = ValidationType.Schema;
             settings.Schemas = schemas;
 
-            string responseXmlAsString = this.response.Content.ReadAsStringAsync().Result;
+            string responseXmlAsString = this.Response.Content.ReadAsStringAsync().Result;
             XmlReader reader = XmlReader.Create(new StringReader(responseXmlAsString), settings);
 
             try
@@ -649,7 +660,7 @@ namespace RestAssured.Response
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse MatchesInlineDtd()
         {
-            string responseMediaType = this.response.Content.Headers.ContentType?.MediaType ?? string.Empty;
+            string responseMediaType = this.Response.Content.Headers.ContentType?.MediaType ?? string.Empty;
 
             if (!responseMediaType.Contains("xml"))
             {
@@ -660,7 +671,7 @@ namespace RestAssured.Response
             settings.DtdProcessing = DtdProcessing.Parse;
             settings.ValidationType = ValidationType.DTD;
 
-            string responseXmlAsString = this.response.Content.ReadAsStringAsync().Result;
+            string responseXmlAsString = this.Response.Content.ReadAsStringAsync().Result;
             XmlReader reader = XmlReader.Create(new StringReader(responseXmlAsString), settings);
 
             try
@@ -684,9 +695,9 @@ namespace RestAssured.Response
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse ResponseTime(IMatcher<TimeSpan> matcher)
         {
-            if (!matcher.Matches(this.elapsedTime))
+            if (!matcher.Matches(this.ElapsedTime))
             {
-                this.FailVerification($"Expected response time to match '{matcher}' but was '{this.elapsedTime}'");
+                this.FailVerification($"Expected response time to match '{matcher}' but was '{this.ElapsedTime}'");
             }
 
             return this;
@@ -699,7 +710,7 @@ namespace RestAssured.Response
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse ResponseBodyLength(IMatcher<int> matcher)
         {
-            string responseContentAsString = this.response.Content.ReadAsStringAsync().Result;
+            string responseContentAsString = this.Response.Content.ReadAsStringAsync().Result;
 
             if (!matcher.Matches(responseContentAsString.Length))
             {
@@ -728,7 +739,7 @@ namespace RestAssured.Response
         /// <returns>The deserialized response object.</returns>
         public object DeserializeTo(Type type, DeserializeAs deserializeAs = DeserializeAs.UseResponseContentTypeHeaderValue)
         {
-            return Deserializer.DeserializeResponseInto(this.response, type, deserializeAs, this.jsonSerializerSettings);
+            return Deserializer.DeserializeResponseInto(this.Response, type, deserializeAs, this.jsonSerializerSettings);
         }
 
         /// <summary>
@@ -737,6 +748,7 @@ namespace RestAssured.Response
         /// <param name="responseLogLevel">The required log level.</param>
         /// <param name="sensitiveHeaderOrCookieNames">The names of the response headers or cookies to be masked when logging.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        [Obsolete("Use Log(LogConfiguration logConfiguration) in ExecutableRequest instead. This method will be removed in RestAssured.Net 5.0.0")]
         public VerifiableResponse Log(ResponseLogLevel responseLogLevel, List<string>? sensitiveHeaderOrCookieNames = null)
         {
             if (responseLogLevel == ResponseLogLevel.OnVerificationFailure)
@@ -745,7 +757,7 @@ namespace RestAssured.Response
                 return this;
             }
 
-            ResponseLogger.Log(this.response, this.cookieContainer, responseLogLevel, sensitiveHeaderOrCookieNames ?? new List<string>(), this.elapsedTime);
+            ResponseLogger.Log(this.Response, this.CookieContainer, responseLogLevel, sensitiveHeaderOrCookieNames ?? new List<string>(), this.ElapsedTime);
             return this;
         }
 
@@ -755,14 +767,14 @@ namespace RestAssured.Response
         /// <returns>An <see cref="ExtractableResponse"/> object from which values can then be extracted.</returns>
         public ExtractableResponse Extract()
         {
-            return new ExtractableResponse(this.response, this.cookieContainer, this.elapsedTime);
+            return new ExtractableResponse(this.Response, this.CookieContainer, this.ElapsedTime);
         }
 
         private void FailVerification(string exceptionMessage)
         {
             if (this.logOnVerificationFailure)
             {
-                ResponseLogger.Log(this.response, this.cookieContainer, ResponseLogLevel.All, this.sensitiveResponseHeadersAndCookies, this.elapsedTime);
+                ResponseLogger.Log(this.Response, this.CookieContainer, ResponseLogLevel.All, this.sensitiveResponseHeadersAndCookies, this.ElapsedTime);
             }
 
             throw new ResponseVerificationException(exceptionMessage);

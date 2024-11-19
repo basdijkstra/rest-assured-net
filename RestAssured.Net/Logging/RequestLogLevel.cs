@@ -14,14 +14,11 @@
 // limitations under the License.
 // </copyright>
 
-namespace RestAssured.Request.Logging
+namespace RestAssured.Logging
 {
-    using System;
-
     /// <summary>
     /// Contains the different logging levels for request logging.
     /// </summary>
-    [Obsolete("Use the RequestLogLevel enum in the RestAssured.Logging namespace instead. This enum will be removed in RestAssured.Net 5.0.0")]
     public enum RequestLogLevel
     {
         /// <summary>

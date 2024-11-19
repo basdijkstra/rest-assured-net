@@ -15,7 +15,9 @@
 // </copyright>
 namespace RestAssured.Configuration
 {
+    using System;
     using System.Net.Http;
+    using RestAssured.Logging;
     using RestAssured.Request.Logging;
     using RestAssured.Response.Logging;
 
@@ -30,14 +32,21 @@ namespace RestAssured.Configuration
         public bool DisableSslCertificateValidation { get; set; } = false;
 
         /// <summary>
+        /// Configuration for be used when logging request and response details.
+        /// </summary>
+        public LogConfiguration LogConfiguration { get; set; } = new LogConfiguration();
+
+        /// <summary>
         /// Setting to configure request logging level for all tests.
         /// </summary>
-        public RequestLogLevel RequestLogLevel { get; set; } = RequestLogLevel.None;
+        [Obsolete("Use the LogConfiguration property to set request logging options instead. This property will be removed in RestAssured.Net 5.0.0")]
+        public Request.Logging.RequestLogLevel RequestLogLevel { get; set; } = Request.Logging.RequestLogLevel.None;
 
         /// <summary>
         /// Setting to configure response logging level for all tests.
         /// </summary>
-        public ResponseLogLevel ResponseLogLevel { get; set; } = ResponseLogLevel.None;
+        [Obsolete("Use the LogConfiguration property to set response logging options instead. This property will be removed in RestAssured.Net 5.0.0")]
+        public Response.Logging.ResponseLogLevel ResponseLogLevel { get; set; } = Response.Logging.ResponseLogLevel.None;
 
         /// <summary>
         /// Setting to configure the <see cref="HttpCompletionOption"/> for all tests.

@@ -29,11 +29,10 @@ namespace RestAssured.Request
     using Microsoft.AspNetCore.WebUtilities;
     using Newtonsoft.Json;
     using RestAssured.Configuration;
+    using RestAssured.Logging;
     using RestAssured.Request.Builders;
     using RestAssured.Request.Exceptions;
-    using RestAssured.Request.Logging;
     using RestAssured.Response;
-    using RestAssured.Response.Logging;
     using Stubble.Core;
     using Stubble.Core.Builders;
     using Stubble.Core.Classes;
@@ -66,12 +65,17 @@ namespace RestAssured.Request
         /// <summary>
         /// The request logging level for this request.
         /// </summary>
-        internal RequestLogLevel RequestLoggingLevel { get; set; }
+        internal Logging.RequestLogLevel RequestLoggingLevel { get; set; }
 
         /// <summary>
         /// The response logging level for this request.
         /// </summary>
-        internal ResponseLogLevel ResponseLoggingLevel { get; set; }
+        internal RestAssured.Response.Logging.ResponseLogLevel ResponseLoggingLevel { get; set; }
+
+        /// <summary>
+        /// The configuration settings to use when logging request and response details.
+        /// </summary>
+        internal LogConfiguration LogConfiguration { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExecutableRequest"/> class.
@@ -449,12 +453,24 @@ namespace RestAssured.Request
         }
 
         /// <summary>
+        /// Sets the configuration for logging request and response details to the specified values.
+        /// </summary>
+        /// <param name="logConfiguration">The log configuration settings to use.</param>
+        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
+        public ExecutableRequest Log(LogConfiguration logConfiguration)
+        {
+            this.LogConfiguration = logConfiguration;
+            return this;
+        }
+
+        /// <summary>
         /// Logs request details to the standard output.
         /// </summary>
         /// <param name="requestLogLevel">The desired request log level.</param>
         /// <param name="sensitiveHeaderOrCookieNames">The names of the request headers or cookies to be masked when logging.</param>
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
-        public ExecutableRequest Log(RequestLogLevel requestLogLevel, List<string>? sensitiveHeaderOrCookieNames = null)
+        [Obsolete("Use Log(LogConfiguration logConfiguration) instead. This method will be removed in RestAssured.Net 5.0.0")]
+        public ExecutableRequest Log(Logging.RequestLogLevel requestLogLevel, List<string>? sensitiveHeaderOrCookieNames = null)
         {
             this.RequestLoggingLevel = requestLogLevel;
 
@@ -691,13 +707,24 @@ namespace RestAssured.Request
                 this.sensitiveRequestHeadersAndCookies.AddRange(this.requestSpecification.SensitiveRequestHeadersAndCookies);
             }
 
-            RequestLogger.LogToConsole(this.request, this.RequestLoggingLevel, this.cookieCollection, this.sensitiveRequestHeadersAndCookies);
+            var legacyLogConfiguration = new LogConfiguration
+            {
+                RequestLogLevel = (RequestLogLevel)this.RequestLoggingLevel,
+                ResponseLogLevel = (ResponseLogLevel)this.ResponseLoggingLevel,
+                SensitiveRequestHeadersAndCookies = this.sensitiveRequestHeadersAndCookies,
+                SensitiveResponseHeadersAndCookies = new List<string>(),
+            };
+
+            RequestResponseLogger logger = new RequestResponseLogger(this.LogConfiguration ?? legacyLogConfiguration);
+
+            // RequestLogger.LogToConsole(this.request, this.RequestLoggingLevel, this.cookieCollection, this.sensitiveRequestHeadersAndCookies);
+            logger.LogRequest(this.request, this.cookieCollection);
 
             try
             {
                 Task<VerifiableResponse> task = httpRequestProcessor.Send(this.request, this.cookieCollection, this.httpCompletionOption);
                 VerifiableResponse verifiableResponse = task.Result;
-                verifiableResponse.Log(this.ResponseLoggingLevel);
+                logger.LogResponse(verifiableResponse);
                 return verifiableResponse;
             }
             catch (AggregateException ae)

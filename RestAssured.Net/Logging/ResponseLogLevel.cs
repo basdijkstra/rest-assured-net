@@ -1,4 +1,4 @@
-﻿// <copyright file="RequestLogLevel.cs" company="On Test Automation">
+﻿// <copyright file="ResponseLogLevel.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,15 +14,12 @@
 // limitations under the License.
 // </copyright>
 
-namespace RestAssured.Request.Logging
+namespace RestAssured.Logging
 {
-    using System;
-
     /// <summary>
     /// Contains the different logging levels for request logging.
     /// </summary>
-    [Obsolete("Use the RequestLogLevel enum in the RestAssured.Logging namespace instead. This enum will be removed in RestAssured.Net 5.0.0")]
-    public enum RequestLogLevel
+    public enum ResponseLogLevel
     {
         /// <summary>
         /// Nothing will be logged to the console.
@@ -30,23 +27,35 @@ namespace RestAssured.Request.Logging
         None = 0,
 
         /// <summary>
-        /// The HTTP method and the endpoint will be logged to the console.
+        /// Response headers will be logged to the console.
         /// </summary>
-        Endpoint = 1,
+        Headers = 1,
 
         /// <summary>
-        /// Request headers will be logged to the console.
+        /// Response body will be logged to the console.
         /// </summary>
-        Headers = 2,
+        Body = 2,
 
         /// <summary>
-        /// Request body will be logged to the console.
+        /// Response time will be logged to the console.
         /// </summary>
-        Body = 3,
+        ResponseTime = 3,
 
         /// <summary>
-        /// All request details will be logged to the console.
+        /// All response details will be logged to the console.
         /// </summary>
         All = 4,
+
+        /// <summary>
+        /// The entire response will be logged to the console
+        /// if the response status code is 4xx or 5xx.
+        /// </summary>
+        OnError = 5,
+
+        /// <summary>
+        /// The entire response will be logged to the console
+        /// if any of the response verifications fails.
+        /// </summary>
+        OnVerificationFailure = 6,
     }
 }

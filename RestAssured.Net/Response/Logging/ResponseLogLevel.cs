@@ -16,9 +16,12 @@
 
 namespace RestAssured.Response.Logging
 {
+    using System;
+
     /// <summary>
     /// Contains the different logging levels for request logging.
     /// </summary>
+    [Obsolete("Use the ResponseLogLevel enum in the RestAssured.Logging namespace instead. This enum will be removed in RestAssured.Net 5.0.0")]
     public enum ResponseLogLevel
     {
         /// <summary>
