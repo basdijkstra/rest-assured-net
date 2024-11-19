@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Unreleased
 
+Nothing yet.
+
+### [4.5.0] - 2024-11-19
+
+#### Added
+
+- Added support for .NET 9 ([#124](https://github.com/basdijkstra/rest-assured-net/issues/124))
+
+#### Fixed
+
+- Fixed issue where `ResponseLogLevel` defined in static config could not be overwritten at individual test level ([#128](https://github.com/basdijkstra/rest-assured-net/issues/128) by [@sqh-jack-starkey](https://github.com/sqh-jack-starkey))
+
+#### Deprecated
+
+- Deprecated `Log(RequestLogLevel requestLogLevel)` and `Log(ResponseLogLevel responseLogLevel)` in favour of `Log(LogConfiguration logConfiguration)`
+
 #### Updated
 
 - Version bumps for HtmlAgilityPack (main project)
