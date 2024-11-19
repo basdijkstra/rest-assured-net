@@ -17,9 +17,8 @@ namespace RestAssured.Tests
 {
     using System.Collections.Generic;
     using NUnit.Framework;
+    using RestAssured.Logging;
     using RestAssured.Request.Builders;
-    using RestAssured.Request.Logging;
-    using RestAssured.Response.Logging;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
     using static RestAssured.Dsl;
@@ -53,8 +52,15 @@ namespace RestAssured.Tests
         {
             this.CreateStubForMaskingSensitiveData();
 
+            var logConfig = new LogConfiguration
+            {
+                RequestLogLevel = RequestLogLevel.All,
+                ResponseLogLevel = ResponseLogLevel.All,
+                SensitiveRequestHeadersAndCookies = new List<string>() { "SensitiveRequestHeader" },
+            };
+
             Given()
-                .Log(RequestLogLevel.All, new List<string>() { "SensitiveRequestHeader" })
+                .Log(logConfig)
                 .And()
                 .Header("NonsensitiveRequestHeader", "This one is printed")
                 .Header("SensitiveRequestHeader", "This one is masked")
@@ -73,11 +79,18 @@ namespace RestAssured.Tests
         {
             this.CreateStubForMaskingSensitiveData();
 
+            var logConfig = new LogConfiguration
+            {
+                RequestLogLevel = RequestLogLevel.All,
+                ResponseLogLevel = ResponseLogLevel.All,
+                SensitiveResponseHeadersAndCookies = new List<string>() { "SensitiveResponseHeader", "SensitiveResponseCookie" },
+            };
+
             Given()
+                .Log(logConfig)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/masking-sensitive-data")
                 .Then()
-                .Log(ResponseLogLevel.All, new List<string>() { "SensitiveResponseHeader", "SensitiveResponseCookie" })
                 .StatusCode(200);
         }
 
@@ -90,8 +103,15 @@ namespace RestAssured.Tests
         {
             this.CreateStubForMaskingSensitiveData();
 
+            var logConfig = new LogConfiguration
+            {
+                RequestLogLevel = RequestLogLevel.All,
+                ResponseLogLevel = ResponseLogLevel.All,
+                SensitiveRequestHeadersAndCookies = new List<string>() { "SensitiveRequestCookie" },
+            };
+
             Given()
-                .Log(RequestLogLevel.All, new List<string>() { "SensitiveRequestCookie" })
+                .Log(logConfig)
                 .And()
                 .Cookie("NonsensitiveRequestCookie", "This one is printed")
                 .Cookie("SensitiveRequestCookie", "This one is masked")
@@ -110,8 +130,15 @@ namespace RestAssured.Tests
         {
             this.CreateStubForMaskingSensitiveData();
 
+            var logConfig = new LogConfiguration
+            {
+                RequestLogLevel = RequestLogLevel.All,
+                ResponseLogLevel = ResponseLogLevel.All,
+                SensitiveRequestHeadersAndCookies = new List<string>() { "SensitiveRequestHeader", "AnotherSensitiveRequestHeader" },
+            };
+
             Given()
-                .Log(RequestLogLevel.All, new List<string>() { "SensitiveRequestHeader", "AnotherSensitiveRequestHeader" })
+                .Log(logConfig)
                 .And()
                 .Header("NonsensitiveRequestHeader", "This one is printed")
                 .Header("SensitiveRequestHeader", "This one is masked")
@@ -131,11 +158,16 @@ namespace RestAssured.Tests
         {
             this.CreateStubForMaskingSensitiveData();
 
+            var logConfig = new LogConfiguration
+            {
+                RequestLogLevel = RequestLogLevel.All,
+            };
+
             Given()
                 .Spec(this.requestSpecification)
                 .Header("NonsensitiveRequestHeader", "This one is printed")
                 .Header("SensitiveRequestHeader", "This one is masked")
-                .Log(RequestLogLevel.All)
+                .Log(logConfig)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/masking-sensitive-data")
                 .Then()
