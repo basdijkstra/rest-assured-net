@@ -70,12 +70,12 @@ namespace RestAssured.Request
         /// <summary>
         /// The response logging level for this request.
         /// </summary>
-        internal RestAssured.Response.Logging.ResponseLogLevel ResponseLoggingLevel { get; set; }
+        internal Response.Logging.ResponseLogLevel ResponseLoggingLevel { get; set; }
 
         /// <summary>
         /// The configuration settings to use when logging request and response details.
         /// </summary>
-        internal LogConfiguration LogConfiguration { get; set; }
+        internal LogConfiguration? LogConfiguration { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExecutableRequest"/> class.
@@ -702,12 +702,6 @@ namespace RestAssured.Request
                 this.httpCompletionOption = this.requestSpecification.HttpCompletionOption;
             }
 
-            // Add header and cookie values to be masked specified in RequestSpecification to the list
-            if (this.requestSpecification != null)
-            {
-                this.sensitiveRequestHeadersAndCookies.AddRange(this.requestSpecification.SensitiveRequestHeadersAndCookies);
-            }
-
             var legacyLogConfiguration = new LogConfiguration
             {
                 RequestLogLevel = (RequestLogLevel)this.RequestLoggingLevel,
@@ -721,6 +715,12 @@ namespace RestAssured.Request
                 // Apply logging settings from the request specification,
                 // but only if they haven't been set for this specific request.
                 this.LogConfiguration ??= this.requestSpecification.LogConfiguration;
+            }
+
+            // Add header and cookie values to be masked specified in RequestSpecification to the list
+            if (this.requestSpecification != null)
+            {
+                this.sensitiveRequestHeadersAndCookies.AddRange(this.requestSpecification.SensitiveRequestHeadersAndCookies);
             }
 
             var logger = new RequestResponseLogger(this.LogConfiguration ?? legacyLogConfiguration);

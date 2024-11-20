@@ -298,9 +298,10 @@ namespace RestAssured.Request.Builders
         /// </summary>
         /// <param name="sensitiveHeaderOrCookieNames">The names of the request headers or cookies to be masked when logging.</param>
         /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
+        [Obsolete("Please specify request header and cookie names to be masked using the LogConfiguration. This method will be removed in RestAssured.Net 5.0.0")]
         public RequestSpecBuilder WithMaskingOfHeadersAndCookies(List<string> sensitiveHeaderOrCookieNames)
         {
-            this.requestSpecification.SensitiveRequestHeadersAndCookies.AddRange(sensitiveHeaderOrCookieNames);
+            this.requestSpecification.LogConfiguration.SensitiveRequestHeadersAndCookies.AddRange(sensitiveHeaderOrCookieNames);
             return this;
         }
 

@@ -37,9 +37,16 @@ namespace RestAssured.Tests
         [SetUp]
         public void CreateRequestSpecification()
         {
+            var logConfig = new LogConfiguration
+            {
+                RequestLogLevel = RequestLogLevel.All,
+                ResponseLogLevel = ResponseLogLevel.All,
+                SensitiveRequestHeadersAndCookies = new List<string>() { "SensitiveRequestHeader", "SensitiveRequestCookie" },
+            };
+
             this.requestSpecification = new RequestSpecBuilder()
                 .WithPort(9876)
-                .WithMaskingOfHeadersAndCookies(new List<string>() { "SensitiveRequestHeader", "SensitiveRequestCookie" })
+                .WithLogConfiguration(logConfig)
                 .Build();
         }
 
@@ -158,16 +165,10 @@ namespace RestAssured.Tests
         {
             this.CreateStubForMaskingSensitiveData();
 
-            var logConfig = new LogConfiguration
-            {
-                RequestLogLevel = RequestLogLevel.All,
-            };
-
             Given()
                 .Spec(this.requestSpecification)
                 .Header("NonsensitiveRequestHeader", "This one is printed")
                 .Header("SensitiveRequestHeader", "This one is masked")
-                .Log(logConfig)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/masking-sensitive-data")
                 .Then()

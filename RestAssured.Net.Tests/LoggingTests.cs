@@ -41,7 +41,7 @@ namespace RestAssured.Tests
 
             var logConfig = new LogConfiguration
             {
-                RequestLogLevel = Logging.RequestLogLevel.All,
+                RequestLogLevel = RequestLogLevel.All,
             };
 
             Given()
@@ -90,7 +90,7 @@ namespace RestAssured.Tests
 
             var logConfig = new LogConfiguration
             {
-                RequestLogLevel = Logging.RequestLogLevel.All,
+                RequestLogLevel = RequestLogLevel.All,
             };
 
             Given()
@@ -114,7 +114,7 @@ namespace RestAssured.Tests
 
             var logConfig = new LogConfiguration
             {
-                ResponseLogLevel = Logging.ResponseLogLevel.All,
+                ResponseLogLevel = ResponseLogLevel.All,
             };
 
             Given()
@@ -154,7 +154,7 @@ namespace RestAssured.Tests
 
             var logConfig = new LogConfiguration
             {
-                ResponseLogLevel = Logging.ResponseLogLevel.All,
+                ResponseLogLevel = ResponseLogLevel.All,
             };
 
             Given()
@@ -177,7 +177,7 @@ namespace RestAssured.Tests
 
             var logConfig = new LogConfiguration
             {
-                ResponseLogLevel = Logging.ResponseLogLevel.All,
+                ResponseLogLevel = ResponseLogLevel.All,
             };
 
             Given()
@@ -200,7 +200,7 @@ namespace RestAssured.Tests
 
             var logConfig = new LogConfiguration
             {
-                RequestLogLevel = Logging.RequestLogLevel.All,
+                RequestLogLevel = RequestLogLevel.All,
             };
 
             Given()
@@ -224,7 +224,7 @@ namespace RestAssured.Tests
 
             var logConfig = new LogConfiguration
             {
-                ResponseLogLevel = Logging.ResponseLogLevel.OnError,
+                ResponseLogLevel = ResponseLogLevel.OnError,
             };
 
             Given()
@@ -248,7 +248,7 @@ namespace RestAssured.Tests
 
             var logConfig = new LogConfiguration
             {
-                ResponseLogLevel = Logging.ResponseLogLevel.OnError,
+                ResponseLogLevel = ResponseLogLevel.OnError,
             };
 
             Given()
@@ -272,7 +272,7 @@ namespace RestAssured.Tests
 
             var logConfig = new LogConfiguration
             {
-                ResponseLogLevel = Logging.ResponseLogLevel.OnVerificationFailure,
+                ResponseLogLevel = ResponseLogLevel.OnVerificationFailure,
             };
 
             Given()
@@ -295,7 +295,7 @@ namespace RestAssured.Tests
 
             var logConfig = new LogConfiguration
             {
-                ResponseLogLevel = Logging.ResponseLogLevel.All,
+                ResponseLogLevel = ResponseLogLevel.All,
             };
 
             var requestSpecification = new RequestSpecBuilder()
@@ -322,7 +322,7 @@ namespace RestAssured.Tests
 
             var originalLogConfig = new LogConfiguration
             {
-                ResponseLogLevel = Logging.ResponseLogLevel.All,
+                ResponseLogLevel = ResponseLogLevel.All,
             };
 
             var requestSpecification = new RequestSpecBuilder()
@@ -331,7 +331,7 @@ namespace RestAssured.Tests
 
             var logConfig = new LogConfiguration
             {
-                ResponseLogLevel = Logging.ResponseLogLevel.ResponseTime,
+                ResponseLogLevel = ResponseLogLevel.ResponseTime,
             };
 
             Given()
@@ -354,7 +354,7 @@ namespace RestAssured.Tests
 
             var logConfig = new LogConfiguration
             {
-                ResponseLogLevel = Logging.ResponseLogLevel.All,
+                ResponseLogLevel = ResponseLogLevel.All,
             };
 
             Given()
