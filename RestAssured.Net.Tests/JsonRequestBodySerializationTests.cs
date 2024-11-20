@@ -15,10 +15,8 @@
 // </copyright>
 namespace RestAssured.Tests
 {
-    using System;
     using System.Collections.Generic;
     using NUnit.Framework;
-    using RestAssured.Request.Exceptions;
     using RestAssured.Tests.Models;
     using WireMock.Matchers;
     using WireMock.RequestBuilders;

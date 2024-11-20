@@ -15,7 +15,6 @@
 // </copyright>
 namespace RestAssured.Tests
 {
-    using System;
     using System.Collections.Generic;
     using NUnit.Framework;
     using RestAssured.Tests.Models;
@@ -31,8 +30,14 @@ namespace RestAssured.Tests
         /// </summary>
         protected WireMockServer Server { get; private set; }
 
+        /// <summary>
+        /// The port used by the WireMock mock server.
+        /// </summary>
         protected static readonly int MOCK_SERVER_PORT = 9876;
 
+        /// <summary>
+        /// The base URL used by the WireMock mock server.
+        /// </summary>
         protected static readonly string MOCK_SERVER_BASE_URL = $"http://localhost:{MOCK_SERVER_PORT}";
 
         /// <summary>

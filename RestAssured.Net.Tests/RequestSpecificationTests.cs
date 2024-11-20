@@ -17,6 +17,7 @@ namespace RestAssured.Tests
 {
     using System.Text;
     using NUnit.Framework;
+    using RestAssured.Logging;
     using RestAssured.Request.Builders;
     using RestAssured.Request.Exceptions;
     using RestAssured.Request.Logging;
@@ -40,12 +41,17 @@ namespace RestAssured.Tests
         [TestCase("request-specification", TestName = "With base path in request specification, works without a leading /")]
         public void FullRequestSpecificationCanBeUsed(string endpoint)
         {
+            var logConfig = new LogConfiguration
+            {
+                RequestLogLevel = Logging.RequestLogLevel.All,
+            };
+
             var fullRequestSpecification = new RequestSpecBuilder()
                 .WithBaseUri("http://localhost:9876")
                 .WithBasePath("api")
                 .WithQueryParam("param_name", "param_value")
                 .WithQueryParam("another_param_name", "another_param_value")
-                .WithRequestLogLevel(RequestLogLevel.All)
+                .WithLogConfiguration(logConfig)
                 .Build();
 
             this.CreateStubForRequestSpecification();

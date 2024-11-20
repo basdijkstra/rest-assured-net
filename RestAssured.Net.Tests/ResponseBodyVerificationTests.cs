@@ -36,6 +36,7 @@ namespace RestAssured.Tests
         /// A test demonstrating RestAssuredNet syntax for verifying
         /// a plaintext response body.
         /// </summary>
+        /// <param name="bodySize">The plain text body size to be used in the test.</param>
         [TestCase("small")]
         [TestCase("medium")]
         [TestCase("large")]

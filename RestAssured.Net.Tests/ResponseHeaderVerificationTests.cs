@@ -30,6 +30,9 @@ namespace RestAssured.Tests
         private string headerName;
         private string headerValue;
 
+        /// <summary>
+        /// Initializes the header name and value to be used in the tests.
+        /// </summary>
         [SetUp]
         public void InitializeHeaderNameAndValue()
         {

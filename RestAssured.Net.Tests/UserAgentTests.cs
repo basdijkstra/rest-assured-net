@@ -37,8 +37,7 @@ namespace RestAssured.Tests
         public void CreateRequestSpecifications()
         {
             this.requestSpecification = new RequestSpecBuilder()
-                .WithScheme("http")
-                .WithHostName("localhost")
+                .WithBaseUri("http://localhost")
                 .WithPort(9876)
                 .WithUserAgent(new ProductInfoHeaderValue("MyUserAgent", "1.0"))
                 .Build();

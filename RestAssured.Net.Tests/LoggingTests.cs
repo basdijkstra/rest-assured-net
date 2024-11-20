@@ -18,8 +18,6 @@ namespace RestAssured.Tests
     using NUnit.Framework;
     using RestAssured.Logging;
     using RestAssured.Request.Builders;
-    using RestAssured.Request.Logging;
-    using RestAssured.Response.Logging;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
     using static RestAssured.Dsl;

@@ -42,8 +42,7 @@ namespace RestAssured.Tests
         public void CreateRequestSpecifications()
         {
             this.requestSpecification = new RequestSpecBuilder()
-                .WithScheme("http")
-                .WithHostName("localhost")
+                .WithBaseUri("http://localhost")
                 .WithBasePath("api")
                 .WithPort(MOCK_SERVER_PORT)
                 .Build();
@@ -131,7 +130,7 @@ namespace RestAssured.Tests
         [Test]
         public void MultipleQueryParametersCanBeSpecifiedUsingAListOfKeyValuePairs()
         {
-            List<KeyValuePair<string, object>> queryParams = new List<KeyValuePair<string, object>>()
+            var queryParams = new List<KeyValuePair<string, object>>()
             {
                 new KeyValuePair<string, object>("name", this.name),
                 new KeyValuePair<string, object>("id", this.firstId),

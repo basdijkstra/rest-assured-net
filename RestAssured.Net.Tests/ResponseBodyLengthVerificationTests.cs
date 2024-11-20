@@ -15,9 +15,9 @@
 // </copyright>
 namespace RestAssured.Tests
 {
-    using System;
     using System.Collections.Generic;
     using NUnit.Framework;
+    using RestAssured.Logging;
     using RestAssured.Response.Exceptions;
     using RestAssured.Tests.Models;
     using WireMock.RequestBuilders;
@@ -83,11 +83,16 @@ namespace RestAssured.Tests
         {
             this.CreateStubForJsonResponseBody();
 
+            var logConfig = new LogConfiguration
+            {
+                ResponseLogLevel = ResponseLogLevel.All,
+            };
+
             Given()
+                .Log(logConfig)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/json-response-body")
                 .Then()
-                .Log(RestAssured.Response.Logging.ResponseLogLevel.All)
                 .StatusCode(200)
                 .ResponseBodyLength(NHamcrest.Is.GreaterThan(25));
         }

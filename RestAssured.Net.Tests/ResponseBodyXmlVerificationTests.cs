@@ -39,6 +39,9 @@ namespace RestAssured.Tests
         private int placeInhabitants;
         private bool isCapital;
 
+        /// <summary>
+        /// Initializes test data used in these tests.
+        /// </summary>
         [SetUp]
         public void SetLocation()
         {
@@ -62,6 +65,9 @@ namespace RestAssured.Tests
             this.location.Places.Add(new Place());
         }
 
+        /// <summary>
+        /// Clears the list of places.
+        /// </summary>
         [TearDown]
         public void ClearPlaces()
         {

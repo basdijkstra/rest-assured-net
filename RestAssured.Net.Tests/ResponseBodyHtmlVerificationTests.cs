@@ -15,7 +15,6 @@
 // </copyright>
 namespace RestAssured.Tests
 {
-    using System.Net.Http;
     using NUnit.Framework;
     using RestAssured.Response;
     using RestAssured.Response.Exceptions;

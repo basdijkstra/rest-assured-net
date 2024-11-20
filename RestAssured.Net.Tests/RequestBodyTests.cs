@@ -36,6 +36,7 @@ namespace RestAssured.Tests
         /// A test demonstrating RestAssuredNet syntax for sending
         /// a plaintext request body when performing an HTTP POST.
         /// </summary>
+        /// <param name="bodySize">The size of the plaintext request body.</param>
         [TestCase("small", TestName = "Sending small plaintext request body")]
         [TestCase("medium", TestName = "Sending medium plaintext request body")]
         [TestCase("large", TestName = "Sending large plaintext request body")]
