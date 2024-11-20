@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+### [4.5.1] - 2024-11-20
+
+#### Fixed
+
+- Fixed issue where sensitive request headers and cookies specified in a `RequestSpecification` weren't properly masked ([#131](https://github.com/basdijkstra/rest-assured-net/issues/131))
+
 ### [4.5.0] - 2024-11-19
 
 #### Added
