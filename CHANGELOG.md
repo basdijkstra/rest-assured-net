@@ -37,7 +37,7 @@ Nothing yet.
 
 #### Added
 
-- Added support for NTML authentication ([#130](https://github.com/basdijkstra/rest-assured-net/issues/130) by [@espy19](https://github.com/espy19))
+- Added support for NTLM authentication ([#130](https://github.com/basdijkstra/rest-assured-net/issues/130) by [@espy19](https://github.com/espy19))
 
 #### Updated
 
