@@ -60,6 +60,7 @@ namespace RestAssured.Request
         private HttpCompletionOption httpCompletionOption = HttpCompletionOption.ResponseContentRead;
         private NetworkCredential? networkCredential = null;
         private bool disableSslCertificateValidation = false;
+        private bool stripCharset = false;
         private bool disposed = false;
 
         /// <summary>
@@ -487,10 +488,12 @@ namespace RestAssured.Request
         /// Adds a request body to the request object to be sent.
         /// </summary>
         /// <param name="body">The body that is to be sent with the request.</param>
+        /// <param name="stripCharset">Flag indicating whether the body should be sent without a specific encoding indicator.</param>
         /// <returns>The current <see cref="ExecutableRequest"/>.</returns>
-        public ExecutableRequest Body(object body)
+        public ExecutableRequest Body(object body, bool stripCharset = false)
         {
             this.requestBody = body;
+            this.stripCharset = stripCharset;
             return this;
         }
 
@@ -795,7 +798,14 @@ namespace RestAssured.Request
 
             string requestBodyAsString = this.Serialize(this.requestBody, this.requestSpecification?.ContentType ?? this.contentTypeHeader);
 
-            return new StringContent(requestBodyAsString, this.requestSpecification?.ContentEncoding ?? this.contentEncoding, this.requestSpecification?.ContentType ?? this.contentTypeHeader);
+            var stringContent = new StringContent(requestBodyAsString, this.requestSpecification?.ContentEncoding ?? this.contentEncoding, this.requestSpecification?.ContentType ?? this.contentTypeHeader);
+
+            if (this.stripCharset)
+            {
+                stringContent.Headers.ContentType!.CharSet = null;
+            }
+
+            return stringContent;
         }
 
         /// <summary>
