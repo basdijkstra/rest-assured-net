@@ -5,7 +5,7 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>4.6.0-beta.1</Version>
+    <Version>4.6.0</Version>
     <Authors>Bas Dijkstra</Authors>
     <Company>On Test Automation</Company>
     <Description>C# port of the popular REST Assured library for writing tests for HTTP APIs.</Description>
@@ -33,7 +33,7 @@
     <PackageReference Include="HtmlAgilityPack" Version="1.11.71" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NHamcrest" Version="3.4.0" />
-    <PackageReference Include="NJsonSchema" Version="11.0.2" />
+    <PackageReference Include="NJsonSchema" Version="11.1.0" />
     <PackageReference Include="Stubble.Core" Version="1.10.8" />
     <PackageReference Include="System.Text.Encodings.Web" Version="6.0.1" Condition="'$(TargetFramework)' == 'net6.0'" />
 	<PackageReference Include="System.Text.Encodings.Web" Version="7.0.0" Condition="'$(TargetFramework)' == 'net7.0'" />

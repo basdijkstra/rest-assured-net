@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+### [4.6.0] - 2024-12-09
+
+#### Added
+
+- Added ability to strip charset from `Content-Type` header when automatically added by .NET ([#132](https://github.com/basdijkstra/rest-assured-net/issues/132) by [@karboncopy](https://github.com/karboncopy))
+
+#### Updated
+
+- Version bumps for NJsonSchema (main project), Microsoft.NET.Test.Sdk, WireMock.Net (test project)
+
 ### [4.5.1] - 2024-11-20
 
 #### Fixed
