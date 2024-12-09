@@ -35,6 +35,8 @@ namespace RestAssured.Tests
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for serializing
         /// and sending a JSON request body when performing an HTTP POST.
+        /// This also shows how stripping the charset that is automatically
+        /// added to the Content-Type header works.
         /// </summary>
         [Test]
         public void ObjectCanBeSerializedToJson()
@@ -42,7 +44,7 @@ namespace RestAssured.Tests
             this.CreateStubForJsonRequestBody();
 
             Given()
-                .Body(this.GetLocation())
+                .Body(this.GetLocation(), stripCharset: true)
                 .When()
                 .Post($"{MOCK_SERVER_BASE_URL}/json-serialization")
                 .Then()
@@ -124,6 +126,7 @@ namespace RestAssured.Tests
         private void CreateStubForJsonRequestBody()
         {
             this.Server?.Given(Request.Create().WithPath("/json-serialization").UsingPost()
+                .WithHeader("Content-Type", new ExactMatcher("application/json"))
                 .WithBody(new JsonMatcher(this.expectedSerializedJsonRequestBody)))
                 .RespondWith(Response.Create()
                 .WithStatusCode(201));
