@@ -17,6 +17,7 @@ namespace RestAssured.Response
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Net;
     using System.Net.Http;
@@ -50,10 +51,38 @@ namespace RestAssured.Response
         /// <summary>
         /// Extracts the entire response body as a string.
         /// </summary>
-        /// <returns>The element value or values extracted from the response using the JsonPath expression.</returns>
+        /// <returns>The response body as a string.</returns>
+        [Obsolete("Please use BodyAsString(), BodyAsByteArray() or BodyAsStream() instead. This method is obsolete and will be removed in RestAssured.Net 5.0.0")]
         public string Body()
         {
             return this.response.Content.ReadAsStringAsync().Result;
+        }
+
+        /// <summary>
+        /// Extracts the entire response body as a string.
+        /// </summary>
+        /// <returns>The response body as a string.</returns>
+        public string BodyAsString()
+        {
+            return this.response.Content.ReadAsStringAsync().Result;
+        }
+
+        /// <summary>
+        /// Extracts the entire response body as a byte array.
+        /// </summary>
+        /// <returns>The response body as a byte array.</returns>
+        public byte[] BodyAsByteArray()
+        {
+            return this.response.Content.ReadAsByteArrayAsync().Result;
+        }
+
+        /// <summary>
+        /// Extracts the entire response body as a <see cref="Stream"/>.
+        /// </summary>
+        /// <returns>The response body as a <see cref="Stream"/>.</returns>
+        public Stream BodyAsStream()
+        {
+            return this.response.Content.ReadAsStreamAsync().Result;
         }
 
         /// <summary>
