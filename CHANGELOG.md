@@ -9,6 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+### [4.7.0] - 2025-02-04
+
+#### Added
+
+- Added ability to extract the response body as a `byte[]` and a `System.IO.Stream` in addition to extracting it as a `string` ([#134](https://github.com/basdijkstra/rest-assured-net/issues/134))
+
+#### Deprecated
+
+- Deprecated `Extract().Body()` in favour of `Extract().BodyAsString()`, `Extract().BodyAsByteArray()` and `Extract().BodyAsStream()`
+
+#### Updated
+
+- Version bumps for HtmlAgilityPack, NHamcrest, System.Text.Encodings.Web (main project), Microsoft.AspNetCore.Mvc.Testing, NUnit, WireMock.Net (test project)
+
+#### Removed
+
+- Removed direct reference to HtmlAgilityPack (test project)
+
 ### [4.6.0] - 2024-12-09
 
 #### Added
