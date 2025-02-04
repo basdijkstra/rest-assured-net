@@ -15,8 +15,8 @@
 // </copyright>
 namespace RestAssured.Tests
 {
-    using NUnit.Framework;
     using System.IO;
+    using NUnit.Framework;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
     using static RestAssured.Dsl;
