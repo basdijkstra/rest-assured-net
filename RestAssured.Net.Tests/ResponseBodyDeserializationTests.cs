@@ -224,6 +224,26 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// Verifies that the correct exception is thrown when the request body
+        /// is empty.
+        /// </summary>
+        [Test]
+        public void EmptyResponseBodyThrowsTheExpectedException()
+        {
+            this.CreateStubForEmptyResponseBody();
+
+            var de = Assert.Throws<DeserializationException>(() =>
+            {
+                Location responseLocation = (Location)Given()
+                    .When()
+                    .Get($"{MOCK_SERVER_BASE_URL}/empty-response-body")
+                    .DeserializeTo(typeof(Location));
+            });
+
+            Assert.That(de?.Message, Is.EqualTo("Response content is null or empty."));
+        }
+
+        /// <summary>
         /// Creates the stub response for the JSON response body example.
         /// </summary>
         private void CreateStubForJsonResponseBody()
@@ -281,6 +301,18 @@ namespace RestAssured.Tests
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/something")
                 .WithBody(this.GetLocationAsXmlString())
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for an empty response body.
+        /// </summary>
+        private void CreateStubForEmptyResponseBody()
+        {
+            this.Server?.Given(Request.Create().WithPath("/empty-response-body").UsingGet())
+                .RespondWith(Response.Create()
+                .WithHeader("Content-Type", "application/json")
+                .WithBody(string.Empty)
                 .WithStatusCode(200));
         }
 
