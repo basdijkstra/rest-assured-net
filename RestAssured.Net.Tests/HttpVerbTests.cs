@@ -37,7 +37,9 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get($"{MOCK_SERVER_BASE_URL}/http-get");
+                .Get($"{MOCK_SERVER_BASE_URL}/http-get")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -51,7 +53,9 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Post($"{MOCK_SERVER_BASE_URL}/http-post");
+                .Post($"{MOCK_SERVER_BASE_URL}/http-post")
+                .Then()
+                .StatusCode(201);
         }
 
         /// <summary>
@@ -65,7 +69,9 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Put($"{MOCK_SERVER_BASE_URL}/http-put");
+                .Put($"{MOCK_SERVER_BASE_URL}/http-put")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -79,7 +85,9 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Patch($"{MOCK_SERVER_BASE_URL}/http-patch");
+                .Patch($"{MOCK_SERVER_BASE_URL}/http-patch")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -93,7 +101,9 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Delete($"{MOCK_SERVER_BASE_URL}/http-delete");
+                .Delete($"{MOCK_SERVER_BASE_URL}/http-delete")
+                .Then()
+                .StatusCode(204);
         }
 
         /// <summary>
@@ -107,7 +117,9 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Head($"{MOCK_SERVER_BASE_URL}/http-head");
+                .Head($"{MOCK_SERVER_BASE_URL}/http-head")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>
@@ -121,7 +133,9 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Options($"{MOCK_SERVER_BASE_URL}/http-options");
+                .Options($"{MOCK_SERVER_BASE_URL}/http-options")
+                .Then()
+                .StatusCode(200);
         }
 
         /// <summary>
