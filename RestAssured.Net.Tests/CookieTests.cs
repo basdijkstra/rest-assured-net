@@ -17,6 +17,7 @@ namespace RestAssured.Tests
 {
     using System.Net;
     using NUnit.Framework;
+    using RestAssured.Request.Cookies;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
     using static RestAssured.Dsl;
@@ -27,6 +28,36 @@ namespace RestAssured.Tests
     [TestFixture]
     public class CookieTests : TestBase
     {
+        /// <summary>
+        /// Verify that cookie domain is properly set when it hasn't been specified already.
+        /// </summary>
+        [Test]
+        public void CookieDomainIsSetToDefaultValueWhenNotSpecified()
+        {
+            Cookie cookie = new Cookie("cookie_name", "cookie_value");
+
+            CookieUtils cookieUtils = new CookieUtils();
+
+            cookie = cookieUtils.SetDomainFor(cookie, "localhost");
+
+            Assert.That(cookie.Domain, Is.EqualTo("localhost"));
+        }
+
+        /// <summary>
+        /// Verify that cookie domain is not updated when it has been specified already.
+        /// </summary>
+        [Test]
+        public void CookieDomainIsUnchangedWhenSpecifiedAlready()
+        {
+            Cookie cookie = new Cookie("cookie_name", "cookie_value", "/my_path", "strawberry.com");
+
+            CookieUtils cookieUtils = new CookieUtils();
+
+            cookie = cookieUtils.SetDomainFor(cookie, "localhost");
+
+            Assert.That(cookie.Domain, Is.EqualTo("strawberry.com"));
+        }
+
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for including
         /// a cookie with a single value when sending an HTTP request.
