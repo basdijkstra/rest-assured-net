@@ -165,7 +165,7 @@ namespace RestAssured.Tests
                 .Get($"{MOCK_SERVER_BASE_URL}/json-response-body-header-mismatch")
                 .Then()
                 .StatusCode(200)
-                .Extract().Body("$.Places[0].Name", ExtractAs.Json);
+                .Extract().Body("$.Places[0].Name", extractAs: ExtractAs.Json);
 
             Assert.That(placeName, Is.EqualTo("Atlantic City"));
         }
