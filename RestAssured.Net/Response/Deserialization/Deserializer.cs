@@ -40,7 +40,7 @@ namespace RestAssured.Response.Deserialization
         {
             string responseBodyAsString = response.Content.ReadAsStringAsync().Result;
 
-            if (responseBodyAsString == null || responseBodyAsString.Equals(string.Empty))
+            if (string.IsNullOrEmpty(responseBodyAsString))
             {
                 throw new DeserializationException("Response content is null or empty.");
             }
