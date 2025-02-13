@@ -61,7 +61,6 @@ namespace RestAssured.Response
         public bool LogOnVerificationFailure { get; internal set; } = false;
 
         private JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
-        private List<string> sensitiveResponseHeadersAndCookies = new List<string>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VerifiableResponse"/> class.
