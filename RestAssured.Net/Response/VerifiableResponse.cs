@@ -31,6 +31,7 @@ namespace RestAssured.Response
     using NJsonSchema;
     using NJsonSchema.Validation;
     using RestAssured.Logging;
+    using RestAssured.Response.ContentType;
     using RestAssured.Response.Deserialization;
     using RestAssured.Response.Exceptions;
     using RestAssured.Response.Logging;
@@ -450,36 +451,11 @@ namespace RestAssured.Response
 
             string responseBodyAsString = this.Response.Content.ReadAsStringAsync().Result;
 
-            string? responseMediaType = string.Empty;
+            string responseMediaType = this.Response.Content.Headers.ContentType?.MediaType ?? string.Empty;
 
-            switch (verifyAs)
-            {
-                case VerifyAs.UseResponseContentTypeHeaderValue:
-                    {
-                        responseMediaType = this.Response.Content.Headers.ContentType?.MediaType;
-                        break;
-                    }
+            var contentType = new ContentTypeUtils().DetermineResponseMediaTypeForResponse(responseMediaType, verifyAs);
 
-                case VerifyAs.Json:
-                    {
-                        responseMediaType = "application/json";
-                        break;
-                    }
-
-                case VerifyAs.Xml:
-                    {
-                        responseMediaType = "application/xml";
-                        break;
-                    }
-
-                case VerifyAs.Html:
-                    {
-                        responseMediaType = "text/html";
-                        break;
-                    }
-            }
-
-            if (responseMediaType!.Equals(string.Empty) || responseMediaType.Contains("json"))
+            if (contentType.Equals(SupportedContentType.Json))
             {
                 IEnumerable<JToken>? resultingElements = JToken.Parse(responseBodyAsString).SelectTokens(path);
 
@@ -493,7 +469,7 @@ namespace RestAssured.Response
                     this.FailVerification($"Expected elements selected by '{path}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
                 }
             }
-            else if (responseMediaType.Contains("xml"))
+            else if (contentType.Equals(SupportedContentType.Xml))
             {
                 XmlDocument xmlDoc = new XmlDocument();
                 xmlDoc.LoadXml(responseBodyAsString);
@@ -518,7 +494,7 @@ namespace RestAssured.Response
                     this.FailVerification($"Expected elements selected by '{path}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
                 }
             }
-            else if (responseMediaType.Contains("html"))
+            else if (contentType.Equals(SupportedContentType.Html))
             {
                 HtmlDocument htmlDoc = new HtmlDocument();
                 htmlDoc.LoadHtml(responseBodyAsString);
@@ -542,10 +518,6 @@ namespace RestAssured.Response
                 {
                     this.FailVerification($"Expected elements selected by '{path}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
                 }
-            }
-            else
-            {
-                this.FailVerification($"Unable to extract elements from response with Content-Type '{responseMediaType}'");
             }
 
             return this;
