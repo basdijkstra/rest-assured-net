@@ -38,7 +38,7 @@
     <PackageReference Include="System.Text.Encodings.Web" Version="6.0.1" Condition="'$(TargetFramework)' == 'net6.0'" />
 	<PackageReference Include="System.Text.Encodings.Web" Version="7.0.0" Condition="'$(TargetFramework)' == 'net7.0'" />
 	<PackageReference Include="System.Text.Encodings.Web" Version="8.0.0" Condition="'$(TargetFramework)' == 'net8.0'" />
-	<PackageReference Include="System.Text.Encodings.Web" Version="9.0.4" Condition="'$(TargetFramework)' == 'net9.0'" />
+	<PackageReference Include="System.Text.Encodings.Web" Version="9.0.6" Condition="'$(TargetFramework)' == 'net9.0'" />
   </ItemGroup>
   
   <ItemGroup>
