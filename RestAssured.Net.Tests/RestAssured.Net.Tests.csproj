@@ -12,10 +12,10 @@
 	<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.20" Condition="'$(TargetFramework)' == 'net7.0'" />
 	<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.17" Condition="'$(TargetFramework)' == 'net8.0'" />
 	<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.6" Condition="'$(TargetFramework)' == 'net9.0'" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageReference Include="NUnit" Version="4.3.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="5.0.0" />
-    <PackageReference Include="WireMock.Net" Version="1.8.4" />
+    <PackageReference Include="WireMock.Net" Version="1.8.11" />
     <PackageReference Include="Faker.Net" Version="2.0.163" />
   </ItemGroup>
 
