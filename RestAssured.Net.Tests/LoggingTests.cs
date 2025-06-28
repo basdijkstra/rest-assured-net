@@ -59,28 +59,6 @@ namespace RestAssured.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for logging
-        /// JSON request details to the standard output.
-        /// </summary>
-        [Test]
-        public void RequestLogLevelCanBeSpecifiedUsingObsoleteMethod()
-        {
-            this.CreateStubForLoggingJsonResponse();
-
-            Given()
-                .Log(RestAssured.Request.Logging.RequestLogLevel.All)
-                .And()
-                .Accept("application/json")
-                .Header("CustomHeader", "custom header value")
-                .ContentType("application/json")
-                .Body(this.jsonBody)
-                .When()
-                .Get($"{MOCK_SERVER_BASE_URL}/log-json-response")
-                .Then()
-                .StatusCode(200);
-        }
-
-        /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for logging
         /// XML request details to the standard output.
         /// </summary>
         [Test]

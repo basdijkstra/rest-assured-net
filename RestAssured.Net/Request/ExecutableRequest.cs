@@ -64,16 +64,6 @@ namespace RestAssured.Request
         private bool disposed = false;
 
         /// <summary>
-        /// The request logging level for this request.
-        /// </summary>
-        internal Logging.RequestLogLevel RequestLoggingLevel { get; set; }
-
-        /// <summary>
-        /// The response logging level for this request.
-        /// </summary>
-        internal Response.Logging.ResponseLogLevel ResponseLoggingLevel { get; set; }
-
-        /// <summary>
         /// The configuration settings to use when logging request and response details.
         /// </summary>
         internal LogConfiguration? LogConfiguration { get; set; }
@@ -86,9 +76,6 @@ namespace RestAssured.Request
         internal ExecutableRequest(RestAssuredConfiguration config, HttpClient? httpClient)
         {
             this.disableSslCertificateValidation = config.DisableSslCertificateValidation;
-
-            this.RequestLoggingLevel = config.RequestLogLevel;
-            this.ResponseLoggingLevel = config.ResponseLogLevel;
             this.LogConfiguration = config.LogConfiguration;
             this.httpCompletionOption = config.HttpCompletionOption;
 
@@ -103,7 +90,6 @@ namespace RestAssured.Request
         public ExecutableRequest Spec(RequestSpecification requestSpecification)
         {
             this.requestSpecification = requestSpecification;
-            this.RequestLoggingLevel = requestSpecification.RequestLogLevel;
             return this;
         }
 
@@ -466,25 +452,6 @@ namespace RestAssured.Request
         }
 
         /// <summary>
-        /// Logs request details to the standard output.
-        /// </summary>
-        /// <param name="requestLogLevel">The desired request log level.</param>
-        /// <param name="sensitiveHeaderOrCookieNames">The names of the request headers or cookies to be masked when logging.</param>
-        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
-        [Obsolete("Use Log(LogConfiguration logConfiguration) instead. This method will be removed in RestAssured.Net 5.0.0")]
-        public ExecutableRequest Log(Logging.RequestLogLevel requestLogLevel, List<string>? sensitiveHeaderOrCookieNames = null)
-        {
-            this.RequestLoggingLevel = requestLogLevel;
-
-            if (sensitiveHeaderOrCookieNames != null)
-            {
-                this.sensitiveRequestHeadersAndCookies.AddRange(sensitiveHeaderOrCookieNames);
-            }
-
-            return this;
-        }
-
-        /// <summary>
         /// Adds a request body to the request object to be sent.
         /// </summary>
         /// <param name="body">The body that is to be sent with the request.</param>
@@ -705,14 +672,6 @@ namespace RestAssured.Request
                 this.httpCompletionOption = this.requestSpecification.HttpCompletionOption;
             }
 
-            var legacyLogConfiguration = new LogConfiguration
-            {
-                RequestLogLevel = (RequestLogLevel)this.RequestLoggingLevel,
-                ResponseLogLevel = (ResponseLogLevel)this.ResponseLoggingLevel,
-                SensitiveRequestHeadersAndCookies = this.sensitiveRequestHeadersAndCookies,
-                SensitiveResponseHeadersAndCookies = new List<string>(),
-            };
-
             if (this.requestSpecification != null)
             {
                 // Apply logging settings from the request specification,
@@ -726,7 +685,7 @@ namespace RestAssured.Request
                 this.sensitiveRequestHeadersAndCookies.AddRange(this.requestSpecification.SensitiveRequestHeadersAndCookies);
             }
 
-            var logger = new RequestResponseLogger(this.LogConfiguration ?? legacyLogConfiguration);
+            var logger = new RequestResponseLogger(this.LogConfiguration!);
 
             // RequestLogger.LogToConsole(this.request, this.RequestLoggingLevel, this.cookieCollection, this.sensitiveRequestHeadersAndCookies);
             logger.LogRequest(this.request, this.cookieCollection);
