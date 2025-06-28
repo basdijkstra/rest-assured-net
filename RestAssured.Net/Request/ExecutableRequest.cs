@@ -169,17 +169,6 @@ namespace RestAssured.Request
         /// <summary>
         /// Adds the specified query parameters to the endpoint when the request is sent.
         /// </summary>
-        /// <param name="queryParams">A <see cref="Dictionary{TKey, TValue}"/> containing the query parameters to be added.</param>
-        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
-        [Obsolete("Please use QueryParams(IEnumerable<KeyValuePair<string, object>>) instead. This method will be removed in version 5.0.0")]
-        public ExecutableRequest QueryParams(Dictionary<string, object> queryParams)
-        {
-            return this.QueryParams((IEnumerable<KeyValuePair<string, object>>)queryParams);
-        }
-
-        /// <summary>
-        /// Adds the specified query parameters to the endpoint when the request is sent.
-        /// </summary>
         /// <param name="queryParams">A <see cref="IEnumerable{T}"/> containing the query parameters to be added.</param>
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
         public ExecutableRequest QueryParams(IEnumerable<KeyValuePair<string, object>> queryParams)
