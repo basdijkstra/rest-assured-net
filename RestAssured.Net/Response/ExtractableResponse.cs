@@ -53,16 +53,6 @@ namespace RestAssured.Response
         /// Extracts the entire response body as a string.
         /// </summary>
         /// <returns>The response body as a string.</returns>
-        [Obsolete("Please use BodyAsString(), BodyAsByteArray() or BodyAsStream() instead. This method is obsolete and will be removed in RestAssured.Net 5.0.0")]
-        public string Body()
-        {
-            return this.response.Content.ReadAsStringAsync().Result;
-        }
-
-        /// <summary>
-        /// Extracts the entire response body as a string.
-        /// </summary>
-        /// <returns>The response body as a string.</returns>
         public string BodyAsString()
         {
             return this.response.Content.ReadAsStringAsync().Result;

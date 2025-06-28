@@ -133,7 +133,7 @@ namespace RestAssured.Tests
                 .Get($"{MOCK_SERVER_BASE_URL}/json-response-body")
                 .Then()
                 .StatusCode(200)
-                .Extract().Body();
+                .Extract().BodyAsString();
 
             Assert.That(responseBodyAsString.Length, Is.GreaterThan(25));
         }

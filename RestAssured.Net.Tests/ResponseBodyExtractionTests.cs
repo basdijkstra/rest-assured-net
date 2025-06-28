@@ -85,25 +85,6 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for extracting a plaintext response
-        /// body as a string using the obsolete Body() method.
-        /// </summary>
-        [Test]
-        public void PlainTextResponseBodyCanBeExtractedAsAStringUsingObsoleteMethod()
-        {
-            this.CreateStubForPlainTextResponse();
-
-            string responseBody = Given()
-                .When()
-                .Get($"{MOCK_SERVER_BASE_URL}/plain-text-response-body")
-                .Then()
-                .StatusCode(200)
-                .Extract().Body();
-
-            Assert.That(responseBody, Is.EqualTo("Plain text response body."));
-        }
-
-        /// <summary>
         /// Creates the stub response for the plain text response body example.
         /// </summary>
         private void CreateStubForPlainTextResponse()
