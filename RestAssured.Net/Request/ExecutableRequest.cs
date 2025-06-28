@@ -672,6 +672,14 @@ namespace RestAssured.Request
                 this.httpCompletionOption = this.requestSpecification.HttpCompletionOption;
             }
 
+            var defaultLogConfiguration = new LogConfiguration
+            {
+                RequestLogLevel = RequestLogLevel.None,
+                ResponseLogLevel = ResponseLogLevel.None,
+                SensitiveRequestHeadersAndCookies = this.sensitiveRequestHeadersAndCookies,
+                SensitiveResponseHeadersAndCookies = new List<string>(),
+            };
+
             if (this.requestSpecification != null)
             {
                 // Apply logging settings from the request specification,
@@ -685,7 +693,7 @@ namespace RestAssured.Request
                 this.sensitiveRequestHeadersAndCookies.AddRange(this.requestSpecification.SensitiveRequestHeadersAndCookies);
             }
 
-            var logger = new RequestResponseLogger(this.LogConfiguration!);
+            var logger = new RequestResponseLogger(this.LogConfiguration ?? defaultLogConfiguration);
 
             // RequestLogger.LogToConsole(this.request, this.RequestLoggingLevel, this.cookieCollection, this.sensitiveRequestHeadersAndCookies);
             logger.LogRequest(this.request, this.cookieCollection);
