@@ -108,24 +108,6 @@ namespace RestAssured.Tests
         /// XML response details to the standard output.
         /// </summary>
         [Test]
-        public void ResponseDetailsCanBeWrittenToStandardOutputForXmlUsingObsoleteMethod()
-        {
-            this.CreateStubForLoggingXmlResponse();
-
-            Given()
-                .When()
-                .Get($"{MOCK_SERVER_BASE_URL}/log-xml-response")
-                .Then()
-                .Log(RestAssured.Response.Logging.ResponseLogLevel.All)
-                .And()
-                .StatusCode(200);
-        }
-
-        /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for logging
-        /// XML response details to the standard output.
-        /// </summary>
-        [Test]
         public void ResponseDetailsCanBeWrittenToStandardOutputForXml()
         {
             this.CreateStubForLoggingXmlResponse();

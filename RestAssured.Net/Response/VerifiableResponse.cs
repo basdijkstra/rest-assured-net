@@ -719,25 +719,6 @@ namespace RestAssured.Response
         }
 
         /// <summary>
-        /// Logs response details to the standard output.
-        /// </summary>
-        /// <param name="responseLogLevel">The required log level.</param>
-        /// <param name="sensitiveHeaderOrCookieNames">The names of the response headers or cookies to be masked when logging.</param>
-        /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
-        [Obsolete("Use Log(LogConfiguration logConfiguration) in ExecutableRequest instead. This method will be removed in RestAssured.Net 5.0.0")]
-        public VerifiableResponse Log(Logging.ResponseLogLevel responseLogLevel, List<string>? sensitiveHeaderOrCookieNames = null)
-        {
-            if (responseLogLevel == Logging.ResponseLogLevel.OnVerificationFailure)
-            {
-                this.LogOnVerificationFailure = true;
-                return this;
-            }
-
-            ResponseLogger.Log(this.Response, this.CookieContainer, responseLogLevel, sensitiveHeaderOrCookieNames ?? new List<string>(), this.ElapsedTime);
-            return this;
-        }
-
-        /// <summary>
         /// Gives access to various methods to extract values from this response object.
         /// </summary>
         /// <returns>An <see cref="ExtractableResponse"/> object from which values can then be extracted.</returns>
