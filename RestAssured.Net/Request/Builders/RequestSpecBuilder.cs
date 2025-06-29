@@ -25,7 +25,6 @@ namespace RestAssured.Request.Builders
     using Newtonsoft.Json;
     using RestAssured.Logging;
     using RestAssured.Request.Exceptions;
-    using RestAssured.Request.Logging;
 
     /// <summary>
     /// A builder class to construct a new instance of the <see cref="RequestSpecification"/> class.

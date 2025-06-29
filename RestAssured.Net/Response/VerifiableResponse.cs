@@ -34,7 +34,6 @@ namespace RestAssured.Response
     using RestAssured.Response.ContentType;
     using RestAssured.Response.Deserialization;
     using RestAssured.Response.Exceptions;
-    using RestAssured.Response.Logging;
 
     /// <summary>
     /// A class representing the response of an HTTP call.
