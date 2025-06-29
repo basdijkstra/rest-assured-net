@@ -42,17 +42,16 @@ namespace RestAssured.Request
 
             try
             {
-                UriBuilder uri = new UriBuilder();
-                uri.Scheme = requestSpec.Scheme;
-                uri.Host = requestSpec.HostName;
-                uri.Port = requestSpec.Port;
-                uri.Path = BuildPath(requestSpec.BasePath, endpoint);
+                Uri uri = new Uri(requestSpec.BaseUri);
+                UriBuilder uriBuilder = new UriBuilder(uri);
+                uriBuilder.Port = requestSpec.Port;
+                uriBuilder.Path = BuildPath(requestSpec.BasePath, endpoint);
 
-                return uri.Uri;
+                return uriBuilder.Uri;
             }
             catch (UriFormatException)
             {
-                throw new RequestCreationException($"Supplied base URI '{requestSpec.Scheme}://{requestSpec.HostName}:{requestSpec.Port}' is invalid.");
+                throw new RequestCreationException($"Supplied base URI '{requestSpec.BaseUri}:{requestSpec.Port}' is invalid.");
             }
         }
 

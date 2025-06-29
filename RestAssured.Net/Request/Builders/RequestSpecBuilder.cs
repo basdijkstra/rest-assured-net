@@ -34,10 +34,8 @@ namespace RestAssured.Request.Builders
     {
         private readonly RequestSpecification requestSpecification;
 
-        private readonly string scheme = "http";
-        private readonly string host = "localhost";
         private readonly int port = -1;  // -1 means the default port for the scheme will be chosen
-        private readonly string baseUri = "http://localhost:-1";
+        private readonly string baseUri = "http://localhost";
         private readonly string basePath = string.Empty;
         private readonly IEnumerable<KeyValuePair<string, string>> queryParams = new List<KeyValuePair<string, string>>();
         private readonly TimeSpan? timeout;
@@ -49,9 +47,7 @@ namespace RestAssured.Request.Builders
         private readonly Encoding? contentEncoding = null;
         private readonly bool disableSslCertificateValidation = false;
         private readonly LogConfiguration logConfiguration = new LogConfiguration();
-        private readonly Logging.RequestLogLevel requestLogLevel = Logging.RequestLogLevel.None;
         private readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
-        private readonly List<string> sensitiveRequestHeadersAndCookies = new List<string>();
         private readonly HttpCompletionOption httpCompletionOption = HttpCompletionOption.ResponseContentRead;
 
         /// <summary>
@@ -59,42 +55,7 @@ namespace RestAssured.Request.Builders
         /// </summary>
         public RequestSpecBuilder()
         {
-            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.baseUri, this.basePath, this.queryParams, this.timeout, this.userAgent, this.proxy, this.headers, this.authenticationHeader, this.contentTypeHeader, this.contentEncoding, this.disableSslCertificateValidation, this.logConfiguration, this.requestLogLevel, this.jsonSerializerSettings, this.sensitiveRequestHeadersAndCookies, this.httpCompletionOption);
-        }
-
-        /// <summary>
-        /// Sets the scheme (http or https) on the <see cref="RequestSpecification"/> to build.
-        /// </summary>
-        /// <param name="scheme">The scheme to use in the request.</param>
-        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
-        [Obsolete("Please use WithBaseUri() instead. This method will be removed in RestAssured.Net 5.0.0")]
-        public RequestSpecBuilder WithScheme(string scheme)
-        {
-            this.requestSpecification.Scheme = scheme;
-            return this;
-        }
-
-        /// <summary>
-        /// Sets the host name on the <see cref="RequestSpecification"/> to build.
-        /// </summary>
-        /// <param name="host">The host name to use in the requests.</param>
-        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
-        [Obsolete("Please use WithBaseUri() instead. This method will be removed in RestAssured.Net 5.0.0")]
-        public RequestSpecBuilder WithHostName(string host)
-        {
-            this.requestSpecification.HostName = host;
-            return this;
-        }
-
-        /// <summary>
-        /// Sets the port on the <see cref="RequestSpecification"/> to build.
-        /// </summary>
-        /// <param name="port">The port to use in the requests.</param>
-        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
-        public RequestSpecBuilder WithPort(int port)
-        {
-            this.requestSpecification.Port = port;
-            return this;
+            this.requestSpecification = new RequestSpecification(this.baseUri, this.port, this.basePath, this.queryParams, this.timeout, this.userAgent, this.proxy, this.headers, this.authenticationHeader, this.contentTypeHeader, this.contentEncoding, this.disableSslCertificateValidation, this.logConfiguration, this.jsonSerializerSettings, this.httpCompletionOption);
         }
 
         /// <summary>
@@ -107,8 +68,6 @@ namespace RestAssured.Request.Builders
             try
             {
                 Uri uri = new Uri(baseUri);
-                this.requestSpecification.Scheme = uri.Scheme;
-                this.requestSpecification.HostName = uri.Host;
                 this.requestSpecification.Port = uri.Port;
             }
             catch (UriFormatException)
@@ -116,6 +75,17 @@ namespace RestAssured.Request.Builders
                 throw new RequestCreationException($"Supplied value '{baseUri}' is not a valid URI");
             }
 
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the port on the <see cref="RequestSpecification"/> to build.
+        /// </summary>
+        /// <param name="port">The port to use in the requests.</param>
+        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
+        public RequestSpecBuilder WithPort(int port)
+        {
+            this.requestSpecification.Port = port;
             return this;
         }
 
@@ -271,18 +241,6 @@ namespace RestAssured.Request.Builders
         }
 
         /// <summary>
-        /// Sets the request log level to the specified <see cref="RequestLogLevel"/> value.
-        /// </summary>
-        /// <param name="requestLogLevel">The <see cref="RequestLogLevel"/> to apply to the requests.</param>
-        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
-        [Obsolete("Please use WithLogConfiguration(LogConfiguration logConfiguration) instead. This method will be removed in RestAssured.Net 5.0.0")]
-        public RequestSpecBuilder WithRequestLogLevel(Logging.RequestLogLevel requestLogLevel)
-        {
-            this.requestSpecification.RequestLogLevel = requestLogLevel;
-            return this;
-        }
-
-        /// <summary>
         /// Sets the JSON serializer settings to the specified <see cref="JsonSerializerSettings"/> value.
         /// </summary>
         /// <param name="jsonSerializerSettings">The <see cref="JsonSerializerSettings"/> to use in the requests.</param>
@@ -290,18 +248,6 @@ namespace RestAssured.Request.Builders
         public RequestSpecBuilder WithJsonSerializerSettings(JsonSerializerSettings jsonSerializerSettings)
         {
             this.requestSpecification.JsonSerializerSettings = jsonSerializerSettings;
-            return this;
-        }
-
-        /// <summary>
-        /// Adds a list of request header or cookie names that should be masked when logging to the list.
-        /// </summary>
-        /// <param name="sensitiveHeaderOrCookieNames">The names of the request headers or cookies to be masked when logging.</param>
-        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
-        [Obsolete("Please specify request header and cookie names to be masked using the LogConfiguration. This method will be removed in RestAssured.Net 5.0.0")]
-        public RequestSpecBuilder WithMaskingOfHeadersAndCookies(List<string> sensitiveHeaderOrCookieNames)
-        {
-            this.requestSpecification.LogConfiguration.SensitiveRequestHeadersAndCookies.AddRange(sensitiveHeaderOrCookieNames);
             return this;
         }
 

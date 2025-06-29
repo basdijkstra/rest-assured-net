@@ -679,7 +679,7 @@ namespace RestAssured.Request
             // Add header and cookie values to be masked specified in RequestSpecification to the list
             if (this.requestSpecification != null)
             {
-                this.sensitiveRequestHeadersAndCookies.AddRange(this.requestSpecification.SensitiveRequestHeadersAndCookies);
+                this.sensitiveRequestHeadersAndCookies.AddRange(this.requestSpecification.LogConfiguration.SensitiveRequestHeadersAndCookies);
             }
 
             var logger = new RequestResponseLogger(this.LogConfiguration ?? defaultLogConfiguration);

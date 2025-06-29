@@ -20,7 +20,6 @@ namespace RestAssured.Tests
     using RestAssured.Logging;
     using RestAssured.Request.Builders;
     using RestAssured.Request.Exceptions;
-    using RestAssured.Request.Logging;
     using WireMock.Matchers;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
@@ -141,26 +140,19 @@ namespace RestAssured.Tests
         /// throws the expected exception.
         /// </summary>
         [Test]
-        public void UsingSchemeInHostNameThrowsTheExpectedException()
+        public void AnotherInvalidBaseUriThrowsTheExpectedException()
         {
-            var incorrectHostNameSpecification = new RequestSpecBuilder()
-                .WithHostName("http://localhost")
-                .WithPort(9876)
-                .Build();
-
             this.CreateStubForRequestSpecification();
 
             var rce = Assert.Throws<RequestCreationException>(() =>
             {
-                Given()
-                    .Spec(incorrectHostNameSpecification)
-                    .When()
-                    .Get("/api/request-specification")
-                    .Then()
-                    .StatusCode(200);
+                var incorrectHostNameSpecification = new RequestSpecBuilder()
+                .WithBaseUri("http:/localhost")
+                .WithPort(9876)
+                .Build();
             });
 
-            Assert.That(rce?.Message, Is.EqualTo("Supplied base URI 'http://http://localhost:9876' is invalid."));
+            Assert.That(rce?.Message, Is.EqualTo("Supplied value 'http:/localhost' is not a valid URI"));
         }
 
         /// <summary>

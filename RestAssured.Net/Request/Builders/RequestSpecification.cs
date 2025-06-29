@@ -23,7 +23,6 @@ namespace RestAssured.Request.Builders
     using System.Text;
     using Newtonsoft.Json;
     using RestAssured.Logging;
-    using RestAssured.Request.Logging;
 
     /// <summary>
     /// Class containing shared properties for requests.
@@ -31,24 +30,14 @@ namespace RestAssured.Request.Builders
     public class RequestSpecification
     {
         /// <summary>
-        /// The scheme (http, https, ...) to be used when constructing the request.
-        /// </summary>
-        public string? Scheme { get; set; }
-
-        /// <summary>
         /// The base URI to be used when constructing the request.
         /// </summary>
-        public string? HostName { get; set; }
+        public string BaseUri { get; set; }
 
         /// <summary>
         /// The port number to be used when constructing the request.
         /// </summary>
         public int Port { get; set; }
-
-        /// <summary>
-        /// The base URI to be used when constructing the request.
-        /// </summary>
-        public string BaseUri { get; set; }
 
         /// <summary>
         /// The base path to be used when constructing the request.
@@ -101,11 +90,6 @@ namespace RestAssured.Request.Builders
         public bool DisableSslCertificateValidation { get; set; }
 
         /// <summary>
-        /// The value for the request logging level when sending the request.
-        /// </summary>
-        public Logging.RequestLogLevel RequestLogLevel { get; set; }
-
-        /// <summary>
         /// The configuration to be used when logging request and response details.
         /// </summary>
         public LogConfiguration LogConfiguration { get; set; }
@@ -116,11 +100,6 @@ namespace RestAssured.Request.Builders
         public JsonSerializerSettings JsonSerializerSettings { get; set; }
 
         /// <summary>
-        /// Can be used to provide sensitive header and cookie names that should be masked when logging request details.
-        /// </summary>
-        public List<string> SensitiveRequestHeadersAndCookies { get; set; }
-
-        /// <summary>
         /// Can be used to indicate whether the <see cref="HttpClient"/> should wait for the request body to be sent.
         /// </summary>
         public HttpCompletionOption HttpCompletionOption { get; set; }
@@ -128,10 +107,8 @@ namespace RestAssured.Request.Builders
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestSpecification"/> class.
         /// </summary>
-        /// <param name="scheme">The scheme (http, https, ....) to use in this request.</param>
-        /// <param name="host">The host name to use in this request.</param>
-        /// <param name="port">The port number to use in this request.</param>
         /// <param name="baseUri">The base URI to use in this request.</param>
+        /// <param name="port">The port number to use in this request.</param>
         /// <param name="basePath">The base path to use in this request.</param>
         /// <param name="queryParams">Query parameters to use in this request.</param>
         /// <param name="timeout">The timeout to use for this request.</param>
@@ -143,16 +120,12 @@ namespace RestAssured.Request.Builders
         /// <param name="contentEncoding">The content encoding to use in this request.</param>
         /// <param name="disableSslCertificateValidation">Flag indicating whether or not to disable SSL certificate validation.</param>
         /// <param name="logConfiguration">The logging configuration to use when logging request and response details.</param>
-        /// <param name="requestLogLevel">The request log level to use in this request.</param>
         /// <param name="jsonSerializerSettings">The JSON serializer settings to use in this request.</param>
-        /// <param name="sensitiveRequestHeadersAndCookies">A list of sensitive header and cookie names (to be masked when logging request details.</param>
         /// <param name="httpCompletionOption">Indicates whether the HttpClient should wait for the request body to be sent.</param>
-        public RequestSpecification(string scheme, string host, int port, string baseUri, string basePath, IEnumerable<KeyValuePair<string, string>> queryParams, TimeSpan? timeout, ProductInfoHeaderValue? userAgent, IWebProxy proxy, Dictionary<string, object> headers, AuthenticationHeaderValue authenticationHeader, string contentType, Encoding contentEncoding, bool disableSslCertificateValidation, LogConfiguration logConfiguration, Logging.RequestLogLevel requestLogLevel, JsonSerializerSettings jsonSerializerSettings, List<string> sensitiveRequestHeadersAndCookies, HttpCompletionOption httpCompletionOption)
+        public RequestSpecification(string baseUri, int port, string basePath, IEnumerable<KeyValuePair<string, string>> queryParams, TimeSpan? timeout, ProductInfoHeaderValue? userAgent, IWebProxy proxy, Dictionary<string, object> headers, AuthenticationHeaderValue authenticationHeader, string contentType, Encoding contentEncoding, bool disableSslCertificateValidation, LogConfiguration logConfiguration, JsonSerializerSettings jsonSerializerSettings, HttpCompletionOption httpCompletionOption)
         {
-            this.Scheme = scheme;
-            this.HostName = host;
-            this.Port = port;
             this.BaseUri = baseUri;
+            this.Port = port;
             this.BasePath = basePath;
             this.QueryParams = queryParams;
             this.Timeout = timeout;
@@ -164,9 +137,7 @@ namespace RestAssured.Request.Builders
             this.ContentEncoding = contentEncoding;
             this.DisableSslCertificateValidation = disableSslCertificateValidation;
             this.LogConfiguration = logConfiguration;
-            this.RequestLogLevel = requestLogLevel;
             this.JsonSerializerSettings = jsonSerializerSettings;
-            this.SensitiveRequestHeadersAndCookies = sensitiveRequestHeadersAndCookies;
             this.HttpCompletionOption = httpCompletionOption;
         }
     }
