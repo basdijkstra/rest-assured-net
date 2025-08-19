@@ -16,6 +16,7 @@
 namespace RestAssured
 {
     using System.Net.Http;
+    using Microsoft.Extensions.Logging;
     using RestAssured.Configuration;
     using RestAssured.Request;
 
@@ -36,6 +37,8 @@ namespace RestAssured
         /// <returns>A <see cref="ExecutableRequest"/> object containing all relevant request properties.</returns>
         public static ExecutableRequest Given(HttpClient? httpClient = null)
         {
+            RestAssuredConfig.LogConfiguration.Logger.LogInformation("TEST LOGGING");
+
             return new ExecutableRequest(RestAssuredConfig, httpClient);
         }
     }

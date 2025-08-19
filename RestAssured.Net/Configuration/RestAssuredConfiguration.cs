@@ -32,7 +32,7 @@ namespace RestAssured.Configuration
         /// <summary>
         /// Configuration for be used when logging request and response details.
         /// </summary>
-        public LogConfiguration? LogConfiguration { get; set; }
+        public LogConfiguration? LogConfiguration { get; set; } = new LogConfiguration();
 
         /// <summary>
         /// Setting to configure the <see cref="HttpCompletionOption"/> for all tests.
