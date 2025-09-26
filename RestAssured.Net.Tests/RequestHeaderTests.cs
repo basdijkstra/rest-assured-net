@@ -15,6 +15,7 @@
 // </copyright>
 namespace RestAssured.Tests
 {
+    using System;
     using System.Collections.Generic;
     using System.Text;
     using NUnit.Framework;
@@ -105,6 +106,47 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for including
+        /// a header with an unrecognized value when sending an HTTP request.
+        /// </summary>
+        [Test]
+        public void AddingHeaderWithUnrecognizedValue_WhenValidationIsSkipped_ShouldBeAddedToRequest()
+        {
+            this.CreateStubForUnrecognizedHeaderValue();
+
+            string datetime = "2025-06-01T09:46:14.698+02:00";
+
+            Given()
+                .Header("If-Modified-Since", datetime, validate: false)
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/unrecognized-header-value")
+                .Then()
+                .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for including
+        /// a header with an unrecognized value when sending an HTTP request.
+        /// </summary>
+        [Test]
+        public void AddingHeaderWithUnrecognizedValue_WhenValidated_ShouldThrowExpectedException()
+        {
+            this.CreateStubForUnrecognizedHeaderValue();
+
+            string datetime = "2025-06-01T09:46:14.698+02:00";
+
+            var fe = Assert.Throws<FormatException>(() =>
+            {
+                Given()
+                .Header("If-Modified-Since", datetime)
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/unrecognized-header-value");
+            });
+
+            Assert.That(fe.Message, Is.EqualTo($"The format of value '{datetime}' is invalid."));
+        }
+
+        /// <summary>
         /// A test demonstrating RestAssuredNet syntax for setting
         /// a Content-Type header with a string value.
         /// </summary>
@@ -187,6 +229,17 @@ namespace RestAssured.Tests
             this.Server?.Given(Request.Create().WithPath("/multiple-headers").UsingGet()
                 .WithHeader("header_one", "header_one_value")
                 .WithHeader("header_two", "header_two_value"))
+                .RespondWith(Response.Create()
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the unrecognized header value example.
+        /// </summary>
+        private void CreateStubForUnrecognizedHeaderValue()
+        {
+            this.Server?.Given(Request.Create().WithPath("/unrecognized-header-value").UsingGet()
+                .WithHeader("If-Modified-Since", "2025-06-01T09:46:14.698+02:00"))
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
         }
