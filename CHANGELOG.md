@@ -18,7 +18,7 @@ Nothing yet.
 
 #### Updated
 
-- Version bumps for HtmlAgilityPack, Newtonsoft.Json, System.Text.Encodings.Web (main project), Microsoft.AspNetCore.Mvc.Testing, Microsoft.NET.Test.Sdk, NUnit, NUnit3TestAdapter, WireMock.Net (test project)
+- Version bumps for HtmlAgilityPack, Newtonsoft.Json, System.Text.Encodings.Web (main project), Microsoft.AspNetCore.Mvc.Testing, NUnit, NUnit3TestAdapter, WireMock.Net (test project)
 
 ### [4.7.1] - 2025-06-13
 
