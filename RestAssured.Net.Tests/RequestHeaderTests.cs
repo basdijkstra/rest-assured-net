@@ -138,7 +138,7 @@ namespace RestAssured.Tests
             var fe = Assert.Throws<FormatException>(() =>
             {
                 Given()
-                .Header("If-Modified-Since", datetime)
+                .Header("If-Modified-Since", datetime, validate: true)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/unrecognized-header-value");
             });
