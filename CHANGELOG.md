@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+### [4.8.0] - 2025-09-25
+
+#### Added
+
+- Added a `Headers()` method to the DSL to add a `Dictionary<string, object>` of headers to a request with a single method call
+- Added an optional parameter `validate` to the `Header()` and `Headers()` method to enable adding headers to a request without validating the provided information ([#141](https://github.com/basdijkstra/rest-assured-net/issues/141) by [@gregorysav](https://github.com/gregorysav))
+
+#### Updated
+
+- Version bumps for HtmlAgilityPack, Newtonsoft.Json, System.Text.Encodings.Web (main project), Microsoft.AspNetCore.Mvc.Testing, Microsoft.NET.Test.Sdk, NUnit, NUnit3TestAdapter, WireMock.Net (test project)
+
 ### [4.7.1] - 2025-06-13
 
 #### Updated
