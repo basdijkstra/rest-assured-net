@@ -48,6 +48,47 @@ namespace RestAssured.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for including
+        /// multiple headers when sending an HTTP request.
+        /// </summary>
+        [Test]
+        public void MultipleHeadersCanBeSuppliedSeparately()
+        {
+            this.CreateStubForMultipleHeaders();
+
+            Given()
+                .Header("header_one", "header_one_value")
+                .Header("header_two", "header_two_value")
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/multiple-headers")
+                .Then()
+                .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for including
+        /// multiple headers as a Dictionary when sending an HTTP request.
+        /// </summary>
+        [Test]
+        public void MultipleHeadersCanBeSuppliedAsADictionary()
+        {
+            this.CreateStubForMultipleHeaders();
+
+            var headers = new Dictionary<string, object>
+            {
+                { "header_one", "header_one_value" },
+                { "header_two", "header_two_value" },
+            };
+
+            Given()
+                .Headers(headers)
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/multiple-headers")
+                .Then()
+                .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for including
         /// a header with multiple values when sending an HTTP request.
         /// </summary>
         [Test]
@@ -134,6 +175,18 @@ namespace RestAssured.Tests
         {
             this.Server?.Given(Request.Create().WithPath("/multiple-header-values").UsingGet()
                 .WithHeader("my_header", "my_header_value_1, my_header_value_2"))
+                .RespondWith(Response.Create()
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the multiple header example.
+        /// </summary>
+        private void CreateStubForMultipleHeaders()
+        {
+            this.Server?.Given(Request.Create().WithPath("/multiple-headers").UsingGet()
+                .WithHeader("header_one", "header_one_value")
+                .WithHeader("header_two", "header_two_value"))
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
         }

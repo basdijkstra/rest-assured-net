@@ -112,10 +112,19 @@ namespace RestAssured.Request
         /// </summary>
         /// <param name="key">The header key that is to be added to the request.</param>
         /// <param name="value">The associated header value that is to be added to the request.</param>
+        /// <param name="validate">Boolean indicating whether the header value should be validated before being added to the request.</param>
         /// <returns>The current <see cref="ExecutableRequest"/>.</returns>
-        public ExecutableRequest Header(string key, object value)
+        public ExecutableRequest Header(string key, object value, bool validate = true)
         {
-            this.request.Headers.Add(key, value.ToString());
+            if (validate)
+            {
+                this.request.Headers.Add(key, value.ToString());
+            }
+            else
+            {
+                this.request.Headers.TryAddWithoutValidation(key, value.ToString());
+            }
+
             return this;
         }
 
@@ -124,10 +133,42 @@ namespace RestAssured.Request
         /// </summary>
         /// <param name="key">The header key that is to be added to the request.</param>
         /// <param name="values">The associated header values that are to be added to the request.</param>
+        /// /// <param name="validate">Boolean indicating whether the header value should be validated before being added to the request.</param>
         /// <returns>The current <see cref="ExecutableRequest"/>.</returns>
-        public ExecutableRequest Header(string key, IEnumerable<string> values)
+        public ExecutableRequest Header(string key, IEnumerable<string> values, bool validate = true)
         {
-            this.request.Headers.Add(key, values);
+            if (validate)
+            {
+                this.request.Headers.Add(key, values);
+            }
+            else
+            {
+                this.request.Headers?.TryAddWithoutValidation(key, values);
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Adds a <see cref="IDictionary{TKey, TValue}"/> of request headers and their associated values to the request object to be sent.
+        /// </summary>
+        /// <param name="headers">An <see cref="Dictionary{TKey, TValue}"/> containing the headers to be added to the request.</param>
+        /// <param name="validate">Boolean indicating whether the header value should be validated before being added to the request.</param>
+        /// <returns>The current <see cref="ExecutableRequest"/>.</returns>
+        public ExecutableRequest Headers(Dictionary<string, object> headers, bool validate = true)
+        {
+            headers.ToList().ForEach(header =>
+            {
+                if (validate)
+                {
+                    this.request.Headers.Add(header.Key, header.Value.ToString());
+                }
+                else
+                {
+                    this.request.Headers.TryAddWithoutValidation(header.Key, header.Value.ToString());
+                }
+            });
+
             return this;
         }
 
