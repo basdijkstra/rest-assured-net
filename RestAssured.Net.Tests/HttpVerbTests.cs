@@ -15,7 +15,9 @@
 // </copyright>
 namespace RestAssured.Tests
 {
+    using System.Net.Http;
     using NUnit.Framework;
+    using RestAssured.Logging;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
     using static RestAssured.Dsl;
@@ -139,6 +141,29 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a response status code when using a custom HTTP verb.
+        /// </summary>
+        [Test]
+        public void CustomHttpVerbCanBeUsed()
+        {
+            this.CreateStubForHttpReset();
+
+            var logConfig = new LogConfiguration
+            {
+                RequestLogLevel = RequestLogLevel.All,
+                ResponseLogLevel = ResponseLogLevel.All,
+            };
+
+            Given()
+                .Log(logConfig)
+                .When()
+                .Invoke($"{MOCK_SERVER_BASE_URL}/http-reset", new HttpMethod("RESET"))
+                .Then()
+                .StatusCode(200);
+        }
+
+        /// <summary>
         /// Creates the stub response for the HTTP GET example.
         /// </summary>
         private void CreateStubForHttpGet()
@@ -204,6 +229,16 @@ namespace RestAssured.Tests
         private void CreateStubForHttpOptions()
         {
             this.Server?.Given(Request.Create().WithPath("/http-options").UsingOptions())
+                .RespondWith(Response.Create()
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the custom HTTP verb example.
+        /// </summary>
+        private void CreateStubForHttpReset()
+        {
+            this.Server?.Given(Request.Create().WithPath("/http-reset").UsingMethod("RESET"))
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
         }
