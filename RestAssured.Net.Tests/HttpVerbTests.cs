@@ -17,7 +17,6 @@ namespace RestAssured.Tests
 {
     using System.Net.Http;
     using NUnit.Framework;
-    using RestAssured.Logging;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
     using static RestAssured.Dsl;
@@ -149,14 +148,7 @@ namespace RestAssured.Tests
         {
             this.CreateStubForHttpReset();
 
-            var logConfig = new LogConfiguration
-            {
-                RequestLogLevel = RequestLogLevel.All,
-                ResponseLogLevel = ResponseLogLevel.All,
-            };
-
             Given()
-                .Log(logConfig)
                 .When()
                 .Invoke($"{MOCK_SERVER_BASE_URL}/http-reset", new HttpMethod("RESET"))
                 .Then()
