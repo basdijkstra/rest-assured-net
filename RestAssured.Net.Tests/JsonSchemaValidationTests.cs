@@ -49,6 +49,24 @@ namespace RestAssured.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for validating a response
+        /// against a JSON schema supplied as a string representing a file location.
+        /// </summary>
+        [Test]
+        public void JsonSchemaCanBeSuppliedAndVerifiedAsStringPointingToFile()
+        {
+            this.CreateStubForJsonSchemaValidation();
+
+            Given()
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/json-schema-validation")
+                .Then()
+                .StatusCode(200)
+                .And()
+                .MatchesJsonSchema(@"../../../Schemas/matching.schema.json");
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for validating a response
         /// against a JSON schema supplied as a JsonSchema.
         /// </summary>
         [Test]
@@ -106,6 +124,50 @@ namespace RestAssured.Tests
                     .StatusCode(200)
                     .And()
                     .MatchesJsonSchema(JsonSchemaDefinitions.InvalidJsonSchemaAsString);
+            });
+
+            Assert.That(rve?.Message, Does.Contain("Could not parse supplied JSON schema. Error:"));
+        }
+
+        /// <summary>
+        /// A test checking that supplying an invalid JSON schema throws the expected exception.
+        /// </summary>
+        [Test]
+        public void SupplyingInvalidJsonSchemaAsFileThrowsTheExpectedException()
+        {
+            this.CreateStubForJsonSchemaValidationMismatch();
+
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                    .When()
+                    .Get($"{MOCK_SERVER_BASE_URL}/json-schema-validation-mismatch")
+                    .Then()
+                    .StatusCode(200)
+                    .And()
+                    .MatchesJsonSchema(@"../../../Schemas/invalid.schema.json");
+            });
+
+            Assert.That(rve?.Message, Does.Contain("Could not parse supplied JSON schema. Error:"));
+        }
+
+        /// <summary>
+        /// A test checking that supplying an invalid JSON schema throws the expected exception.
+        /// </summary>
+        [Test]
+        public void SupplyingNonsenseInputThrowsTheExpectedException()
+        {
+            this.CreateStubForJsonSchemaValidation();
+
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                    .When()
+                    .Get($"{MOCK_SERVER_BASE_URL}/json-schema-validation")
+                    .Then()
+                    .StatusCode(200)
+                    .And()
+                    .MatchesJsonSchema("not-a-schema-not-a-file");
             });
 
             Assert.That(rve?.Message, Does.Contain("Could not parse supplied JSON schema. Error:"));

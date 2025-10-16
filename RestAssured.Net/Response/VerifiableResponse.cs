@@ -531,6 +531,11 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when can't parse supplied JSON schema.</exception>
         public VerifiableResponse MatchesJsonSchema(string jsonSchema)
         {
+            if (File.Exists(Path.GetFullPath(jsonSchema)))
+            {
+                jsonSchema = File.ReadAllText(Path.GetFullPath(jsonSchema));
+            }
+
             try
             {
                 JsonSchema parsedSchema = JsonSchema.FromJsonAsync(jsonSchema).Result;
