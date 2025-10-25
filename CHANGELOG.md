@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Unreleased
 
-Nothing yet.
+#### Updated
+
+- Version bumps for HtmlAgilityPack, System.Text.Encodings.Web (main project), Microsoft.AspNetCore.Mvc.Testing, NUnit3TestAdapter, WireMock.Net (test project)
 
 ### [4.8.0] - 2025-09-25
 
