@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Unreleased
 
+Nothing yet.
+
+### [4.9.0] - 2025-10-29
+
+- Added support for providing paths to a JSON schema file when validating response bodies against a schema using `MatchesJsonSchema()` ([#142](https://github.com/basdijkstra/rest-assured-net/issues/142) by [@gostosohub](https://github.com/gostosohub))
+
 #### Updated
 
 - Version bumps for HtmlAgilityPack, System.Text.Encodings.Web (main project), Microsoft.AspNetCore.Mvc.Testing, NUnit3TestAdapter, WireMock.Net (test project)
