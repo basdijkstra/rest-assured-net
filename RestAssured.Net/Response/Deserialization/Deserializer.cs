@@ -13,11 +13,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // </copyright>
+
 namespace RestAssured.Response.Deserialization
 {
     using System;
     using System.IO;
     using System.Net.Http;
+    using System.Threading.Tasks;
     using System.Xml.Serialization;
     using Newtonsoft.Json;
     using RestAssured.Response.Exceptions;
@@ -36,9 +38,9 @@ namespace RestAssured.Response.Deserialization
         /// <param name="jsonSerializerSettings">The <see cref="JsonSerializerSettings"/> to use when deserializing to JSON.</param>
         /// <returns>The deserialized response body object.</returns>
         /// <exception cref="DeserializationException">Thrown when deserialization of the response body fails.</exception>
-        internal static object DeserializeResponseInto(HttpResponseMessage response, Type type, DeserializeAs deserializeAs, JsonSerializerSettings jsonSerializerSettings)
+        internal static object? DeserializeResponseInto(HttpResponseMessage response, Type type, DeserializeAs deserializeAs, JsonSerializerSettings jsonSerializerSettings)
         {
-            string responseBodyAsString = response.Content.ReadAsStringAsync().Result;
+            string responseBodyAsString = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
             if (string.IsNullOrEmpty(responseBodyAsString))
             {
@@ -51,39 +53,51 @@ namespace RestAssured.Response.Deserialization
             {
                 case DeserializeAs.UseResponseContentTypeHeaderValue:
                 {
-                        responseMediaType = response.Content.Headers.ContentType?.MediaType;
-                        break;
+                    responseMediaType = response.Content.Headers.ContentType?.MediaType;
+                    break;
                 }
 
                 case DeserializeAs.Json:
                 {
-                        responseMediaType = "application/json";
-                        break;
+                    responseMediaType = "application/json";
+                    break;
                 }
 
                 case DeserializeAs.Xml:
                 {
-                        responseMediaType = "application/xml";
-                        break;
+                    responseMediaType = "application/xml";
+                    break;
                 }
             }
 
             if (responseMediaType == null || responseMediaType.Contains("json"))
             {
-                return JsonConvert.DeserializeObject(response.Content.ReadAsStringAsync().Result, type, jsonSerializerSettings) ?? string.Empty;
+                return JsonConvert.DeserializeObject(responseBodyAsString, type, jsonSerializerSettings);
             }
-            else if (responseMediaType.Contains("xml"))
+
+            if (responseMediaType.Contains("xml"))
             {
                 XmlSerializer xmlSerializer = new XmlSerializer(type);
-                using (TextReader reader = new StringReader(response.Content.ReadAsStringAsync().Result))
-                {
-                    return xmlSerializer.Deserialize(reader) !;
-                }
+                using TextReader reader = new StringReader(responseBodyAsString);
+                return xmlSerializer.Deserialize(reader);
             }
-            else
-            {
-                throw new DeserializationException($"Unable to deserialize response with Content-Type '{responseMediaType}'");
-            }
+
+            throw new DeserializationException($"Unable to deserialize response with Content-Type '{responseMediaType}'");
+        }
+
+        /// <summary>
+        /// Deserializes an <see cref="HttpResponseMessage"/> body into the specified type.
+        /// </summary>
+        /// <typeparam name="T">The type to deserialize the response body into.</typeparam>
+        /// <param name="response">The <see cref="HttpResponseMessage"/> containing the body to be deserialized.</param>
+        /// <param name="deserializeAs">Indicates how to interpret the response content when deserializing.</param>
+        /// <param name="jsonSerializerSettings">The <see cref="JsonSerializerSettings"/> to use when deserializing to JSON.</param>
+        /// <returns>The deserialized response body object.</returns>
+        /// <exception cref="DeserializationException">Thrown when deserialization of the response body fails.</exception>
+        internal static T? DeserializeResponseInto<T>(HttpResponseMessage response, DeserializeAs deserializeAs, JsonSerializerSettings jsonSerializerSettings)
+            where T : class
+        {
+            return DeserializeResponseInto(response, typeof(T), deserializeAs, jsonSerializerSettings) as T;
         }
     }
 }
