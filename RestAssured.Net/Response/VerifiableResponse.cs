@@ -284,7 +284,7 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when the actual response body does not match the expected one.</exception>
         public VerifiableResponse Body(string expectedResponseBody)
         {
-            string actualResponseBody = this.Response.Content.ReadAsStringAsync().Result;
+            string actualResponseBody = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
             if (!actualResponseBody.Equals(expectedResponseBody))
             {
@@ -302,7 +302,7 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when the actual response body does not match the expected one.</exception>
         public VerifiableResponse Body(IMatcher<string> matcher)
         {
-            string actualResponseBody = this.Response.Content.ReadAsStringAsync().Result;
+            string actualResponseBody = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
             if (!matcher.Matches(actualResponseBody))
             {
@@ -322,7 +322,7 @@ namespace RestAssured.Response
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse Body<T>(string path, IMatcher<T> matcher, VerifyAs verifyAs = VerifyAs.UseResponseContentTypeHeaderValue)
         {
-            string responseBodyAsString = this.Response.Content.ReadAsStringAsync().Result;
+            string responseBodyAsString = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
             string? responseMediaType = string.Empty;
 
@@ -449,7 +449,7 @@ namespace RestAssured.Response
         {
             List<T> elementValues = new List<T>();
 
-            string responseBodyAsString = this.Response.Content.ReadAsStringAsync().Result;
+            string responseBodyAsString = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
             string responseMediaType = this.Response.Content.Headers.ContentType?.MediaType ?? string.Empty;
 
@@ -538,15 +538,12 @@ namespace RestAssured.Response
 
             try
             {
-                JsonSchema parsedSchema = JsonSchema.FromJsonAsync(jsonSchema).Result;
+                JsonSchema parsedSchema = JsonSchema.FromJsonAsync(jsonSchema).GetAwaiter().GetResult();
                 return this.MatchesJsonSchema(parsedSchema);
             }
-            catch (AggregateException ae)
+            catch (JsonException je)
             {
-                foreach (Exception ex in ae.InnerExceptions)
-                {
-                    this.FailVerification($"Could not parse supplied JSON schema. Error: {ex.Message}");
-                }
+                this.FailVerification($"Could not parse supplied JSON schema. Error: {je.Message}");
             }
 
             return this;
@@ -567,7 +564,7 @@ namespace RestAssured.Response
                 this.FailVerification($"Expected response Content-Type header to contain 'json', but was '{responseMediaType}'");
             }
 
-            string responseBodyAsString = this.Response.Content.ReadAsStringAsync().Result;
+            string responseBodyAsString = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
             ICollection<ValidationError> schemaValidationErrors = jsonSchema.Validate(responseBodyAsString);
 
@@ -618,7 +615,7 @@ namespace RestAssured.Response
             settings.ValidationType = ValidationType.Schema;
             settings.Schemas = schemas;
 
-            string responseXmlAsString = this.Response.Content.ReadAsStringAsync().Result;
+            string responseXmlAsString = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
             XmlReader reader = XmlReader.Create(new StringReader(responseXmlAsString), settings);
 
             try
@@ -652,7 +649,7 @@ namespace RestAssured.Response
             settings.DtdProcessing = DtdProcessing.Parse;
             settings.ValidationType = ValidationType.DTD;
 
-            string responseXmlAsString = this.Response.Content.ReadAsStringAsync().Result;
+            string responseXmlAsString = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
             XmlReader reader = XmlReader.Create(new StringReader(responseXmlAsString), settings);
 
             try
@@ -691,7 +688,7 @@ namespace RestAssured.Response
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse ResponseBodyLength(IMatcher<int> matcher)
         {
-            string responseContentAsString = this.Response.Content.ReadAsStringAsync().Result;
+            string responseContentAsString = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
             if (!matcher.Matches(responseContentAsString.Length))
             {

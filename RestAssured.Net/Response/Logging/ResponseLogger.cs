@@ -139,7 +139,7 @@ namespace RestAssured.Response.Logging
                 return;
             }
 
-            string responseBodyAsString = response.Content.ReadAsStringAsync().Result;
+            string responseBodyAsString = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
             if (responseBodyAsString.Equals(string.Empty))
             {
