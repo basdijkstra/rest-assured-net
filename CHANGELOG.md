@@ -9,7 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+### [4.10.0] - 2025-11-12
+
+#### Added
+
+- Added support for .NET 10 ([#140](https://github.com/basdijkstra/rest-assured-net/issues/140))
+- Added the ability to deserialize response bodies using generics with `DeserializeTo<T>()` ([#143](https://github.com/basdijkstra/rest-assured-net/issues/143) by [@StefH](https://github.com/StefH))
+
+#### Deprecated
+
+- Deprecated `DeserializeTo(Type type)` in favour of `DeserializeTo<T>()`
+
 ### [4.9.0] - 2025-10-29
+
+#### Added
 
 - Added support for providing paths to a JSON schema file when validating response bodies against a schema using `MatchesJsonSchema()` ([#142](https://github.com/basdijkstra/rest-assured-net/issues/142) by [@gostosohub](https://github.com/gostosohub))
 
