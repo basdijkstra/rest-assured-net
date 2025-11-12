@@ -104,7 +104,7 @@ namespace RestAssured.Request.Logging
                 return;
             }
 
-            string requestBodyAsString = request.Content.ReadAsStringAsync().Result;
+            string requestBodyAsString = request.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
             if (requestBodyAsString.Equals(string.Empty))
             {

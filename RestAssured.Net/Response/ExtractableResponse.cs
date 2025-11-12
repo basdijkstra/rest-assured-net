@@ -56,7 +56,7 @@ namespace RestAssured.Response
         [Obsolete("Please use BodyAsString(), BodyAsByteArray() or BodyAsStream() instead. This method is obsolete and will be removed in RestAssured.Net 5.0.0")]
         public string Body()
         {
-            return this.response.Content.ReadAsStringAsync().Result;
+            return this.response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace RestAssured.Response
         /// <returns>The response body as a string.</returns>
         public string BodyAsString()
         {
-            return this.response.Content.ReadAsStringAsync().Result;
+            return this.response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace RestAssured.Response
         /// <returns>The response body as a byte array.</returns>
         public byte[] BodyAsByteArray()
         {
-            return this.response.Content.ReadAsByteArrayAsync().Result;
+            return this.response.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult();
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace RestAssured.Response
         /// <returns>The response body as a <see cref="Stream"/>.</returns>
         public Stream BodyAsStream()
         {
-            return this.response.Content.ReadAsStreamAsync().Result;
+            return this.response.Content.ReadAsStreamAsync().GetAwaiter().GetResult();
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace RestAssured.Response
         /// <exception cref="ExtractionException">Thrown when evaluating the JsonPath did not yield any results.</exception>
         public object Body(string path, ExtractAs extractAs = ExtractAs.UseResponseContentTypeHeaderValue, ReturnAs returnAs = ReturnAs.Singular)
         {
-            string responseBodyAsString = this.response.Content.ReadAsStringAsync().Result;
+            string responseBodyAsString = this.response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
             string responseMediaType = this.response.Content.Headers.ContentType?.MediaType ?? string.Empty;
 

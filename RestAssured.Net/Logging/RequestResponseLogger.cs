@@ -173,7 +173,7 @@ namespace RestAssured.Logging
                 return;
             }
 
-            string requestBodyAsString = request.Content.ReadAsStringAsync().Result;
+            string requestBodyAsString = request.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
             if (requestBodyAsString.Equals(string.Empty))
             {
@@ -250,7 +250,7 @@ namespace RestAssured.Logging
                 return;
             }
 
-            string responseBodyAsString = response.Content.ReadAsStringAsync().Result;
+            string responseBodyAsString = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
             if (responseBodyAsString.Equals(string.Empty))
             {

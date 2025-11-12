@@ -15,6 +15,7 @@
 // </copyright>
 namespace RestAssured.Tests
 {
+    using System.Threading.Tasks;
     using NJsonSchema;
     using NUnit.Framework;
     using RestAssured.Response.Exceptions;
@@ -70,11 +71,11 @@ namespace RestAssured.Tests
         /// against a JSON schema supplied as a JsonSchema.
         /// </summary>
         [Test]
-        public void JsonSchemaCanBeSuppliedAndVerifiedAsJsonSchema()
+        public async Task JsonSchemaCanBeSuppliedAndVerifiedAsJsonSchema()
         {
             this.CreateStubForJsonSchemaValidation();
 
-            JsonSchema parsedSchema = JsonSchema.FromJsonAsync(JsonSchemaDefinitions.MatchingJsonSchema).Result;
+            JsonSchema parsedSchema = await JsonSchema.FromJsonAsync(JsonSchemaDefinitions.MatchingJsonSchema);
 
             Given()
                 .When()

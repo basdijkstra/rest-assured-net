@@ -774,19 +774,17 @@ namespace RestAssured.Request
 
             try
             {
-                Task<VerifiableResponse> task = httpRequestProcessor.Send(this.request, this.cookieCollection, this.httpCompletionOption);
-                VerifiableResponse verifiableResponse = task.Result;
+                VerifiableResponse verifiableResponse = httpRequestProcessor.Send(this.request, this.cookieCollection, this.httpCompletionOption).GetAwaiter().GetResult();
                 verifiableResponse = logger.LogResponse(verifiableResponse);
                 return verifiableResponse;
             }
-            catch (AggregateException ae)
+            catch (TaskCanceledException)
             {
-                if (ae.InnerException?.GetType() == typeof(TaskCanceledException))
-                {
-                    throw new HttpRequestProcessorException($"Request timeout of {this.timeout ?? this.requestSpecification?.Timeout ?? TimeSpan.FromSeconds(100)} exceeded.");
-                }
-
-                throw new HttpRequestProcessorException($"Unhandled exception {ae.Message}");
+                throw new HttpRequestProcessorException($"Request timeout of {this.timeout ?? this.requestSpecification?.Timeout ?? TimeSpan.FromSeconds(100)} exceeded.");
+            }
+            catch (Exception ex)
+            {
+                throw new HttpRequestProcessorException($"Unhandled exception {ex.Message}");
             }
         }
 
