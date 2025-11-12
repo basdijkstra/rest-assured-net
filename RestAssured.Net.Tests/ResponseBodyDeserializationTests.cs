@@ -84,10 +84,10 @@ namespace RestAssured.Tests
         {
             this.CreateStubForJsonResponseBody();
 
-            Location responseLocation = (Location)Given()
+            Location responseLocation = Given()
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/json-deserialization")
-                .DeserializeTo(typeof(Location));
+                .DeserializeTo<Location>();
 
             Assert.That(responseLocation.Country, Is.EqualTo(this.country));
             Assert.That(responseLocation.Places?.Count, Is.EqualTo(2));
@@ -104,14 +104,14 @@ namespace RestAssured.Tests
         /// a JSON response into an object when performing an HTTP GET.
         /// </summary>
         [Test]
-        public void ObjectCanBeDeserializedAsTypeFromJson()
+        public void ObjectCanBeDeserializedFromJsonUsingDeprecatedMethodTakingTypeArgument()
         {
             this.CreateStubForJsonResponseBody();
 
-            Location responseLocation = Given()
+            Location responseLocation = (Location)Given()
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/json-deserialization")
-                .DeserializeTo<Location>();
+                .DeserializeTo(typeof(Location));
 
             Assert.That(responseLocation.Country, Is.EqualTo(this.country));
             Assert.That(responseLocation.Places?.Count, Is.EqualTo(2));
@@ -133,13 +133,13 @@ namespace RestAssured.Tests
         {
             this.CreateStubForJsonResponseBody();
 
-            Location responseLocation = (Location)Given()
+            Location responseLocation = Given()
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/json-deserialization")
                 .Then()
                 .StatusCode(200)
                 .And()
-                .DeserializeTo(typeof(Location));
+                .DeserializeTo<Location>();
 
             Assert.That(responseLocation.Country, Is.EqualTo(this.country));
             Assert.That(responseLocation.Places?.Count, Is.EqualTo(2));
@@ -161,11 +161,11 @@ namespace RestAssured.Tests
         {
             this.CreateStubForJsonResponseBodyWithNonMatchingContentTypeHeader();
 
-            Location responseLocation = (Location)Given()
+            Location responseLocation = Given()
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/json-deserialization-header-mismatch")
                 .Then()
-                .DeserializeTo(typeof(Location), DeserializeAs.Json);
+                .DeserializeTo<Location>(DeserializeAs.Json);
 
             Assert.That(responseLocation.Country, Is.EqualTo(this.country));
             Assert.That(responseLocation.Places?.Count, Is.EqualTo(2));
@@ -186,11 +186,11 @@ namespace RestAssured.Tests
         {
             this.CreateStubForXmlResponseBody();
 
-            Location responseLocation = (Location)Given()
+            Location responseLocation = Given()
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/xml-deserialization")
                 .Then()
-                .DeserializeTo(typeof(Location));
+                .DeserializeTo<Location>();
 
             Assert.That(responseLocation.Country, Is.EqualTo(this.country));
             Assert.That(responseLocation.Places?.Count, Is.EqualTo(2));
@@ -211,11 +211,11 @@ namespace RestAssured.Tests
         {
             this.CreateStubForXmlResponseBodyWithNonMatchingContentTypeHeader();
 
-            Location responseLocation = (Location)Given()
+            Location responseLocation = Given()
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/xml-deserialization-header-mismatch")
                 .Then()
-                .DeserializeTo(typeof(Location), DeserializeAs.Xml);
+                .DeserializeTo<Location>(DeserializeAs.Xml);
 
             Assert.That(responseLocation.Country, Is.EqualTo(this.country));
             Assert.That(responseLocation.Places?.Count, Is.EqualTo(2));
@@ -238,10 +238,10 @@ namespace RestAssured.Tests
 
             var de = Assert.Throws<DeserializationException>(() =>
             {
-                Location responseLocation = (Location)Given()
+                Location responseLocation = Given()
                     .When()
                     .Get($"{MOCK_SERVER_BASE_URL}/xml-deserialization-unrecognized-content-type")
-                    .DeserializeTo(typeof(Location));
+                    .DeserializeTo<Location>();
             });
 
             Assert.That(de?.Message, Is.EqualTo("Unable to deserialize response with Content-Type 'application/something'"));
@@ -258,10 +258,10 @@ namespace RestAssured.Tests
 
             var de = Assert.Throws<DeserializationException>(() =>
             {
-                Location responseLocation = (Location)Given()
+                Location responseLocation = Given()
                     .When()
                     .Get($"{MOCK_SERVER_BASE_URL}/empty-response-body")
-                    .DeserializeTo(typeof(Location));
+                    .DeserializeTo<Location>();
             });
 
             Assert.That(de?.Message, Is.EqualTo("Response content is null or empty."));
