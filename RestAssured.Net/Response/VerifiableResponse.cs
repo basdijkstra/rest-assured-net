@@ -15,16 +15,8 @@
 // </copyright>
 namespace RestAssured.Response
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Net;
-    using System.Net.Http;
-    using System.Net.Http.Headers;
-    using System.Xml;
-    using System.Xml.Schema;
     using HtmlAgilityPack;
+    using Microsoft.AspNetCore.Http;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     using NHamcrest;
@@ -35,6 +27,18 @@ namespace RestAssured.Response
     using RestAssured.Response.Deserialization;
     using RestAssured.Response.Exceptions;
     using RestAssured.Response.Logging;
+    using Stubble.Core;
+    using Stubble.Core.Builders;
+    using Stubble.Core.Classes;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Net;
+    using System.Net.Http;
+    using System.Net.Http.Headers;
+    using System.Xml;
+    using System.Xml.Schema;
 
     /// <summary>
     /// A class representing the response of an HTTP call.
@@ -107,13 +111,27 @@ namespace RestAssured.Response
         /// Verifies that the actual status code is equal to an expected value.
         /// </summary>
         /// <param name="expectedStatusCode">The expected status code.</param>
+        /// <param name="errorMessage">A custom error message to be used when the verification fails.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         /// <exception cref="ResponseVerificationException">Thrown when the actual status code does not match the expected one.</exception>
-        public VerifiableResponse StatusCode(int expectedStatusCode)
+        public VerifiableResponse StatusCode(int expectedStatusCode, string? errorMessage = null)
         {
             if (expectedStatusCode != (int)this.Response.StatusCode)
             {
-                this.FailVerification($"Expected status code to be {expectedStatusCode}, but was {(int)this.Response.StatusCode}");
+                errorMessage ??= $"Expected status code to be {expectedStatusCode}, but was {(int)this.Response.StatusCode}";
+
+                var values = new Dictionary<string, object>()
+                {
+                    { "expected", expectedStatusCode },
+                    { "actual", (int)this.Response.StatusCode },
+                };
+
+                StubbleVisitorRenderer renderer = new StubbleBuilder()
+                    .Configure(builder => builder.SetDefaultTags(new Tags("[", "]")))
+                    .Build();
+                errorMessage = renderer.Render(errorMessage, values);
+
+                this.FailVerification(errorMessage);
             }
 
             return this;
@@ -123,13 +141,27 @@ namespace RestAssured.Response
         /// Verifies that the actual status code is equal to an expected value.
         /// </summary>
         /// <param name="expectedStatusCode">The expected status code.</param>
+        /// <param name="errorMessage">A custom error message to be used when the verification fails.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         /// <exception cref="ResponseVerificationException">Thrown when the actual status code does not match the expected one.</exception>
-        public VerifiableResponse StatusCode(HttpStatusCode expectedStatusCode)
+        public VerifiableResponse StatusCode(HttpStatusCode expectedStatusCode, string? errorMessage = null)
         {
             if (!expectedStatusCode.Equals(this.Response.StatusCode))
             {
-                this.FailVerification($"Expected status code to be {expectedStatusCode}, but was {this.Response.StatusCode}");
+                errorMessage ??= $"Expected status code to be {expectedStatusCode}, but was {this.Response.StatusCode}";
+
+                var values = new Dictionary<string, object>()
+                {
+                    { "expected", expectedStatusCode },
+                    { "actual", this.Response.StatusCode },
+                };
+
+                StubbleVisitorRenderer renderer = new StubbleBuilder()
+                    .Configure(builder => builder.SetDefaultTags(new Tags("[", "]")))
+                    .Build();
+                errorMessage = renderer.Render(errorMessage, values);
+
+                this.FailVerification(errorMessage);
             }
 
             return this;
@@ -139,13 +171,27 @@ namespace RestAssured.Response
         /// Verifies that the actual status code is equal to an expected value.
         /// </summary>
         /// <param name="matcher">The NHamcrest matcher to evaluate.</param>
+        /// <param name="errorMessage">A custom error message to be used when the verification fails.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         /// <exception cref="ResponseVerificationException">Thrown when the actual status code does not match the expected one.</exception>
-        public VerifiableResponse StatusCode(IMatcher<int> matcher)
+        public VerifiableResponse StatusCode(IMatcher<int> matcher, string? errorMessage = null)
         {
             if (!matcher.Matches((int)this.Response.StatusCode))
             {
-                this.FailVerification($"Expected response status code to match '{matcher}', but was {(int)this.Response.StatusCode}");
+                errorMessage ??= $"Expected response status code to match '{matcher}', but was {(int)this.Response.StatusCode}";
+
+                var values = new Dictionary<string, object>()
+                {
+                    { "expected", matcher },
+                    { "actual", (int)this.Response.StatusCode },
+                };
+
+                StubbleVisitorRenderer renderer = new StubbleBuilder()
+                    .Configure(builder => builder.SetDefaultTags(new Tags("[", "]")))
+                    .Build();
+                errorMessage = renderer.Render(errorMessage, values);
+
+                this.FailVerification(errorMessage);
             }
 
             return this;

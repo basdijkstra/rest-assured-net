@@ -132,6 +132,97 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a response status code using a custom error message, test that
+        /// it is throwing the expected exception with the custom message.
+        /// </summary>
+        [Test]
+        public void FixedCustomErrorMessageCanBeSpecifiedWhenVerifyingStatusCode()
+        {
+            this.CreateStubForHttpOK();
+
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                    .When()
+                    .Get($"{MOCK_SERVER_BASE_URL}/http-status-code-ok")
+                    .Then()
+                    .StatusCode(201, "HTTP status code was not equal to 201");
+            });
+
+            Assert.That(rve?.Message, Is.EqualTo("HTTP status code was not equal to 201"));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a response status code using a custom error message with template values,
+        /// for the expected and actual values, test that
+        /// it is throwing the expected exception with the correctly formatted custom message.
+        /// </summary>
+        [Test]
+        public void TemplatedCustomErrorMessageCanBeSpecifiedWhenVerifyingStatusCodeAsInteger()
+        {
+            this.CreateStubForHttpOK();
+
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                    .When()
+                    .Get($"{MOCK_SERVER_BASE_URL}/http-status-code-ok")
+                    .Then()
+                    .StatusCode(201, "Expected [expected], but was [actual]");
+            });
+
+            Assert.That(rve?.Message, Is.EqualTo("Expected 201, but was 200"));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a response status code using a custom error message with template values,
+        /// for the expected and actual values, test that
+        /// it is throwing the expected exception with the correctly formatted custom message.
+        /// </summary>
+        [Test]
+        public void TemplatedCustomErrorMessageCanBeSpecifiedWhenVerifyingStatusCodeAsHttpStatusCode()
+        {
+            this.CreateStubForHttpOK();
+
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                    .When()
+                    .Get($"{MOCK_SERVER_BASE_URL}/http-status-code-ok")
+                    .Then()
+                    .StatusCode(HttpStatusCode.Created, "Expected [expected], but was [actual]");
+            });
+
+            Assert.That(rve?.Message, Is.EqualTo("Expected Created, but was OK"));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a response status code using a custom error message with template values,
+        /// for the expected and actual values, test that
+        /// it is throwing the expected exception with the correctly formatted custom message.
+        /// </summary>
+        [Test]
+        public void TemplatedCustomErrorMessageCanBeSpecifiedWhenVerifyingStatusCodeAsNHamcrestMatcher()
+        {
+            this.CreateStubForHttpOK();
+
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                    .When()
+                    .Get($"{MOCK_SERVER_BASE_URL}/http-status-code-ok")
+                    .Then()
+                    .StatusCode(NHamcrest.Is.GreaterThan(300), "Expected [expected], but was [actual]");
+            });
+
+            Assert.That(rve?.Message, Is.EqualTo("Expected greater than 300, but was 200"));
+        }
+
+        /// <summary>
         /// Creates the stub response for the HTTP OK example.
         /// </summary>
         private void CreateStubForHttpOK()
