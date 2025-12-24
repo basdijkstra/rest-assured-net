@@ -16,6 +16,7 @@
 namespace RestAssured.Response.Logging
 {
     using System.Collections.Generic;
+    using System.Runtime.CompilerServices;
     using Stubble.Core;
     using Stubble.Core.Builders;
     using Stubble.Core.Classes;
@@ -26,7 +27,27 @@ namespace RestAssured.Response.Logging
     internal class AssertionMessageBuilder
     {
         /// <summary>
-        /// Builds an error message based on the original error message and values to insert.
+        /// The start tag used to identify a template.
+        /// </summary>
+        internal const string START_TAG = "[";
+
+        /// <summary>
+        /// The end tag used to identify a template.
+        /// </summary>
+        internal const string END_TAG = "]";
+
+        /// <summary>
+        /// The template value to insert in a templated assertion error message for the expected value.
+        /// </summary>
+        internal const string TEMPLATE_EXPECTED_VALUE = "expected";
+
+        /// <summary>
+        /// The template value to insert in a templated assertion error message for the actual value.
+        /// </summary>
+        internal const string TEMPLATE_ACTUAL_VALUE = "actual";
+
+        /// <summary>
+        /// Builds an error message based on the original assertion error message and values to insert.
         /// </summary>
         /// <param name="originalMessage">The original error message.</param>
         /// <param name="expectedValue">The expected assertion value to insert in the message.</param>
@@ -36,12 +57,12 @@ namespace RestAssured.Response.Logging
         {
             var values = new Dictionary<string, object>()
                 {
-                    { "expected", expectedValue },
-                    { "actual", actualValue },
+                    { TEMPLATE_EXPECTED_VALUE, expectedValue },
+                    { TEMPLATE_ACTUAL_VALUE, actualValue },
                 };
 
             StubbleVisitorRenderer renderer = new StubbleBuilder()
-                .Configure(builder => builder.SetDefaultTags(new Tags("[", "]")))
+                .Configure(builder => builder.SetDefaultTags(new Tags(START_TAG, END_TAG)))
                 .Build();
 
             return renderer.Render(originalMessage, values);
