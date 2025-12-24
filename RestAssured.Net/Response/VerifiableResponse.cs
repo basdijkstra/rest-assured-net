@@ -15,8 +15,16 @@
 // </copyright>
 namespace RestAssured.Response
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Net;
+    using System.Net.Http;
+    using System.Net.Http.Headers;
+    using System.Xml;
+    using System.Xml.Schema;
     using HtmlAgilityPack;
-    using Microsoft.AspNetCore.Http;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     using NHamcrest;
@@ -30,15 +38,6 @@ namespace RestAssured.Response
     using Stubble.Core;
     using Stubble.Core.Builders;
     using Stubble.Core.Classes;
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Net;
-    using System.Net.Http;
-    using System.Net.Http.Headers;
-    using System.Xml;
-    using System.Xml.Schema;
 
     /// <summary>
     /// A class representing the response of an HTTP call.
