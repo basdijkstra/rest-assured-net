@@ -119,18 +119,7 @@ namespace RestAssured.Response
             {
                 errorMessage ??= $"Expected status code to be {expectedStatusCode}, but was {(int)this.Response.StatusCode}";
 
-                var values = new Dictionary<string, object>()
-                {
-                    { "expected", expectedStatusCode },
-                    { "actual", (int)this.Response.StatusCode },
-                };
-
-                StubbleVisitorRenderer renderer = new StubbleBuilder()
-                    .Configure(builder => builder.SetDefaultTags(new Tags("[", "]")))
-                    .Build();
-                errorMessage = renderer.Render(errorMessage, values);
-
-                this.FailVerification(errorMessage);
+                this.FailVerification(AssertionMessageBuilder.BuildMessage(errorMessage, expectedStatusCode, (int)this.Response.StatusCode));
             }
 
             return this;
@@ -149,18 +138,7 @@ namespace RestAssured.Response
             {
                 errorMessage ??= $"Expected status code to be {expectedStatusCode}, but was {this.Response.StatusCode}";
 
-                var values = new Dictionary<string, object>()
-                {
-                    { "expected", expectedStatusCode },
-                    { "actual", this.Response.StatusCode },
-                };
-
-                StubbleVisitorRenderer renderer = new StubbleBuilder()
-                    .Configure(builder => builder.SetDefaultTags(new Tags("[", "]")))
-                    .Build();
-                errorMessage = renderer.Render(errorMessage, values);
-
-                this.FailVerification(errorMessage);
+                this.FailVerification(AssertionMessageBuilder.BuildMessage(errorMessage, expectedStatusCode, this.Response.StatusCode));
             }
 
             return this;
@@ -179,18 +157,7 @@ namespace RestAssured.Response
             {
                 errorMessage ??= $"Expected response status code to match '{matcher}', but was {(int)this.Response.StatusCode}";
 
-                var values = new Dictionary<string, object>()
-                {
-                    { "expected", matcher },
-                    { "actual", (int)this.Response.StatusCode },
-                };
-
-                StubbleVisitorRenderer renderer = new StubbleBuilder()
-                    .Configure(builder => builder.SetDefaultTags(new Tags("[", "]")))
-                    .Build();
-                errorMessage = renderer.Render(errorMessage, values);
-
-                this.FailVerification(errorMessage);
+                this.FailVerification(AssertionMessageBuilder.BuildMessage(errorMessage, matcher, (int)this.Response.StatusCode));
             }
 
             return this;

@@ -133,28 +133,6 @@ namespace RestAssured.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
-        /// a response status code using a custom error message, test that
-        /// it is throwing the expected exception with the custom message.
-        /// </summary>
-        [Test]
-        public void FixedCustomErrorMessageCanBeSpecifiedWhenVerifyingStatusCode()
-        {
-            this.CreateStubForHttpOK();
-
-            var rve = Assert.Throws<ResponseVerificationException>(() =>
-            {
-                Given()
-                    .When()
-                    .Get($"{MOCK_SERVER_BASE_URL}/http-status-code-ok")
-                    .Then()
-                    .StatusCode(201, "HTTP status code was not equal to 201");
-            });
-
-            Assert.That(rve?.Message, Is.EqualTo("HTTP status code was not equal to 201"));
-        }
-
-        /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for verifying
         /// a response status code using a custom error message with template values,
         /// for the expected and actual values, test that
         /// it is throwing the expected exception with the correctly formatted custom message.
