@@ -35,9 +35,6 @@ namespace RestAssured.Response
     using RestAssured.Response.Deserialization;
     using RestAssured.Response.Exceptions;
     using RestAssured.Response.Logging;
-    using Stubble.Core;
-    using Stubble.Core.Builders;
-    using Stubble.Core.Classes;
 
     /// <summary>
     /// A class representing the response of an HTTP call.
