@@ -27,18 +27,8 @@ namespace RestAssured.Tests
     [TestFixture]
     public class ResponseHeaderVerificationTests : TestBase
     {
-        private string headerName;
-        private string headerValue;
-
-        /// <summary>
-        /// Initializes the header name and value to be used in the tests.
-        /// </summary>
-        [SetUp]
-        public void InitializeHeaderNameAndValue()
-        {
-            this.headerName = Faker.Lorem.Sentence(Faker.RandomNumber.Next(3, 10)).Replace(".", string.Empty).Replace(" ", "-");
-            this.headerValue = "header_val" + Faker.Lorem.Sentence(Faker.RandomNumber.Next(3, 20)).Replace(".", string.Empty);
-        }
+        private readonly string headerName = "a_header";
+        private readonly string headerValue = "a_value";
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
@@ -54,7 +44,6 @@ namespace RestAssured.Tests
                 .Get($"{MOCK_SERVER_BASE_URL}/custom-response-header")
                 .Then()
                 .StatusCode(200)
-                .And() // Example of using the And() syntactic sugar method in response verification.
                 .Header(this.headerName, this.headerValue);
         }
 
@@ -72,7 +61,7 @@ namespace RestAssured.Tests
                 .Get($"{MOCK_SERVER_BASE_URL}/custom-response-header")
                 .Then()
                 .StatusCode(200)
-                .Header(this.headerName, NHamcrest.Contains.String("header_val"));
+                .Header(this.headerName, NHamcrest.Is.EqualTo(this.headerValue));
         }
 
         /// <summary>
@@ -116,29 +105,7 @@ namespace RestAssured.Tests
                     .Header(this.headerName, "value_does_not_match");
             });
 
-            Assert.That(rve?.Message, Is.EqualTo("Expected value for response header with name '" + this.headerName + "' to be 'value_does_not_match', but was '" + this.headerValue + "'."));
-        }
-
-        /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for verifying
-        /// that the correct exception is thrown when a header value does not match the given NHamcrest matcher.
-        /// </summary>
-        [Test]
-        public void HeaderValueNotMatchingTheSpecifiedNHamcrestMatcherThrowsTheExpectedException()
-        {
-            this.CreateStubForCustomSingleResponseHeader();
-
-            var rve = Assert.Throws<ResponseVerificationException>(() =>
-            {
-                Given()
-                    .When()
-                    .Get($"{MOCK_SERVER_BASE_URL}/custom-response-header")
-                    .Then()
-                    .StatusCode(200)
-                    .Header(this.headerName, NHamcrest.Contains.String("not_found"));
-            });
-
-            Assert.That(rve?.Message, Is.EqualTo("Expected value for response header with name '" + this.headerName + "' to match 'a string containing \"not_found\"', but was '" + this.headerValue + "'."));
+            Assert.That(rve?.Message, Is.EqualTo($"Expected value for response header with name '{this.headerName}' to match '\"value_does_not_match\"', but was '{this.headerValue}'."));
         }
 
         /// <summary>
@@ -195,6 +162,28 @@ namespace RestAssured.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
+        /// that the correct exception is thrown when the response does not have a Content-Type header.
+        /// </summary>
+        [Test]
+        public void NoContentTypeHeaderThrowsTheExpectedException()
+        {
+            this.CreateStubForNoResponseContentTypeHeader();
+
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                    .When()
+                    .Get($"{MOCK_SERVER_BASE_URL}/no-response-content-type-header")
+                    .Then()
+                    .StatusCode(200)
+                    .ContentType("application/something");
+            });
+
+            Assert.That(rve?.Message, Is.EqualTo("Response Content-Type header could not be found."));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
         /// that the correct exception is thrown when the response content type does not equal the specified value.
         /// </summary>
         [Test]
@@ -212,29 +201,7 @@ namespace RestAssured.Tests
                     .ContentType("application/something_else");
             });
 
-            Assert.That(rve?.Message, Is.EqualTo("Expected value for response Content-Type header to be 'application/something_else', but was 'application/something'."));
-        }
-
-        /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for verifying
-        /// that the correct exception is thrown when the response content type does not equal the specified value.
-        /// </summary>
-        [Test]
-        public void ContentTypeHeaderValueNotMatchingNHamcrestMatcherThrowsTheExpectedException()
-        {
-            this.CreateStubForCustomResponseContentTypeHeader();
-
-            var rve = Assert.Throws<ResponseVerificationException>(() =>
-            {
-                Given()
-                    .When()
-                    .Get($"{MOCK_SERVER_BASE_URL}/custom-response-content-type-header")
-                    .Then()
-                    .StatusCode(200)
-                    .ContentType(NHamcrest.Contains.String("not_found"));
-            });
-
-            Assert.That(rve?.Message, Is.EqualTo("Expected value for response Content-Type header to match 'a string containing \"not_found\"', but was 'application/something'."));
+            Assert.That(rve?.Message, Is.EqualTo("Expected value for response Content-Type header to match '\"application/something_else\"', but was 'application/something'."));
         }
 
         /// <summary>
@@ -256,6 +223,16 @@ namespace RestAssured.Tests
             this.Server?.Given(Request.Create().WithPath("/custom-response-content-type-header").UsingGet())
                 .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/something")
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the no response content type example.
+        /// </summary>
+        private void CreateStubForNoResponseContentTypeHeader()
+        {
+            this.Server?.Given(Request.Create().WithPath("/no-response-content-type-header").UsingGet())
+                .RespondWith(Response.Create()
                 .WithStatusCode(200));
         }
 

@@ -169,19 +169,7 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when the header does not exist, or when the header value does not equal the supplied expected value.</exception>
         public VerifiableResponse Header(string name, string expectedValue)
         {
-            if (!this.Response.Headers.TryGetValues(name, out IEnumerable<string>? values))
-            {
-                this.FailVerification($"Expected header with name '{name}' to be in the response, but it could not be found.");
-            }
-
-            string firstValue = values!.First();
-
-            if (!firstValue.Equals(expectedValue))
-            {
-                this.FailVerification($"Expected value for response header with name '{name}' to be '{expectedValue}', but was '{firstValue}'.");
-            }
-
-            return this;
+            return this.Header(name, Is.EqualTo(expectedValue));
         }
 
         /// <summary>
@@ -218,19 +206,7 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when the "Content-Type" header does not exist, or when the header value does not equal the supplied expected value.</exception>
         public VerifiableResponse ContentType(string expectedContentType)
         {
-            MediaTypeHeaderValue? actualContentType = this.Response.Content.Headers.ContentType;
-
-            if (actualContentType == null)
-            {
-                this.FailVerification("Response Content-Type header could not be found.");
-            }
-
-            if (!actualContentType!.ToString().Equals(expectedContentType))
-            {
-                this.FailVerification($"Expected value for response Content-Type header to be '{expectedContentType}', but was '{actualContentType}'.");
-            }
-
-            return this;
+            return this.ContentType(Is.EqualTo(expectedContentType));
         }
 
         /// <summary>
