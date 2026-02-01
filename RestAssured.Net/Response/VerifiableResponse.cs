@@ -112,14 +112,7 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when the actual status code does not match the expected one.</exception>
         public VerifiableResponse StatusCode(int expectedStatusCode, string? errorMessage = null)
         {
-            if (expectedStatusCode != (int)this.Response.StatusCode)
-            {
-                errorMessage ??= $"Expected status code to be {expectedStatusCode}, but was {(int)this.Response.StatusCode}";
-
-                this.FailVerification(AssertionMessageBuilder.BuildMessage(errorMessage, expectedStatusCode, (int)this.Response.StatusCode));
-            }
-
-            return this;
+            return this.StatusCode(Is.EqualTo(expectedStatusCode), errorMessage);
         }
 
         /// <summary>
@@ -131,14 +124,7 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when the actual status code does not match the expected one.</exception>
         public VerifiableResponse StatusCode(HttpStatusCode expectedStatusCode, string? errorMessage = null)
         {
-            if (!expectedStatusCode.Equals(this.Response.StatusCode))
-            {
-                errorMessage ??= $"Expected status code to be {expectedStatusCode}, but was {this.Response.StatusCode}";
-
-                this.FailVerification(AssertionMessageBuilder.BuildMessage(errorMessage, expectedStatusCode, this.Response.StatusCode));
-            }
-
-            return this;
+            return this.StatusCode(Is.EqualTo(expectedStatusCode), errorMessage);
         }
 
         /// <summary>
@@ -155,6 +141,25 @@ namespace RestAssured.Response
                 errorMessage ??= $"Expected response status code to match '{matcher}', but was {(int)this.Response.StatusCode}";
 
                 this.FailVerification(AssertionMessageBuilder.BuildMessage(errorMessage, matcher, (int)this.Response.StatusCode));
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Verifies that the actual status code is equal to an expected value.
+        /// </summary>
+        /// <param name="matcher">The NHamcrest matcher to evaluate.</param>
+        /// <param name="errorMessage">A custom error message to be used when the verification fails.</param>
+        /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
+        /// <exception cref="ResponseVerificationException">Thrown when the actual status code does not match the expected one.</exception>
+        public VerifiableResponse StatusCode(IMatcher<HttpStatusCode> matcher, string? errorMessage = null)
+        {
+            if (!matcher.Matches(this.Response.StatusCode))
+            {
+                errorMessage ??= $"Expected response status code to match '{matcher}', but was {this.Response.StatusCode}";
+
+                this.FailVerification(AssertionMessageBuilder.BuildMessage(errorMessage, matcher, this.Response.StatusCode));
             }
 
             return this;
