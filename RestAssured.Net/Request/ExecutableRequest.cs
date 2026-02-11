@@ -24,8 +24,6 @@ namespace RestAssured.Request
     using System.Net.Http.Headers;
     using System.Text;
     using System.Threading.Tasks;
-    using System.Xml.Serialization;
-    using Microsoft.AspNetCore.StaticFiles;
     using Microsoft.AspNetCore.WebUtilities;
     using Newtonsoft.Json;
     using RestAssured.Configuration;
@@ -372,7 +370,7 @@ namespace RestAssured.Request
             try
             {
                 StreamContent fileContents = new StreamContent(fileName.OpenRead());
-                fileContents.Headers.ContentType = contentType ??= this.GetContentTypeForFile(fileName);
+                fileContents.Headers.ContentType = contentType ??= RequestBodyFactory.GetContentTypeForFile(fileName);
 
                 this.multipartFormDataContent.Add(fileContents, controlName, fileName.Name);
             }
@@ -717,7 +715,17 @@ namespace RestAssured.Request
             // Apply other settings provided in the request specification to the request
             this.request = RequestSpecificationProcessor.Apply(this.requestSpecification!, this.request);
 
-            this.request.Content = this.CreateRequestBody();
+            var bodySettings = new RequestBodySettings(
+                this.requestSpecification?.ContentType ?? this.contentTypeHeader,
+                this.requestSpecification?.ContentEncoding ?? this.contentEncoding,
+                this.stripCharset,
+                this.requestSpecification?.JsonSerializerSettings ?? this.jsonSerializerSettings);
+
+            this.request.Content = RequestBodyFactory.Create(
+                this.multipartFormDataContent,
+                this.formData,
+                this.requestBody,
+                bodySettings);
 
             // SSL validation can be disabled either in a request or through a RequestSpecification
             bool disableSslChecks = this.disableSslCertificateValidation || (this.requestSpecification?.DisableSslCertificateValidation ?? false);
@@ -817,80 +825,6 @@ namespace RestAssured.Request
                 // Windows, relative path
                 return RequestSpecificationProcessor.BuildUriFromRequestSpec(requestSpec, endpoint);
             }
-        }
-
-        /// <summary>
-        /// Creates the body payload for the request.
-        /// </summary>
-        /// <returns>The request body as an object of type <see cref="HttpContent"/>.</returns>
-        private HttpContent CreateRequestBody()
-        {
-            if (this.multipartFormDataContent != null)
-            {
-                return this.multipartFormDataContent;
-            }
-
-            if (this.formData != null)
-            {
-                return new FormUrlEncodedContent(this.formData);
-            }
-
-            string requestBodyAsString = this.Serialize(this.requestBody, this.requestSpecification?.ContentType ?? this.contentTypeHeader);
-
-            var stringContent = new StringContent(requestBodyAsString, this.requestSpecification?.ContentEncoding ?? this.contentEncoding, this.requestSpecification?.ContentType ?? this.contentTypeHeader);
-
-            if (this.stripCharset)
-            {
-                stringContent.Headers.ContentType!.CharSet = null;
-            }
-
-            return stringContent;
-        }
-
-        /// <summary>
-        /// Serializes the request body set for the request object to JSON, if necessary.
-        /// </summary>
-        /// <param name="body">The request body object.</param>
-        /// <param name="contentType">The request Content-Type header value.</param>
-        /// <returns>Either the body itself (if the body is a string), or a serialized version of the body.</returns>
-        private string Serialize(object body, string contentType)
-        {
-            if (body is string)
-            {
-                return (string)body;
-            }
-
-            if (contentType.Contains("json"))
-            {
-                return JsonConvert.SerializeObject(body, this.requestSpecification?.JsonSerializerSettings ?? this.jsonSerializerSettings);
-            }
-
-            if (contentType.Contains("xml"))
-            {
-                using (StringWriter sw = new StringWriter())
-                {
-                    XmlSerializer xmlSerializer = new XmlSerializer(body.GetType());
-                    xmlSerializer.Serialize(sw, body);
-                    return sw.ToString();
-                }
-            }
-
-            throw new RequestCreationException(
-                $"Could not determine how to serialize request based on specified content type '{contentType}'");
-        }
-
-        private MediaTypeHeaderValue GetContentTypeForFile(FileInfo fileName)
-        {
-            FileExtensionContentTypeProvider provider = new FileExtensionContentTypeProvider();
-
-            string contentType;
-
-            if (!provider.TryGetContentType(fileName.FullName, out contentType!))
-            {
-                contentType = "application/octet-stream";
-            }
-
-            return MediaTypeHeaderValue.Parse(contentType);
         }
     }
 }
