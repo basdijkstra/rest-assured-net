@@ -23,17 +23,12 @@ namespace RestAssured.Request
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Text;
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.WebUtilities;
     using Newtonsoft.Json;
     using RestAssured.Configuration;
     using RestAssured.Logging;
     using RestAssured.Request.Builders;
     using RestAssured.Request.Exceptions;
     using RestAssured.Response;
-    using Stubble.Core;
-    using Stubble.Core.Builders;
-    using Stubble.Core.Classes;
 
     /// <summary>
     /// The request to be sent.
@@ -676,155 +671,40 @@ namespace RestAssured.Request
         }
 
         /// <summary>
-        /// Sends the request object to the <see cref="HttpRequestProcessor"/>.
+        /// Sends the request object to the <see cref="RequestExecutor"/>.
         /// </summary>
         /// <param name="httpMethod">The HTTP method to use in the request.</param>
         /// <param name="endpoint">The endpoint to be used in the request.</param>
         /// <returns>An object representing the HTTP response corresponding to the request.</returns>
         private VerifiableResponse Send(HttpMethod httpMethod, string endpoint)
         {
-            // Set the HTTP method for the request
-            this.request.Method = httpMethod;
-
-            // Replace any path parameter placeholders that have been specified with their values
-            if (this.pathParams.Count > 0)
+            var context = new RequestContext
             {
-                StubbleVisitorRenderer renderer = new StubbleBuilder()
-                    .Configure(builder => builder.SetDefaultTags(new Tags("[", "]")))
-                    .Build();
-                endpoint = renderer.Render(endpoint, this.pathParams);
-            }
-
-            // Build the Uri for the request
-            this.request.RequestUri = this.BuildUri(this.requestSpecification!, endpoint);
-
-            // Add any query parameters that have been specified and create the endpoint
-            if (this.requestSpecification != null)
-            {
-                foreach (KeyValuePair<string, string> param in this.requestSpecification.QueryParams)
-                {
-                    this.request.RequestUri = new Uri(QueryHelpers.AddQueryString(this.request.RequestUri.ToString(), param.Key, param.Value));
-                }
-            }
-
-            foreach (KeyValuePair<string, string> param in this.queryParams)
-            {
-                this.request.RequestUri = new Uri(QueryHelpers.AddQueryString(this.request.RequestUri.ToString(), param.Key, param.Value));
-            }
-
-            // Apply other settings provided in the request specification to the request
-            this.request = RequestSpecificationProcessor.Apply(this.requestSpecification!, this.request);
-
-            var bodySettings = new RequestBodySettings(
-                this.requestSpecification?.ContentType ?? this.contentTypeHeader,
-                this.requestSpecification?.ContentEncoding ?? this.contentEncoding,
-                this.stripCharset,
-                this.requestSpecification?.JsonSerializerSettings ?? this.jsonSerializerSettings);
-
-            this.request.Content = RequestBodyFactory.Create(
-                this.multipartFormDataContent,
-                this.formData,
-                this.requestBody,
-                bodySettings);
-
-            // SSL validation can be disabled either in a request or through a RequestSpecification
-            bool disableSslChecks = this.disableSslCertificateValidation || (this.requestSpecification?.DisableSslCertificateValidation ?? false);
-
-            // Create the HTTP request processor that sends the request and set its properties
-            HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor(this.httpClient, this.proxy ?? this.requestSpecification?.Proxy, disableSslChecks, this.networkCredential);
-
-            // Timeout set in test has precedence over timeout set in request specification
-            // If both are null, use default timeout for HttpClient (= 100.000 milliseconds).
-            if (this.timeout != null)
-            {
-                httpRequestProcessor.SetTimeout((TimeSpan)this.timeout);
-            }
-            else if (this.requestSpecification != null)
-            {
-                if (this.requestSpecification.Timeout != null)
-                {
-                    httpRequestProcessor.SetTimeout((TimeSpan)this.requestSpecification.Timeout);
-                }
-            }
-
-            // HttpCompletionOption set in the test takes precedence over the value in the RequestSpecification
-            // Only if it's still the default (so not set in the test), overwrite it with the value in the RequestSpecification.
-            if (this.requestSpecification != null && this.httpCompletionOption.Equals(HttpCompletionOption.ResponseContentRead))
-            {
-                this.httpCompletionOption = this.requestSpecification.HttpCompletionOption;
-            }
-
-            var legacyLogConfiguration = new LogConfiguration
-            {
-                RequestLogLevel = (RequestLogLevel)this.RequestLoggingLevel,
-                ResponseLogLevel = (ResponseLogLevel)this.ResponseLoggingLevel,
+                HttpClient = this.httpClient,
+                Request = this.request,
+                CookieCollection = this.cookieCollection,
+                RequestSpecification = this.requestSpecification,
+                PathParams = this.pathParams,
+                QueryParams = this.queryParams,
+                RequestBody = this.requestBody,
+                ContentTypeHeader = this.contentTypeHeader,
+                ContentEncoding = this.contentEncoding,
+                StripCharset = this.stripCharset,
+                JsonSerializerSettings = this.jsonSerializerSettings,
+                FormData = this.formData,
+                MultipartFormDataContent = this.multipartFormDataContent,
+                DisableSslCertificateValidation = this.disableSslCertificateValidation,
+                Proxy = this.proxy,
+                NetworkCredential = this.networkCredential,
+                Timeout = this.timeout,
+                HttpCompletionOption = this.httpCompletionOption,
+                RequestLoggingLevel = this.RequestLoggingLevel,
+                ResponseLoggingLevel = this.ResponseLoggingLevel,
                 SensitiveRequestHeadersAndCookies = this.sensitiveRequestHeadersAndCookies,
-                SensitiveResponseHeadersAndCookies = new List<string>(),
+                LogConfiguration = this.LogConfiguration,
             };
 
-            if (this.requestSpecification != null)
-            {
-                // Apply logging settings from the request specification,
-                // but only if they haven't been set for this specific request.
-                this.LogConfiguration ??= this.requestSpecification.LogConfiguration;
-            }
-
-            // Add header and cookie values to be masked specified in RequestSpecification to the list
-            if (this.requestSpecification != null)
-            {
-                this.sensitiveRequestHeadersAndCookies.AddRange(this.requestSpecification.SensitiveRequestHeadersAndCookies);
-            }
-
-            var logger = new RequestResponseLogger(this.LogConfiguration ?? legacyLogConfiguration);
-
-            // RequestLogger.LogToConsole(this.request, this.RequestLoggingLevel, this.cookieCollection, this.sensitiveRequestHeadersAndCookies);
-            logger.LogRequest(this.request, this.cookieCollection);
-
-            try
-            {
-                VerifiableResponse verifiableResponse = httpRequestProcessor.Send(this.request, this.cookieCollection, this.httpCompletionOption).GetAwaiter().GetResult();
-                verifiableResponse = logger.LogResponse(verifiableResponse);
-                return verifiableResponse;
-            }
-            catch (TaskCanceledException)
-            {
-                throw new HttpRequestProcessorException($"Request timeout of {this.timeout ?? this.requestSpecification?.Timeout ?? TimeSpan.FromSeconds(100)} exceeded.");
-            }
-            catch (Exception ex)
-            {
-                throw new HttpRequestProcessorException($"Unhandled exception {ex.Message}");
-            }
-        }
-
-        /// <summary>
-        /// Builds the URI to be used in the request from the current endpoint and the <see cref="RequestSpecification"/>.
-        /// </summary>
-        /// <param name="requestSpec">The <see cref="RequestSpecification"/> to use when constructing the endpoint.</param>
-        /// <param name="endpoint">The endpoint as supplied in the test.</param>
-        /// <returns>The modified endpoint to use in the request.</returns>
-        private Uri BuildUri(RequestSpecification requestSpec, string endpoint)
-        {
-            try
-            {
-                Uri uri = new Uri(endpoint);
-
-                // '/path' does not throw an UriFormatException on Linux and MacOS,
-                // but creates a Uri 'file://path', which we do not want to use here.
-                // See also https://github.com/dotnet/runtime/issues/27813
-                if (uri.Scheme != "file")
-                {
-                    // All OSes, absolute path
-                    return uri;
-                }
-
-                // MacOS, Unix, relative path
-                return RequestSpecificationProcessor.BuildUriFromRequestSpec(requestSpec, endpoint);
-            }
-            catch (UriFormatException)
-            {
-                // Windows, relative path
-                return RequestSpecificationProcessor.BuildUriFromRequestSpec(requestSpec, endpoint);
-            }
+            return RequestExecutor.Send(httpMethod, endpoint, context);
         }
     }
 }
