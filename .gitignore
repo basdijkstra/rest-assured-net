@@ -292,3 +292,6 @@ build
 
 # SpecFlow auto generated files
 TestProject.OpenSDK.SpecFlowExamples/SpecFlow
+
+# Local preferences for Claude Code
+.claude/*.local.json
