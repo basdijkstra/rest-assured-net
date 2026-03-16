@@ -581,21 +581,13 @@ namespace RestAssured.Response
                 this.FailVerification($"JsonPath expression '{path}' did not yield any results.");
             }
 
-            bool useCollectionMatcher = resultingElement!.GetType().Equals(typeof(JArray));
+            T valueToMatch = resultingElement!.GetType().Equals(typeof(JArray))
+                ? (T)resultingElement!.ToObject<ICollection<T>>() !
+                : resultingElement!.ToObject<T>() !;
 
-            if (useCollectionMatcher)
+            if (!matcher.Matches(valueToMatch))
             {
-                if (!matcher.Matches((T)resultingElement!.ToObject<ICollection<T>>() !))
-                {
-                    this.FailVerification($"Expected element selected by '{path}' to match '{matcher}' but was '{resultingElement}'");
-                }
-            }
-            else
-            {
-                if (!matcher.Matches(resultingElement!.ToObject<T>() !))
-                {
-                    this.FailVerification($"Expected element selected by '{path}' to match '{matcher}' but was '{resultingElement}'");
-                }
+                this.FailVerification($"Expected element selected by '{path}' to match '{matcher}' but was '{resultingElement}'");
             }
         }
 
