@@ -312,23 +312,15 @@ namespace RestAssured.Response
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse Body<T>(string path, IMatcher<T> matcher, VerifyAs verifyAs = VerifyAs.UseResponseContentTypeHeaderValue)
         {
-            string responseBodyAsString = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-
-            string responseMediaType = this.Response.Content.Headers.ContentType?.MediaType ?? string.Empty;
-
-            SupportedContentType contentType = new ContentTypeUtils().DetermineResponseMediaTypeForResponse(responseMediaType, verifyAs);
+            var (responseBodyAsString, contentType) = this.ResolveBodyAndContentType(verifyAs);
 
             if (contentType.Equals(SupportedContentType.Json))
             {
                 this.VerifyJsonBody(path, matcher, responseBodyAsString);
             }
-            else if (contentType.Equals(SupportedContentType.Xml))
+            else
             {
-                this.VerifyXmlBody(path, matcher, responseBodyAsString);
-            }
-            else if (contentType.Equals(SupportedContentType.Html))
-            {
-                this.VerifyHtmlBody(path, matcher, responseBodyAsString);
+                this.VerifyMarkupBody(path, matcher, responseBodyAsString, contentType);
             }
 
             return this;
@@ -344,23 +336,15 @@ namespace RestAssured.Response
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse Body<T>(string path, IMatcher<IEnumerable<T>> matcher, VerifyAs verifyAs = VerifyAs.UseResponseContentTypeHeaderValue)
         {
-            string responseBodyAsString = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-
-            string responseMediaType = this.Response.Content.Headers.ContentType?.MediaType ?? string.Empty;
-
-            SupportedContentType contentType = new ContentTypeUtils().DetermineResponseMediaTypeForResponse(responseMediaType, verifyAs);
+            var (responseBodyAsString, contentType) = this.ResolveBodyAndContentType(verifyAs);
 
             if (contentType.Equals(SupportedContentType.Json))
             {
                 this.VerifyJsonElements(path, matcher, responseBodyAsString);
             }
-            else if (contentType.Equals(SupportedContentType.Xml))
+            else
             {
-                this.VerifyXmlElements(path, matcher, responseBodyAsString);
-            }
-            else if (contentType.Equals(SupportedContentType.Html))
-            {
-                this.VerifyHtmlElements(path, matcher, responseBodyAsString);
+                this.VerifyMarkupElements(path, matcher, responseBodyAsString, contentType);
             }
 
             return this;
@@ -631,56 +615,6 @@ namespace RestAssured.Response
             }
         }
 
-        private void VerifyXmlBody<T>(string path, IMatcher<T> matcher, string responseBodyAsString)
-        {
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(responseBodyAsString);
-            XmlNode? xmlElement = xmlDoc.SelectSingleNode(path);
-
-            if (xmlElement == null)
-            {
-                this.FailVerification($"XPath expression '{path}' did not yield any results.");
-            }
-
-            // Try and cast the element value to an object of the type used in the matcher
-            try
-            {
-                if (!matcher.Matches((T)Convert.ChangeType(xmlElement!.InnerText, typeof(T))))
-                {
-                    this.FailVerification($"Expected element selected by '{path}' to match '{matcher}' but was '{xmlElement.InnerText}'");
-                }
-            }
-            catch (FormatException)
-            {
-                this.FailVerification($"Response element value {xmlElement!.InnerText} cannot be converted to value of type '{typeof(T)}'");
-            }
-        }
-
-        private void VerifyHtmlBody<T>(string path, IMatcher<T> matcher, string responseBodyAsString)
-        {
-            HtmlDocument htmlDoc = new HtmlDocument();
-            htmlDoc.LoadHtml(responseBodyAsString);
-            HtmlNode? htmlElement = htmlDoc.DocumentNode.SelectSingleNode(path);
-
-            if (htmlElement == null)
-            {
-                this.FailVerification($"XPath expression '{path}' did not yield any results.");
-            }
-
-            // Try and cast the element value to an object of the type used in the matcher
-            try
-            {
-                if (!matcher.Matches((T)Convert.ChangeType(htmlElement!.InnerText, typeof(T))))
-                {
-                    this.FailVerification($"Expected element selected by '{path}' to match '{matcher}' but was '{htmlElement.InnerText}'");
-                }
-            }
-            catch (FormatException)
-            {
-                this.FailVerification($"Response element value {htmlElement!.InnerText} cannot be converted to value of type '{typeof(T)}'");
-            }
-        }
-
         private void VerifyJsonElements<T>(string path, IMatcher<IEnumerable<T>> matcher, string responseBodyAsString)
         {
             List<T> elementValues = new List<T>();
@@ -698,24 +632,38 @@ namespace RestAssured.Response
             }
         }
 
-        private void VerifyXmlElements<T>(string path, IMatcher<IEnumerable<T>> matcher, string responseBodyAsString)
+        private void VerifyMarkupBody<T>(string path, IMatcher<T> matcher, string responseBodyAsString, SupportedContentType contentType)
+        {
+            string innerText = this.SelectSingleNodeInnerText(path, responseBodyAsString, contentType);
+
+            // Try and cast the element value to an object of the type used in the matcher
+            try
+            {
+                if (!matcher.Matches((T)Convert.ChangeType(innerText, typeof(T))))
+                {
+                    this.FailVerification($"Expected element selected by '{path}' to match '{matcher}' but was '{innerText}'");
+                }
+            }
+            catch (FormatException)
+            {
+                this.FailVerification($"Response element value {innerText} cannot be converted to value of type '{typeof(T)}'");
+            }
+        }
+
+        private void VerifyMarkupElements<T>(string path, IMatcher<IEnumerable<T>> matcher, string responseBodyAsString, SupportedContentType contentType)
         {
             List<T> elementValues = new List<T>();
 
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(responseBodyAsString);
-            XmlNodeList? xmlElements = xmlDoc.SelectNodes(path);
-
             // Try and cast the element values to an object of the type used in the matcher
-            foreach (XmlNode xmlElement in xmlElements!)
+            foreach (string innerText in this.SelectNodeInnerTexts(path, responseBodyAsString, contentType))
             {
                 try
                 {
-                    elementValues.Add((T)Convert.ChangeType(xmlElement.InnerText, typeof(T)));
+                    elementValues.Add((T)Convert.ChangeType(innerText, typeof(T)));
                 }
                 catch (FormatException)
                 {
-                    this.FailVerification($"Response element value {xmlElement.InnerText} cannot be converted to object of type {typeof(T)}");
+                    this.FailVerification($"Response element value {innerText} cannot be converted to object of type {typeof(T)}");
                 }
             }
 
@@ -725,31 +673,51 @@ namespace RestAssured.Response
             }
         }
 
-        private void VerifyHtmlElements<T>(string path, IMatcher<IEnumerable<T>> matcher, string responseBodyAsString)
+        private string SelectSingleNodeInnerText(string path, string responseBodyAsString, SupportedContentType contentType)
         {
-            List<T> elementValues = new List<T>();
+            if (contentType == SupportedContentType.Xml)
+            {
+                XmlDocument xmlDoc = new XmlDocument();
+                xmlDoc.LoadXml(responseBodyAsString);
+                XmlNode? node = xmlDoc.SelectSingleNode(path);
+                if (node == null)
+                {
+                    this.FailVerification($"XPath expression '{path}' did not yield any results.");
+                }
+
+                return node!.InnerText;
+            }
 
             HtmlDocument htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(responseBodyAsString);
-            HtmlNodeCollection? htmlElements = htmlDoc.DocumentNode.SelectNodes(path);
-
-            // Try and cast the element values to an object of the type used in the matcher
-            foreach (HtmlNode htmlElement in htmlElements!)
+            HtmlNode? htmlNode = htmlDoc.DocumentNode.SelectSingleNode(path);
+            if (htmlNode == null)
             {
-                try
-                {
-                    elementValues.Add((T)Convert.ChangeType(htmlElement.InnerText, typeof(T)));
-                }
-                catch (FormatException)
-                {
-                    this.FailVerification($"Response element value {htmlElement.InnerText} cannot be converted to object of type {typeof(T)}");
-                }
+                this.FailVerification($"XPath expression '{path}' did not yield any results.");
             }
 
-            if (!matcher.Matches(elementValues))
+            return htmlNode!.InnerText;
+        }
+
+        private IEnumerable<string> SelectNodeInnerTexts(string path, string responseBodyAsString, SupportedContentType contentType)
+        {
+            if (contentType == SupportedContentType.Xml)
             {
-                this.FailVerification($"Expected elements selected by '{path}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
+                XmlDocument xmlDoc = new XmlDocument();
+                xmlDoc.LoadXml(responseBodyAsString);
+                return xmlDoc.SelectNodes(path)!.Cast<XmlNode>().Select(n => n.InnerText).ToList();
             }
+
+            HtmlDocument htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(responseBodyAsString);
+            return htmlDoc.DocumentNode.SelectNodes(path)!.Cast<HtmlNode>().Select(n => n.InnerText).ToList();
+        }
+
+        private (string body, SupportedContentType contentType) ResolveBodyAndContentType(VerifyAs verifyAs)
+        {
+            string body = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            string mediaType = this.Response.Content.Headers.ContentType?.MediaType ?? string.Empty;
+            return (body, new ContentTypeUtils().DetermineResponseMediaTypeForResponse(mediaType, verifyAs));
         }
 
         private void FailVerification(string exceptionMessage)
