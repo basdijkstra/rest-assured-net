@@ -344,77 +344,23 @@ namespace RestAssured.Response
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse Body<T>(string path, IMatcher<IEnumerable<T>> matcher, VerifyAs verifyAs = VerifyAs.UseResponseContentTypeHeaderValue)
         {
-            List<T> elementValues = new List<T>();
-
             string responseBodyAsString = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
             string responseMediaType = this.Response.Content.Headers.ContentType?.MediaType ?? string.Empty;
 
-            var contentType = new ContentTypeUtils().DetermineResponseMediaTypeForResponse(responseMediaType, verifyAs);
+            SupportedContentType contentType = new ContentTypeUtils().DetermineResponseMediaTypeForResponse(responseMediaType, verifyAs);
 
             if (contentType.Equals(SupportedContentType.Json))
             {
-                IEnumerable<JToken>? resultingElements = JToken.Parse(responseBodyAsString).SelectTokens(path);
-
-                foreach (JToken element in resultingElements)
-                {
-                    elementValues.Add(element.ToObject<T>() !);
-                }
-
-                if (!matcher.Matches(elementValues))
-                {
-                    this.FailVerification($"Expected elements selected by '{path}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
-                }
+                this.VerifyJsonElements(path, matcher, responseBodyAsString);
             }
             else if (contentType.Equals(SupportedContentType.Xml))
             {
-                XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.LoadXml(responseBodyAsString);
-                XmlNodeList? xmlElements = xmlDoc.SelectNodes(path);
-
-                // Try and cast the element values to an object of the type used in the matcher
-                foreach (XmlNode xmlElement in xmlElements!)
-                {
-                    try
-                    {
-                        T objectFromElementValue = (T)Convert.ChangeType(xmlElement.InnerText, typeof(T));
-                        elementValues.Add(objectFromElementValue);
-                    }
-                    catch (FormatException)
-                    {
-                        this.FailVerification($"Response element value {xmlElement.InnerText} cannot be converted to object of type {typeof(T)}");
-                    }
-                }
-
-                if (!matcher.Matches(elementValues))
-                {
-                    this.FailVerification($"Expected elements selected by '{path}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
-                }
+                this.VerifyXmlElements(path, matcher, responseBodyAsString);
             }
             else if (contentType.Equals(SupportedContentType.Html))
             {
-                HtmlDocument htmlDoc = new HtmlDocument();
-                htmlDoc.LoadHtml(responseBodyAsString);
-                HtmlNodeCollection? htmlElements = htmlDoc.DocumentNode.SelectNodes(path);
-
-                // Try and cast the element values to an object of the type used in the matcher
-                foreach (HtmlNode htmlElement in htmlElements!)
-                {
-                    try
-                    {
-                        T objectFromElementValue = (T)Convert.ChangeType(htmlElement.InnerText, typeof(T));
-                        elementValues.Add(objectFromElementValue);
-                    }
-                    catch (FormatException)
-                    {
-                        this.FailVerification($"Response element value {htmlElement.InnerText} cannot be converted to object of type {typeof(T)}");
-                    }
-                }
-
-                if (!matcher.Matches(elementValues))
-                {
-                    this.FailVerification($"Expected elements selected by '{path}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
-                }
+                this.VerifyHtmlElements(path, matcher, responseBodyAsString);
             }
 
             return this;
@@ -732,6 +678,77 @@ namespace RestAssured.Response
             catch (FormatException)
             {
                 this.FailVerification($"Response element value {htmlElement!.InnerText} cannot be converted to value of type '{typeof(T)}'");
+            }
+        }
+
+        private void VerifyJsonElements<T>(string path, IMatcher<IEnumerable<T>> matcher, string responseBodyAsString)
+        {
+            List<T> elementValues = new List<T>();
+
+            IEnumerable<JToken> resultingElements = JToken.Parse(responseBodyAsString).SelectTokens(path);
+
+            foreach (JToken element in resultingElements)
+            {
+                elementValues.Add(element.ToObject<T>() !);
+            }
+
+            if (!matcher.Matches(elementValues))
+            {
+                this.FailVerification($"Expected elements selected by '{path}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
+            }
+        }
+
+        private void VerifyXmlElements<T>(string path, IMatcher<IEnumerable<T>> matcher, string responseBodyAsString)
+        {
+            List<T> elementValues = new List<T>();
+
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(responseBodyAsString);
+            XmlNodeList? xmlElements = xmlDoc.SelectNodes(path);
+
+            // Try and cast the element values to an object of the type used in the matcher
+            foreach (XmlNode xmlElement in xmlElements!)
+            {
+                try
+                {
+                    elementValues.Add((T)Convert.ChangeType(xmlElement.InnerText, typeof(T)));
+                }
+                catch (FormatException)
+                {
+                    this.FailVerification($"Response element value {xmlElement.InnerText} cannot be converted to object of type {typeof(T)}");
+                }
+            }
+
+            if (!matcher.Matches(elementValues))
+            {
+                this.FailVerification($"Expected elements selected by '{path}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
+            }
+        }
+
+        private void VerifyHtmlElements<T>(string path, IMatcher<IEnumerable<T>> matcher, string responseBodyAsString)
+        {
+            List<T> elementValues = new List<T>();
+
+            HtmlDocument htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(responseBodyAsString);
+            HtmlNodeCollection? htmlElements = htmlDoc.DocumentNode.SelectNodes(path);
+
+            // Try and cast the element values to an object of the type used in the matcher
+            foreach (HtmlNode htmlElement in htmlElements!)
+            {
+                try
+                {
+                    elementValues.Add((T)Convert.ChangeType(htmlElement.InnerText, typeof(T)));
+                }
+                catch (FormatException)
+                {
+                    this.FailVerification($"Response element value {htmlElement.InnerText} cannot be converted to object of type {typeof(T)}");
+                }
+            }
+
+            if (!matcher.Matches(elementValues))
+            {
+                this.FailVerification($"Expected elements selected by '{path}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
             }
         }
 
