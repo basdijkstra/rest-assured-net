@@ -696,7 +696,16 @@ namespace RestAssured.Response
         {
             string body = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
             string mediaType = this.Response.Content.Headers.ContentType?.MediaType ?? string.Empty;
-            return new ResolvedBody(body, new ContentTypeUtils().DetermineResponseMediaTypeForResponse(mediaType, verifyAs));
+
+            try
+            {
+                return new ResolvedBody(body, new ContentTypeUtils().DetermineResponseMediaTypeForResponse(mediaType, verifyAs));
+            }
+            catch (ExtractionException ee)
+            {
+                this.FailVerification(ee.Message);
+                return default;
+            }
         }
 
         private readonly record struct ResolvedBody(string Content, SupportedContentType ContentType);
