@@ -312,15 +312,15 @@ namespace RestAssured.Response
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse Body<T>(string path, IMatcher<T> matcher, VerifyAs verifyAs = VerifyAs.UseResponseContentTypeHeaderValue)
         {
-            var (responseBodyAsString, contentType) = this.ResolveBodyAndContentType(verifyAs);
+            ResolvedBody resolved = this.ResolveBodyAndContentType(verifyAs);
 
-            if (contentType.Equals(SupportedContentType.Json))
+            if (resolved.ContentType.Equals(SupportedContentType.Json))
             {
-                this.VerifyJsonBody(path, matcher, responseBodyAsString);
+                this.VerifyJsonBody(path, matcher, resolved);
             }
             else
             {
-                this.VerifyMarkupBody(path, matcher, responseBodyAsString, contentType);
+                this.VerifyMarkupBody(path, matcher, resolved);
             }
 
             return this;
@@ -336,15 +336,15 @@ namespace RestAssured.Response
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse Body<T>(string path, IMatcher<IEnumerable<T>> matcher, VerifyAs verifyAs = VerifyAs.UseResponseContentTypeHeaderValue)
         {
-            var (responseBodyAsString, contentType) = this.ResolveBodyAndContentType(verifyAs);
+            ResolvedBody resolved = this.ResolveBodyAndContentType(verifyAs);
 
-            if (contentType.Equals(SupportedContentType.Json))
+            if (resolved.ContentType.Equals(SupportedContentType.Json))
             {
-                this.VerifyJsonElements(path, matcher, responseBodyAsString);
+                this.VerifyJsonElements(path, matcher, resolved);
             }
             else
             {
-                this.VerifyMarkupElements(path, matcher, responseBodyAsString, contentType);
+                this.VerifyMarkupElements(path, matcher, resolved);
             }
 
             return this;
@@ -572,9 +572,9 @@ namespace RestAssured.Response
             }
         }
 
-        private void VerifyJsonBody<T>(string path, IMatcher<T> matcher, string responseBodyAsString)
+        private void VerifyJsonBody<T>(string path, IMatcher<T> matcher, ResolvedBody resolved)
         {
-            JToken? resultingElement = JToken.Parse(responseBodyAsString).SelectToken(path);
+            JToken? resultingElement = JToken.Parse(resolved.Content).SelectToken(path);
 
             if (resultingElement == null)
             {
@@ -591,11 +591,11 @@ namespace RestAssured.Response
             }
         }
 
-        private void VerifyJsonElements<T>(string path, IMatcher<IEnumerable<T>> matcher, string responseBodyAsString)
+        private void VerifyJsonElements<T>(string path, IMatcher<IEnumerable<T>> matcher, ResolvedBody resolved)
         {
             List<T> elementValues = new List<T>();
 
-            IEnumerable<JToken> resultingElements = JToken.Parse(responseBodyAsString).SelectTokens(path);
+            IEnumerable<JToken> resultingElements = JToken.Parse(resolved.Content).SelectTokens(path);
 
             foreach (JToken element in resultingElements)
             {
@@ -608,9 +608,9 @@ namespace RestAssured.Response
             }
         }
 
-        private void VerifyMarkupBody<T>(string path, IMatcher<T> matcher, string responseBodyAsString, SupportedContentType contentType)
+        private void VerifyMarkupBody<T>(string path, IMatcher<T> matcher, ResolvedBody resolved)
         {
-            string innerText = this.SelectSingleNodeInnerText(path, responseBodyAsString, contentType);
+            string innerText = this.SelectSingleNodeInnerText(path, resolved);
 
             // Try and cast the element value to an object of the type used in the matcher
             try
@@ -626,12 +626,12 @@ namespace RestAssured.Response
             }
         }
 
-        private void VerifyMarkupElements<T>(string path, IMatcher<IEnumerable<T>> matcher, string responseBodyAsString, SupportedContentType contentType)
+        private void VerifyMarkupElements<T>(string path, IMatcher<IEnumerable<T>> matcher, ResolvedBody resolved)
         {
             List<T> elementValues = new List<T>();
 
             // Try and cast the element values to an object of the type used in the matcher
-            foreach (string innerText in this.SelectNodeInnerTexts(path, responseBodyAsString, contentType))
+            foreach (string innerText in this.SelectNodeInnerTexts(path, resolved))
             {
                 try
                 {
@@ -649,12 +649,12 @@ namespace RestAssured.Response
             }
         }
 
-        private string SelectSingleNodeInnerText(string path, string responseBodyAsString, SupportedContentType contentType)
+        private string SelectSingleNodeInnerText(string path, ResolvedBody resolved)
         {
-            if (contentType == SupportedContentType.Xml)
+            if (resolved.ContentType == SupportedContentType.Xml)
             {
                 XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.LoadXml(responseBodyAsString);
+                xmlDoc.LoadXml(resolved.Content);
                 XmlNode? node = xmlDoc.SelectSingleNode(path);
                 if (node == null)
                 {
@@ -665,7 +665,7 @@ namespace RestAssured.Response
             }
 
             HtmlDocument htmlDoc = new HtmlDocument();
-            htmlDoc.LoadHtml(responseBodyAsString);
+            htmlDoc.LoadHtml(resolved.Content);
             HtmlNode? htmlNode = htmlDoc.DocumentNode.SelectSingleNode(path);
             if (htmlNode == null)
             {
@@ -675,26 +675,28 @@ namespace RestAssured.Response
             return htmlNode!.InnerText;
         }
 
-        private IEnumerable<string> SelectNodeInnerTexts(string path, string responseBodyAsString, SupportedContentType contentType)
+        private IEnumerable<string> SelectNodeInnerTexts(string path, ResolvedBody resolved)
         {
-            if (contentType == SupportedContentType.Xml)
+            if (resolved.ContentType == SupportedContentType.Xml)
             {
                 XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.LoadXml(responseBodyAsString);
+                xmlDoc.LoadXml(resolved.Content);
                 return xmlDoc.SelectNodes(path)!.Cast<XmlNode>().Select(n => n.InnerText).ToList();
             }
 
             HtmlDocument htmlDoc = new HtmlDocument();
-            htmlDoc.LoadHtml(responseBodyAsString);
+            htmlDoc.LoadHtml(resolved.Content);
             return htmlDoc.DocumentNode.SelectNodes(path)!.Cast<HtmlNode>().Select(n => n.InnerText).ToList();
         }
 
-        private (string body, SupportedContentType contentType) ResolveBodyAndContentType(VerifyAs verifyAs)
+        private ResolvedBody ResolveBodyAndContentType(VerifyAs verifyAs)
         {
             string body = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
             string mediaType = this.Response.Content.Headers.ContentType?.MediaType ?? string.Empty;
-            return (body, new ContentTypeUtils().DetermineResponseMediaTypeForResponse(mediaType, verifyAs));
+            return new ResolvedBody(body, new ContentTypeUtils().DetermineResponseMediaTypeForResponse(mediaType, verifyAs));
         }
+
+        private readonly record struct ResolvedBody(string Content, SupportedContentType ContentType);
 
         private void FailVerification(string exceptionMessage)
         {
