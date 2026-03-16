@@ -384,12 +384,7 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when "Content-Type" doesn't contain "json" or when body doesn't match JSON schema supplied.</exception>
         public VerifiableResponse MatchesJsonSchema(JsonSchema jsonSchema)
         {
-            string responseMediaType = this.Response.Content.Headers.ContentType?.MediaType ?? string.Empty;
-
-            if (!responseMediaType.Contains("json"))
-            {
-                this.FailVerification($"Expected response Content-Type header to contain 'json', but was '{responseMediaType}'");
-            }
+            this.RequireContentType(SupportedContentType.Json);
 
             string responseBodyAsString = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
@@ -548,14 +543,20 @@ namespace RestAssured.Response
             return new ExtractableResponse(this.Response, this.CookieContainer, this.ElapsedTime);
         }
 
+        private void RequireContentType(SupportedContentType required)
+        {
+            string mediaType = this.Response.Content.Headers.ContentType?.MediaType ?? string.Empty;
+            string requiredFragment = required.ToString().ToLower();
+
+            if (!mediaType.Contains(requiredFragment))
+            {
+                this.FailVerification($"Expected response Content-Type header to contain '{requiredFragment}', but was '{mediaType}'");
+            }
+        }
+
         private void ReadAndValidateXml(XmlReaderSettings settings, string failureMessage)
         {
-            string responseMediaType = this.Response.Content.Headers.ContentType?.MediaType ?? string.Empty;
-
-            if (!responseMediaType.Contains("xml"))
-            {
-                this.FailVerification($"Expected response Content-Type header to contain 'xml', but was '{responseMediaType}'");
-            }
+            this.RequireContentType(SupportedContentType.Xml);
 
             string responseXmlAsString = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
             XmlReader reader = XmlReader.Create(new StringReader(responseXmlAsString), settings);
