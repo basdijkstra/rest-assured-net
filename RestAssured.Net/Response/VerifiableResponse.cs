@@ -431,31 +431,11 @@ namespace RestAssured.Response
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse MatchesXsd(XmlSchemaSet schemas)
         {
-            string responseMediaType = this.Response.Content.Headers.ContentType?.MediaType ?? string.Empty;
-
-            if (!responseMediaType.Contains("xml"))
-            {
-                this.FailVerification($"Expected response Content-Type header to contain 'xml', but was '{responseMediaType}'");
-            }
-
             XmlReaderSettings settings = new XmlReaderSettings();
             settings.ValidationType = ValidationType.Schema;
             settings.Schemas = schemas;
 
-            string responseXmlAsString = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-            XmlReader reader = XmlReader.Create(new StringReader(responseXmlAsString), settings);
-
-            try
-            {
-                while (reader.Read())
-                {
-                }
-            }
-            catch (XmlSchemaValidationException xsve)
-            {
-                this.FailVerification($"Response body did not match XML schema supplied. Error: '{xsve.Message}'");
-            }
-
+            this.ReadAndValidateXml(settings, "Response body did not match XML schema supplied");
             return this;
         }
 
@@ -465,31 +445,11 @@ namespace RestAssured.Response
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse MatchesInlineDtd()
         {
-            string responseMediaType = this.Response.Content.Headers.ContentType?.MediaType ?? string.Empty;
-
-            if (!responseMediaType.Contains("xml"))
-            {
-                this.FailVerification($"Expected response Content-Type header to contain 'xml', but was '{responseMediaType}'");
-            }
-
             XmlReaderSettings settings = new XmlReaderSettings();
             settings.DtdProcessing = DtdProcessing.Parse;
             settings.ValidationType = ValidationType.DTD;
 
-            string responseXmlAsString = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-            XmlReader reader = XmlReader.Create(new StringReader(responseXmlAsString), settings);
-
-            try
-            {
-                while (reader.Read())
-                {
-                }
-            }
-            catch (XmlSchemaException xse)
-            {
-                this.FailVerification($"Response body did not match inline DTD. Error: '{xse.Message}'");
-            }
-
+            this.ReadAndValidateXml(settings, "Response body did not match inline DTD");
             return this;
         }
 
@@ -586,6 +546,30 @@ namespace RestAssured.Response
         public ExtractableResponse Extract()
         {
             return new ExtractableResponse(this.Response, this.CookieContainer, this.ElapsedTime);
+        }
+
+        private void ReadAndValidateXml(XmlReaderSettings settings, string failureMessage)
+        {
+            string responseMediaType = this.Response.Content.Headers.ContentType?.MediaType ?? string.Empty;
+
+            if (!responseMediaType.Contains("xml"))
+            {
+                this.FailVerification($"Expected response Content-Type header to contain 'xml', but was '{responseMediaType}'");
+            }
+
+            string responseXmlAsString = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            XmlReader reader = XmlReader.Create(new StringReader(responseXmlAsString), settings);
+
+            try
+            {
+                while (reader.Read())
+                {
+                }
+            }
+            catch (XmlSchemaException xse)
+            {
+                this.FailVerification($"{failureMessage}. Error: '{xse.Message}'");
+            }
         }
 
         private void VerifyJsonBody<T>(string path, IMatcher<T> matcher, string responseBodyAsString)
