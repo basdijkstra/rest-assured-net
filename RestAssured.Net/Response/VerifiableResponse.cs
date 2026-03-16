@@ -320,79 +320,15 @@ namespace RestAssured.Response
 
             if (contentType.Equals(SupportedContentType.Json))
             {
-                JToken? resultingElement = JToken.Parse(responseBodyAsString).SelectToken(path);
-
-                if (resultingElement == null)
-                {
-                    this.FailVerification($"JsonPath expression '{path}' did not yield any results.");
-                }
-
-                bool useCollectionMatcher = resultingElement!.GetType().Equals(typeof(JArray));
-
-                if (useCollectionMatcher)
-                {
-                    if (!matcher.Matches((T)resultingElement!.ToObject<ICollection<T>>() !))
-                    {
-                        this.FailVerification($"Expected element selected by '{path}' to match '{matcher}' but was '{resultingElement}'");
-                    }
-                }
-                else
-                {
-                    if (!matcher.Matches(resultingElement!.ToObject<T>() !))
-                    {
-                        this.FailVerification($"Expected element selected by '{path}' to match '{matcher}' but was '{resultingElement}'");
-                    }
-                }
+                this.VerifyJsonBody(path, matcher, responseBodyAsString);
             }
             else if (contentType.Equals(SupportedContentType.Xml))
             {
-                XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.LoadXml(responseBodyAsString);
-                XmlNode? xmlElement = xmlDoc.SelectSingleNode(path);
-
-                if (xmlElement == null)
-                {
-                    this.FailVerification($"XPath expression '{path}' did not yield any results.");
-                }
-
-                // Try and cast the element value to an object of the type used in the matcher
-                try
-                {
-                    T objectFromElementValue = (T)Convert.ChangeType(xmlElement!.InnerText, typeof(T));
-                    if (!matcher.Matches((T)Convert.ChangeType(xmlElement.InnerText, typeof(T))))
-                    {
-                        this.FailVerification($"Expected element selected by '{path}' to match '{matcher}' but was '{xmlElement.InnerText}'");
-                    }
-                }
-                catch (FormatException)
-                {
-                    this.FailVerification($"Response element value {xmlElement!.InnerText} cannot be converted to value of type '{typeof(T)}'");
-                }
+                this.VerifyXmlBody(path, matcher, responseBodyAsString);
             }
             else if (contentType.Equals(SupportedContentType.Html))
             {
-                HtmlDocument responseBodyAsHtml = new HtmlDocument();
-                responseBodyAsHtml.LoadHtml(responseBodyAsString);
-                HtmlNode? htmlElement = responseBodyAsHtml.DocumentNode.SelectSingleNode(path);
-
-                if (htmlElement == null)
-                {
-                    this.FailVerification($"XPath expression '{path}' did not yield any results.");
-                }
-
-                // Try and cast the element value to an object of the type used in the matcher
-                try
-                {
-                    T objectFromElementValue = (T)Convert.ChangeType(htmlElement!.InnerText, typeof(T));
-                    if (!matcher.Matches((T)Convert.ChangeType(htmlElement.InnerText, typeof(T))))
-                    {
-                        this.FailVerification($"Expected element selected by '{path}' to match '{matcher}' but was '{htmlElement.InnerText}'");
-                    }
-                }
-                catch (FormatException)
-                {
-                    this.FailVerification($"Response element value {htmlElement!.InnerText} cannot be converted to value of type '{typeof(T)}'");
-                }
+                this.VerifyHtmlBody(path, matcher, responseBodyAsString);
             }
 
             return this;
@@ -720,6 +656,83 @@ namespace RestAssured.Response
         public ExtractableResponse Extract()
         {
             return new ExtractableResponse(this.Response, this.CookieContainer, this.ElapsedTime);
+        }
+
+        private void VerifyJsonBody<T>(string path, IMatcher<T> matcher, string responseBodyAsString)
+        {
+            JToken? resultingElement = JToken.Parse(responseBodyAsString).SelectToken(path);
+
+            if (resultingElement == null)
+            {
+                this.FailVerification($"JsonPath expression '{path}' did not yield any results.");
+            }
+
+            bool useCollectionMatcher = resultingElement!.GetType().Equals(typeof(JArray));
+
+            if (useCollectionMatcher)
+            {
+                if (!matcher.Matches((T)resultingElement!.ToObject<ICollection<T>>() !))
+                {
+                    this.FailVerification($"Expected element selected by '{path}' to match '{matcher}' but was '{resultingElement}'");
+                }
+            }
+            else
+            {
+                if (!matcher.Matches(resultingElement!.ToObject<T>() !))
+                {
+                    this.FailVerification($"Expected element selected by '{path}' to match '{matcher}' but was '{resultingElement}'");
+                }
+            }
+        }
+
+        private void VerifyXmlBody<T>(string path, IMatcher<T> matcher, string responseBodyAsString)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(responseBodyAsString);
+            XmlNode? xmlElement = xmlDoc.SelectSingleNode(path);
+
+            if (xmlElement == null)
+            {
+                this.FailVerification($"XPath expression '{path}' did not yield any results.");
+            }
+
+            // Try and cast the element value to an object of the type used in the matcher
+            try
+            {
+                if (!matcher.Matches((T)Convert.ChangeType(xmlElement!.InnerText, typeof(T))))
+                {
+                    this.FailVerification($"Expected element selected by '{path}' to match '{matcher}' but was '{xmlElement.InnerText}'");
+                }
+            }
+            catch (FormatException)
+            {
+                this.FailVerification($"Response element value {xmlElement!.InnerText} cannot be converted to value of type '{typeof(T)}'");
+            }
+        }
+
+        private void VerifyHtmlBody<T>(string path, IMatcher<T> matcher, string responseBodyAsString)
+        {
+            HtmlDocument htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(responseBodyAsString);
+            HtmlNode? htmlElement = htmlDoc.DocumentNode.SelectSingleNode(path);
+
+            if (htmlElement == null)
+            {
+                this.FailVerification($"XPath expression '{path}' did not yield any results.");
+            }
+
+            // Try and cast the element value to an object of the type used in the matcher
+            try
+            {
+                if (!matcher.Matches((T)Convert.ChangeType(htmlElement!.InnerText, typeof(T))))
+                {
+                    this.FailVerification($"Expected element selected by '{path}' to match '{matcher}' but was '{htmlElement.InnerText}'");
+                }
+            }
+            catch (FormatException)
+            {
+                this.FailVerification($"Response element value {htmlElement!.InnerText} cannot be converted to value of type '{typeof(T)}'");
+            }
         }
 
         private void FailVerification(string exceptionMessage)
