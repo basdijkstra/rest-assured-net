@@ -94,52 +94,6 @@ namespace RestAssured.Logging
             return verifiableResponse;
         }
 
-        private VerifiableResponse LogResponseOnError(VerifiableResponse verifiableResponse)
-        {
-            if ((int)verifiableResponse.Response.StatusCode >= 400)
-            {
-                LogResponseStatusCode(verifiableResponse.Response);
-                LogResponseHeaders(verifiableResponse.Response, this.logConfiguration.SensitiveResponseHeadersAndCookies);
-                LogResponseCookies(verifiableResponse.CookieContainer, this.logConfiguration.SensitiveResponseHeadersAndCookies);
-                LogResponseBody(verifiableResponse.Response);
-                LogResponseTime(verifiableResponse.ElapsedTime);
-            }
-
-            return verifiableResponse;
-        }
-
-        private void LogResponseForLevel(VerifiableResponse verifiableResponse)
-        {
-            if (this.logConfiguration.ResponseLogLevel > ResponseLogLevel.None)
-            {
-                LogResponseStatusCode(verifiableResponse.Response);
-            }
-
-            if (this.logConfiguration.ResponseLogLevel == ResponseLogLevel.Headers)
-            {
-                LogResponseHeaders(verifiableResponse.Response, this.logConfiguration.SensitiveResponseHeadersAndCookies);
-                LogResponseCookies(verifiableResponse.CookieContainer, this.logConfiguration.SensitiveResponseHeadersAndCookies);
-            }
-
-            if (this.logConfiguration.ResponseLogLevel == ResponseLogLevel.Body)
-            {
-                LogResponseBody(verifiableResponse.Response);
-            }
-
-            if (this.logConfiguration.ResponseLogLevel == ResponseLogLevel.ResponseTime)
-            {
-                LogResponseTime(verifiableResponse.ElapsedTime);
-            }
-
-            if (this.logConfiguration.ResponseLogLevel == ResponseLogLevel.All)
-            {
-                LogResponseHeaders(verifiableResponse.Response, this.logConfiguration.SensitiveResponseHeadersAndCookies);
-                LogResponseCookies(verifiableResponse.CookieContainer, this.logConfiguration.SensitiveResponseHeadersAndCookies);
-                LogResponseBody(verifiableResponse.Response);
-                LogResponseTime(verifiableResponse.ElapsedTime);
-            }
-        }
-
         private static void LogRequestHeaders(HttpRequestMessage request, List<string> sensitiveRequestHeadersAndCookies)
         {
             LogMessageHeaders(request.Headers, request.Content, sensitiveRequestHeadersAndCookies);
@@ -239,6 +193,52 @@ namespace RestAssured.Logging
             else
             {
                 Console.WriteLine(bodyAsString);
+            }
+        }
+
+        private VerifiableResponse LogResponseOnError(VerifiableResponse verifiableResponse)
+        {
+            if ((int)verifiableResponse.Response.StatusCode >= 400)
+            {
+                LogResponseStatusCode(verifiableResponse.Response);
+                LogResponseHeaders(verifiableResponse.Response, this.logConfiguration.SensitiveResponseHeadersAndCookies);
+                LogResponseCookies(verifiableResponse.CookieContainer, this.logConfiguration.SensitiveResponseHeadersAndCookies);
+                LogResponseBody(verifiableResponse.Response);
+                LogResponseTime(verifiableResponse.ElapsedTime);
+            }
+
+            return verifiableResponse;
+        }
+
+        private void LogResponseForLevel(VerifiableResponse verifiableResponse)
+        {
+            if (this.logConfiguration.ResponseLogLevel > ResponseLogLevel.None)
+            {
+                LogResponseStatusCode(verifiableResponse.Response);
+            }
+
+            if (this.logConfiguration.ResponseLogLevel == ResponseLogLevel.Headers)
+            {
+                LogResponseHeaders(verifiableResponse.Response, this.logConfiguration.SensitiveResponseHeadersAndCookies);
+                LogResponseCookies(verifiableResponse.CookieContainer, this.logConfiguration.SensitiveResponseHeadersAndCookies);
+            }
+
+            if (this.logConfiguration.ResponseLogLevel == ResponseLogLevel.Body)
+            {
+                LogResponseBody(verifiableResponse.Response);
+            }
+
+            if (this.logConfiguration.ResponseLogLevel == ResponseLogLevel.ResponseTime)
+            {
+                LogResponseTime(verifiableResponse.ElapsedTime);
+            }
+
+            if (this.logConfiguration.ResponseLogLevel == ResponseLogLevel.All)
+            {
+                LogResponseHeaders(verifiableResponse.Response, this.logConfiguration.SensitiveResponseHeadersAndCookies);
+                LogResponseCookies(verifiableResponse.CookieContainer, this.logConfiguration.SensitiveResponseHeadersAndCookies);
+                LogResponseBody(verifiableResponse.Response);
+                LogResponseTime(verifiableResponse.ElapsedTime);
             }
         }
     }
