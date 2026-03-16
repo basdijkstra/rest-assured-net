@@ -1,4 +1,4 @@
-﻿// <copyright file="VerifiableResponse.cs" company="On Test Automation">
+// <copyright file="VerifiableResponse.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -314,36 +314,11 @@ namespace RestAssured.Response
         {
             string responseBodyAsString = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
-            string? responseMediaType = string.Empty;
+            string responseMediaType = this.Response.Content.Headers.ContentType?.MediaType ?? string.Empty;
 
-            switch (verifyAs)
-            {
-                case VerifyAs.UseResponseContentTypeHeaderValue:
-                    {
-                        responseMediaType = this.Response.Content.Headers.ContentType?.MediaType;
-                        break;
-                    }
+            SupportedContentType contentType = new ContentTypeUtils().DetermineResponseMediaTypeForResponse(responseMediaType, verifyAs);
 
-                case VerifyAs.Json:
-                    {
-                        responseMediaType = "application/json";
-                        break;
-                    }
-
-                case VerifyAs.Xml:
-                    {
-                        responseMediaType = "application/xml";
-                        break;
-                    }
-
-                case VerifyAs.Html:
-                    {
-                        responseMediaType = "text/html";
-                        break;
-                    }
-            }
-
-            if (responseMediaType!.Equals(string.Empty) || responseMediaType.Contains("json"))
+            if (contentType.Equals(SupportedContentType.Json))
             {
                 JToken? resultingElement = JToken.Parse(responseBodyAsString).SelectToken(path);
 
@@ -369,7 +344,7 @@ namespace RestAssured.Response
                     }
                 }
             }
-            else if (responseMediaType.Contains("xml"))
+            else if (contentType.Equals(SupportedContentType.Xml))
             {
                 XmlDocument xmlDoc = new XmlDocument();
                 xmlDoc.LoadXml(responseBodyAsString);
@@ -394,7 +369,7 @@ namespace RestAssured.Response
                     this.FailVerification($"Response element value {xmlElement!.InnerText} cannot be converted to value of type '{typeof(T)}'");
                 }
             }
-            else if (responseMediaType.Contains("html"))
+            else if (contentType.Equals(SupportedContentType.Html))
             {
                 HtmlDocument responseBodyAsHtml = new HtmlDocument();
                 responseBodyAsHtml.LoadHtml(responseBodyAsString);
@@ -418,10 +393,6 @@ namespace RestAssured.Response
                 {
                     this.FailVerification($"Response element value {htmlElement!.InnerText} cannot be converted to value of type '{typeof(T)}'");
                 }
-            }
-            else
-            {
-                this.FailVerification($"Unable to extract elements from response with Content-Type '{responseMediaType}'");
             }
 
             return this;
