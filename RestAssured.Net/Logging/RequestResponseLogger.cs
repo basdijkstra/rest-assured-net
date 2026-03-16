@@ -1,4 +1,4 @@
-﻿// <copyright file="RequestResponseLogger.cs" company="On Test Automation">
+// <copyright file="RequestResponseLogger.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -86,18 +86,29 @@ namespace RestAssured.Logging
 
             if (this.logConfiguration.ResponseLogLevel == ResponseLogLevel.OnError)
             {
-                if ((int)verifiableResponse.Response.StatusCode >= 400)
-                {
-                    LogResponseStatusCode(verifiableResponse.Response);
-                    LogResponseHeaders(verifiableResponse.Response, this.logConfiguration.SensitiveResponseHeadersAndCookies);
-                    LogResponseCookies(verifiableResponse.CookieContainer, this.logConfiguration.SensitiveResponseHeadersAndCookies);
-                    LogResponseBody(verifiableResponse.Response);
-                    LogResponseTime(verifiableResponse.ElapsedTime);
-                }
-
-                return verifiableResponse;
+                return this.LogResponseOnError(verifiableResponse);
             }
 
+            this.LogResponseForLevel(verifiableResponse);
+            return verifiableResponse;
+        }
+
+        private VerifiableResponse LogResponseOnError(VerifiableResponse verifiableResponse)
+        {
+            if ((int)verifiableResponse.Response.StatusCode >= 400)
+            {
+                LogResponseStatusCode(verifiableResponse.Response);
+                LogResponseHeaders(verifiableResponse.Response, this.logConfiguration.SensitiveResponseHeadersAndCookies);
+                LogResponseCookies(verifiableResponse.CookieContainer, this.logConfiguration.SensitiveResponseHeadersAndCookies);
+                LogResponseBody(verifiableResponse.Response);
+                LogResponseTime(verifiableResponse.ElapsedTime);
+            }
+
+            return verifiableResponse;
+        }
+
+        private void LogResponseForLevel(VerifiableResponse verifiableResponse)
+        {
             if (this.logConfiguration.ResponseLogLevel > ResponseLogLevel.None)
             {
                 LogResponseStatusCode(verifiableResponse.Response);
@@ -126,8 +137,6 @@ namespace RestAssured.Logging
                 LogResponseBody(verifiableResponse.Response);
                 LogResponseTime(verifiableResponse.ElapsedTime);
             }
-
-            return verifiableResponse;
         }
 
         private static void LogRequestHeaders(HttpRequestMessage request, List<string> sensitiveRequestHeadersAndCookies)
