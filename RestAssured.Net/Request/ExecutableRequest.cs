@@ -1,4 +1,4 @@
-﻿// <copyright file="ExecutableRequest.cs" company="On Test Automation">
+// <copyright file="ExecutableRequest.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -55,6 +55,7 @@ namespace RestAssured.Request
         private bool disableSslCertificateValidation = false;
         private bool stripCharset = false;
         private bool disposed = false;
+        private IRestAssuredNetLogger? logger;
 
         /// <summary>
         /// The request logging level for this request.
@@ -76,7 +77,8 @@ namespace RestAssured.Request
         /// </summary>
         /// <param name="config">The <see cref="RestAssuredConfiguration"/> to use for all requests.</param>
         /// <param name="httpClient">The <see cref="HttpClient"/> to use when sending requests.</param>
-        internal ExecutableRequest(RestAssuredConfiguration config, HttpClient? httpClient)
+        /// <param name="logger">The <see cref="IRestAssuredNetLogger"/> to use when writing log output.</param>
+        internal ExecutableRequest(RestAssuredConfiguration config, HttpClient? httpClient, IRestAssuredNetLogger? logger = null)
         {
             this.disableSslCertificateValidation = config.DisableSslCertificateValidation;
 
@@ -86,6 +88,7 @@ namespace RestAssured.Request
             this.httpCompletionOption = config.HttpCompletionOption;
 
             this.httpClient = httpClient;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -702,6 +705,7 @@ namespace RestAssured.Request
                 ResponseLoggingLevel = this.ResponseLoggingLevel,
                 SensitiveRequestHeadersAndCookies = this.sensitiveRequestHeadersAndCookies,
                 LogConfiguration = this.LogConfiguration,
+                Logger = this.logger,
             };
 
             return RequestExecutor.Send(httpMethod, endpoint, context);

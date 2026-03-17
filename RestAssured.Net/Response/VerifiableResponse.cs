@@ -61,6 +61,11 @@ namespace RestAssured.Response
         /// </summary>
         public bool LogOnVerificationFailure { get; internal set; } = false;
 
+        /// <summary>
+        /// The <see cref="IRestAssuredNetLogger"/> to use when logging on verification failure.
+        /// </summary>
+        internal IRestAssuredNetLogger? Logger { get; set; }
+
         private JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
 
         /// <summary>
@@ -721,7 +726,7 @@ namespace RestAssured.Response
                     ResponseLogLevel = RestAssured.Logging.ResponseLogLevel.All,
                 };
 
-                var logger = new RequestResponseLogger(logConfiguration);
+                var logger = new RequestResponseLogger(logConfiguration, this.Logger);
                 logger.LogResponse(this);
             }
 

@@ -137,13 +137,14 @@ namespace RestAssured.Request
                 context.SensitiveRequestHeadersAndCookies.AddRange(context.RequestSpecification.SensitiveRequestHeadersAndCookies);
             }
 
-            var logger = new RequestResponseLogger(context.LogConfiguration ?? legacyLogConfiguration);
+            var logger = new RequestResponseLogger(context.LogConfiguration ?? legacyLogConfiguration, context.Logger);
 
             logger.LogRequest(context.Request, context.CookieCollection);
 
             try
             {
                 VerifiableResponse verifiableResponse = httpRequestProcessor.Send(context.Request, context.CookieCollection, context.HttpCompletionOption).GetAwaiter().GetResult();
+                verifiableResponse.Logger = context.Logger;
                 verifiableResponse = logger.LogResponse(verifiableResponse);
                 return verifiableResponse;
             }
