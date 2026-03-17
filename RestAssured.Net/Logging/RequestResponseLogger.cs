@@ -1,4 +1,4 @@
-﻿// <copyright file="RequestResponseLogger.cs" company="On Test Automation">
+// <copyright file="RequestResponseLogger.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,6 +20,7 @@ namespace RestAssured.Logging
     using System.Collections.Generic;
     using System.Net;
     using System.Net.Http;
+    using System.Net.Http.Headers;
     using System.Xml.Linq;
     using Newtonsoft.Json;
     using RestAssured.Response;
@@ -86,18 +87,131 @@ namespace RestAssured.Logging
 
             if (this.logConfiguration.ResponseLogLevel == ResponseLogLevel.OnError)
             {
-                if ((int)verifiableResponse.Response.StatusCode >= 400)
-                {
-                    LogResponseStatusCode(verifiableResponse.Response);
-                    LogResponseHeaders(verifiableResponse.Response, this.logConfiguration.SensitiveResponseHeadersAndCookies);
-                    LogResponseCookies(verifiableResponse.CookieContainer, this.logConfiguration.SensitiveResponseHeadersAndCookies);
-                    LogResponseBody(verifiableResponse.Response);
-                    LogResponseTime(verifiableResponse.ElapsedTime);
-                }
-
-                return verifiableResponse;
+                return this.LogResponseOnError(verifiableResponse);
             }
 
+            this.LogResponseForLevel(verifiableResponse);
+            return verifiableResponse;
+        }
+
+        private static void LogRequestHeaders(HttpRequestMessage request, List<string> sensitiveRequestHeadersAndCookies)
+        {
+            LogMessageHeaders(request.Headers, request.Content, sensitiveRequestHeadersAndCookies);
+        }
+
+        private static void LogRequestCookies(CookieCollection cookieCollection, List<string> sensitiveRequestHeadersAndCookies)
+        {
+            foreach (Cookie cookie in cookieCollection)
+            {
+                LogCookie(cookie, sensitiveRequestHeadersAndCookies);
+            }
+        }
+
+        private static void LogRequestBody(HttpRequestMessage request)
+        {
+            LogHttpContent(request.Content);
+        }
+
+        private static void LogResponseStatusCode(HttpResponseMessage response)
+        {
+            Console.WriteLine($"HTTP {(int)response.StatusCode} ({response.StatusCode})");
+        }
+
+        private static void LogResponseHeaders(HttpResponseMessage response, List<string> sensitiveResponseHeadersAndCookies)
+        {
+            LogMessageHeaders(response.Headers, response.Content, sensitiveResponseHeadersAndCookies);
+        }
+
+        private static void LogResponseCookies(CookieContainer cookieContainer, List<string> sensitiveResponseHeadersAndCookies)
+        {
+            var cookies = cookieContainer.GetAllCookies().GetEnumerator();
+
+            while (cookies.MoveNext())
+            {
+                LogCookie((Cookie)cookies.Current, sensitiveResponseHeadersAndCookies);
+            }
+        }
+
+        private static void LogResponseBody(HttpResponseMessage response)
+        {
+            LogHttpContent(response.Content);
+        }
+
+        private static void LogResponseTime(TimeSpan elapsedTime)
+        {
+            Console.WriteLine($"Response time: {elapsedTime.TotalMilliseconds} ms");
+        }
+
+        private static void LogMessageHeaders(HttpHeaders headers, HttpContent? content, List<string> sensitiveHeaders)
+        {
+            if (content != null)
+            {
+                Console.WriteLine($"Content-Type: {content.Headers.ContentType}");
+                Console.WriteLine($"Content-Length: {content.Headers.ContentLength}");
+            }
+
+            foreach (KeyValuePair<string, IEnumerable<string>> header in headers)
+            {
+                string value = sensitiveHeaders.Contains(header.Key) ? "*****" : string.Join(", ", header.Value);
+                Console.WriteLine($"{header.Key}: {value}");
+            }
+        }
+
+        private static void LogCookie(Cookie cookie, List<string> sensitiveNames)
+        {
+            string value = sensitiveNames.Contains(cookie.Name) ? "*****" : cookie.Value;
+            Console.WriteLine($"Cookie: {cookie.Name}={value}, Domain: {cookie.Domain}, HTTP-only: {cookie.HttpOnly}, Secure: {cookie.Secure}");
+        }
+
+        private static void LogHttpContent(HttpContent? content)
+        {
+            if (content == null)
+            {
+                return;
+            }
+
+            string bodyAsString = content.ReadAsStringAsync().GetAwaiter().GetResult();
+
+            if (!bodyAsString.Equals(string.Empty))
+            {
+                LogFormattedBody(bodyAsString, content.Headers.ContentType?.MediaType ?? string.Empty);
+            }
+        }
+
+        private static void LogFormattedBody(string bodyAsString, string mediaType)
+        {
+            if (mediaType.Equals(string.Empty) || mediaType.Contains("json"))
+            {
+                object jsonPayload = JsonConvert.DeserializeObject(bodyAsString, typeof(object)) ?? "Could not read payload";
+                Console.WriteLine(JsonConvert.SerializeObject(jsonPayload, Formatting.Indented));
+            }
+            else if (mediaType.Contains("xml"))
+            {
+                XDocument doc = XDocument.Parse(bodyAsString);
+                Console.WriteLine(doc.ToString());
+            }
+            else
+            {
+                Console.WriteLine(bodyAsString);
+            }
+        }
+
+        private VerifiableResponse LogResponseOnError(VerifiableResponse verifiableResponse)
+        {
+            if ((int)verifiableResponse.Response.StatusCode >= 400)
+            {
+                LogResponseStatusCode(verifiableResponse.Response);
+                LogResponseHeaders(verifiableResponse.Response, this.logConfiguration.SensitiveResponseHeadersAndCookies);
+                LogResponseCookies(verifiableResponse.CookieContainer, this.logConfiguration.SensitiveResponseHeadersAndCookies);
+                LogResponseBody(verifiableResponse.Response);
+                LogResponseTime(verifiableResponse.ElapsedTime);
+            }
+
+            return verifiableResponse;
+        }
+
+        private void LogResponseForLevel(VerifiableResponse verifiableResponse)
+        {
             if (this.logConfiguration.ResponseLogLevel > ResponseLogLevel.None)
             {
                 LogResponseStatusCode(verifiableResponse.Response);
@@ -126,158 +240,6 @@ namespace RestAssured.Logging
                 LogResponseBody(verifiableResponse.Response);
                 LogResponseTime(verifiableResponse.ElapsedTime);
             }
-
-            return verifiableResponse;
-        }
-
-        private static void LogRequestHeaders(HttpRequestMessage request, List<string> sensitiveRequestHeadersAndCookies)
-        {
-            if (request.Content != null)
-            {
-                Console.WriteLine($"Content-Type: {request.Content.Headers.ContentType}");
-                Console.WriteLine($"Content-Length: {request.Content.Headers.ContentLength}");
-            }
-
-            foreach (KeyValuePair<string, IEnumerable<string>> header in request.Headers)
-            {
-                if (sensitiveRequestHeadersAndCookies.Contains(header.Key))
-                {
-                    Console.WriteLine($"{header.Key}: *****");
-                }
-                else
-                {
-                    Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
-                }
-            }
-        }
-
-        private static void LogRequestCookies(CookieCollection cookieCollection, List<string> sensitiveRequestHeadersAndCookies)
-        {
-            foreach (Cookie cookie in cookieCollection)
-            {
-                if (sensitiveRequestHeadersAndCookies.Contains(cookie.Name))
-                {
-                    Console.WriteLine($"Cookie: {cookie.Name}=*****, Domain: {cookie.Domain}, HTTP-only: {cookie.HttpOnly}, Secure: {cookie.Secure}");
-                }
-                else
-                {
-                    Console.WriteLine($"Cookie: {cookie.Name}={cookie.Value}, Domain: {cookie.Domain}, HTTP-only: {cookie.HttpOnly}, Secure: {cookie.Secure}");
-                }
-            }
-        }
-
-        private static void LogRequestBody(HttpRequestMessage request)
-        {
-            if (request.Content == null)
-            {
-                return;
-            }
-
-            string requestBodyAsString = request.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-
-            if (requestBodyAsString.Equals(string.Empty))
-            {
-                return;
-            }
-
-            string requestMediaType = request.Content.Headers.ContentType?.MediaType ?? string.Empty;
-
-            if (requestMediaType.Equals(string.Empty) || requestMediaType.Contains("json"))
-            {
-                object jsonPayload = JsonConvert.DeserializeObject(requestBodyAsString, typeof(object)) ?? "Could not read request payload";
-                Console.WriteLine(JsonConvert.SerializeObject(jsonPayload, Formatting.Indented));
-            }
-            else if (requestMediaType.Contains("xml"))
-            {
-                XDocument doc = XDocument.Parse(requestBodyAsString);
-                Console.WriteLine(doc.ToString());
-            }
-            else
-            {
-                Console.WriteLine(requestBodyAsString);
-            }
-        }
-
-        private static void LogResponseStatusCode(HttpResponseMessage response)
-        {
-            Console.WriteLine($"HTTP {(int)response.StatusCode} ({response.StatusCode})");
-        }
-
-        private static void LogResponseHeaders(HttpResponseMessage response, List<string> sensitiveResponseHeadersAndCookies)
-        {
-            if (response.Content != null)
-            {
-                Console.WriteLine($"Content-Type: {response.Content.Headers.ContentType}");
-                Console.WriteLine($"Content-Length: {response.Content.Headers.ContentLength}");
-            }
-
-            foreach (KeyValuePair<string, IEnumerable<string>> header in response.Headers)
-            {
-                if (sensitiveResponseHeadersAndCookies.Contains(header.Key))
-                {
-                    Console.WriteLine($"{header.Key}: *****");
-                }
-                else
-                {
-                    Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
-                }
-            }
-        }
-
-        private static void LogResponseCookies(CookieContainer cookieContainer, List<string> sensitiveResponseHeadersAndCookies)
-        {
-            var cookies = cookieContainer.GetAllCookies().GetEnumerator();
-
-            while (cookies.MoveNext())
-            {
-                Cookie cookie = (Cookie)cookies.Current;
-
-                if (sensitiveResponseHeadersAndCookies.Contains(cookie.Name))
-                {
-                    Console.WriteLine($"Cookie: {cookie.Name}=*****, Domain: {cookie.Domain}, HTTP-only: {cookie.HttpOnly}, Secure: {cookie.Secure}");
-                }
-                else
-                {
-                    Console.WriteLine($"Cookie: {cookie.Name}={cookie.Value}, Domain: {cookie.Domain}, HTTP-only: {cookie.HttpOnly}, Secure: {cookie.Secure}");
-                }
-            }
-        }
-
-        private static void LogResponseBody(HttpResponseMessage response)
-        {
-            if (response.Content == null)
-            {
-                return;
-            }
-
-            string responseBodyAsString = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-
-            if (responseBodyAsString.Equals(string.Empty))
-            {
-                return;
-            }
-
-            string responseMediaType = response.Content.Headers.ContentType?.MediaType ?? string.Empty;
-
-            if (responseMediaType.Equals(string.Empty) || responseMediaType.Contains("json"))
-            {
-                object jsonPayload = JsonConvert.DeserializeObject(responseBodyAsString, typeof(object)) ?? "Could not read response payload";
-                Console.WriteLine(JsonConvert.SerializeObject(jsonPayload, Formatting.Indented));
-            }
-            else if (responseMediaType.Contains("xml"))
-            {
-                XDocument doc = XDocument.Parse(responseBodyAsString);
-                Console.WriteLine(doc.ToString());
-            }
-            else
-            {
-                Console.WriteLine(responseBodyAsString);
-            }
-        }
-
-        private static void LogResponseTime(TimeSpan elapsedTime)
-        {
-            Console.WriteLine($"Response time: {elapsedTime.TotalMilliseconds} ms");
         }
     }
 }
