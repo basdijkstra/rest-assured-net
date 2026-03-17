@@ -45,10 +45,10 @@ namespace RestAssured.Logging
         }
 
         /// <summary>
-        /// Logs request details to the console.
+        /// Logs request details using the injected <see cref="IRestAssuredNetLogger"/>.
         /// </summary>
-        /// <param name="request">The <see cref="HttpRequestMessage"/> to be logged to the console.</param>
-        /// <param name="cookieCollection">The <see cref="CookieCollection"/> associated with this request.</param>
+        /// <param name="request">The <see cref="HttpRequestMessage"/> whose details are to be logged.</param>
+        /// <param name="cookieCollection">The <see cref="CookieCollection"/> containing cookies associated with the request.</param>
         public void LogRequest(HttpRequestMessage request, CookieCollection cookieCollection)
         {
             if (this.logConfiguration.RequestLogLevel >= RequestLogLevel.Endpoint)
@@ -76,10 +76,10 @@ namespace RestAssured.Logging
         }
 
         /// <summary>
-        /// Logs response details to the console.
+        /// Logs response details using the injected <see cref="IRestAssuredNetLogger"/>.
         /// </summary>
-        /// <param name="verifiableResponse">The <see cref="VerifiableResponse"/> to log to the console.</param>
-        /// <returns>The supplied <see cref="VerifiableResponse"/>, with the LogOnVerificationFailure flag set.</returns>
+        /// <param name="verifiableResponse">The <see cref="VerifiableResponse"/> whose details are to be logged.</param>
+        /// <returns>The supplied <see cref="VerifiableResponse"/>, with the LogOnVerificationFailure flag set when applicable.</returns>
         public VerifiableResponse LogResponse(VerifiableResponse verifiableResponse)
         {
             if (this.logConfiguration.ResponseLogLevel == ResponseLogLevel.OnVerificationFailure)
