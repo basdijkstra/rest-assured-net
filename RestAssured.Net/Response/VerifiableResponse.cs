@@ -1,4 +1,4 @@
-﻿// <copyright file="VerifiableResponse.cs" company="On Test Automation">
+// <copyright file="VerifiableResponse.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -312,116 +312,16 @@ namespace RestAssured.Response
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse Body<T>(string path, IMatcher<T> matcher, VerifyAs verifyAs = VerifyAs.UseResponseContentTypeHeaderValue)
         {
-            string responseBodyAsString = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            ResolvedBody resolved = this.ResolveBodyAndContentType(verifyAs);
+            NodePath nodePath = new NodePath(path);
 
-            string? responseMediaType = string.Empty;
-
-            switch (verifyAs)
+            if (resolved.ContentType.Equals(SupportedContentType.Json))
             {
-                case VerifyAs.UseResponseContentTypeHeaderValue:
-                    {
-                        responseMediaType = this.Response.Content.Headers.ContentType?.MediaType;
-                        break;
-                    }
-
-                case VerifyAs.Json:
-                    {
-                        responseMediaType = "application/json";
-                        break;
-                    }
-
-                case VerifyAs.Xml:
-                    {
-                        responseMediaType = "application/xml";
-                        break;
-                    }
-
-                case VerifyAs.Html:
-                    {
-                        responseMediaType = "text/html";
-                        break;
-                    }
-            }
-
-            if (responseMediaType!.Equals(string.Empty) || responseMediaType.Contains("json"))
-            {
-                JToken? resultingElement = JToken.Parse(responseBodyAsString).SelectToken(path);
-
-                if (resultingElement == null)
-                {
-                    this.FailVerification($"JsonPath expression '{path}' did not yield any results.");
-                }
-
-                bool useCollectionMatcher = resultingElement!.GetType().Equals(typeof(JArray));
-
-                if (useCollectionMatcher)
-                {
-                    if (!matcher.Matches((T)resultingElement!.ToObject<ICollection<T>>() !))
-                    {
-                        this.FailVerification($"Expected element selected by '{path}' to match '{matcher}' but was '{resultingElement}'");
-                    }
-                }
-                else
-                {
-                    if (!matcher.Matches(resultingElement!.ToObject<T>() !))
-                    {
-                        this.FailVerification($"Expected element selected by '{path}' to match '{matcher}' but was '{resultingElement}'");
-                    }
-                }
-            }
-            else if (responseMediaType.Contains("xml"))
-            {
-                XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.LoadXml(responseBodyAsString);
-                XmlNode? xmlElement = xmlDoc.SelectSingleNode(path);
-
-                if (xmlElement == null)
-                {
-                    this.FailVerification($"XPath expression '{path}' did not yield any results.");
-                }
-
-                // Try and cast the element value to an object of the type used in the matcher
-                try
-                {
-                    T objectFromElementValue = (T)Convert.ChangeType(xmlElement!.InnerText, typeof(T));
-                    if (!matcher.Matches((T)Convert.ChangeType(xmlElement.InnerText, typeof(T))))
-                    {
-                        this.FailVerification($"Expected element selected by '{path}' to match '{matcher}' but was '{xmlElement.InnerText}'");
-                    }
-                }
-                catch (FormatException)
-                {
-                    this.FailVerification($"Response element value {xmlElement!.InnerText} cannot be converted to value of type '{typeof(T)}'");
-                }
-            }
-            else if (responseMediaType.Contains("html"))
-            {
-                HtmlDocument responseBodyAsHtml = new HtmlDocument();
-                responseBodyAsHtml.LoadHtml(responseBodyAsString);
-                HtmlNode? htmlElement = responseBodyAsHtml.DocumentNode.SelectSingleNode(path);
-
-                if (htmlElement == null)
-                {
-                    this.FailVerification($"XPath expression '{path}' did not yield any results.");
-                }
-
-                // Try and cast the element value to an object of the type used in the matcher
-                try
-                {
-                    T objectFromElementValue = (T)Convert.ChangeType(htmlElement!.InnerText, typeof(T));
-                    if (!matcher.Matches((T)Convert.ChangeType(htmlElement.InnerText, typeof(T))))
-                    {
-                        this.FailVerification($"Expected element selected by '{path}' to match '{matcher}' but was '{htmlElement.InnerText}'");
-                    }
-                }
-                catch (FormatException)
-                {
-                    this.FailVerification($"Response element value {htmlElement!.InnerText} cannot be converted to value of type '{typeof(T)}'");
-                }
+                this.VerifyJsonBody(nodePath, matcher, resolved);
             }
             else
             {
-                this.FailVerification($"Unable to extract elements from response with Content-Type '{responseMediaType}'");
+                this.VerifyMarkupBody(nodePath, matcher, resolved);
             }
 
             return this;
@@ -437,77 +337,16 @@ namespace RestAssured.Response
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse Body<T>(string path, IMatcher<IEnumerable<T>> matcher, VerifyAs verifyAs = VerifyAs.UseResponseContentTypeHeaderValue)
         {
-            List<T> elementValues = new List<T>();
+            ResolvedBody resolved = this.ResolveBodyAndContentType(verifyAs);
+            NodePath nodePath = new NodePath(path);
 
-            string responseBodyAsString = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-
-            string responseMediaType = this.Response.Content.Headers.ContentType?.MediaType ?? string.Empty;
-
-            var contentType = new ContentTypeUtils().DetermineResponseMediaTypeForResponse(responseMediaType, verifyAs);
-
-            if (contentType.Equals(SupportedContentType.Json))
+            if (resolved.ContentType.Equals(SupportedContentType.Json))
             {
-                IEnumerable<JToken>? resultingElements = JToken.Parse(responseBodyAsString).SelectTokens(path);
-
-                foreach (JToken element in resultingElements)
-                {
-                    elementValues.Add(element.ToObject<T>() !);
-                }
-
-                if (!matcher.Matches(elementValues))
-                {
-                    this.FailVerification($"Expected elements selected by '{path}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
-                }
+                this.VerifyJsonElements(nodePath, matcher, resolved);
             }
-            else if (contentType.Equals(SupportedContentType.Xml))
+            else
             {
-                XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.LoadXml(responseBodyAsString);
-                XmlNodeList? xmlElements = xmlDoc.SelectNodes(path);
-
-                // Try and cast the element values to an object of the type used in the matcher
-                foreach (XmlNode xmlElement in xmlElements!)
-                {
-                    try
-                    {
-                        T objectFromElementValue = (T)Convert.ChangeType(xmlElement.InnerText, typeof(T));
-                        elementValues.Add(objectFromElementValue);
-                    }
-                    catch (FormatException)
-                    {
-                        this.FailVerification($"Response element value {xmlElement.InnerText} cannot be converted to object of type {typeof(T)}");
-                    }
-                }
-
-                if (!matcher.Matches(elementValues))
-                {
-                    this.FailVerification($"Expected elements selected by '{path}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
-                }
-            }
-            else if (contentType.Equals(SupportedContentType.Html))
-            {
-                HtmlDocument htmlDoc = new HtmlDocument();
-                htmlDoc.LoadHtml(responseBodyAsString);
-                HtmlNodeCollection? htmlElements = htmlDoc.DocumentNode.SelectNodes(path);
-
-                // Try and cast the element values to an object of the type used in the matcher
-                foreach (HtmlNode htmlElement in htmlElements!)
-                {
-                    try
-                    {
-                        T objectFromElementValue = (T)Convert.ChangeType(htmlElement.InnerText, typeof(T));
-                        elementValues.Add(objectFromElementValue);
-                    }
-                    catch (FormatException)
-                    {
-                        this.FailVerification($"Response element value {htmlElement.InnerText} cannot be converted to object of type {typeof(T)}");
-                    }
-                }
-
-                if (!matcher.Matches(elementValues))
-                {
-                    this.FailVerification($"Expected elements selected by '{path}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
-                }
+                this.VerifyMarkupElements(nodePath, matcher, resolved);
             }
 
             return this;
@@ -547,12 +386,7 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when "Content-Type" doesn't contain "json" or when body doesn't match JSON schema supplied.</exception>
         public VerifiableResponse MatchesJsonSchema(JsonSchema jsonSchema)
         {
-            string responseMediaType = this.Response.Content.Headers.ContentType?.MediaType ?? string.Empty;
-
-            if (!responseMediaType.Contains("json"))
-            {
-                this.FailVerification($"Expected response Content-Type header to contain 'json', but was '{responseMediaType}'");
-            }
+            this.RequireContentType(SupportedContentType.Json);
 
             string responseBodyAsString = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
@@ -594,31 +428,11 @@ namespace RestAssured.Response
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse MatchesXsd(XmlSchemaSet schemas)
         {
-            string responseMediaType = this.Response.Content.Headers.ContentType?.MediaType ?? string.Empty;
-
-            if (!responseMediaType.Contains("xml"))
-            {
-                this.FailVerification($"Expected response Content-Type header to contain 'xml', but was '{responseMediaType}'");
-            }
-
             XmlReaderSettings settings = new XmlReaderSettings();
             settings.ValidationType = ValidationType.Schema;
             settings.Schemas = schemas;
 
-            string responseXmlAsString = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-            XmlReader reader = XmlReader.Create(new StringReader(responseXmlAsString), settings);
-
-            try
-            {
-                while (reader.Read())
-                {
-                }
-            }
-            catch (XmlSchemaValidationException xsve)
-            {
-                this.FailVerification($"Response body did not match XML schema supplied. Error: '{xsve.Message}'");
-            }
-
+            this.ReadAndValidateXml(settings, "Response body did not match XML schema supplied");
             return this;
         }
 
@@ -628,31 +442,11 @@ namespace RestAssured.Response
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse MatchesInlineDtd()
         {
-            string responseMediaType = this.Response.Content.Headers.ContentType?.MediaType ?? string.Empty;
-
-            if (!responseMediaType.Contains("xml"))
-            {
-                this.FailVerification($"Expected response Content-Type header to contain 'xml', but was '{responseMediaType}'");
-            }
-
             XmlReaderSettings settings = new XmlReaderSettings();
             settings.DtdProcessing = DtdProcessing.Parse;
             settings.ValidationType = ValidationType.DTD;
 
-            string responseXmlAsString = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-            XmlReader reader = XmlReader.Create(new StringReader(responseXmlAsString), settings);
-
-            try
-            {
-                while (reader.Read())
-                {
-                }
-            }
-            catch (XmlSchemaException xse)
-            {
-                this.FailVerification($"Response body did not match inline DTD. Error: '{xse.Message}'");
-            }
-
+            this.ReadAndValidateXml(settings, "Response body did not match inline DTD");
             return this;
         }
 
@@ -750,6 +544,173 @@ namespace RestAssured.Response
         {
             return new ExtractableResponse(this.Response, this.CookieContainer, this.ElapsedTime);
         }
+
+        private void RequireContentType(SupportedContentType required)
+        {
+            string mediaType = this.Response.Content.Headers.ContentType?.MediaType ?? string.Empty;
+            string requiredFragment = required.ToString().ToLower();
+
+            if (!mediaType.Contains(requiredFragment))
+            {
+                this.FailVerification($"Expected response Content-Type header to contain '{requiredFragment}', but was '{mediaType}'");
+            }
+        }
+
+        private void ReadAndValidateXml(XmlReaderSettings settings, string failureMessage)
+        {
+            this.RequireContentType(SupportedContentType.Xml);
+
+            string responseXmlAsString = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            XmlReader reader = XmlReader.Create(new StringReader(responseXmlAsString), settings);
+
+            try
+            {
+                while (reader.Read())
+                {
+                }
+            }
+            catch (XmlSchemaException xse)
+            {
+                this.FailVerification($"{failureMessage}. Error: '{xse.Message}'");
+            }
+        }
+
+        private void VerifyJsonBody<T>(NodePath nodePath, IMatcher<T> matcher, ResolvedBody resolved)
+        {
+            JToken? resultingElement = JToken.Parse(resolved.Content).SelectToken(nodePath.Expression);
+
+            if (resultingElement == null)
+            {
+                this.FailVerification($"JsonPath expression '{nodePath.Expression}' did not yield any results.");
+            }
+
+            T valueToMatch = resultingElement!.GetType().Equals(typeof(JArray))
+                ? (T)resultingElement!.ToObject<ICollection<T>>() !
+                : resultingElement!.ToObject<T>() !;
+
+            if (!matcher.Matches(valueToMatch))
+            {
+                this.FailVerification($"Expected element selected by '{nodePath.Expression}' to match '{matcher}' but was '{resultingElement}'");
+            }
+        }
+
+        private void VerifyJsonElements<T>(NodePath nodePath, IMatcher<IEnumerable<T>> matcher, ResolvedBody resolved)
+        {
+            List<T> elementValues = new List<T>();
+
+            IEnumerable<JToken> resultingElements = JToken.Parse(resolved.Content).SelectTokens(nodePath.Expression);
+
+            foreach (JToken element in resultingElements)
+            {
+                elementValues.Add(element.ToObject<T>() !);
+            }
+
+            if (!matcher.Matches(elementValues))
+            {
+                this.FailVerification($"Expected elements selected by '{nodePath.Expression}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
+            }
+        }
+
+        private void VerifyMarkupBody<T>(NodePath nodePath, IMatcher<T> matcher, ResolvedBody resolved)
+        {
+            string innerText = this.SelectSingleNodeInnerText(nodePath, resolved);
+
+            // Try and cast the element value to an object of the type used in the matcher
+            try
+            {
+                if (!matcher.Matches((T)Convert.ChangeType(innerText, typeof(T))))
+                {
+                    this.FailVerification($"Expected element selected by '{nodePath.Expression}' to match '{matcher}' but was '{innerText}'");
+                }
+            }
+            catch (FormatException)
+            {
+                this.FailVerification($"Response element value {innerText} cannot be converted to value of type '{typeof(T)}'");
+            }
+        }
+
+        private void VerifyMarkupElements<T>(NodePath nodePath, IMatcher<IEnumerable<T>> matcher, ResolvedBody resolved)
+        {
+            List<T> elementValues = new List<T>();
+
+            // Try and cast the element values to an object of the type used in the matcher
+            foreach (string innerText in this.SelectNodeInnerTexts(nodePath, resolved))
+            {
+                try
+                {
+                    elementValues.Add((T)Convert.ChangeType(innerText, typeof(T)));
+                }
+                catch (FormatException)
+                {
+                    this.FailVerification($"Response element value {innerText} cannot be converted to object of type {typeof(T)}");
+                }
+            }
+
+            if (!matcher.Matches(elementValues))
+            {
+                this.FailVerification($"Expected elements selected by '{nodePath.Expression}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
+            }
+        }
+
+        private string SelectSingleNodeInnerText(NodePath nodePath, ResolvedBody resolved)
+        {
+            if (resolved.ContentType == SupportedContentType.Xml)
+            {
+                XmlDocument xmlDoc = new XmlDocument();
+                xmlDoc.LoadXml(resolved.Content);
+                XmlNode? node = xmlDoc.SelectSingleNode(nodePath.Expression);
+                if (node == null)
+                {
+                    this.FailVerification($"XPath expression '{nodePath.Expression}' did not yield any results.");
+                }
+
+                return node!.InnerText;
+            }
+
+            HtmlDocument htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(resolved.Content);
+            HtmlNode? htmlNode = htmlDoc.DocumentNode.SelectSingleNode(nodePath.Expression);
+            if (htmlNode == null)
+            {
+                this.FailVerification($"XPath expression '{nodePath.Expression}' did not yield any results.");
+            }
+
+            return htmlNode!.InnerText;
+        }
+
+        private IEnumerable<string> SelectNodeInnerTexts(NodePath nodePath, ResolvedBody resolved)
+        {
+            if (resolved.ContentType == SupportedContentType.Xml)
+            {
+                XmlDocument xmlDoc = new XmlDocument();
+                xmlDoc.LoadXml(resolved.Content);
+                return xmlDoc.SelectNodes(nodePath.Expression)!.Cast<XmlNode>().Select(n => n.InnerText).ToList();
+            }
+
+            HtmlDocument htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(resolved.Content);
+            return htmlDoc.DocumentNode.SelectNodes(nodePath.Expression)!.Cast<HtmlNode>().Select(n => n.InnerText).ToList();
+        }
+
+        private ResolvedBody ResolveBodyAndContentType(VerifyAs verifyAs)
+        {
+            string body = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            string mediaType = this.Response.Content.Headers.ContentType?.MediaType ?? string.Empty;
+
+            try
+            {
+                return new ResolvedBody(body, new ContentTypeUtils().DetermineResponseMediaTypeForResponse(mediaType, verifyAs));
+            }
+            catch (ExtractionException ee)
+            {
+                this.FailVerification(ee.Message);
+                return default;
+            }
+        }
+
+        private readonly record struct ResolvedBody(string Content, SupportedContentType ContentType);
+
+        private readonly record struct NodePath(string Expression);
 
         private void FailVerification(string exceptionMessage)
         {
