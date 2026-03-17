@@ -138,11 +138,9 @@ namespace RestAssured.Response
         {
             if (!matcher.Matches((int)this.Response.StatusCode))
             {
-                string message = errorMessage.HasValue
-                    ? errorMessage.Value!
-                    : $"Expected response status code to match '{matcher}', but was {(int)this.Response.StatusCode}";
-
-                this.FailVerification(AssertionMessageBuilder.BuildMessage(message, matcher, (int)this.Response.StatusCode));
+                this.FailVerification(errorMessage.HasValue
+                    ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, (int)this.Response.StatusCode)
+                    : $"Expected response status code to match '{matcher}', but was {(int)this.Response.StatusCode}");
             }
 
             return this;
@@ -159,11 +157,9 @@ namespace RestAssured.Response
         {
             if (!matcher.Matches(this.Response.StatusCode))
             {
-                string message = errorMessage.HasValue
-                    ? errorMessage.Value!
-                    : $"Expected response status code to match '{matcher}', but was {this.Response.StatusCode}";
-
-                this.FailVerification(AssertionMessageBuilder.BuildMessage(message, matcher, this.Response.StatusCode));
+                this.FailVerification(errorMessage.HasValue
+                    ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, this.Response.StatusCode)
+                    : $"Expected response status code to match '{matcher}', but was {this.Response.StatusCode}");
             }
 
             return this;
