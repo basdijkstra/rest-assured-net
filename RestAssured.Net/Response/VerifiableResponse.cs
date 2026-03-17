@@ -602,7 +602,9 @@ namespace RestAssured.Response
 
             if (resultingElement == null)
             {
-                this.FailVerification($"JsonPath expression '{nodePath.Expression}' did not yield any results.");
+                this.FailVerification(errorMessage.HasValue
+                    ? $"{errorMessage.Value!}: JsonPath expression '{nodePath.Expression}' did not yield any results."
+                    : $"JsonPath expression '{nodePath.Expression}' did not yield any results.");
             }
 
             T valueToMatch = resultingElement!.GetType().Equals(typeof(JArray))
@@ -652,7 +654,9 @@ namespace RestAssured.Response
             }
             catch (FormatException)
             {
-                this.FailVerification($"Response element value {innerText} cannot be converted to value of type '{typeof(T)}'");
+                this.FailVerification(errorMessage.HasValue
+                    ? $"{errorMessage.Value!}: Response element value {innerText} cannot be converted to value of type '{typeof(T)}'"
+                    : $"Response element value {innerText} cannot be converted to value of type '{typeof(T)}'");
             }
         }
 
@@ -669,7 +673,9 @@ namespace RestAssured.Response
                 }
                 catch (FormatException)
                 {
-                    this.FailVerification($"Response element value {innerText} cannot be converted to object of type {typeof(T)}");
+                    this.FailVerification(errorMessage.HasValue
+                        ? $"{errorMessage.Value!}: Response element value {innerText} cannot be converted to object of type {typeof(T)}"
+                        : $"Response element value {innerText} cannot be converted to object of type {typeof(T)}");
                 }
             }
 

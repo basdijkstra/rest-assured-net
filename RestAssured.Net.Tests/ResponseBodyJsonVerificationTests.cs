@@ -365,6 +365,28 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// Verifies that a custom error message is used when the JsonPath expression
+        /// does not yield any results.
+        /// </summary>
+        [Test]
+        public void CustomErrorMessageIsUsedWhenJsonPathDoesNotYieldAnyResults()
+        {
+            this.CreateStubForJsonResponseBody();
+
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                    .When()
+                    .Get($"{MOCK_SERVER_BASE_URL}/json-response-body")
+                    .Then()
+                    .StatusCode(200)
+                    .Body("$.Places[0].DoesNotExist", NHamcrest.Is.False(), errorMessage: "Custom no-results message");
+            });
+
+            Assert.That(rve?.Message, Is.EqualTo("Custom no-results message: JsonPath expression '$.Places[0].DoesNotExist' did not yield any results."));
+        }
+
+        /// <summary>
         /// Verifies that a custom error message is used when a JSON path body element
         /// does not match the expected NHamcrest matcher.
         /// </summary>
