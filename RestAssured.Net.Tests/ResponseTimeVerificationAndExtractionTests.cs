@@ -88,6 +88,29 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a response time using a templated custom error message,
+        /// that the exception contains the correctly formatted message.
+        /// </summary>
+        [Test]
+        public void TemplatedCustomErrorMessageCanBeSpecifiedWhenVerifyingResponseTime()
+        {
+            this.CreateStubForDelayedResponse();
+
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/delayed-response")
+                .Then()
+                .StatusCode(200)
+                .ResponseTime(NHamcrest.Is.LessThan(TimeSpan.FromMilliseconds(200)), "Expected [expected]");
+            });
+
+            Assert.That(rve?.Message, Is.EqualTo("Expected less than 00:00:00.2000000"));
+        }
+
+        /// <summary>
         /// Creates the stub response for the response time extraction and verification examples.
         /// </summary>
         private void CreateStubForDelayedResponse()

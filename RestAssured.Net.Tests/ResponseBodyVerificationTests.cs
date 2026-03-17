@@ -153,6 +153,50 @@ namespace RestAssured.Tests
             Assert.That(rve?.Message, Is.EqualTo($"Unable to extract elements from response with Content-Type 'application/unknown'"));
         }
 
+        /// <summary>
+        /// Verifies that a custom error message is used when the response body
+        /// does not equal the expected string value.
+        /// </summary>
+        [Test]
+        public void TemplatedCustomErrorMessageCanBeSpecifiedWhenVerifyingBodyAsString()
+        {
+            this.CreateStubForPlaintextResponseBody("small");
+
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                    .When()
+                    .Get($"{MOCK_SERVER_BASE_URL}/plaintext-response-body")
+                    .Then()
+                    .StatusCode(200)
+                    .Body("wrong body", "Expected [expected]");
+            });
+
+            Assert.That(rve?.Message, Is.EqualTo("Expected wrong body"));
+        }
+
+        /// <summary>
+        /// Verifies that a custom error message is used when the response body
+        /// does not match the given NHamcrest matcher.
+        /// </summary>
+        [Test]
+        public void TemplatedCustomErrorMessageCanBeSpecifiedWhenVerifyingBodyUsingNHamcrestMatcher()
+        {
+            this.CreateStubForJsonStringResponseBody();
+
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                    .When()
+                    .Get($"{MOCK_SERVER_BASE_URL}/json-string-response-body")
+                    .Then()
+                    .StatusCode(200)
+                    .Body(NHamcrest.Contains.String("Jane Doe"), "Expected [expected]");
+            });
+
+            Assert.That(rve?.Message, Is.EqualTo("Expected a string containing \"Jane Doe\""));
+        }
+
         private void CreateStubForPlaintextResponseBody(string bodySize)
         {
             switch (bodySize)

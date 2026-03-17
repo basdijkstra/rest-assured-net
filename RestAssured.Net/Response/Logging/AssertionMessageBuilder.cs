@@ -1,4 +1,4 @@
-﻿// <copyright file="AssertionMessageBuilder.cs" company="On Test Automation">
+// <copyright file="AssertionMessageBuilder.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,10 +16,10 @@
 namespace RestAssured.Response.Logging
 {
     using System.Collections.Generic;
-    using System.Runtime.CompilerServices;
     using Stubble.Core;
     using Stubble.Core.Builders;
     using Stubble.Core.Classes;
+    using Stubble.Core.Settings;
 
     /// <summary>
     /// Contains helper methods for logging assertion results.
@@ -65,7 +65,7 @@ namespace RestAssured.Response.Logging
                 .Configure(builder => builder.SetDefaultTags(new Tags(START_TAG, END_TAG)))
                 .Build();
 
-            return renderer.Render(originalMessage, values);
+            return renderer.Render(originalMessage, values, new RenderSettings { SkipHtmlEncoding = true });
         }
     }
 }
