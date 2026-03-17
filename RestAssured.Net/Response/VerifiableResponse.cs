@@ -286,7 +286,7 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when the actual response body does not match the expected one.</exception>
         public VerifiableResponse Body(string expectedResponseBody, string? errorMessage = null)
         {
-            string actualResponseBody = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            string actualResponseBody = this.ReadBodyAsString();
 
             if (!actualResponseBody.Equals(expectedResponseBody))
             {
@@ -307,7 +307,7 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when the actual response body does not match the expected one.</exception>
         public VerifiableResponse Body(IMatcher<string> matcher, string? errorMessage = null)
         {
-            string actualResponseBody = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            string actualResponseBody = this.ReadBodyAsString();
 
             if (!matcher.Matches(actualResponseBody))
             {
@@ -744,6 +744,11 @@ namespace RestAssured.Response
         private readonly record struct ResolvedBody(string Content, SupportedContentType ContentType);
 
         private readonly record struct NodePath(string Expression);
+
+        private string ReadBodyAsString()
+        {
+            return this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+        }
 
         private void FailVerification(string exceptionMessage)
         {
