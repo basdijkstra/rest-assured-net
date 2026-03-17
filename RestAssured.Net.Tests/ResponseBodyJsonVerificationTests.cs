@@ -365,9 +365,6 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
-        /// Creates the stub response for the JSON response body example.
-        /// </summary>
-        /// <summary>
         /// Verifies that a custom error message is used when a JSON path body element
         /// does not match the expected NHamcrest matcher.
         /// </summary>
@@ -389,6 +386,9 @@ namespace RestAssured.Tests
             Assert.That(rve?.Message, Is.EqualTo("Expected \"NonExistentCity\""));
         }
 
+        /// <summary>
+        /// Creates the stub response for the JSON response body example.
+        /// </summary>
         private void CreateStubForJsonResponseBody()
         {
             this.Server?.Given(Request.Create().WithPath("/json-response-body").UsingGet())
