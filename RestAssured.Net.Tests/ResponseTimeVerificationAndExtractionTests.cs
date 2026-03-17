@@ -88,9 +88,8 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for verifying
-        /// a response time using a templated custom error message,
-        /// that the exception contains the correctly formatted message.
+        /// A test demonstrating RestAssuredNet syntax for verifying a response time using a templated custom error message,
+        /// and asserting that the thrown exception contains the correctly formatted message.
         /// </summary>
         [Test]
         public void TemplatedCustomErrorMessageCanBeSpecifiedWhenVerifyingResponseTime()
