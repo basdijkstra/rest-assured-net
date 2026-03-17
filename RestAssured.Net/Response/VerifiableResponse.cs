@@ -286,16 +286,11 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when the actual response body does not match the expected one.</exception>
         public VerifiableResponse Body(string expectedResponseBody, string? errorMessage = null)
         {
-            string actualResponseBody = this.ReadBodyAsString();
-
-            if (!actualResponseBody.Equals(expectedResponseBody))
-            {
-                this.FailVerification(errorMessage != null
-                    ? AssertionMessageBuilder.BuildMessage(errorMessage, expectedResponseBody, actualResponseBody)
-                    : $"Actual response body did not match expected response body.\nExpected: '{expectedResponseBody}'\nActual: '{actualResponseBody}'");
-            }
-
-            return this;
+            return this.VerifyResponseBody(
+                actual => !actual.Equals(expectedResponseBody),
+                actual => $"Actual response body did not match expected response body.\nExpected: '{expectedResponseBody}'\nActual: '{actual}'",
+                expectedResponseBody,
+                errorMessage);
         }
 
         /// <summary>
@@ -307,16 +302,11 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when the actual response body does not match the expected one.</exception>
         public VerifiableResponse Body(IMatcher<string> matcher, string? errorMessage = null)
         {
-            string actualResponseBody = this.ReadBodyAsString();
-
-            if (!matcher.Matches(actualResponseBody))
-            {
-                this.FailVerification(errorMessage != null
-                    ? AssertionMessageBuilder.BuildMessage(errorMessage, matcher, actualResponseBody)
-                    : $"Actual response body expected to match '{matcher}' but didn't.\nActual: '{actualResponseBody}'");
-            }
-
-            return this;
+            return this.VerifyResponseBody(
+                actual => !matcher.Matches(actual),
+                actual => $"Actual response body expected to match '{matcher}' but didn't.\nActual: '{actual}'",
+                matcher,
+                errorMessage);
         }
 
         /// <summary>
@@ -744,6 +734,20 @@ namespace RestAssured.Response
         private readonly record struct ResolvedBody(string Content, SupportedContentType ContentType);
 
         private readonly record struct NodePath(string Expression);
+
+        private VerifiableResponse VerifyResponseBody(Func<string, bool> failCondition, Func<string, string> buildDefaultMessage, object expectedValue, string? errorMessage)
+        {
+            string actual = this.ReadBodyAsString();
+
+            if (failCondition(actual))
+            {
+                this.FailVerification(errorMessage != null
+                    ? AssertionMessageBuilder.BuildMessage(errorMessage, expectedValue, actual)
+                    : buildDefaultMessage(actual));
+            }
+
+            return this;
+        }
 
         private string ReadBodyAsString()
         {
