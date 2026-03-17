@@ -136,13 +136,7 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when the actual status code does not match the expected one.</exception>
         public VerifiableResponse StatusCode(IMatcher<int> matcher, ErrorMessage errorMessage = default)
         {
-            if (!matcher.Matches((int)this.Response.StatusCode))
-            {
-                this.FailVerification(errorMessage.HasValue
-                    ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, (int)this.Response.StatusCode)
-                    : $"Expected response status code to match '{matcher}', but was {(int)this.Response.StatusCode}");
-            }
-
+            this.VerifyWithMatcher(matcher, (int)this.Response.StatusCode, $"Expected response status code to match '{matcher}', but was {(int)this.Response.StatusCode}", errorMessage);
             return this;
         }
 
@@ -155,13 +149,7 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when the actual status code does not match the expected one.</exception>
         public VerifiableResponse StatusCode(IMatcher<HttpStatusCode> matcher, ErrorMessage errorMessage = default)
         {
-            if (!matcher.Matches(this.Response.StatusCode))
-            {
-                this.FailVerification(errorMessage.HasValue
-                    ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, this.Response.StatusCode)
-                    : $"Expected response status code to match '{matcher}', but was {this.Response.StatusCode}");
-            }
-
+            this.VerifyWithMatcher(matcher, this.Response.StatusCode, $"Expected response status code to match '{matcher}', but was {this.Response.StatusCode}", errorMessage);
             return this;
         }
 
@@ -326,19 +314,11 @@ namespace RestAssured.Response
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse Body<T>(string path, IMatcher<T> matcher, VerifyAs verifyAs = VerifyAs.UseResponseContentTypeHeaderValue, ErrorMessage errorMessage = default)
         {
-            ResolvedBody resolved = this.ResolveBodyAndContentType(verifyAs);
-            NodePath nodePath = new NodePath(path);
-
-            if (resolved.ContentType.Equals(SupportedContentType.Json))
-            {
-                this.VerifyJsonBody(nodePath, matcher, resolved, errorMessage);
-            }
-            else
-            {
-                this.VerifyMarkupBody(nodePath, matcher, resolved, errorMessage);
-            }
-
-            return this;
+            return this.DispatchBodyVerification(
+                path,
+                verifyAs,
+                (np, rb) => this.VerifyJsonBody(np, matcher, rb, errorMessage),
+                (np, rb) => this.VerifyMarkupBody(np, matcher, rb, errorMessage));
         }
 
         /// <summary>
@@ -352,19 +332,11 @@ namespace RestAssured.Response
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse Body<T>(string path, IMatcher<IEnumerable<T>> matcher, VerifyAs verifyAs = VerifyAs.UseResponseContentTypeHeaderValue, ErrorMessage errorMessage = default)
         {
-            ResolvedBody resolved = this.ResolveBodyAndContentType(verifyAs);
-            NodePath nodePath = new NodePath(path);
-
-            if (resolved.ContentType.Equals(SupportedContentType.Json))
-            {
-                this.VerifyJsonElements(nodePath, matcher, resolved, errorMessage);
-            }
-            else
-            {
-                this.VerifyMarkupElements(nodePath, matcher, resolved, errorMessage);
-            }
-
-            return this;
+            return this.DispatchBodyVerification(
+                path,
+                verifyAs,
+                (np, rb) => this.VerifyJsonElements(np, matcher, rb, errorMessage),
+                (np, rb) => this.VerifyMarkupElements(np, matcher, rb, errorMessage));
         }
 
         /// <summary>
@@ -473,13 +445,7 @@ namespace RestAssured.Response
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse ResponseTime(IMatcher<TimeSpan> matcher, ErrorMessage errorMessage = default)
         {
-            if (!matcher.Matches(this.ElapsedTime))
-            {
-                this.FailVerification(errorMessage.HasValue
-                    ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, this.ElapsedTime)
-                    : $"Expected response time to match '{matcher}' but was '{this.ElapsedTime}'");
-            }
-
+            this.VerifyWithMatcher(matcher, this.ElapsedTime, $"Expected response time to match '{matcher}' but was '{this.ElapsedTime}'", errorMessage);
             return this;
         }
 
@@ -764,6 +730,33 @@ namespace RestAssured.Response
         private string ReadBodyAsString()
         {
             return this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+        }
+
+        private void VerifyWithMatcher<T>(IMatcher<T> matcher, T actualValue, string defaultMessage, ErrorMessage errorMessage)
+        {
+            if (!matcher.Matches(actualValue))
+            {
+                this.FailVerification(errorMessage.HasValue
+                    ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, actualValue!)
+                    : defaultMessage);
+            }
+        }
+
+        private VerifiableResponse DispatchBodyVerification(string path, VerifyAs verifyAs, Action<NodePath, ResolvedBody> jsonVerify, Action<NodePath, ResolvedBody> markupVerify)
+        {
+            ResolvedBody resolved = this.ResolveBodyAndContentType(verifyAs);
+            NodePath nodePath = new NodePath(path);
+
+            if (resolved.ContentType.Equals(SupportedContentType.Json))
+            {
+                jsonVerify(nodePath, resolved);
+            }
+            else
+            {
+                markupVerify(nodePath, resolved);
+            }
+
+            return this;
         }
 
         private void FailVerification(string exceptionMessage)
