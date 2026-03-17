@@ -15,6 +15,7 @@
 // </copyright>
 namespace RestAssured
 {
+    using System;
     using System.Net.Http;
     using RestAssured.Configuration;
     using RestAssured.Logging;
@@ -48,6 +49,11 @@ namespace RestAssured
         /// <returns>A <see cref="ExecutableRequest"/> object containing all relevant request properties.</returns>
         public static ExecutableRequest Given(IRestAssuredNetLogger logger, HttpClient? httpClient = null)
         {
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
             return new ExecutableRequest(RestAssuredConfig, httpClient, logger);
         }
     }

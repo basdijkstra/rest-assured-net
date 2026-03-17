@@ -15,6 +15,7 @@
 // </copyright>
 namespace RestAssured.Tests
 {
+    using System;
     using System.Collections.Generic;
     using NUnit.Framework;
     using RestAssured.Logging;
@@ -162,6 +163,15 @@ namespace RestAssured.Tests
                 .StatusCode(200);
 
             Assert.That(collector.Messages, Has.Some.Contains("John Doe"));
+        }
+
+        /// <summary>
+        /// Verifies that passing a null logger to Given throws an ArgumentNullException.
+        /// </summary>
+        [Test]
+        public void GivenWithNullLoggerThrowsArgumentNullException()
+        {
+            Assert.Throws<ArgumentNullException>(() => Given((IRestAssuredNetLogger)null!));
         }
 
         /// <summary>
