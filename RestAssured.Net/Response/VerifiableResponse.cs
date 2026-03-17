@@ -407,7 +407,7 @@ namespace RestAssured.Response
         {
             this.RequireContentType(SupportedContentType.Json);
 
-            string responseBodyAsString = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            string responseBodyAsString = this.ReadBodyAsString();
 
             ICollection<ValidationError> schemaValidationErrors = jsonSchema.Validate(responseBodyAsString);
 
@@ -495,7 +495,7 @@ namespace RestAssured.Response
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse ResponseBodyLength(IMatcher<int> matcher, ErrorMessage errorMessage = default)
         {
-            string responseContentAsString = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            string responseContentAsString = this.ReadBodyAsString();
 
             if (!matcher.Matches(responseContentAsString.Length))
             {
@@ -585,7 +585,7 @@ namespace RestAssured.Response
         {
             this.RequireContentType(SupportedContentType.Xml);
 
-            string responseXmlAsString = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            string responseXmlAsString = this.ReadBodyAsString();
             XmlReader reader = XmlReader.Create(new StringReader(responseXmlAsString), settings);
 
             try
@@ -727,7 +727,7 @@ namespace RestAssured.Response
 
         private ResolvedBody ResolveBodyAndContentType(VerifyAs verifyAs)
         {
-            string body = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            string body = this.ReadBodyAsString();
             string mediaType = this.Response.Content.Headers.ContentType?.MediaType ?? string.Empty;
 
             try
