@@ -16,7 +16,6 @@
 namespace RestAssured.Tests
 {
     using System.Collections.Generic;
-    using System.Linq;
     using NUnit.Framework;
     using RestAssured.Logging;
     using RestAssured.Response.Exceptions;
@@ -33,13 +32,26 @@ namespace RestAssured.Tests
         private readonly string jsonBody = "{\"id\": 1, \"user\": \"John Doe\"}";
 
         /// <summary>
+        /// Creates the WireMock stub used by all tests in this fixture.
+        /// </summary>
+        [SetUp]
+        public void CreateStub()
+        {
+            this.Server?.Given(Request.Create()
+                .WithPath("/custom-logger-test")
+                .UsingAnyMethod())
+                .RespondWith(Response.Create()
+                .WithStatusCode(200)
+                .WithHeader("Content-Type", "application/json")
+                .WithBody(this.jsonBody));
+        }
+
+        /// <summary>
         /// Verifies that the request endpoint line is captured by a custom logger.
         /// </summary>
         [Test]
         public void RequestEndpointIsWrittenToCustomLogger()
         {
-            this.CreateStubForJsonResponse();
-
             var collector = new CollectingLogger();
 
             Given(collector)
@@ -59,8 +71,6 @@ namespace RestAssured.Tests
         [Test]
         public void RequestHeadersAreWrittenToCustomLogger()
         {
-            this.CreateStubForJsonResponse();
-
             var collector = new CollectingLogger();
 
             Given(collector)
@@ -80,8 +90,6 @@ namespace RestAssured.Tests
         [Test]
         public void SensitiveRequestHeaderIsMaskedInCustomLogger()
         {
-            this.CreateStubForJsonResponse();
-
             var collector = new CollectingLogger();
 
             Given(collector)
@@ -106,8 +114,6 @@ namespace RestAssured.Tests
         [Test]
         public void ResponseStatusCodeIsWrittenToCustomLogger()
         {
-            this.CreateStubForJsonResponse();
-
             var collector = new CollectingLogger();
 
             Given(collector)
@@ -126,8 +132,6 @@ namespace RestAssured.Tests
         [Test]
         public void ResponseBodyIsWrittenToCustomLogger()
         {
-            this.CreateStubForJsonResponse();
-
             var collector = new CollectingLogger();
 
             Given(collector)
@@ -137,7 +141,7 @@ namespace RestAssured.Tests
                 .Then()
                 .StatusCode(200);
 
-            Assert.That(collector.Messages.Any(m => m.Contains("John Doe")), Is.True);
+            Assert.That(collector.Messages, Has.Some.Contains("John Doe"));
         }
 
         /// <summary>
@@ -146,8 +150,6 @@ namespace RestAssured.Tests
         [Test]
         public void RequestBodyIsWrittenToCustomLogger()
         {
-            this.CreateStubForJsonResponse();
-
             var collector = new CollectingLogger();
 
             Given(collector)
@@ -159,7 +161,7 @@ namespace RestAssured.Tests
                 .Then()
                 .StatusCode(200);
 
-            Assert.That(collector.Messages.Any(m => m.Contains("John Doe")), Is.True);
+            Assert.That(collector.Messages, Has.Some.Contains("John Doe"));
         }
 
         /// <summary>
@@ -168,8 +170,6 @@ namespace RestAssured.Tests
         [Test]
         public void ResponseIsWrittenToCustomLoggerOnVerificationFailure()
         {
-            this.CreateStubForJsonResponse();
-
             var collector = new CollectingLogger();
 
             Assert.Throws<ResponseVerificationException>(() =>
@@ -183,19 +183,6 @@ namespace RestAssured.Tests
             Assert.That(collector.Messages, Has.Some.Contains("HTTP 200"));
         }
 
-        /// <summary>
-        /// Creates the WireMock stub for these tests.
-        /// </summary>
-        private void CreateStubForJsonResponse()
-        {
-            this.Server?.Given(Request.Create()
-                .WithPath("/custom-logger-test")
-                .UsingAnyMethod())
-                .RespondWith(Response.Create()
-                .WithStatusCode(200)
-                .WithHeader("Content-Type", "application/json")
-                .WithBody(this.jsonBody));
-        }
     }
 
 }
