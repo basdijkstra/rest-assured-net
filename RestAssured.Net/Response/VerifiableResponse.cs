@@ -590,7 +590,7 @@ namespace RestAssured.Response
             }
         }
 
-        private void VerifyJsonBody<T>(NodePath nodePath, IMatcher<T> matcher, ResolvedBody resolved, string? errorMessage = null)
+        private void VerifyJsonBody<T>(NodePath nodePath, IMatcher<T> matcher, ResolvedBody resolved, ErrorMessage errorMessage = default)
         {
             JToken? resultingElement = JToken.Parse(resolved.Content).SelectToken(nodePath.Expression);
 
@@ -605,13 +605,13 @@ namespace RestAssured.Response
 
             if (!matcher.Matches(valueToMatch))
             {
-                this.FailVerification(errorMessage != null
-                    ? AssertionMessageBuilder.BuildMessage(errorMessage, matcher, resultingElement!)
+                this.FailVerification(errorMessage.HasValue
+                    ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, resultingElement!)
                     : $"Expected element selected by '{nodePath.Expression}' to match '{matcher}' but was '{resultingElement}'");
             }
         }
 
-        private void VerifyJsonElements<T>(NodePath nodePath, IMatcher<IEnumerable<T>> matcher, ResolvedBody resolved, string? errorMessage = null)
+        private void VerifyJsonElements<T>(NodePath nodePath, IMatcher<IEnumerable<T>> matcher, ResolvedBody resolved, ErrorMessage errorMessage = default)
         {
             List<T> elementValues = new List<T>();
 
@@ -624,13 +624,13 @@ namespace RestAssured.Response
 
             if (!matcher.Matches(elementValues))
             {
-                this.FailVerification(errorMessage != null
-                    ? AssertionMessageBuilder.BuildMessage(errorMessage, matcher, string.Join(", ", elementValues))
+                this.FailVerification(errorMessage.HasValue
+                    ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, string.Join(", ", elementValues))
                     : $"Expected elements selected by '{nodePath.Expression}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
             }
         }
 
-        private void VerifyMarkupBody<T>(NodePath nodePath, IMatcher<T> matcher, ResolvedBody resolved, string? errorMessage = null)
+        private void VerifyMarkupBody<T>(NodePath nodePath, IMatcher<T> matcher, ResolvedBody resolved, ErrorMessage errorMessage = default)
         {
             string innerText = this.SelectSingleNodeInnerText(nodePath, resolved);
 
@@ -639,8 +639,8 @@ namespace RestAssured.Response
             {
                 if (!matcher.Matches((T)Convert.ChangeType(innerText, typeof(T))))
                 {
-                    this.FailVerification(errorMessage != null
-                        ? AssertionMessageBuilder.BuildMessage(errorMessage, matcher, innerText)
+                    this.FailVerification(errorMessage.HasValue
+                        ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, innerText)
                         : $"Expected element selected by '{nodePath.Expression}' to match '{matcher}' but was '{innerText}'");
                 }
             }
@@ -650,7 +650,7 @@ namespace RestAssured.Response
             }
         }
 
-        private void VerifyMarkupElements<T>(NodePath nodePath, IMatcher<IEnumerable<T>> matcher, ResolvedBody resolved, string? errorMessage = null)
+        private void VerifyMarkupElements<T>(NodePath nodePath, IMatcher<IEnumerable<T>> matcher, ResolvedBody resolved, ErrorMessage errorMessage = default)
         {
             List<T> elementValues = new List<T>();
 
@@ -669,8 +669,8 @@ namespace RestAssured.Response
 
             if (!matcher.Matches(elementValues))
             {
-                this.FailVerification(errorMessage != null
-                    ? AssertionMessageBuilder.BuildMessage(errorMessage, matcher, string.Join(", ", elementValues))
+                this.FailVerification(errorMessage.HasValue
+                    ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, string.Join(", ", elementValues))
                     : $"Expected elements selected by '{nodePath.Expression}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
             }
         }
@@ -735,14 +735,21 @@ namespace RestAssured.Response
 
         private readonly record struct NodePath(string Expression);
 
-        private VerifiableResponse VerifyResponseBody(Func<string, bool> failCondition, Func<string, string> buildDefaultMessage, object expectedValue, string? errorMessage)
+        private readonly record struct ErrorMessage(string? Value)
+        {
+            public bool HasValue => this.Value != null;
+
+            public static implicit operator ErrorMessage(string? value) => new ErrorMessage(value);
+        }
+
+        private VerifiableResponse VerifyResponseBody(Func<string, bool> failCondition, Func<string, string> buildDefaultMessage, object expectedValue, ErrorMessage errorMessage)
         {
             string actual = this.ReadBodyAsString();
 
             if (failCondition(actual))
             {
-                this.FailVerification(errorMessage != null
-                    ? AssertionMessageBuilder.BuildMessage(errorMessage, expectedValue, actual)
+                this.FailVerification(errorMessage.HasValue
+                    ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, expectedValue, actual)
                     : buildDefaultMessage(actual));
             }
 
