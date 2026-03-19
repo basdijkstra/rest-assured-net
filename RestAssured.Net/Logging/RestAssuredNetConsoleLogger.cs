@@ -19,14 +19,29 @@ namespace RestAssured.Logging
     using System;
 
     /// <summary>
-    /// The default <see cref="IRestAssuredNetLogger"/> implementation that writes log lines to standard output.
+    /// The default <see cref="IRestAssuredNetLogger"/> implementation that writes log lines to a configurable sink,
+    /// defaulting to standard output.
     /// </summary>
     public class RestAssuredNetConsoleLogger : IRestAssuredNetLogger
     {
+        private readonly Action<string> sink;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RestAssuredNetConsoleLogger"/> class.
+        /// </summary>
+        /// <param name="sink">
+        /// The action to invoke for each log line. Defaults to <see cref="Console.WriteLine(string)"/>
+        /// when not specified, preserving existing behaviour.
+        /// </param>
+        public RestAssuredNetConsoleLogger(Action<string>? sink = null)
+        {
+            this.sink = sink ?? Console.WriteLine;
+        }
+
         /// <inheritdoc/>
         public void Log(string message)
         {
-            Console.WriteLine(message);
+            this.sink(message);
         }
     }
 }
