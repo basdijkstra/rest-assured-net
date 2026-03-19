@@ -88,7 +88,7 @@ namespace RestAssured.Request
             this.httpCompletionOption = config.HttpCompletionOption;
 
             this.httpClient = httpClient;
-            this.logger = logger;
+            this.logger = logger ?? config.Logger;
         }
 
         /// <summary>
@@ -100,6 +100,7 @@ namespace RestAssured.Request
         {
             this.requestSpecification = requestSpecification;
             this.RequestLoggingLevel = requestSpecification.RequestLogLevel;
+            this.logger ??= requestSpecification.Logger;
             return this;
         }
 

@@ -1,4 +1,4 @@
-﻿// <copyright file="RequestSpecBuilder.cs" company="On Test Automation">
+// <copyright file="RequestSpecBuilder.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -313,6 +313,17 @@ namespace RestAssured.Request.Builders
         public RequestSpecBuilder WithHttpCompletionOption(HttpCompletionOption httpCompletionOption)
         {
             this.requestSpecification.HttpCompletionOption = httpCompletionOption;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the <see cref="IRestAssuredNetLogger"/> to use when writing log output for requests that use this specification.
+        /// </summary>
+        /// <param name="logger">The <see cref="IRestAssuredNetLogger"/> implementation to use as the log sink.</param>
+        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
+        public RequestSpecBuilder WithLogger(IRestAssuredNetLogger logger)
+        {
+            this.requestSpecification.Logger = logger;
             return this;
         }
 

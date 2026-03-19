@@ -19,6 +19,7 @@ namespace RestAssured.Tests
     using System.Collections.Generic;
     using NUnit.Framework;
     using RestAssured.Logging;
+    using RestAssured.Request.Builders;
     using RestAssured.Response.Exceptions;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
@@ -175,6 +176,106 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// Verifies that the request endpoint line is captured by a logger set on a RequestSpecification.
+        /// </summary>
+        [Test]
+        public void RequestEndpointIsWrittenToLoggerFromRequestSpecification()
+        {
+            var collector = new CollectingLogger();
+
+            var spec = new RequestSpecBuilder()
+                .WithBaseUri(MOCK_SERVER_BASE_URL)
+                .WithLogConfiguration(new LogConfiguration { RequestLogLevel = RequestLogLevel.Endpoint })
+                .WithLogger(collector)
+                .Build();
+
+            Given()
+                .Spec(spec)
+                .When()
+                .Get("/custom-logger-test")
+                .Then()
+                .StatusCode(200);
+
+            Assert.That(collector.Messages, Has.Some.Contains("GET"));
+            Assert.That(collector.Messages, Has.Some.Contains("/custom-logger-test"));
+        }
+
+        /// <summary>
+        /// Verifies that request headers are captured by a logger set on a RequestSpecification.
+        /// </summary>
+        [Test]
+        public void RequestHeadersAreWrittenToLoggerFromRequestSpecification()
+        {
+            var collector = new CollectingLogger();
+
+            var spec = new RequestSpecBuilder()
+                .WithBaseUri(MOCK_SERVER_BASE_URL)
+                .WithLogConfiguration(new LogConfiguration { RequestLogLevel = RequestLogLevel.All })
+                .WithLogger(collector)
+                .Build();
+
+            Given()
+                .Spec(spec)
+                .Header("X-Custom-Header", "custom-value")
+                .When()
+                .Get("/custom-logger-test")
+                .Then()
+                .StatusCode(200);
+
+            Assert.That(collector.Messages, Has.Some.Contains("X-Custom-Header: custom-value"));
+        }
+
+        /// <summary>
+        /// Verifies that the response body is captured by a logger set on a RequestSpecification.
+        /// </summary>
+        [Test]
+        public void ResponseBodyIsWrittenToLoggerFromRequestSpecification()
+        {
+            var collector = new CollectingLogger();
+
+            var spec = new RequestSpecBuilder()
+                .WithBaseUri(MOCK_SERVER_BASE_URL)
+                .WithLogConfiguration(new LogConfiguration { ResponseLogLevel = ResponseLogLevel.All })
+                .WithLogger(collector)
+                .Build();
+
+            Given()
+                .Spec(spec)
+                .When()
+                .Get("/custom-logger-test")
+                .Then()
+                .StatusCode(200);
+
+            Assert.That(collector.Messages, Has.Some.Contains("John Doe"));
+        }
+
+        /// <summary>
+        /// Verifies that an explicit Given(logger) takes precedence over a logger set on a RequestSpecification.
+        /// </summary>
+        [Test]
+        public void ExplicitGivenLoggerTakesPrecedenceOverRequestSpecificationLogger()
+        {
+            var specCollector = new CollectingLogger();
+            var givenCollector = new CollectingLogger();
+
+            var spec = new RequestSpecBuilder()
+                .WithBaseUri(MOCK_SERVER_BASE_URL)
+                .WithLogConfiguration(new LogConfiguration { RequestLogLevel = RequestLogLevel.Endpoint })
+                .WithLogger(specCollector)
+                .Build();
+
+            Given(givenCollector)
+                .Spec(spec)
+                .When()
+                .Get("/custom-logger-test")
+                .Then()
+                .StatusCode(200);
+
+            Assert.That(givenCollector.Messages, Has.Some.Contains("GET"));
+            Assert.That(specCollector.Messages, Is.Empty);
+        }
+
+        /// <summary>
         /// Verifies that response details are written to a custom logger on verification failure.
         /// </summary>
         [Test]
@@ -192,7 +293,5 @@ namespace RestAssured.Tests
 
             Assert.That(collector.Messages, Has.Some.Contains("HTTP 200"));
         }
-
     }
-
 }
