@@ -30,53 +30,56 @@ namespace RestAssured.Logging
     /// </summary>
     internal class RequestResponseLogger
     {
-        private LogConfiguration logConfiguration;
+        private readonly LogConfiguration logConfiguration;
+        private readonly IRestAssuredNetLogger logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestResponseLogger"/> class.
         /// </summary>
         /// <param name="logConfiguration">The <see cref="LogConfiguration"/> to use when logging request and response details.</param>
-        public RequestResponseLogger(LogConfiguration logConfiguration)
+        /// <param name="logger">The <see cref="IRestAssuredNetLogger"/> to use when writing log output.</param>
+        public RequestResponseLogger(LogConfiguration logConfiguration, IRestAssuredNetLogger? logger = null)
         {
             this.logConfiguration = logConfiguration;
+            this.logger = logger ?? new RestAssuredNetConsoleLogger();
         }
 
         /// <summary>
-        /// Logs request details to the console.
+        /// Logs request details using the injected <see cref="IRestAssuredNetLogger"/>.
         /// </summary>
-        /// <param name="request">The <see cref="HttpRequestMessage"/> to be logged to the console.</param>
-        /// <param name="cookieCollection">The <see cref="CookieCollection"/> associated with this request.</param>
+        /// <param name="request">The <see cref="HttpRequestMessage"/> whose details are to be logged.</param>
+        /// <param name="cookieCollection">The <see cref="CookieCollection"/> containing cookies associated with the request.</param>
         public void LogRequest(HttpRequestMessage request, CookieCollection cookieCollection)
         {
             if (this.logConfiguration.RequestLogLevel >= RequestLogLevel.Endpoint)
             {
-                Console.WriteLine($"{request.Method} {request.RequestUri}");
+                this.logger.Log($"{request.Method} {request.RequestUri}");
             }
 
             if (this.logConfiguration.RequestLogLevel == RequestLogLevel.Headers)
             {
-                LogRequestHeaders(request, this.logConfiguration.SensitiveRequestHeadersAndCookies);
-                LogRequestCookies(cookieCollection, this.logConfiguration.SensitiveRequestHeadersAndCookies);
+                this.LogRequestHeaders(request, this.logConfiguration.SensitiveRequestHeadersAndCookies);
+                this.LogRequestCookies(cookieCollection, this.logConfiguration.SensitiveRequestHeadersAndCookies);
             }
 
             if (this.logConfiguration.RequestLogLevel == RequestLogLevel.Body)
             {
-                LogRequestBody(request);
+                this.LogRequestBody(request);
             }
 
             if (this.logConfiguration.RequestLogLevel == RequestLogLevel.All)
             {
-                LogRequestHeaders(request, this.logConfiguration.SensitiveRequestHeadersAndCookies);
-                LogRequestCookies(cookieCollection, this.logConfiguration.SensitiveRequestHeadersAndCookies);
-                LogRequestBody(request);
+                this.LogRequestHeaders(request, this.logConfiguration.SensitiveRequestHeadersAndCookies);
+                this.LogRequestCookies(cookieCollection, this.logConfiguration.SensitiveRequestHeadersAndCookies);
+                this.LogRequestBody(request);
             }
         }
 
         /// <summary>
-        /// Logs response details to the console.
+        /// Logs response details using the injected <see cref="IRestAssuredNetLogger"/>.
         /// </summary>
-        /// <param name="verifiableResponse">The <see cref="VerifiableResponse"/> to log to the console.</param>
-        /// <returns>The supplied <see cref="VerifiableResponse"/>, with the LogOnVerificationFailure flag set.</returns>
+        /// <param name="verifiableResponse">The <see cref="VerifiableResponse"/> whose details are to be logged.</param>
+        /// <returns>The supplied <see cref="VerifiableResponse"/>, with the LogOnVerificationFailure flag set when applicable.</returns>
         public VerifiableResponse LogResponse(VerifiableResponse verifiableResponse)
         {
             if (this.logConfiguration.ResponseLogLevel == ResponseLogLevel.OnVerificationFailure)
@@ -94,76 +97,76 @@ namespace RestAssured.Logging
             return verifiableResponse;
         }
 
-        private static void LogRequestHeaders(HttpRequestMessage request, List<string> sensitiveRequestHeadersAndCookies)
+        private void LogRequestHeaders(HttpRequestMessage request, List<string> sensitiveRequestHeadersAndCookies)
         {
-            LogMessageHeaders(request.Headers, request.Content, sensitiveRequestHeadersAndCookies);
+            this.LogMessageHeaders(request.Headers, request.Content, sensitiveRequestHeadersAndCookies);
         }
 
-        private static void LogRequestCookies(CookieCollection cookieCollection, List<string> sensitiveRequestHeadersAndCookies)
+        private void LogRequestCookies(CookieCollection cookieCollection, List<string> sensitiveRequestHeadersAndCookies)
         {
             foreach (Cookie cookie in cookieCollection)
             {
-                LogCookie(cookie, sensitiveRequestHeadersAndCookies);
+                this.LogCookie(cookie, sensitiveRequestHeadersAndCookies);
             }
         }
 
-        private static void LogRequestBody(HttpRequestMessage request)
+        private void LogRequestBody(HttpRequestMessage request)
         {
-            LogHttpContent(request.Content);
+            this.LogHttpContent(request.Content);
         }
 
-        private static void LogResponseStatusCode(HttpResponseMessage response)
+        private void LogResponseStatusCode(HttpResponseMessage response)
         {
-            Console.WriteLine($"HTTP {(int)response.StatusCode} ({response.StatusCode})");
+            this.logger.Log($"HTTP {(int)response.StatusCode} ({response.StatusCode})");
         }
 
-        private static void LogResponseHeaders(HttpResponseMessage response, List<string> sensitiveResponseHeadersAndCookies)
+        private void LogResponseHeaders(HttpResponseMessage response, List<string> sensitiveResponseHeadersAndCookies)
         {
-            LogMessageHeaders(response.Headers, response.Content, sensitiveResponseHeadersAndCookies);
+            this.LogMessageHeaders(response.Headers, response.Content, sensitiveResponseHeadersAndCookies);
         }
 
-        private static void LogResponseCookies(CookieContainer cookieContainer, List<string> sensitiveResponseHeadersAndCookies)
+        private void LogResponseCookies(CookieContainer cookieContainer, List<string> sensitiveResponseHeadersAndCookies)
         {
             var cookies = cookieContainer.GetAllCookies().GetEnumerator();
 
             while (cookies.MoveNext())
             {
-                LogCookie((Cookie)cookies.Current, sensitiveResponseHeadersAndCookies);
+                this.LogCookie((Cookie)cookies.Current, sensitiveResponseHeadersAndCookies);
             }
         }
 
-        private static void LogResponseBody(HttpResponseMessage response)
+        private void LogResponseBody(HttpResponseMessage response)
         {
-            LogHttpContent(response.Content);
+            this.LogHttpContent(response.Content);
         }
 
-        private static void LogResponseTime(TimeSpan elapsedTime)
+        private void LogResponseTime(TimeSpan elapsedTime)
         {
-            Console.WriteLine($"Response time: {elapsedTime.TotalMilliseconds} ms");
+            this.logger.Log($"Response time: {elapsedTime.TotalMilliseconds} ms");
         }
 
-        private static void LogMessageHeaders(HttpHeaders headers, HttpContent? content, List<string> sensitiveHeaders)
+        private void LogMessageHeaders(HttpHeaders headers, HttpContent? content, List<string> sensitiveHeaders)
         {
             if (content != null)
             {
-                Console.WriteLine($"Content-Type: {content.Headers.ContentType}");
-                Console.WriteLine($"Content-Length: {content.Headers.ContentLength}");
+                this.logger.Log($"Content-Type: {content.Headers.ContentType}");
+                this.logger.Log($"Content-Length: {content.Headers.ContentLength}");
             }
 
             foreach (KeyValuePair<string, IEnumerable<string>> header in headers)
             {
                 string value = sensitiveHeaders.Contains(header.Key) ? "*****" : string.Join(", ", header.Value);
-                Console.WriteLine($"{header.Key}: {value}");
+                this.logger.Log($"{header.Key}: {value}");
             }
         }
 
-        private static void LogCookie(Cookie cookie, List<string> sensitiveNames)
+        private void LogCookie(Cookie cookie, List<string> sensitiveNames)
         {
             string value = sensitiveNames.Contains(cookie.Name) ? "*****" : cookie.Value;
-            Console.WriteLine($"Cookie: {cookie.Name}={value}, Domain: {cookie.Domain}, HTTP-only: {cookie.HttpOnly}, Secure: {cookie.Secure}");
+            this.logger.Log($"Cookie: {cookie.Name}={value}, Domain: {cookie.Domain}, HTTP-only: {cookie.HttpOnly}, Secure: {cookie.Secure}");
         }
 
-        private static void LogHttpContent(HttpContent? content)
+        private void LogHttpContent(HttpContent? content)
         {
             if (content == null)
             {
@@ -174,25 +177,25 @@ namespace RestAssured.Logging
 
             if (!bodyAsString.Equals(string.Empty))
             {
-                LogFormattedBody(bodyAsString, content.Headers.ContentType?.MediaType ?? string.Empty);
+                this.LogFormattedBody(bodyAsString, content.Headers.ContentType?.MediaType ?? string.Empty);
             }
         }
 
-        private static void LogFormattedBody(string bodyAsString, string mediaType)
+        private void LogFormattedBody(string bodyAsString, string mediaType)
         {
             if (mediaType.Equals(string.Empty) || mediaType.Contains("json"))
             {
                 object jsonPayload = JsonConvert.DeserializeObject(bodyAsString, typeof(object)) ?? "Could not read payload";
-                Console.WriteLine(JsonConvert.SerializeObject(jsonPayload, Formatting.Indented));
+                this.logger.Log(JsonConvert.SerializeObject(jsonPayload, Formatting.Indented));
             }
             else if (mediaType.Contains("xml"))
             {
                 XDocument doc = XDocument.Parse(bodyAsString);
-                Console.WriteLine(doc.ToString());
+                this.logger.Log(doc.ToString());
             }
             else
             {
-                Console.WriteLine(bodyAsString);
+                this.logger.Log(bodyAsString);
             }
         }
 
@@ -200,11 +203,11 @@ namespace RestAssured.Logging
         {
             if ((int)verifiableResponse.Response.StatusCode >= 400)
             {
-                LogResponseStatusCode(verifiableResponse.Response);
-                LogResponseHeaders(verifiableResponse.Response, this.logConfiguration.SensitiveResponseHeadersAndCookies);
-                LogResponseCookies(verifiableResponse.CookieContainer, this.logConfiguration.SensitiveResponseHeadersAndCookies);
-                LogResponseBody(verifiableResponse.Response);
-                LogResponseTime(verifiableResponse.ElapsedTime);
+                this.LogResponseStatusCode(verifiableResponse.Response);
+                this.LogResponseHeaders(verifiableResponse.Response, this.logConfiguration.SensitiveResponseHeadersAndCookies);
+                this.LogResponseCookies(verifiableResponse.CookieContainer, this.logConfiguration.SensitiveResponseHeadersAndCookies);
+                this.LogResponseBody(verifiableResponse.Response);
+                this.LogResponseTime(verifiableResponse.ElapsedTime);
             }
 
             return verifiableResponse;
@@ -214,31 +217,31 @@ namespace RestAssured.Logging
         {
             if (this.logConfiguration.ResponseLogLevel > ResponseLogLevel.None)
             {
-                LogResponseStatusCode(verifiableResponse.Response);
+                this.LogResponseStatusCode(verifiableResponse.Response);
             }
 
             if (this.logConfiguration.ResponseLogLevel == ResponseLogLevel.Headers)
             {
-                LogResponseHeaders(verifiableResponse.Response, this.logConfiguration.SensitiveResponseHeadersAndCookies);
-                LogResponseCookies(verifiableResponse.CookieContainer, this.logConfiguration.SensitiveResponseHeadersAndCookies);
+                this.LogResponseHeaders(verifiableResponse.Response, this.logConfiguration.SensitiveResponseHeadersAndCookies);
+                this.LogResponseCookies(verifiableResponse.CookieContainer, this.logConfiguration.SensitiveResponseHeadersAndCookies);
             }
 
             if (this.logConfiguration.ResponseLogLevel == ResponseLogLevel.Body)
             {
-                LogResponseBody(verifiableResponse.Response);
+                this.LogResponseBody(verifiableResponse.Response);
             }
 
             if (this.logConfiguration.ResponseLogLevel == ResponseLogLevel.ResponseTime)
             {
-                LogResponseTime(verifiableResponse.ElapsedTime);
+                this.LogResponseTime(verifiableResponse.ElapsedTime);
             }
 
             if (this.logConfiguration.ResponseLogLevel == ResponseLogLevel.All)
             {
-                LogResponseHeaders(verifiableResponse.Response, this.logConfiguration.SensitiveResponseHeadersAndCookies);
-                LogResponseCookies(verifiableResponse.CookieContainer, this.logConfiguration.SensitiveResponseHeadersAndCookies);
-                LogResponseBody(verifiableResponse.Response);
-                LogResponseTime(verifiableResponse.ElapsedTime);
+                this.LogResponseHeaders(verifiableResponse.Response, this.logConfiguration.SensitiveResponseHeadersAndCookies);
+                this.LogResponseCookies(verifiableResponse.CookieContainer, this.logConfiguration.SensitiveResponseHeadersAndCookies);
+                this.LogResponseBody(verifiableResponse.Response);
+                this.LogResponseTime(verifiableResponse.ElapsedTime);
             }
         }
     }

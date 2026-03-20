@@ -1,4 +1,4 @@
-﻿// <copyright file="RequestSpecification.cs" company="On Test Automation">
+// <copyright file="RequestSpecification.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -124,6 +124,11 @@ namespace RestAssured.Request.Builders
         /// Can be used to indicate whether the <see cref="HttpClient"/> should wait for the request body to be sent.
         /// </summary>
         public HttpCompletionOption HttpCompletionOption { get; set; }
+
+        /// <summary>
+        /// The <see cref="IRestAssuredNetLogger"/> to use when writing log output for requests that use this specification.
+        /// </summary>
+        public IRestAssuredNetLogger? Logger { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestSpecification"/> class.

@@ -1,4 +1,4 @@
-﻿// <copyright file="Dsl.cs" company="On Test Automation">
+// <copyright file="Dsl.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +15,10 @@
 // </copyright>
 namespace RestAssured
 {
+    using System;
     using System.Net.Http;
     using RestAssured.Configuration;
+    using RestAssured.Logging;
     using RestAssured.Request;
 
     /// <summary>
@@ -37,6 +39,22 @@ namespace RestAssured
         public static ExecutableRequest Given(HttpClient? httpClient = null)
         {
             return new ExecutableRequest(RestAssuredConfig, httpClient);
+        }
+
+        /// <summary>
+        /// Used to start writing a new test with a custom logger.
+        /// </summary>
+        /// <param name="logger">The <see cref="IRestAssuredNetLogger"/> to use when writing log output.</param>
+        /// <param name="httpClient">The <see cref="HttpClient"/> to use when submitting the request.</param>
+        /// <returns>A <see cref="ExecutableRequest"/> object containing all relevant request properties.</returns>
+        public static ExecutableRequest Given(IRestAssuredNetLogger logger, HttpClient? httpClient = null)
+        {
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
+            return new ExecutableRequest(RestAssuredConfig, httpClient, logger);
         }
     }
 }

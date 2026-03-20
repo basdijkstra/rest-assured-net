@@ -141,5 +141,10 @@ namespace RestAssured.Request
         /// The log configuration settings for this request.
         /// </summary>
         internal LogConfiguration? LogConfiguration { get; set; }
+
+        /// <summary>
+        /// The <see cref="IRestAssuredNetLogger"/> to use when writing log output.
+        /// </summary>
+        internal IRestAssuredNetLogger? Logger { get; set; }
     }
 }

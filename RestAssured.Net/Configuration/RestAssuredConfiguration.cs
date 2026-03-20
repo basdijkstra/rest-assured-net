@@ -1,4 +1,4 @@
-﻿// <copyright file="RestAssuredConfiguration.cs" company="On Test Automation">
+// <copyright file="RestAssuredConfiguration.cs" company="On Test Automation">
 // Copyright 2019 the original author or authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -50,5 +50,10 @@ namespace RestAssured.Configuration
         /// Setting to configure the <see cref="HttpCompletionOption"/> for all tests.
         /// </summary>
         public HttpCompletionOption HttpCompletionOption { get; set; } = HttpCompletionOption.ResponseContentRead;
+
+        /// <summary>
+        /// The <see cref="IRestAssuredNetLogger"/> to use as the global log sink for all requests.
+        /// </summary>
+        public IRestAssuredNetLogger? Logger { get; set; }
     }
 }
