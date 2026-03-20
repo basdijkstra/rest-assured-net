@@ -111,12 +111,12 @@ namespace RestAssured.Tests
 
             Assert.Throws<JsonSerializationException>(() =>
             {
-                Place place = (Place)Given()
+                Place place = Given()
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/object-deserialization-custom-settings")
                 .Then()
                 .UsingJsonSerializerSettings(jsonSerializerSettings)
-                .DeserializeTo(typeof(Place));
+                .DeserializeTo<Place>();
             });
         }
 

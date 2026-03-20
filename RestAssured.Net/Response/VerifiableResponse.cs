@@ -487,18 +487,6 @@ namespace RestAssured.Response
         /// <summary>
         /// Deserializes the response content into the specified type and returns it.
         /// </summary>
-        /// <param name="type">The object type to deserialize into.</param>
-        /// <param name="deserializeAs">Indicates how to interpret the response content when deserializing.</param>
-        /// <returns>The deserialized response object.</returns>
-        [Obsolete("This method is obsolete and will be removed in RestAssured.Net version 5.0.0. Please use DeserializeTo<T>() instead.")]
-        public object? DeserializeTo(Type type, DeserializeAs deserializeAs = DeserializeAs.UseResponseContentTypeHeaderValue)
-        {
-            return Deserializer.DeserializeResponseInto(this.Response, type, deserializeAs, this.jsonSerializerSettings);
-        }
-
-        /// <summary>
-        /// Deserializes the response content into the specified type and returns it.
-        /// </summary>
         /// <typeparam name="T">The type to deserialize the response body into.</typeparam>
         /// <param name="deserializeAs">Indicates how to interpret the response content when deserializing.</param>
         /// <returns>The deserialized response object.</returns>
