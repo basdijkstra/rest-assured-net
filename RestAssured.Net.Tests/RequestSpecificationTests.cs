@@ -20,7 +20,6 @@ namespace RestAssured.Tests
     using RestAssured.Logging;
     using RestAssured.Request.Builders;
     using RestAssured.Request.Exceptions;
-    using RestAssured.Request.Logging;
     using WireMock.Matchers;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;

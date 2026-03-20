@@ -123,13 +123,13 @@ namespace RestAssured.Request
         /// The request logging level.
         /// </summary>
         [Obsolete("Use LogConfiguration instead. Will be removed in RestAssured.Net 5.0.0")]
-        internal Logging.RequestLogLevel RequestLoggingLevel { get; set; }
+        internal RequestLogLevel RequestLoggingLevel { get; set; }
 
         /// <summary>
         /// The response logging level.
         /// </summary>
         [Obsolete("Use LogConfiguration instead. Will be removed in RestAssured.Net 5.0.0")]
-        internal Response.Logging.ResponseLogLevel ResponseLoggingLevel { get; set; }
+        internal ResponseLogLevel ResponseLoggingLevel { get; set; }
 
         /// <summary>
         /// Names of sensitive request headers and cookies to mask when logging.

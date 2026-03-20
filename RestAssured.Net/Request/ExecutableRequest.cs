@@ -60,12 +60,12 @@ namespace RestAssured.Request
         /// <summary>
         /// The request logging level for this request.
         /// </summary>
-        internal Logging.RequestLogLevel RequestLoggingLevel { get; set; }
+        internal RequestLogLevel RequestLoggingLevel { get; set; }
 
         /// <summary>
         /// The response logging level for this request.
         /// </summary>
-        internal Response.Logging.ResponseLogLevel ResponseLoggingLevel { get; set; }
+        internal ResponseLogLevel ResponseLoggingLevel { get; set; }
 
         /// <summary>
         /// The configuration settings to use when logging request and response details.
@@ -510,7 +510,7 @@ namespace RestAssured.Request
         /// <param name="sensitiveHeaderOrCookieNames">The names of the request headers or cookies to be masked when logging.</param>
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
         [Obsolete("Use Log(LogConfiguration logConfiguration) instead. This method will be removed in RestAssured.Net 5.0.0")]
-        public ExecutableRequest Log(Logging.RequestLogLevel requestLogLevel, List<string>? sensitiveHeaderOrCookieNames = null)
+        public ExecutableRequest Log(RequestLogLevel requestLogLevel, List<string>? sensitiveHeaderOrCookieNames = null)
         {
             this.RequestLoggingLevel = requestLogLevel;
 

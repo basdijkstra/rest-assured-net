@@ -23,7 +23,6 @@ namespace RestAssured.Request.Builders
     using System.Text;
     using Newtonsoft.Json;
     using RestAssured.Logging;
-    using RestAssured.Request.Logging;
 
     /// <summary>
     /// Class containing shared properties for requests.
@@ -103,7 +102,7 @@ namespace RestAssured.Request.Builders
         /// <summary>
         /// The value for the request logging level when sending the request.
         /// </summary>
-        public Logging.RequestLogLevel RequestLogLevel { get; set; }
+        public RequestLogLevel RequestLogLevel { get; set; }
 
         /// <summary>
         /// The configuration to be used when logging request and response details.
@@ -152,7 +151,7 @@ namespace RestAssured.Request.Builders
         /// <param name="jsonSerializerSettings">The JSON serializer settings to use in this request.</param>
         /// <param name="sensitiveRequestHeadersAndCookies">A list of sensitive header and cookie names (to be masked when logging request details.</param>
         /// <param name="httpCompletionOption">Indicates whether the HttpClient should wait for the request body to be sent.</param>
-        public RequestSpecification(string scheme, string host, int port, string baseUri, string basePath, IEnumerable<KeyValuePair<string, string>> queryParams, TimeSpan? timeout, ProductInfoHeaderValue? userAgent, IWebProxy proxy, Dictionary<string, object> headers, AuthenticationHeaderValue authenticationHeader, string contentType, Encoding contentEncoding, bool disableSslCertificateValidation, LogConfiguration logConfiguration, Logging.RequestLogLevel requestLogLevel, JsonSerializerSettings jsonSerializerSettings, List<string> sensitiveRequestHeadersAndCookies, HttpCompletionOption httpCompletionOption)
+        public RequestSpecification(string scheme, string host, int port, string baseUri, string basePath, IEnumerable<KeyValuePair<string, string>> queryParams, TimeSpan? timeout, ProductInfoHeaderValue? userAgent, IWebProxy proxy, Dictionary<string, object> headers, AuthenticationHeaderValue authenticationHeader, string contentType, Encoding contentEncoding, bool disableSslCertificateValidation, LogConfiguration logConfiguration, RequestLogLevel requestLogLevel, JsonSerializerSettings jsonSerializerSettings, List<string> sensitiveRequestHeadersAndCookies, HttpCompletionOption httpCompletionOption)
         {
             this.Scheme = scheme;
             this.HostName = host;

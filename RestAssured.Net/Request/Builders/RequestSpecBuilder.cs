@@ -25,7 +25,6 @@ namespace RestAssured.Request.Builders
     using Newtonsoft.Json;
     using RestAssured.Logging;
     using RestAssured.Request.Exceptions;
-    using RestAssured.Request.Logging;
 
     /// <summary>
     /// A builder class to construct a new instance of the <see cref="RequestSpecification"/> class.
@@ -49,7 +48,7 @@ namespace RestAssured.Request.Builders
         private readonly Encoding? contentEncoding = null;
         private readonly bool disableSslCertificateValidation = false;
         private readonly LogConfiguration logConfiguration = new LogConfiguration();
-        private readonly Logging.RequestLogLevel requestLogLevel = Logging.RequestLogLevel.None;
+        private readonly RequestLogLevel requestLogLevel = RequestLogLevel.None;
         private readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
         private readonly List<string> sensitiveRequestHeadersAndCookies = new List<string>();
         private readonly HttpCompletionOption httpCompletionOption = HttpCompletionOption.ResponseContentRead;
@@ -276,7 +275,7 @@ namespace RestAssured.Request.Builders
         /// <param name="requestLogLevel">The <see cref="RequestLogLevel"/> to apply to the requests.</param>
         /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
         [Obsolete("Please use WithLogConfiguration(LogConfiguration logConfiguration) instead. This method will be removed in RestAssured.Net 5.0.0")]
-        public RequestSpecBuilder WithRequestLogLevel(Logging.RequestLogLevel requestLogLevel)
+        public RequestSpecBuilder WithRequestLogLevel(RequestLogLevel requestLogLevel)
         {
             this.requestSpecification.RequestLogLevel = requestLogLevel;
             return this;

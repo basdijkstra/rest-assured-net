@@ -118,8 +118,8 @@ namespace RestAssured.Request
 
             var legacyLogConfiguration = new LogConfiguration
             {
-                RequestLogLevel = (RequestLogLevel)context.RequestLoggingLevel,
-                ResponseLogLevel = (ResponseLogLevel)context.ResponseLoggingLevel,
+                RequestLogLevel = context.RequestLoggingLevel,
+                ResponseLogLevel = context.ResponseLoggingLevel,
                 SensitiveRequestHeadersAndCookies = context.SensitiveRequestHeadersAndCookies,
                 SensitiveResponseHeadersAndCookies = new List<string>(),
             };

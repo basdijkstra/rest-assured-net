@@ -17,7 +17,7 @@ namespace RestAssured.Tests
 {
     using System.Collections.Generic;
     using NUnit.Framework;
-    using RestAssured.Response.Logging;
+    using RestAssured.Logging;
 
     /// <summary>
     /// Tests for the <see cref="AssertionMessageBuilder"/> class.

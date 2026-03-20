@@ -67,7 +67,7 @@ namespace RestAssured.Tests
             this.CreateStubForLoggingJsonResponse();
 
             Given()
-                .Log(RestAssured.Request.Logging.RequestLogLevel.All)
+                .Log(RequestLogLevel.All)
                 .And()
                 .Accept("application/json")
                 .Header("CustomHeader", "custom header value")
@@ -122,24 +122,6 @@ namespace RestAssured.Tests
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/log-json-response")
                 .Then()
-                .StatusCode(200);
-        }
-
-        /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for logging
-        /// XML response details to the standard output.
-        /// </summary>
-        [Test]
-        public void ResponseDetailsCanBeWrittenToStandardOutputForXmlUsingObsoleteMethod()
-        {
-            this.CreateStubForLoggingXmlResponse();
-
-            Given()
-                .When()
-                .Get($"{MOCK_SERVER_BASE_URL}/log-xml-response")
-                .Then()
-                .Log(RestAssured.Response.Logging.ResponseLogLevel.All)
-                .And()
                 .StatusCode(200);
         }
 
