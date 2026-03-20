@@ -48,9 +48,7 @@ namespace RestAssured.Request.Builders
         private readonly Encoding? contentEncoding = null;
         private readonly bool disableSslCertificateValidation = false;
         private readonly LogConfiguration logConfiguration = new LogConfiguration();
-        private readonly RequestLogLevel requestLogLevel = RequestLogLevel.None;
         private readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
-        private readonly List<string> sensitiveRequestHeadersAndCookies = new List<string>();
         private readonly HttpCompletionOption httpCompletionOption = HttpCompletionOption.ResponseContentRead;
 
         /// <summary>
@@ -58,7 +56,7 @@ namespace RestAssured.Request.Builders
         /// </summary>
         public RequestSpecBuilder()
         {
-            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.baseUri, this.basePath, this.queryParams, this.timeout, this.userAgent, this.proxy, this.headers, this.authenticationHeader, this.contentTypeHeader, this.contentEncoding, this.disableSslCertificateValidation, this.logConfiguration, this.requestLogLevel, this.jsonSerializerSettings, this.sensitiveRequestHeadersAndCookies, this.httpCompletionOption);
+            this.requestSpecification = new RequestSpecification(this.scheme, this.host, this.port, this.baseUri, this.basePath, this.queryParams, this.timeout, this.userAgent, this.proxy, this.headers, this.authenticationHeader, this.contentTypeHeader, this.contentEncoding, this.disableSslCertificateValidation, this.logConfiguration, this.jsonSerializerSettings, this.httpCompletionOption);
         }
 
         /// <summary>
@@ -246,18 +244,6 @@ namespace RestAssured.Request.Builders
         }
 
         /// <summary>
-        /// Sets the request log level to the specified <see cref="RequestLogLevel"/> value.
-        /// </summary>
-        /// <param name="requestLogLevel">The <see cref="RequestLogLevel"/> to apply to the requests.</param>
-        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
-        [Obsolete("Please use WithLogConfiguration(LogConfiguration logConfiguration) instead. This method will be removed in RestAssured.Net 5.0.0")]
-        public RequestSpecBuilder WithRequestLogLevel(RequestLogLevel requestLogLevel)
-        {
-            this.requestSpecification.RequestLogLevel = requestLogLevel;
-            return this;
-        }
-
-        /// <summary>
         /// Sets the JSON serializer settings to the specified <see cref="JsonSerializerSettings"/> value.
         /// </summary>
         /// <param name="jsonSerializerSettings">The <see cref="JsonSerializerSettings"/> to use in the requests.</param>
@@ -265,18 +251,6 @@ namespace RestAssured.Request.Builders
         public RequestSpecBuilder WithJsonSerializerSettings(JsonSerializerSettings jsonSerializerSettings)
         {
             this.requestSpecification.JsonSerializerSettings = jsonSerializerSettings;
-            return this;
-        }
-
-        /// <summary>
-        /// Adds a list of request header or cookie names that should be masked when logging to the list.
-        /// </summary>
-        /// <param name="sensitiveHeaderOrCookieNames">The names of the request headers or cookies to be masked when logging.</param>
-        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
-        [Obsolete("Please specify request header and cookie names to be masked using the LogConfiguration. This method will be removed in RestAssured.Net 5.0.0")]
-        public RequestSpecBuilder WithMaskingOfHeadersAndCookies(List<string> sensitiveHeaderOrCookieNames)
-        {
-            this.requestSpecification.LogConfiguration.SensitiveRequestHeadersAndCookies.AddRange(sensitiveHeaderOrCookieNames);
             return this;
         }
 

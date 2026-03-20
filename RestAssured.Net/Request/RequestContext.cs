@@ -120,24 +120,6 @@ namespace RestAssured.Request
         internal HttpCompletionOption HttpCompletionOption { get; set; } = HttpCompletionOption.ResponseContentRead;
 
         /// <summary>
-        /// The request logging level.
-        /// </summary>
-        [Obsolete("Use LogConfiguration instead. Will be removed in RestAssured.Net 5.0.0")]
-        internal RequestLogLevel RequestLoggingLevel { get; set; }
-
-        /// <summary>
-        /// The response logging level.
-        /// </summary>
-        [Obsolete("Use LogConfiguration instead. Will be removed in RestAssured.Net 5.0.0")]
-        internal ResponseLogLevel ResponseLoggingLevel { get; set; }
-
-        /// <summary>
-        /// Names of sensitive request headers and cookies to mask when logging.
-        /// </summary>
-        [Obsolete("Use LogConfiguration instead. Will be removed in RestAssured.Net 5.0.0")]
-        internal List<string> SensitiveRequestHeadersAndCookies { get; set; } = new List<string>();
-
-        /// <summary>
         /// The log configuration settings for this request.
         /// </summary>
         internal LogConfiguration? LogConfiguration { get; set; }

@@ -35,18 +35,6 @@ namespace RestAssured.Configuration
         public LogConfiguration? LogConfiguration { get; set; }
 
         /// <summary>
-        /// Setting to configure request logging level for all tests.
-        /// </summary>
-        [Obsolete("Use the LogConfiguration property to set request logging options instead. This property will be removed in RestAssured.Net 5.0.0")]
-        public RequestLogLevel RequestLogLevel { get; set; } = RequestLogLevel.None;
-
-        /// <summary>
-        /// Setting to configure response logging level for all tests.
-        /// </summary>
-        [Obsolete("Use the LogConfiguration property to set response logging options instead. This property will be removed in RestAssured.Net 5.0.0")]
-        public ResponseLogLevel ResponseLogLevel { get; set; } = ResponseLogLevel.None;
-
-        /// <summary>
         /// Setting to configure the <see cref="HttpCompletionOption"/> for all tests.
         /// </summary>
         public HttpCompletionOption HttpCompletionOption { get; set; } = HttpCompletionOption.ResponseContentRead;

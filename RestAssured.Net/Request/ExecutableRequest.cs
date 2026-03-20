@@ -49,23 +49,12 @@ namespace RestAssured.Request
         private TimeSpan? timeout = null;
         private IWebProxy? proxy = null;
         private JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
-        private List<string> sensitiveRequestHeadersAndCookies = new List<string>();
         private HttpCompletionOption httpCompletionOption = HttpCompletionOption.ResponseContentRead;
         private NetworkCredential? networkCredential = null;
         private bool disableSslCertificateValidation = false;
         private bool stripCharset = false;
         private bool disposed = false;
         private IRestAssuredNetLogger? logger;
-
-        /// <summary>
-        /// The request logging level for this request.
-        /// </summary>
-        internal RequestLogLevel RequestLoggingLevel { get; set; }
-
-        /// <summary>
-        /// The response logging level for this request.
-        /// </summary>
-        internal ResponseLogLevel ResponseLoggingLevel { get; set; }
 
         /// <summary>
         /// The configuration settings to use when logging request and response details.
@@ -82,8 +71,6 @@ namespace RestAssured.Request
         {
             this.disableSslCertificateValidation = config.DisableSslCertificateValidation;
 
-            this.RequestLoggingLevel = config.RequestLogLevel;
-            this.ResponseLoggingLevel = config.ResponseLogLevel;
             this.LogConfiguration = config.LogConfiguration;
             this.httpCompletionOption = config.HttpCompletionOption;
 
@@ -99,7 +86,6 @@ namespace RestAssured.Request
         public ExecutableRequest Spec(RequestSpecification requestSpecification)
         {
             this.requestSpecification = requestSpecification;
-            this.RequestLoggingLevel = requestSpecification.RequestLogLevel;
             this.logger ??= requestSpecification.Logger;
             return this;
         }
@@ -493,25 +479,6 @@ namespace RestAssured.Request
         }
 
         /// <summary>
-        /// Logs request details to the standard output.
-        /// </summary>
-        /// <param name="requestLogLevel">The desired request log level.</param>
-        /// <param name="sensitiveHeaderOrCookieNames">The names of the request headers or cookies to be masked when logging.</param>
-        /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
-        [Obsolete("Use Log(LogConfiguration logConfiguration) instead. This method will be removed in RestAssured.Net 5.0.0")]
-        public ExecutableRequest Log(RequestLogLevel requestLogLevel, List<string>? sensitiveHeaderOrCookieNames = null)
-        {
-            this.RequestLoggingLevel = requestLogLevel;
-
-            if (sensitiveHeaderOrCookieNames != null)
-            {
-                this.sensitiveRequestHeadersAndCookies.AddRange(sensitiveHeaderOrCookieNames);
-            }
-
-            return this;
-        }
-
-        /// <summary>
         /// Adds a request body to the request object to be sent.
         /// </summary>
         /// <param name="body">The body that is to be sent with the request.</param>
@@ -691,9 +658,6 @@ namespace RestAssured.Request
                 NetworkCredential = this.networkCredential,
                 Timeout = this.timeout,
                 HttpCompletionOption = this.httpCompletionOption,
-                RequestLoggingLevel = this.RequestLoggingLevel,
-                ResponseLoggingLevel = this.ResponseLoggingLevel,
-                SensitiveRequestHeadersAndCookies = this.sensitiveRequestHeadersAndCookies,
                 LogConfiguration = this.LogConfiguration,
                 Logger = this.logger,
             };

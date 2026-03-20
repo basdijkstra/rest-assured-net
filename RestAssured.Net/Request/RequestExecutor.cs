@@ -116,14 +116,6 @@ namespace RestAssured.Request
                 context.HttpCompletionOption = context.RequestSpecification.HttpCompletionOption;
             }
 
-            var legacyLogConfiguration = new LogConfiguration
-            {
-                RequestLogLevel = context.RequestLoggingLevel,
-                ResponseLogLevel = context.ResponseLoggingLevel,
-                SensitiveRequestHeadersAndCookies = context.SensitiveRequestHeadersAndCookies,
-                SensitiveResponseHeadersAndCookies = new List<string>(),
-            };
-
             if (context.RequestSpecification != null)
             {
                 // Apply logging settings from the request specification,
@@ -131,13 +123,7 @@ namespace RestAssured.Request
                 context.LogConfiguration ??= context.RequestSpecification.LogConfiguration;
             }
 
-            // Add header and cookie values to be masked specified in RequestSpecification to the list
-            if (context.RequestSpecification != null)
-            {
-                context.SensitiveRequestHeadersAndCookies.AddRange(context.RequestSpecification.SensitiveRequestHeadersAndCookies);
-            }
-
-            var logger = new RequestResponseLogger(context.LogConfiguration ?? legacyLogConfiguration, context.Logger);
+            var logger = new RequestResponseLogger(context.LogConfiguration ?? new LogConfiguration(), context.Logger);
 
             logger.LogRequest(context.Request, context.CookieCollection);
 
