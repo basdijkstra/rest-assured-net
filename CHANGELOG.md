@@ -7,9 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Unreleased
 
+Nothing yet.
+
+### [5.0.0] - 2026-03-20
+
+#### Added
+
+- Added the ability to inject a custom logger for reporting ([#137](https://github.com/basdijkstra/rest-assured-net/issues/137) by [@dhansak79](https://github.com/dhansak79))
+- Added the ability to specify a custom error message when verifying response properties ([#146](https://github.com/basdijkstra/rest-assured-net/issues/146) by [@dhansak79](https://github.com/dhansak79))
+
 #### Removed
 
+- Removed .NET 6 and .NET 7 as target frameworks
+- Removed deprecated logging logic in `RestAssured.Request.Logging` and `RestAssured.Response.Logging` namespaces
+- Removed deprecated `ExtractableResponse.Body()` method
+- Removed deprecated `VerifiableResponse.DeserializeTo(Type)` method
+- Removed deprecated `RequestSpecBuilder.WithScheme() / WithHostName()` methods
+- Removed deprecated `ExecutableRequest.QueryParams(Dictionary<string, object>)` method
 - Removed reference to System.Text.Encodings.Web as it is no longer used (main project)
+
+#### Updated
+
+- Version bumps for NJsonSchema (main project), Microsoft.AspNetCore.Mvc.Testing, Microsoft.NET.Test.Sdk, NUnit, NUnit3TestAdapter, WireMock.Net (test project)
 
 ### [4.10.0] - 2025-11-12
 
