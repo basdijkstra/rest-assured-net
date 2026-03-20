@@ -139,6 +139,29 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a response body length using a templated custom error message,
+        /// that the exception contains the correctly formatted message.
+        /// </summary>
+        [Test]
+        public void TemplatedCustomErrorMessageCanBeSpecifiedWhenVerifyingResponseBodyLength()
+        {
+            this.CreateStubForJsonResponseBody();
+
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/json-response-body")
+                .Then()
+                .StatusCode(200)
+                .ResponseBodyLength(NHamcrest.Is.LessThan(25), "Expected [expected]");
+            });
+
+            Assert.That(rve?.Message, Is.EqualTo("Expected less than 25"));
+        }
+
+        /// <summary>
         /// Creates the stub response for the JSON response body extraction examples.
         /// </summary>
         private void CreateStubForJsonResponseBody()

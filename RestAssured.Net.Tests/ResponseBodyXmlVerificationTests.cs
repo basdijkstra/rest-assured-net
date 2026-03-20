@@ -188,6 +188,50 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// Verifies that a custom error message is used when the element value returned
+        /// by the XPath cannot be converted to the matcher type.
+        /// </summary>
+        [Test]
+        public void CustomErrorMessageIsUsedWhenElementValueCannotBeConvertedToMatcherType()
+        {
+            this.CreateStubForXmlResponseBody();
+
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                    .When()
+                    .Get($"{MOCK_SERVER_BASE_URL}/xml-response-body")
+                    .Then()
+                    .StatusCode(200)
+                    .Body("//Place[1]/Inhabitants", NHamcrest.Is.True(), errorMessage: "Custom conversion message");
+            });
+
+            Assert.That(rve?.Message, Is.EqualTo("Custom conversion message: Response element value " + this.placeInhabitants + " cannot be converted to value of type 'System.Boolean'"));
+        }
+
+        /// <summary>
+        /// Verifies that a custom error message is used when a collection element value
+        /// returned by the XPath cannot be converted to the matcher type.
+        /// </summary>
+        [Test]
+        public void CustomErrorMessageIsUsedWhenCollectionElementValueCannotBeConvertedToMatcherType()
+        {
+            this.CreateStubForXmlResponseBody();
+
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                    .When()
+                    .Get($"{MOCK_SERVER_BASE_URL}/xml-response-body")
+                    .Then()
+                    .StatusCode(200)
+                    .Body("//Place/Inhabitants", NHamcrest.Has.Item(NHamcrest.Is.True()), errorMessage: "Custom collection conversion message");
+            });
+
+            Assert.That(rve?.Message, Is.EqualTo("Custom collection conversion message: Response element value " + this.placeInhabitants + " cannot be converted to object of type System.Boolean"));
+        }
+
+        /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
         /// an XML response body element collection using an NHamcrest matcher.
         /// </summary>

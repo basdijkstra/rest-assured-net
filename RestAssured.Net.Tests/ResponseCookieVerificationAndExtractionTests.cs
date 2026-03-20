@@ -173,6 +173,30 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a cookie value using a templated custom error message,
+        /// that the exception contains the correctly formatted message.
+        /// </summary>
+        [Test]
+        public void TemplatedCustomErrorMessageCanBeSpecifiedWhenVerifyingCookieValue()
+        {
+            this.CreateStubForGenericCookie();
+
+            ResponseVerificationException rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/response-with-generic-cookie")
+                .Then()
+                .StatusCode(200)
+                .And()
+                .Cookie("my_cookie", NHamcrest.Is.EqualTo("wrong_value"), "Expected [expected] but got [actual]");
+            });
+
+            Assert.That(rve.Message, Is.EqualTo("Expected \"wrong_value\" but got my_value"));
+        }
+
+        /// <summary>
         /// Creates the stub returning a response with a generic response cookie.
         /// </summary>
         private void CreateStubForGenericCookie()

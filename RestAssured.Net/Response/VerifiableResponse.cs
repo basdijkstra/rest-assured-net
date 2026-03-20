@@ -115,7 +115,7 @@ namespace RestAssured.Response
         /// <param name="errorMessage">A custom error message to be used when the verification fails.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         /// <exception cref="ResponseVerificationException">Thrown when the actual status code does not match the expected one.</exception>
-        public VerifiableResponse StatusCode(int expectedStatusCode, string? errorMessage = null)
+        public VerifiableResponse StatusCode(int expectedStatusCode, ErrorMessage errorMessage = default)
         {
             return this.StatusCode(Is.EqualTo(expectedStatusCode), errorMessage);
         }
@@ -127,7 +127,7 @@ namespace RestAssured.Response
         /// <param name="errorMessage">A custom error message to be used when the verification fails.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         /// <exception cref="ResponseVerificationException">Thrown when the actual status code does not match the expected one.</exception>
-        public VerifiableResponse StatusCode(HttpStatusCode expectedStatusCode, string? errorMessage = null)
+        public VerifiableResponse StatusCode(HttpStatusCode expectedStatusCode, ErrorMessage errorMessage = default)
         {
             return this.StatusCode(Is.EqualTo(expectedStatusCode), errorMessage);
         }
@@ -139,15 +139,9 @@ namespace RestAssured.Response
         /// <param name="errorMessage">A custom error message to be used when the verification fails.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         /// <exception cref="ResponseVerificationException">Thrown when the actual status code does not match the expected one.</exception>
-        public VerifiableResponse StatusCode(IMatcher<int> matcher, string? errorMessage = null)
+        public VerifiableResponse StatusCode(IMatcher<int> matcher, ErrorMessage errorMessage = default)
         {
-            if (!matcher.Matches((int)this.Response.StatusCode))
-            {
-                errorMessage ??= $"Expected response status code to match '{matcher}', but was {(int)this.Response.StatusCode}";
-
-                this.FailVerification(AssertionMessageBuilder.BuildMessage(errorMessage, matcher, (int)this.Response.StatusCode));
-            }
-
+            this.VerifyWithMatcher(matcher, (int)this.Response.StatusCode, $"Expected response status code to match '{matcher}', but was {(int)this.Response.StatusCode}", errorMessage);
             return this;
         }
 
@@ -158,15 +152,9 @@ namespace RestAssured.Response
         /// <param name="errorMessage">A custom error message to be used when the verification fails.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         /// <exception cref="ResponseVerificationException">Thrown when the actual status code does not match the expected one.</exception>
-        public VerifiableResponse StatusCode(IMatcher<HttpStatusCode> matcher, string? errorMessage = null)
+        public VerifiableResponse StatusCode(IMatcher<HttpStatusCode> matcher, ErrorMessage errorMessage = default)
         {
-            if (!matcher.Matches(this.Response.StatusCode))
-            {
-                errorMessage ??= $"Expected response status code to match '{matcher}', but was {this.Response.StatusCode}";
-
-                this.FailVerification(AssertionMessageBuilder.BuildMessage(errorMessage, matcher, this.Response.StatusCode));
-            }
-
+            this.VerifyWithMatcher(matcher, this.Response.StatusCode, $"Expected response status code to match '{matcher}', but was {this.Response.StatusCode}", errorMessage);
             return this;
         }
 
@@ -175,11 +163,12 @@ namespace RestAssured.Response
         /// </summary>
         /// <param name="name">The expected response header name.</param>
         /// <param name="expectedValue">The corresponding expected response header value.</param>
+        /// <param name="errorMessage">A custom error message to be used when the verification fails.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         /// <exception cref="ResponseVerificationException">Thrown when the header does not exist, or when the header value does not equal the supplied expected value.</exception>
-        public VerifiableResponse Header(string name, string expectedValue)
+        public VerifiableResponse Header(string name, string expectedValue, ErrorMessage errorMessage = default)
         {
-            return this.Header(name, Is.EqualTo(expectedValue));
+            return this.Header(name, Is.EqualTo(expectedValue), errorMessage);
         }
 
         /// <summary>
@@ -187,9 +176,10 @@ namespace RestAssured.Response
         /// </summary>
         /// <param name="name">The expected response header name.</param>
         /// <param name="matcher">The NHamcrest matcher to evaluate.</param>
+        /// <param name="errorMessage">A custom error message to be used when the verification fails.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         /// <exception cref="ResponseVerificationException">Thrown when the header does not exist, or when the header value does not equal the supplied expected value.</exception>
-        public VerifiableResponse Header(string name, IMatcher<string> matcher)
+        public VerifiableResponse Header(string name, IMatcher<string> matcher, ErrorMessage errorMessage = default)
         {
             if (this.Response.Headers.TryGetValues(name, out IEnumerable<string>? values))
             {
@@ -197,12 +187,16 @@ namespace RestAssured.Response
 
                 if (!matcher.Matches(firstValue))
                 {
-                    this.FailVerification($"Expected value for response header with name '{name}' to match '{matcher}', but was '{firstValue}'.");
+                    this.FailVerification(errorMessage.HasValue
+                        ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, firstValue)
+                        : $"Expected value for response header with name '{name}' to match '{matcher}', but was '{firstValue}'.");
                 }
             }
             else
             {
-                this.FailVerification($"Expected header with name '{name}' to be in the response, but it could not be found.");
+                this.FailVerification(errorMessage.HasValue
+                    ? errorMessage.Value!
+                    : $"Expected header with name '{name}' to be in the response, but it could not be found.");
             }
 
             return this;
@@ -212,31 +206,37 @@ namespace RestAssured.Response
         /// Verifies that the response Content-Type header has the expected value.
         /// </summary>
         /// <param name="expectedContentType">The expected value for the response Content-Type header.</param>
+        /// <param name="errorMessage">A custom error message to be used when the verification fails.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         /// <exception cref="ResponseVerificationException">Thrown when the "Content-Type" header does not exist, or when the header value does not equal the supplied expected value.</exception>
-        public VerifiableResponse ContentType(string expectedContentType)
+        public VerifiableResponse ContentType(string expectedContentType, ErrorMessage errorMessage = default)
         {
-            return this.ContentType(Is.EqualTo(expectedContentType));
+            return this.ContentType(Is.EqualTo(expectedContentType), errorMessage);
         }
 
         /// <summary>
         /// Verifies that the response Content-Type header value matches a given NHamcrest matcher.
         /// </summary>
         /// <param name="matcher">The NHamcrest matcher to evaluate.</param>
+        /// <param name="errorMessage">A custom error message to be used when the verification fails.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         /// <exception cref="ResponseVerificationException">Thrown when the "Content-Type" header does not exist, or when the header value does not equal the supplied expected value.</exception>
-        public VerifiableResponse ContentType(IMatcher<string> matcher)
+        public VerifiableResponse ContentType(IMatcher<string> matcher, ErrorMessage errorMessage = default)
         {
             MediaTypeHeaderValue? actualContentType = this.Response.Content.Headers.ContentType;
 
             if (actualContentType == null)
             {
-                this.FailVerification("Response Content-Type header could not be found.");
+                this.FailVerification(errorMessage.HasValue
+                    ? errorMessage.Value!
+                    : "Response Content-Type header could not be found.");
             }
 
             if (!matcher.Matches(actualContentType!.ToString()))
             {
-                this.FailVerification($"Expected value for response Content-Type header to match '{matcher}', but was '{actualContentType}'.");
+                this.FailVerification(errorMessage.HasValue
+                    ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, actualContentType.ToString())
+                    : $"Expected value for response Content-Type header to match '{matcher}', but was '{actualContentType}'.");
             }
 
             return this;
@@ -247,8 +247,9 @@ namespace RestAssured.Response
         /// </summary>
         /// <param name="name">The name of the cookie to verify.</param>
         /// <param name="matcher">The NHamcrest matcher to evaluate.</param>
+        /// <param name="errorMessage">A custom error message to be used when the verification fails.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
-        public VerifiableResponse Cookie(string name, IMatcher<string> matcher)
+        public VerifiableResponse Cookie(string name, IMatcher<string> matcher, ErrorMessage errorMessage = default)
         {
             var cookies = this.CookieContainer.GetAllCookies().GetEnumerator();
 
@@ -259,14 +260,18 @@ namespace RestAssured.Response
                 {
                     if (!matcher.Matches(cookie.Value))
                     {
-                        this.FailVerification($"Expected value for cookie with name '{name}' to match '{matcher}', but was '{cookie.Value}'.");
+                        this.FailVerification(errorMessage.HasValue
+                            ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, cookie.Value)
+                            : $"Expected value for cookie with name '{name}' to match '{matcher}', but was '{cookie.Value}'.");
                     }
 
                     return this;
                 }
             }
 
-            this.FailVerification($"Cookie with name '{name}' could not be found in the response.");
+            this.FailVerification(errorMessage.HasValue
+                ? errorMessage.Value!
+                : $"Cookie with name '{name}' could not be found in the response.");
 
             return this;
         }
@@ -275,36 +280,32 @@ namespace RestAssured.Response
         /// Verifies that the response body is equal to the specified expected body.
         /// </summary>
         /// <param name="expectedResponseBody">The expected response body.</param>
+        /// <param name="errorMessage">A custom error message to be used when the verification fails.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         /// <exception cref="ResponseVerificationException">Thrown when the actual response body does not match the expected one.</exception>
-        public VerifiableResponse Body(string expectedResponseBody)
+        public VerifiableResponse Body(string expectedResponseBody, ErrorMessage errorMessage = default)
         {
-            string actualResponseBody = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-
-            if (!actualResponseBody.Equals(expectedResponseBody))
-            {
-                this.FailVerification($"Actual response body did not match expected response body.\nExpected: '{expectedResponseBody}'\nActual: '{actualResponseBody}'");
-            }
-
-            return this;
+            return this.VerifyResponseBody(
+                actual => !actual.Equals(expectedResponseBody),
+                actual => $"Actual response body did not match expected response body.\nExpected: '{expectedResponseBody}'\nActual: '{actual}'",
+                expectedResponseBody,
+                errorMessage);
         }
 
         /// <summary>
         /// Verifies that the response body matches the specified NHamcrest matcher.
         /// </summary>
         /// <param name="matcher">The NHamcrest matcher to evaluate.</param>
+        /// <param name="errorMessage">A custom error message to be used when the verification fails.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         /// <exception cref="ResponseVerificationException">Thrown when the actual response body does not match the expected one.</exception>
-        public VerifiableResponse Body(IMatcher<string> matcher)
+        public VerifiableResponse Body(IMatcher<string> matcher, ErrorMessage errorMessage = default)
         {
-            string actualResponseBody = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-
-            if (!matcher.Matches(actualResponseBody))
-            {
-                this.FailVerification($"Actual response body expected to match '{matcher}' but didn't.\nActual: '{actualResponseBody}'");
-            }
-
-            return this;
+            return this.VerifyResponseBody(
+                actual => !matcher.Matches(actual),
+                actual => $"Actual response body expected to match '{matcher}' but didn't.\nActual: '{actual}'",
+                matcher,
+                errorMessage);
         }
 
         /// <summary>
@@ -314,22 +315,15 @@ namespace RestAssured.Response
         /// <param name="path">The JsonPath or XPath expression to evaluate.</param>
         /// <param name="matcher">The NHamcrest matcher to evaluate.</param>
         /// <param name="verifyAs">Indicates how to interpret the response.</param>
+        /// <param name="errorMessage">A custom error message to be used when the verification fails.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
-        public VerifiableResponse Body<T>(string path, IMatcher<T> matcher, VerifyAs verifyAs = VerifyAs.UseResponseContentTypeHeaderValue)
+        public VerifiableResponse Body<T>(string path, IMatcher<T> matcher, VerifyAs verifyAs = VerifyAs.UseResponseContentTypeHeaderValue, ErrorMessage errorMessage = default)
         {
-            ResolvedBody resolved = this.ResolveBodyAndContentType(verifyAs);
-            NodePath nodePath = new NodePath(path);
-
-            if (resolved.ContentType.Equals(SupportedContentType.Json))
-            {
-                this.VerifyJsonBody(nodePath, matcher, resolved);
-            }
-            else
-            {
-                this.VerifyMarkupBody(nodePath, matcher, resolved);
-            }
-
-            return this;
+            return this.DispatchBodyVerification(
+                path,
+                verifyAs,
+                (np, rb) => this.VerifyJsonBody(np, matcher, rb, errorMessage),
+                (np, rb) => this.VerifyMarkupBody(np, matcher, rb, errorMessage));
         }
 
         /// <summary>
@@ -339,22 +333,15 @@ namespace RestAssured.Response
         /// <param name="path">The JsonPath expression to evaluate.</param>
         /// <param name="matcher">The NHamcrest matcher to evaluate.</param>
         /// <param name="verifyAs">Indicates how to interpret the response.</param>
+        /// <param name="errorMessage">A custom error message to be used when the verification fails.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
-        public VerifiableResponse Body<T>(string path, IMatcher<IEnumerable<T>> matcher, VerifyAs verifyAs = VerifyAs.UseResponseContentTypeHeaderValue)
+        public VerifiableResponse Body<T>(string path, IMatcher<IEnumerable<T>> matcher, VerifyAs verifyAs = VerifyAs.UseResponseContentTypeHeaderValue, ErrorMessage errorMessage = default)
         {
-            ResolvedBody resolved = this.ResolveBodyAndContentType(verifyAs);
-            NodePath nodePath = new NodePath(path);
-
-            if (resolved.ContentType.Equals(SupportedContentType.Json))
-            {
-                this.VerifyJsonElements(nodePath, matcher, resolved);
-            }
-            else
-            {
-                this.VerifyMarkupElements(nodePath, matcher, resolved);
-            }
-
-            return this;
+            return this.DispatchBodyVerification(
+                path,
+                verifyAs,
+                (np, rb) => this.VerifyJsonElements(np, matcher, rb, errorMessage),
+                (np, rb) => this.VerifyMarkupElements(np, matcher, rb, errorMessage));
         }
 
         /// <summary>
@@ -393,7 +380,7 @@ namespace RestAssured.Response
         {
             this.RequireContentType(SupportedContentType.Json);
 
-            string responseBodyAsString = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            string responseBodyAsString = this.ReadBodyAsString();
 
             ICollection<ValidationError> schemaValidationErrors = jsonSchema.Validate(responseBodyAsString);
 
@@ -459,14 +446,11 @@ namespace RestAssured.Response
         /// Verifies that the response time matches the specified NHamcrest matcher.
         /// </summary>
         /// <param name="matcher">The NHamcrest matcher to match against the response time.</param>
+        /// <param name="errorMessage">A custom error message to be used when the verification fails.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
-        public VerifiableResponse ResponseTime(IMatcher<TimeSpan> matcher)
+        public VerifiableResponse ResponseTime(IMatcher<TimeSpan> matcher, ErrorMessage errorMessage = default)
         {
-            if (!matcher.Matches(this.ElapsedTime))
-            {
-                this.FailVerification($"Expected response time to match '{matcher}' but was '{this.ElapsedTime}'");
-            }
-
+            this.VerifyWithMatcher(matcher, this.ElapsedTime, $"Expected response time to match '{matcher}' but was '{this.ElapsedTime}'", errorMessage);
             return this;
         }
 
@@ -474,14 +458,17 @@ namespace RestAssured.Response
         /// Verifies that the response body length (in bytes) matches the specified NHamcrest matcher.
         /// </summary>
         /// <param name="matcher">The NHamcrest matcher to match against the response body length (in bytes).</param>
+        /// <param name="errorMessage">A custom error message to be used when the verification fails.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
-        public VerifiableResponse ResponseBodyLength(IMatcher<int> matcher)
+        public VerifiableResponse ResponseBodyLength(IMatcher<int> matcher, ErrorMessage errorMessage = default)
         {
-            string responseContentAsString = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            string responseContentAsString = this.ReadBodyAsString();
 
             if (!matcher.Matches(responseContentAsString.Length))
             {
-                this.FailVerification($"Expected response body length to match '{matcher}' but was '{responseContentAsString.Length}'");
+                this.FailVerification(errorMessage.HasValue
+                    ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, responseContentAsString.Length)
+                    : $"Expected response body length to match '{matcher}' but was '{responseContentAsString.Length}'");
             }
 
             return this;
@@ -565,7 +552,7 @@ namespace RestAssured.Response
         {
             this.RequireContentType(SupportedContentType.Xml);
 
-            string responseXmlAsString = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            string responseXmlAsString = this.ReadBodyAsString();
             XmlReader reader = XmlReader.Create(new StringReader(responseXmlAsString), settings);
 
             try
@@ -580,13 +567,15 @@ namespace RestAssured.Response
             }
         }
 
-        private void VerifyJsonBody<T>(NodePath nodePath, IMatcher<T> matcher, ResolvedBody resolved)
+        private void VerifyJsonBody<T>(NodePath nodePath, IMatcher<T> matcher, ResolvedBody resolved, ErrorMessage errorMessage = default)
         {
             JToken? resultingElement = JToken.Parse(resolved.Content).SelectToken(nodePath.Expression);
 
             if (resultingElement == null)
             {
-                this.FailVerification($"JsonPath expression '{nodePath.Expression}' did not yield any results.");
+                this.FailVerification(errorMessage.HasValue
+                    ? $"{errorMessage.Value!}: JsonPath expression '{nodePath.Expression}' did not yield any results."
+                    : $"JsonPath expression '{nodePath.Expression}' did not yield any results.");
             }
 
             T valueToMatch = resultingElement!.GetType().Equals(typeof(JArray))
@@ -595,11 +584,13 @@ namespace RestAssured.Response
 
             if (!matcher.Matches(valueToMatch))
             {
-                this.FailVerification($"Expected element selected by '{nodePath.Expression}' to match '{matcher}' but was '{resultingElement}'");
+                this.FailVerification(errorMessage.HasValue
+                    ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, resultingElement!)
+                    : $"Expected element selected by '{nodePath.Expression}' to match '{matcher}' but was '{resultingElement}'");
             }
         }
 
-        private void VerifyJsonElements<T>(NodePath nodePath, IMatcher<IEnumerable<T>> matcher, ResolvedBody resolved)
+        private void VerifyJsonElements<T>(NodePath nodePath, IMatcher<IEnumerable<T>> matcher, ResolvedBody resolved, ErrorMessage errorMessage = default)
         {
             List<T> elementValues = new List<T>();
 
@@ -612,11 +603,13 @@ namespace RestAssured.Response
 
             if (!matcher.Matches(elementValues))
             {
-                this.FailVerification($"Expected elements selected by '{nodePath.Expression}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
+                this.FailVerification(errorMessage.HasValue
+                    ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, string.Join(", ", elementValues))
+                    : $"Expected elements selected by '{nodePath.Expression}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
             }
         }
 
-        private void VerifyMarkupBody<T>(NodePath nodePath, IMatcher<T> matcher, ResolvedBody resolved)
+        private void VerifyMarkupBody<T>(NodePath nodePath, IMatcher<T> matcher, ResolvedBody resolved, ErrorMessage errorMessage = default)
         {
             string innerText = this.SelectSingleNodeInnerText(nodePath, resolved);
 
@@ -625,16 +618,20 @@ namespace RestAssured.Response
             {
                 if (!matcher.Matches((T)Convert.ChangeType(innerText, typeof(T))))
                 {
-                    this.FailVerification($"Expected element selected by '{nodePath.Expression}' to match '{matcher}' but was '{innerText}'");
+                    this.FailVerification(errorMessage.HasValue
+                        ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, innerText)
+                        : $"Expected element selected by '{nodePath.Expression}' to match '{matcher}' but was '{innerText}'");
                 }
             }
             catch (FormatException)
             {
-                this.FailVerification($"Response element value {innerText} cannot be converted to value of type '{typeof(T)}'");
+                this.FailVerification(errorMessage.HasValue
+                    ? $"{errorMessage.Value!}: Response element value {innerText} cannot be converted to value of type '{typeof(T)}'"
+                    : $"Response element value {innerText} cannot be converted to value of type '{typeof(T)}'");
             }
         }
 
-        private void VerifyMarkupElements<T>(NodePath nodePath, IMatcher<IEnumerable<T>> matcher, ResolvedBody resolved)
+        private void VerifyMarkupElements<T>(NodePath nodePath, IMatcher<IEnumerable<T>> matcher, ResolvedBody resolved, ErrorMessage errorMessage = default)
         {
             List<T> elementValues = new List<T>();
 
@@ -647,13 +644,17 @@ namespace RestAssured.Response
                 }
                 catch (FormatException)
                 {
-                    this.FailVerification($"Response element value {innerText} cannot be converted to object of type {typeof(T)}");
+                    this.FailVerification(errorMessage.HasValue
+                        ? $"{errorMessage.Value!}: Response element value {innerText} cannot be converted to object of type {typeof(T)}"
+                        : $"Response element value {innerText} cannot be converted to object of type {typeof(T)}");
                 }
             }
 
             if (!matcher.Matches(elementValues))
             {
-                this.FailVerification($"Expected elements selected by '{nodePath.Expression}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
+                this.FailVerification(errorMessage.HasValue
+                    ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, string.Join(", ", elementValues))
+                    : $"Expected elements selected by '{nodePath.Expression}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
             }
         }
 
@@ -699,7 +700,7 @@ namespace RestAssured.Response
 
         private ResolvedBody ResolveBodyAndContentType(VerifyAs verifyAs)
         {
-            string body = this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            string body = this.ReadBodyAsString();
             string mediaType = this.Response.Content.Headers.ContentType?.MediaType ?? string.Empty;
 
             try
@@ -716,6 +717,52 @@ namespace RestAssured.Response
         private readonly record struct ResolvedBody(string Content, SupportedContentType ContentType);
 
         private readonly record struct NodePath(string Expression);
+
+        private VerifiableResponse VerifyResponseBody(Func<string, bool> failCondition, Func<string, string> buildDefaultMessage, object expectedValue, ErrorMessage errorMessage)
+        {
+            string actual = this.ReadBodyAsString();
+
+            if (failCondition(actual))
+            {
+                this.FailVerification(errorMessage.HasValue
+                    ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, expectedValue, actual)
+                    : buildDefaultMessage(actual));
+            }
+
+            return this;
+        }
+
+        private string ReadBodyAsString()
+        {
+            return this.Response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+        }
+
+        private void VerifyWithMatcher<T>(IMatcher<T> matcher, T actualValue, string defaultMessage, ErrorMessage errorMessage)
+        {
+            if (!matcher.Matches(actualValue))
+            {
+                this.FailVerification(errorMessage.HasValue
+                    ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, actualValue!)
+                    : defaultMessage);
+            }
+        }
+
+        private VerifiableResponse DispatchBodyVerification(string path, VerifyAs verifyAs, Action<NodePath, ResolvedBody> jsonVerify, Action<NodePath, ResolvedBody> markupVerify)
+        {
+            ResolvedBody resolved = this.ResolveBodyAndContentType(verifyAs);
+            NodePath nodePath = new NodePath(path);
+
+            if (resolved.ContentType.Equals(SupportedContentType.Json))
+            {
+                jsonVerify(nodePath, resolved);
+            }
+            else
+            {
+                markupVerify(nodePath, resolved);
+            }
+
+            return this;
+        }
 
         private void FailVerification(string exceptionMessage)
         {

@@ -205,6 +205,98 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a response header value using a templated custom error message with
+        /// a string overload, that the exception contains the correctly formatted message.
+        /// </summary>
+        [Test]
+        public void TemplatedCustomErrorMessageCanBeSpecifiedWhenVerifyingHeaderValueAsString()
+        {
+            this.CreateStubForCustomSingleResponseHeader();
+
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                    .When()
+                    .Get($"{MOCK_SERVER_BASE_URL}/custom-response-header")
+                    .Then()
+                    .StatusCode(200)
+                    .Header(this.headerName, "value_does_not_match", "Expected [expected] but got [actual]");
+            });
+
+            Assert.That(rve?.Message, Is.EqualTo("Expected \"value_does_not_match\" but got a_value"));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// a response header value using a templated custom error message with
+        /// an NHamcrest matcher overload, that the exception contains the correctly formatted message.
+        /// </summary>
+        [Test]
+        public void TemplatedCustomErrorMessageCanBeSpecifiedWhenVerifyingHeaderValueUsingNHamcrestMatcher()
+        {
+            this.CreateStubForCustomSingleResponseHeader();
+
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                    .When()
+                    .Get($"{MOCK_SERVER_BASE_URL}/custom-response-header")
+                    .Then()
+                    .StatusCode(200)
+                    .Header(this.headerName, NHamcrest.Contains.String("_wrong"), "Expected [expected] but got [actual]");
+            });
+
+            Assert.That(rve?.Message, Is.EqualTo("Expected a string containing \"_wrong\" but got a_value"));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// the Content-Type header using a templated custom error message with
+        /// a string overload, that the exception contains the correctly formatted message.
+        /// </summary>
+        [Test]
+        public void TemplatedCustomErrorMessageCanBeSpecifiedWhenVerifyingContentTypeAsString()
+        {
+            this.CreateStubForCustomResponseContentTypeHeader();
+
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                    .When()
+                    .Get($"{MOCK_SERVER_BASE_URL}/custom-response-content-type-header")
+                    .Then()
+                    .StatusCode(200)
+                    .ContentType("application/something_else", "Expected [expected] but got [actual]");
+            });
+
+            Assert.That(rve?.Message, Is.EqualTo("Expected \"application/something_else\" but got application/something"));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
+        /// the Content-Type header using a templated custom error message with
+        /// an NHamcrest matcher overload, that the exception contains the correctly formatted message.
+        /// </summary>
+        [Test]
+        public void TemplatedCustomErrorMessageCanBeSpecifiedWhenVerifyingContentTypeUsingNHamcrestMatcher()
+        {
+            this.CreateStubForCustomResponseContentTypeHeader();
+
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                    .When()
+                    .Get($"{MOCK_SERVER_BASE_URL}/custom-response-content-type-header")
+                    .Then()
+                    .StatusCode(200)
+                    .ContentType(NHamcrest.Contains.String("wrong_type"), "Expected [expected] but got [actual]");
+            });
+
+            Assert.That(rve?.Message, Is.EqualTo("Expected a string containing \"wrong_type\" but got application/something"));
+        }
+
+        /// <summary>
         /// Creates the stub response for the single response header example.
         /// </summary>
         private void CreateStubForCustomSingleResponseHeader()
