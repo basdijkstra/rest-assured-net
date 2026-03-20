@@ -537,13 +537,13 @@ namespace RestAssured.Response
 
         private void VerifyJsonBody<T>(NodePath nodePath, IMatcher<T> matcher, ResolvedBody resolved, ErrorMessage errorMessage = default)
         {
-            JToken? resultingElement = JToken.Parse(resolved.Content).SelectToken(nodePath.Expression);
+            JToken? resultingElement = JToken.Parse(resolved.content).SelectToken(nodePath.expression);
 
             if (resultingElement == null)
             {
                 this.FailVerification(errorMessage.HasValue
-                    ? $"{errorMessage.Value!}: JsonPath expression '{nodePath.Expression}' did not yield any results."
-                    : $"JsonPath expression '{nodePath.Expression}' did not yield any results.");
+                    ? $"{errorMessage.Value!}: JsonPath expression '{nodePath.expression}' did not yield any results."
+                    : $"JsonPath expression '{nodePath.expression}' did not yield any results.");
             }
 
             T valueToMatch = resultingElement!.GetType().Equals(typeof(JArray))
@@ -554,7 +554,7 @@ namespace RestAssured.Response
             {
                 this.FailVerification(errorMessage.HasValue
                     ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, resultingElement!)
-                    : $"Expected element selected by '{nodePath.Expression}' to match '{matcher}' but was '{resultingElement}'");
+                    : $"Expected element selected by '{nodePath.expression}' to match '{matcher}' but was '{resultingElement}'");
             }
         }
 
@@ -562,7 +562,7 @@ namespace RestAssured.Response
         {
             List<T> elementValues = new List<T>();
 
-            IEnumerable<JToken> resultingElements = JToken.Parse(resolved.Content).SelectTokens(nodePath.Expression);
+            IEnumerable<JToken> resultingElements = JToken.Parse(resolved.content).SelectTokens(nodePath.expression);
 
             foreach (JToken element in resultingElements)
             {
@@ -573,7 +573,7 @@ namespace RestAssured.Response
             {
                 this.FailVerification(errorMessage.HasValue
                     ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, string.Join(", ", elementValues))
-                    : $"Expected elements selected by '{nodePath.Expression}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
+                    : $"Expected elements selected by '{nodePath.expression}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
             }
         }
 
@@ -588,7 +588,7 @@ namespace RestAssured.Response
                 {
                     this.FailVerification(errorMessage.HasValue
                         ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, innerText)
-                        : $"Expected element selected by '{nodePath.Expression}' to match '{matcher}' but was '{innerText}'");
+                        : $"Expected element selected by '{nodePath.expression}' to match '{matcher}' but was '{innerText}'");
                 }
             }
             catch (FormatException)
@@ -622,31 +622,31 @@ namespace RestAssured.Response
             {
                 this.FailVerification(errorMessage.HasValue
                     ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, string.Join(", ", elementValues))
-                    : $"Expected elements selected by '{nodePath.Expression}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
+                    : $"Expected elements selected by '{nodePath.expression}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
             }
         }
 
         private string SelectSingleNodeInnerText(NodePath nodePath, ResolvedBody resolved)
         {
-            if (resolved.ContentType == SupportedContentType.Xml)
+            if (resolved.contentType == SupportedContentType.Xml)
             {
                 XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.LoadXml(resolved.Content);
-                XmlNode? node = xmlDoc.SelectSingleNode(nodePath.Expression);
+                xmlDoc.LoadXml(resolved.content);
+                XmlNode? node = xmlDoc.SelectSingleNode(nodePath.expression);
                 if (node == null)
                 {
-                    this.FailVerification($"XPath expression '{nodePath.Expression}' did not yield any results.");
+                    this.FailVerification($"XPath expression '{nodePath.expression}' did not yield any results.");
                 }
 
                 return node!.InnerText;
             }
 
             HtmlDocument htmlDoc = new HtmlDocument();
-            htmlDoc.LoadHtml(resolved.Content);
-            HtmlNode? htmlNode = htmlDoc.DocumentNode.SelectSingleNode(nodePath.Expression);
+            htmlDoc.LoadHtml(resolved.content);
+            HtmlNode? htmlNode = htmlDoc.DocumentNode.SelectSingleNode(nodePath.expression);
             if (htmlNode == null)
             {
-                this.FailVerification($"XPath expression '{nodePath.Expression}' did not yield any results.");
+                this.FailVerification($"XPath expression '{nodePath.expression}' did not yield any results.");
             }
 
             return htmlNode!.InnerText;
@@ -654,16 +654,16 @@ namespace RestAssured.Response
 
         private IEnumerable<string> SelectNodeInnerTexts(NodePath nodePath, ResolvedBody resolved)
         {
-            if (resolved.ContentType == SupportedContentType.Xml)
+            if (resolved.contentType == SupportedContentType.Xml)
             {
                 XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.LoadXml(resolved.Content);
-                return xmlDoc.SelectNodes(nodePath.Expression)!.Cast<XmlNode>().Select(n => n.InnerText).ToList();
+                xmlDoc.LoadXml(resolved.content);
+                return xmlDoc.SelectNodes(nodePath.expression)!.Cast<XmlNode>().Select(n => n.InnerText).ToList();
             }
 
             HtmlDocument htmlDoc = new HtmlDocument();
-            htmlDoc.LoadHtml(resolved.Content);
-            return htmlDoc.DocumentNode.SelectNodes(nodePath.Expression)!.Cast<HtmlNode>().Select(n => n.InnerText).ToList();
+            htmlDoc.LoadHtml(resolved.content);
+            return htmlDoc.DocumentNode.SelectNodes(nodePath.expression)!.Cast<HtmlNode>().Select(n => n.InnerText).ToList();
         }
 
         private ResolvedBody ResolveBodyAndContentType(VerifyAs verifyAs)
@@ -682,9 +682,9 @@ namespace RestAssured.Response
             }
         }
 
-        private readonly record struct ResolvedBody(string Content, SupportedContentType ContentType);
+        private readonly record struct ResolvedBody(string content, SupportedContentType contentType);
 
-        private readonly record struct NodePath(string Expression);
+        private readonly record struct NodePath(string expression);
 
         private VerifiableResponse VerifyResponseBody(Func<string, bool> failCondition, Func<string, string> buildDefaultMessage, object expectedValue, ErrorMessage errorMessage)
         {
@@ -720,7 +720,7 @@ namespace RestAssured.Response
             ResolvedBody resolved = this.ResolveBodyAndContentType(verifyAs);
             NodePath nodePath = new NodePath(path);
 
-            if (resolved.ContentType.Equals(SupportedContentType.Json))
+            if (resolved.contentType.Equals(SupportedContentType.Json))
             {
                 jsonVerify(nodePath, resolved);
             }
