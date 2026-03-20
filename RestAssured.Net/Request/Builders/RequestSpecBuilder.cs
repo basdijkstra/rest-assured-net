@@ -62,30 +62,6 @@ namespace RestAssured.Request.Builders
         }
 
         /// <summary>
-        /// Sets the scheme (http or https) on the <see cref="RequestSpecification"/> to build.
-        /// </summary>
-        /// <param name="scheme">The scheme to use in the request.</param>
-        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
-        [Obsolete("Please use WithBaseUri() instead. This method will be removed in RestAssured.Net 5.0.0")]
-        public RequestSpecBuilder WithScheme(string scheme)
-        {
-            this.requestSpecification.Scheme = scheme;
-            return this;
-        }
-
-        /// <summary>
-        /// Sets the host name on the <see cref="RequestSpecification"/> to build.
-        /// </summary>
-        /// <param name="host">The host name to use in the requests.</param>
-        /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
-        [Obsolete("Please use WithBaseUri() instead. This method will be removed in RestAssured.Net 5.0.0")]
-        public RequestSpecBuilder WithHostName(string host)
-        {
-            this.requestSpecification.HostName = host;
-            return this;
-        }
-
-        /// <summary>
         /// Sets the port on the <see cref="RequestSpecification"/> to build.
         /// </summary>
         /// <param name="port">The port to use in the requests.</param>

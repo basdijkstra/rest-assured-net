@@ -136,34 +136,6 @@ namespace RestAssured.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax showing that
-        /// using a hostname in the request specification including the scheme
-        /// throws the expected exception.
-        /// </summary>
-        [Test]
-        public void UsingSchemeInHostNameThrowsTheExpectedException()
-        {
-            var incorrectHostNameSpecification = new RequestSpecBuilder()
-                .WithHostName("http://localhost")
-                .WithPort(9876)
-                .Build();
-
-            this.CreateStubForRequestSpecification();
-
-            var rce = Assert.Throws<RequestCreationException>(() =>
-            {
-                Given()
-                    .Spec(incorrectHostNameSpecification)
-                    .When()
-                    .Get("/api/request-specification")
-                    .Then()
-                    .StatusCode(200);
-            });
-
-            Assert.That(rce?.Message, Is.EqualTo("Supplied base URI 'http://http://localhost:9876' is invalid."));
-        }
-
-        /// <summary>
-        /// A test demonstrating RestAssuredNet syntax showing that
         /// using an incorrect value for the base URI throws the expected exception.
         /// </summary>
         [Test]
