@@ -550,9 +550,9 @@ namespace RestAssured.Response
 
             if (resultingElement == null)
             {
-                this.FailVerification(errorMessage.HasValue
-                    ? $"{errorMessage.Value!}: JsonPath expression '{nodePath.expression}' did not yield any results."
-                    : $"JsonPath expression '{nodePath.expression}' did not yield any results.");
+                this.FailVerification(VerificationMessageBuilder.ResolveWithPrefix(
+                    errorMessage,
+                    $"JsonPath expression '{nodePath.expression}' did not yield any results."));
             }
 
             T valueToMatch = resultingElement!.GetType().Equals(typeof(JArray))
@@ -608,9 +608,9 @@ namespace RestAssured.Response
             }
             catch (FormatException)
             {
-                this.FailVerification(errorMessage.HasValue
-                    ? $"{errorMessage.Value!}: Response element value {innerText} cannot be converted to value of type '{typeof(T)}'"
-                    : $"Response element value {innerText} cannot be converted to value of type '{typeof(T)}'");
+                this.FailVerification(VerificationMessageBuilder.ResolveWithPrefix(
+                    errorMessage,
+                    $"Response element value {innerText} cannot be converted to value of type '{typeof(T)}'"));
             }
         }
 
@@ -627,9 +627,9 @@ namespace RestAssured.Response
                 }
                 catch (FormatException)
                 {
-                    this.FailVerification(errorMessage.HasValue
-                        ? $"{errorMessage.Value!}: Response element value {innerText} cannot be converted to object of type {typeof(T)}"
-                        : $"Response element value {innerText} cannot be converted to object of type {typeof(T)}");
+                    this.FailVerification(VerificationMessageBuilder.ResolveWithPrefix(
+                        errorMessage,
+                        $"Response element value {innerText} cannot be converted to object of type {typeof(T)}"));
                 }
             }
 
