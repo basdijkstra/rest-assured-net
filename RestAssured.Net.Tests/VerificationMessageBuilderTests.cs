@@ -41,25 +41,6 @@ namespace RestAssured.Tests
             Assert.That(resultMessage, Is.EqualTo(expectedResultMessage));
         }
 
-        private static IEnumerable<TestCaseData> BuildMessageTestCases()
-        {
-            yield return new TestCaseData("Error message", null, null, "Error message")
-                .SetName("Error message without template values remains unchanged");
-
-            yield return new TestCaseData("Expected [expected] but was [actual]", 200, 404, "Expected 200 but was 404")
-                .SetName("Integer literals can be inserted into error message");
-
-            yield return new TestCaseData("Expected [expected] but was [actual]", "banana", "apple", "Expected banana but was apple")
-                .SetName("String literals can be inserted into error message");
-
-            yield return new TestCaseData("Expected [expected] but was [actual]", false, true, "Expected False but was True")
-                .SetName("Boolean literals can be inserted into error message");
-
-            yield return new TestCaseData("Expected [expected] but was [actual]", NHamcrest.Is.LessThan(300), 401, "Expected less than 300 but was 401")
-                .SetName("NHamcrest matcher can be inserted into error message");
-        }
-
-
         /// <summary>
         /// Verifies that <see cref="VerificationMessageBuilder.Resolve(ErrorMessage, string)"/>
         /// returns the custom message when one is provided.
@@ -114,6 +95,24 @@ namespace RestAssured.Tests
             string result = VerificationMessageBuilder.Resolve(errorMessage, "default message", 200, 404);
 
             Assert.That(result, Is.EqualTo("default message"));
+        }
+
+        private static IEnumerable<TestCaseData> BuildMessageTestCases()
+        {
+            yield return new TestCaseData("Error message", null, null, "Error message")
+                .SetName("Error message without template values remains unchanged");
+
+            yield return new TestCaseData("Expected [expected] but was [actual]", 200, 404, "Expected 200 but was 404")
+                .SetName("Integer literals can be inserted into error message");
+
+            yield return new TestCaseData("Expected [expected] but was [actual]", "banana", "apple", "Expected banana but was apple")
+                .SetName("String literals can be inserted into error message");
+
+            yield return new TestCaseData("Expected [expected] but was [actual]", false, true, "Expected False but was True")
+                .SetName("Boolean literals can be inserted into error message");
+
+            yield return new TestCaseData("Expected [expected] but was [actual]", NHamcrest.Is.LessThan(300), 401, "Expected less than 300 but was 401")
+                .SetName("NHamcrest matcher can be inserted into error message");
         }
     }
 }
