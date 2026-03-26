@@ -182,20 +182,23 @@ namespace RestAssured.Response
         {
             if (this.Response.Headers.TryGetValues(name, out IEnumerable<string>? values))
             {
+                // Stryker disable once Linq: Equivalent mutant - TryGetValues guarantees non-empty collection
                 string firstValue = values.First();
 
                 if (!matcher.Matches(firstValue))
                 {
-                    this.FailVerification(errorMessage.HasValue
-                        ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, firstValue)
-                        : $"Expected value for response header with name '{name}' to match '{matcher}', but was '{firstValue}'.");
+                    this.FailVerification(VerificationMessageBuilder.Resolve(
+                        errorMessage,
+                        $"Expected value for response header with name '{name}' to match '{matcher}', but was '{firstValue}'.",
+                        matcher,
+                        firstValue));
                 }
             }
             else
             {
-                this.FailVerification(errorMessage.HasValue
-                    ? errorMessage.Value!
-                    : $"Expected header with name '{name}' to be in the response, but it could not be found.");
+                this.FailVerification(VerificationMessageBuilder.Resolve(
+                    errorMessage,
+                    $"Expected header with name '{name}' to be in the response, but it could not be found."));
             }
 
             return this;
@@ -226,16 +229,18 @@ namespace RestAssured.Response
 
             if (actualContentType == null)
             {
-                this.FailVerification(errorMessage.HasValue
-                    ? errorMessage.Value!
-                    : "Response Content-Type header could not be found.");
+                this.FailVerification(VerificationMessageBuilder.Resolve(
+                    errorMessage,
+                    "Response Content-Type header could not be found."));
             }
 
             if (!matcher.Matches(actualContentType!.ToString()))
             {
-                this.FailVerification(errorMessage.HasValue
-                    ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, actualContentType.ToString())
-                    : $"Expected value for response Content-Type header to match '{matcher}', but was '{actualContentType}'.");
+                this.FailVerification(VerificationMessageBuilder.Resolve(
+                    errorMessage,
+                    $"Expected value for response Content-Type header to match '{matcher}', but was '{actualContentType}'.",
+                    matcher,
+                    actualContentType.ToString()));
             }
 
             return this;
@@ -259,18 +264,20 @@ namespace RestAssured.Response
                 {
                     if (!matcher.Matches(cookie.Value))
                     {
-                        this.FailVerification(errorMessage.HasValue
-                            ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, cookie.Value)
-                            : $"Expected value for cookie with name '{name}' to match '{matcher}', but was '{cookie.Value}'.");
+                        this.FailVerification(VerificationMessageBuilder.Resolve(
+                            errorMessage,
+                            $"Expected value for cookie with name '{name}' to match '{matcher}', but was '{cookie.Value}'.",
+                            matcher,
+                            cookie.Value));
                     }
 
                     return this;
                 }
             }
 
-            this.FailVerification(errorMessage.HasValue
-                ? errorMessage.Value!
-                : $"Cookie with name '{name}' could not be found in the response.");
+            this.FailVerification(VerificationMessageBuilder.Resolve(
+                errorMessage,
+                $"Cookie with name '{name}' could not be found in the response."));
 
             return this;
         }
@@ -465,9 +472,11 @@ namespace RestAssured.Response
 
             if (!matcher.Matches(responseContentAsString.Length))
             {
-                this.FailVerification(errorMessage.HasValue
-                    ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, responseContentAsString.Length)
-                    : $"Expected response body length to match '{matcher}' but was '{responseContentAsString.Length}'");
+                this.FailVerification(VerificationMessageBuilder.Resolve(
+                    errorMessage,
+                    $"Expected response body length to match '{matcher}' but was '{responseContentAsString.Length}'",
+                    matcher,
+                    responseContentAsString.Length));
             }
 
             return this;
@@ -552,9 +561,11 @@ namespace RestAssured.Response
 
             if (!matcher.Matches(valueToMatch))
             {
-                this.FailVerification(errorMessage.HasValue
-                    ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, resultingElement!)
-                    : $"Expected element selected by '{nodePath.expression}' to match '{matcher}' but was '{resultingElement}'");
+                this.FailVerification(VerificationMessageBuilder.Resolve(
+                    errorMessage,
+                    $"Expected element selected by '{nodePath.expression}' to match '{matcher}' but was '{resultingElement}'",
+                    matcher,
+                    resultingElement!));
             }
         }
 
@@ -571,9 +582,11 @@ namespace RestAssured.Response
 
             if (!matcher.Matches(elementValues))
             {
-                this.FailVerification(errorMessage.HasValue
-                    ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, string.Join(", ", elementValues))
-                    : $"Expected elements selected by '{nodePath.expression}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
+                this.FailVerification(VerificationMessageBuilder.Resolve(
+                    errorMessage,
+                    $"Expected elements selected by '{nodePath.expression}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]",
+                    matcher,
+                    string.Join(", ", elementValues)));
             }
         }
 
@@ -586,9 +599,11 @@ namespace RestAssured.Response
             {
                 if (!matcher.Matches((T)Convert.ChangeType(innerText, typeof(T))))
                 {
-                    this.FailVerification(errorMessage.HasValue
-                        ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, innerText)
-                        : $"Expected element selected by '{nodePath.expression}' to match '{matcher}' but was '{innerText}'");
+                    this.FailVerification(VerificationMessageBuilder.Resolve(
+                        errorMessage,
+                        $"Expected element selected by '{nodePath.expression}' to match '{matcher}' but was '{innerText}'",
+                        matcher,
+                        innerText));
                 }
             }
             catch (FormatException)
@@ -620,9 +635,11 @@ namespace RestAssured.Response
 
             if (!matcher.Matches(elementValues))
             {
-                this.FailVerification(errorMessage.HasValue
-                    ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, string.Join(", ", elementValues))
-                    : $"Expected elements selected by '{nodePath.expression}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]");
+                this.FailVerification(VerificationMessageBuilder.Resolve(
+                    errorMessage,
+                    $"Expected elements selected by '{nodePath.expression}' to match '{matcher}', but was [{string.Join(", ", elementValues)}]",
+                    matcher,
+                    string.Join(", ", elementValues)));
             }
         }
 
@@ -692,9 +709,11 @@ namespace RestAssured.Response
 
             if (failCondition(actual))
             {
-                this.FailVerification(errorMessage.HasValue
-                    ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, expectedValue, actual)
-                    : buildDefaultMessage(actual));
+                this.FailVerification(VerificationMessageBuilder.Resolve(
+                    errorMessage,
+                    buildDefaultMessage(actual),
+                    expectedValue,
+                    actual));
             }
 
             return this;
@@ -709,9 +728,11 @@ namespace RestAssured.Response
         {
             if (!matcher.Matches(actualValue))
             {
-                this.FailVerification(errorMessage.HasValue
-                    ? AssertionMessageBuilder.BuildMessage(errorMessage.Value!, matcher, actualValue!)
-                    : defaultMessage);
+                this.FailVerification(VerificationMessageBuilder.Resolve(
+                    errorMessage,
+                    defaultMessage,
+                    matcher,
+                    actualValue!));
             }
         }
 
