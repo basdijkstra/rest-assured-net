@@ -58,6 +58,17 @@ namespace RestAssured.Logging
             => errorMessage.HasValue ? errorMessage.Value! : defaultMessage;
 
         /// <summary>
+        /// Returns the custom error message prefixed to the default message if one was supplied, otherwise returns the default message.
+        /// Use this overload for "not found" or "format error" failures where the custom message should provide additional context
+        /// alongside the default message, rather than replacing it entirely.
+        /// </summary>
+        /// <param name="errorMessage">The optional custom error message.</param>
+        /// <param name="defaultMessage">The default message to append after the custom message.</param>
+        /// <returns>The resolved error message.</returns>
+        internal static string ResolveWithPrefix(ErrorMessage errorMessage, string defaultMessage)
+            => errorMessage.HasValue ? $"{errorMessage.Value!}: {defaultMessage}" : defaultMessage;
+
+        /// <summary>
         /// Returns the custom error message with template substitution if one was supplied, otherwise returns the default message.
         /// Use this overload for "value mismatch" failures where <c>[expected]</c> and <c>[actual]</c> tokens can be substituted.
         /// </summary>
