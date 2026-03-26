@@ -469,16 +469,7 @@ namespace RestAssured.Response
         public VerifiableResponse ResponseBodyLength(IMatcher<int> matcher, ErrorMessage errorMessage = default)
         {
             string responseContentAsString = this.ReadBodyAsString();
-
-            if (!matcher.Matches(responseContentAsString.Length))
-            {
-                this.FailVerification(VerificationMessageBuilder.Resolve(
-                    errorMessage,
-                    $"Expected response body length to match '{matcher}' but was '{responseContentAsString.Length}'",
-                    matcher,
-                    responseContentAsString.Length));
-            }
-
+            this.VerifyWithMatcher(matcher, responseContentAsString.Length, $"Expected response body length to match '{matcher}' but was '{responseContentAsString.Length}'", errorMessage);
             return this;
         }
 
