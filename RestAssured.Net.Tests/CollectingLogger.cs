@@ -15,6 +15,7 @@
 // </copyright>
 namespace RestAssured.Tests
 {
+    using System;
     using System.Collections.Generic;
     using RestAssured.Logging;
 
@@ -32,6 +33,7 @@ namespace RestAssured.Tests
         public void Log(string message)
         {
             this.Messages.Add(message);
+            Console.WriteLine(message);
         }
     }
 }

@@ -51,28 +51,32 @@ namespace RestAssured.Logging
         /// <param name="cookieCollection">The <see cref="CookieCollection"/> containing cookies associated with the request.</param>
         public void LogRequest(HttpRequestMessage request, CookieCollection cookieCollection)
         {
+            var entries = new List<string>();
+
             if (this.logConfiguration.RequestLogLevel >= RequestLogLevel.Endpoint)
             {
-                this.logger.Log($"{request.Method} {request.RequestUri}");
+                entries.Add($"{request.Method} {request.RequestUri}");
             }
 
             if (this.logConfiguration.RequestLogLevel == RequestLogLevel.Headers)
             {
-                this.LogRequestHeaders(request, this.logConfiguration.SensitiveRequestHeadersAndCookies);
-                this.LogRequestCookies(cookieCollection, this.logConfiguration.SensitiveRequestHeadersAndCookies);
+                entries = this.LogRequestHeaders(entries, request, this.logConfiguration.SensitiveRequestHeadersAndCookies);
+                entries = this.LogRequestCookies(entries, cookieCollection, this.logConfiguration.SensitiveRequestHeadersAndCookies);
             }
 
             if (this.logConfiguration.RequestLogLevel == RequestLogLevel.Body)
             {
-                this.LogRequestBody(request);
+                entries = this.LogRequestBody(entries, request);
             }
 
             if (this.logConfiguration.RequestLogLevel == RequestLogLevel.All)
             {
-                this.LogRequestHeaders(request, this.logConfiguration.SensitiveRequestHeadersAndCookies);
-                this.LogRequestCookies(cookieCollection, this.logConfiguration.SensitiveRequestHeadersAndCookies);
-                this.LogRequestBody(request);
+                entries = this.LogRequestHeaders(entries, request, this.logConfiguration.SensitiveRequestHeadersAndCookies);
+                entries = this.LogRequestCookies(entries, cookieCollection, this.logConfiguration.SensitiveRequestHeadersAndCookies);
+                entries = this.LogRequestBody(entries, request);
             }
+
+            this.logger.Log(string.Join(Environment.NewLine, entries));
         }
 
         /// <summary>
@@ -97,152 +101,174 @@ namespace RestAssured.Logging
             return verifiableResponse;
         }
 
-        private void LogRequestHeaders(HttpRequestMessage request, List<string> sensitiveRequestHeadersAndCookies)
+        private List<string> LogRequestHeaders(List<string> entries, HttpRequestMessage request, List<string> sensitiveRequestHeadersAndCookies)
         {
-            this.LogMessageHeaders(request.Headers, request.Content, sensitiveRequestHeadersAndCookies);
+            return this.LogMessageHeaders(entries, request.Headers, request.Content, sensitiveRequestHeadersAndCookies);
         }
 
-        private void LogRequestCookies(CookieCollection cookieCollection, List<string> sensitiveRequestHeadersAndCookies)
+        private List<string> LogRequestCookies(List<string> entries, CookieCollection cookieCollection, List<string> sensitiveRequestHeadersAndCookies)
         {
             foreach (Cookie cookie in cookieCollection)
             {
-                this.LogCookie(cookie, sensitiveRequestHeadersAndCookies);
+                entries = this.LogCookie(entries, cookie, sensitiveRequestHeadersAndCookies);
             }
+
+            return entries;
         }
 
-        private void LogRequestBody(HttpRequestMessage request)
+        private List<string> LogRequestBody(List<string> entries, HttpRequestMessage request)
         {
-            this.LogHttpContent(request.Content);
+            return this.LogHttpContent(entries, request.Content);
         }
 
-        private void LogResponseStatusCode(HttpResponseMessage response)
+        private List<string> LogResponseStatusCode(List<string> entries, HttpResponseMessage response)
         {
-            this.logger.Log($"HTTP {(int)response.StatusCode} ({response.StatusCode})");
+            entries.Add($"HTTP {(int)response.StatusCode} ({response.StatusCode})");
+            return entries;
         }
 
-        private void LogResponseHeaders(HttpResponseMessage response, List<string> sensitiveResponseHeadersAndCookies)
+        private List<string> LogResponseHeaders(List<string> entries, HttpResponseMessage response, List<string> sensitiveResponseHeadersAndCookies)
         {
-            this.LogMessageHeaders(response.Headers, response.Content, sensitiveResponseHeadersAndCookies);
+            return this.LogMessageHeaders(entries, response.Headers, response.Content, sensitiveResponseHeadersAndCookies);
         }
 
-        private void LogResponseCookies(CookieContainer cookieContainer, List<string> sensitiveResponseHeadersAndCookies)
+        private List<string> LogResponseCookies(List<string> entries, CookieContainer cookieContainer, List<string> sensitiveResponseHeadersAndCookies)
         {
             var cookies = cookieContainer.GetAllCookies().GetEnumerator();
 
             while (cookies.MoveNext())
             {
-                this.LogCookie((Cookie)cookies.Current, sensitiveResponseHeadersAndCookies);
+                entries = this.LogCookie(entries, (Cookie)cookies.Current, sensitiveResponseHeadersAndCookies);
             }
+
+            return entries;
         }
 
-        private void LogResponseBody(HttpResponseMessage response)
+        private List<string> LogResponseBody(List<string> entries, HttpResponseMessage response)
         {
-            this.LogHttpContent(response.Content);
+            return this.LogHttpContent(entries, response.Content);
         }
 
-        private void LogResponseTime(TimeSpan elapsedTime)
+        private List<string> LogResponseTime(List<string> entries, TimeSpan elapsedTime)
         {
-            this.logger.Log($"Response time: {elapsedTime.TotalMilliseconds} ms");
+            entries.Add($"Response time: {elapsedTime.TotalMilliseconds} ms");
+            return entries;
         }
 
-        private void LogMessageHeaders(HttpHeaders headers, HttpContent? content, List<string> sensitiveHeaders)
+        private List<string> LogMessageHeaders(List<string> entries, HttpHeaders headers, HttpContent? content, List<string> sensitiveHeaders)
         {
             if (content != null)
             {
-                this.logger.Log($"Content-Type: {content.Headers.ContentType}");
-                this.logger.Log($"Content-Length: {content.Headers.ContentLength}");
+                entries.Add($"Content-Type: {content.Headers.ContentType}");
+                entries.Add($"Content-Length: {content.Headers.ContentLength}");
             }
 
             foreach (KeyValuePair<string, IEnumerable<string>> header in headers)
             {
                 string value = sensitiveHeaders.Contains(header.Key) ? "*****" : string.Join(", ", header.Value);
-                this.logger.Log($"{header.Key}: {value}");
+                entries.Add($"{header.Key}: {value}");
             }
+
+            return entries;
         }
 
-        private void LogCookie(Cookie cookie, List<string> sensitiveNames)
+        private List<string> LogCookie(List<string> entries, Cookie cookie, List<string> sensitiveNames)
         {
             string value = sensitiveNames.Contains(cookie.Name) ? "*****" : cookie.Value;
-            this.logger.Log($"Cookie: {cookie.Name}={value}, Domain: {cookie.Domain}, HTTP-only: {cookie.HttpOnly}, Secure: {cookie.Secure}");
+            entries.Add($"Cookie: {cookie.Name}={value}, Domain: {cookie.Domain}, HTTP-only: {cookie.HttpOnly}, Secure: {cookie.Secure}");
+
+            return entries;
         }
 
-        private void LogHttpContent(HttpContent? content)
+        private List<string> LogHttpContent(List<string> entries, HttpContent? content)
         {
             if (content == null)
             {
-                return;
+                return entries;
             }
 
             string bodyAsString = content.ReadAsStringAsync().GetAwaiter().GetResult();
 
             if (!bodyAsString.Equals(string.Empty))
             {
-                this.LogFormattedBody(bodyAsString, content.Headers.ContentType?.MediaType ?? string.Empty);
+                entries = this.LogFormattedBody(entries, bodyAsString, content.Headers.ContentType?.MediaType ?? string.Empty);
             }
+
+            return entries;
         }
 
-        private void LogFormattedBody(string bodyAsString, string mediaType)
+        private List<string> LogFormattedBody(List<string> entries, string bodyAsString, string mediaType)
         {
             if (mediaType.Equals(string.Empty) || mediaType.Contains("json"))
             {
                 object jsonPayload = JsonConvert.DeserializeObject(bodyAsString, typeof(object)) ?? "Could not read payload";
-                this.logger.Log(JsonConvert.SerializeObject(jsonPayload, Formatting.Indented));
+                entries.Add(JsonConvert.SerializeObject(jsonPayload, Formatting.Indented));
             }
             else if (mediaType.Contains("xml"))
             {
                 XDocument doc = XDocument.Parse(bodyAsString);
-                this.logger.Log(doc.ToString());
+                entries.Add(doc.ToString());
             }
             else
             {
-                this.logger.Log(bodyAsString);
+                entries.Add(bodyAsString);
             }
+
+            return entries;
         }
 
         private VerifiableResponse LogResponseOnError(VerifiableResponse verifiableResponse)
         {
+            var entries = new List<string>();
+
             if ((int)verifiableResponse.Response.StatusCode >= 400)
             {
-                this.LogResponseStatusCode(verifiableResponse.Response);
-                this.LogResponseHeaders(verifiableResponse.Response, this.logConfiguration.SensitiveResponseHeadersAndCookies);
-                this.LogResponseCookies(verifiableResponse.CookieContainer, this.logConfiguration.SensitiveResponseHeadersAndCookies);
-                this.LogResponseBody(verifiableResponse.Response);
-                this.LogResponseTime(verifiableResponse.ElapsedTime);
+                entries = this.LogResponseStatusCode(entries, verifiableResponse.Response);
+                entries = this.LogResponseHeaders(entries, verifiableResponse.Response, this.logConfiguration.SensitiveResponseHeadersAndCookies);
+                entries = this.LogResponseCookies(entries, verifiableResponse.CookieContainer, this.logConfiguration.SensitiveResponseHeadersAndCookies);
+                entries = this.LogResponseBody(entries, verifiableResponse.Response);
+                entries = this.LogResponseTime(entries, verifiableResponse.ElapsedTime);
             }
+
+            this.logger.Log(string.Join(Environment.NewLine, entries));
 
             return verifiableResponse;
         }
 
         private void LogResponseForLevel(VerifiableResponse verifiableResponse)
         {
+            var entries = new List<string>();
+
             if (this.logConfiguration.ResponseLogLevel > ResponseLogLevel.None)
             {
-                this.LogResponseStatusCode(verifiableResponse.Response);
+                entries = this.LogResponseStatusCode(entries, verifiableResponse.Response);
             }
 
             if (this.logConfiguration.ResponseLogLevel == ResponseLogLevel.Headers)
             {
-                this.LogResponseHeaders(verifiableResponse.Response, this.logConfiguration.SensitiveResponseHeadersAndCookies);
-                this.LogResponseCookies(verifiableResponse.CookieContainer, this.logConfiguration.SensitiveResponseHeadersAndCookies);
+                entries = this.LogResponseHeaders(entries, verifiableResponse.Response, this.logConfiguration.SensitiveResponseHeadersAndCookies);
+                entries = this.LogResponseCookies(entries, verifiableResponse.CookieContainer, this.logConfiguration.SensitiveResponseHeadersAndCookies);
             }
 
             if (this.logConfiguration.ResponseLogLevel == ResponseLogLevel.Body)
             {
-                this.LogResponseBody(verifiableResponse.Response);
+                entries = this.LogResponseBody(entries, verifiableResponse.Response);
             }
 
             if (this.logConfiguration.ResponseLogLevel == ResponseLogLevel.ResponseTime)
             {
-                this.LogResponseTime(verifiableResponse.ElapsedTime);
+                entries = this.LogResponseTime(entries, verifiableResponse.ElapsedTime);
             }
 
             if (this.logConfiguration.ResponseLogLevel == ResponseLogLevel.All)
             {
-                this.LogResponseHeaders(verifiableResponse.Response, this.logConfiguration.SensitiveResponseHeadersAndCookies);
-                this.LogResponseCookies(verifiableResponse.CookieContainer, this.logConfiguration.SensitiveResponseHeadersAndCookies);
-                this.LogResponseBody(verifiableResponse.Response);
-                this.LogResponseTime(verifiableResponse.ElapsedTime);
+                entries = this.LogResponseHeaders(entries, verifiableResponse.Response, this.logConfiguration.SensitiveResponseHeadersAndCookies);
+                entries = this.LogResponseCookies(entries, verifiableResponse.CookieContainer, this.logConfiguration.SensitiveResponseHeadersAndCookies);
+                entries = this.LogResponseBody(entries, verifiableResponse.Response);
+                entries = this.LogResponseTime(entries, verifiableResponse.ElapsedTime);
             }
+
+            this.logger.Log(string.Join(Environment.NewLine, entries));
         }
     }
 }

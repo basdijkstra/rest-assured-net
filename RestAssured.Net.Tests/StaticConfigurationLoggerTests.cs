@@ -61,9 +61,9 @@ namespace RestAssured.Tests
         [Test]
         public void RequestEndpointIsWrittenToLoggerFromStaticConfiguration()
         {
-            var collector = new CollectingLogger();
+            var logger = new CollectingLogger();
 
-            RestAssuredConfig.Logger = collector;
+            RestAssuredConfig.Logger = logger;
             RestAssuredConfig.LogConfiguration = new LogConfiguration { RequestLogLevel = RequestLogLevel.Endpoint };
 
             Given()
@@ -72,8 +72,8 @@ namespace RestAssured.Tests
                 .Then()
                 .StatusCode(200);
 
-            Assert.That(collector.Messages, Has.Some.Contains("GET"));
-            Assert.That(collector.Messages, Has.Some.Contains("/static-config-logger-test"));
+            Assert.That(logger.Messages, Has.Some.Contains("GET"));
+            Assert.That(logger.Messages, Has.Some.Contains("/static-config-logger-test"));
         }
 
         /// <summary>
@@ -82,9 +82,9 @@ namespace RestAssured.Tests
         [Test]
         public void ResponseBodyIsWrittenToLoggerFromStaticConfiguration()
         {
-            var collector = new CollectingLogger();
+            var logger = new CollectingLogger();
 
-            RestAssuredConfig.Logger = collector;
+            RestAssuredConfig.Logger = logger;
             RestAssuredConfig.LogConfiguration = new LogConfiguration { ResponseLogLevel = ResponseLogLevel.All };
 
             Given()
@@ -93,7 +93,7 @@ namespace RestAssured.Tests
                 .Then()
                 .StatusCode(200);
 
-            Assert.That(collector.Messages, Has.Some.Contains("John Doe"));
+            Assert.That(logger.Messages, Has.Some.Contains("John Doe"));
         }
 
         /// <summary>
@@ -102,20 +102,20 @@ namespace RestAssured.Tests
         [Test]
         public void ExplicitGivenLoggerTakesPrecedenceOverStaticConfigurationLogger()
         {
-            var configCollector = new CollectingLogger();
-            var givenCollector = new CollectingLogger();
+            var configLogger = new CollectingLogger();
+            var givenLogger = new CollectingLogger();
 
-            RestAssuredConfig.Logger = configCollector;
+            RestAssuredConfig.Logger = configLogger;
             RestAssuredConfig.LogConfiguration = new LogConfiguration { RequestLogLevel = RequestLogLevel.Endpoint };
 
-            Given(givenCollector)
+            Given(givenLogger)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/static-config-logger-test")
                 .Then()
                 .StatusCode(200);
 
-            Assert.That(givenCollector.Messages, Has.Some.Contains("GET"));
-            Assert.That(configCollector.Messages, Is.Empty);
+            Assert.That(givenLogger.Messages, Has.Some.Contains("GET"));
+            Assert.That(configLogger.Messages, Is.Empty);
         }
     }
 }
