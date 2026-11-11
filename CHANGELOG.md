@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+### [5.1.0] - 2026-11-11
+
+- Added support for .NET 11 ([#151](https://github.com/basdijkstra/rest-assured-net/issues/151))
+
+#### Updated
+
+- Version bumps for NJsonSchema, HtmlAgilityPack (main project), Microsoft.AspNetCore.Mvc.Testing, Microsoft.NET.Test.Sdk, NUnit, NUnit3TestAdapter, WireMock.Net (test project)
+
 ### [5.0.0] - 2026-03-20
 
 #### Added
