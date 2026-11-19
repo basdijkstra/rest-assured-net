@@ -152,6 +152,116 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test checking that a query string in a relative endpoint is sent as a query string,
+        /// and not as part of the path, when a request specification is used.
+        /// </summary>
+        [Test]
+        public void RelativeEndpointWithQueryStringCanBeUsedWithRequestSpecification()
+        {
+            this.CreateStubForQueryStringEndpoint("/query-string-endpoint");
+
+            var requestSpecification = new RequestSpecBuilder()
+                .WithBaseUri("http://localhost:9876")
+                .Build();
+
+            Given()
+                .Spec(requestSpecification)
+                .When()
+                .Get("/query-string-endpoint?id=1")
+                .Then()
+                .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test checking that a query string in a relative endpoint is sent as a query string
+        /// when a request specification with a base path is used.
+        /// </summary>
+        [Test]
+        public void RelativeEndpointWithQueryStringCanBeUsedWithBasePath()
+        {
+            this.CreateStubForQueryStringEndpoint("/api/query-string-endpoint");
+
+            var requestSpecification = new RequestSpecBuilder()
+                .WithBaseUri("http://localhost:9876")
+                .WithBasePath("api")
+                .Build();
+
+            Given()
+                .Spec(requestSpecification)
+                .When()
+                .Get("/query-string-endpoint?id=1")
+                .Then()
+                .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test checking that a query string in a relative endpoint is combined with query parameters
+        /// set in the request specification and in the request.
+        /// </summary>
+        [Test]
+        public void QueryStringInEndpointIsCombinedWithQueryParams()
+        {
+            this.Server?.Given(Request.Create().WithPath("/query-string-endpoint")
+                .WithParam("id", "1")
+                .WithParam("a", "1")
+                .WithParam("b", "2")
+                .UsingGet())
+                .RespondWith(Response.Create()
+                .WithStatusCode(200));
+
+            var requestSpecification = new RequestSpecBuilder()
+                .WithBaseUri("http://localhost:9876")
+                .WithQueryParam("a", "1")
+                .Build();
+
+            Given()
+                .Spec(requestSpecification)
+                .QueryParam("b", "2")
+                .When()
+                .Get("/query-string-endpoint?id=1")
+                .Then()
+                .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test checking that an already encoded query string in a relative endpoint is not encoded again.
+        /// </summary>
+        [Test]
+        public void EncodedQueryStringInEndpointIsNotEncodedAgain()
+        {
+            this.Server?.Given(Request.Create().WithPath("/query-string-endpoint")
+                .WithParam("id", "1")
+                .WithParam("name", "John Doe")
+                .UsingGet())
+                .RespondWith(Response.Create()
+                .WithStatusCode(200));
+
+            var requestSpecification = new RequestSpecBuilder()
+                .WithBaseUri("http://localhost:9876")
+                .Build();
+
+            Given()
+                .Spec(requestSpecification)
+                .When()
+                .Get("/query-string-endpoint?id=1&name=John%20Doe")
+                .Then()
+                .StatusCode(200);
+        }
+
+        /// <summary>
+        /// Creates the stub response for an endpoint that requires the query parameter id=1.
+        /// </summary>
+        /// <param name="path">The path to create the stub for.</param>
+        private void CreateStubForQueryStringEndpoint(string path)
+        {
+            this.Server?.Given(Request.Create().WithPath(path)
+                .WithParam("id", "1")
+                .UsingGet())
+                .RespondWith(Response.Create()
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
         /// Creates the stub response for the request specification tests.
         /// </summary>
         private void CreateStubForRequestSpecification()

@@ -40,13 +40,26 @@ namespace RestAssured.Request
                 throw new RequestCreationException("Supplied request specification is null.");
             }
 
+            // A query string in the endpoint must not become part of the path, because
+            // UriBuilder escapes the '?' in a path, so split it off and set it as the query.
+            string path = endpoint;
+            string query = string.Empty;
+            int queryStart = endpoint.IndexOf('?');
+
+            if (queryStart >= 0)
+            {
+                path = endpoint.Substring(0, queryStart);
+                query = endpoint.Substring(queryStart + 1);
+            }
+
             try
             {
                 UriBuilder uri = new UriBuilder();
                 uri.Scheme = requestSpec.Scheme;
                 uri.Host = requestSpec.HostName;
                 uri.Port = requestSpec.Port;
-                uri.Path = BuildPath(requestSpec.BasePath, endpoint);
+                uri.Path = BuildPath(requestSpec.BasePath, path);
+                uri.Query = query;
 
                 return uri.Uri;
             }
