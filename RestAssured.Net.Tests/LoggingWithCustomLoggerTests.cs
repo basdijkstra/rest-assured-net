@@ -136,6 +136,31 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// Verifies that a cookie sent with the request, but not set by the server,
+        /// is written to the request log and not to the response log.
+        /// </summary>
+        [Test]
+        public void RequestCookieIsNotLoggedAsResponseCookie()
+        {
+            Given()
+                .Spec(this.requestSpecification)
+                .Log(new LogConfiguration()
+                {
+                    RequestLogLevel = RequestLogLevel.All,
+                    ResponseLogLevel = ResponseLogLevel.All,
+                })
+                .Cookie("request_cookie", "request_cookie_value")
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/custom-logger-test")
+                .Then()
+                .StatusCode(200);
+
+            Assert.That(this.logger.Messages.Count, Is.EqualTo(2));
+            Assert.That(this.logger.Messages[0], Does.Contain("request_cookie_value"));
+            Assert.That(this.logger.Messages[1], Does.Not.Contain("request_cookie_value"));
+        }
+
+        /// <summary>
         /// Verifies that the response status code is written to a custom logger.
         /// </summary>
         [Test]

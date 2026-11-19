@@ -15,6 +15,7 @@
 // </copyright>
 namespace RestAssured.Tests
 {
+    using System.Net.Http;
     using NUnit.Framework;
     using RestAssured.Response.Exceptions;
     using WireMock.RequestBuilders;
@@ -197,6 +198,131 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test checking that a cookie that was sent with the request,
+        /// but not set by the server, is not found when verifying response cookies.
+        /// </summary>
+        [Test]
+        public void RequestCookieIsNotReportedAsResponseCookieWhenVerifying()
+        {
+            this.CreateStubForResponseWithoutCookie();
+
+            ResponseVerificationException rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                .Cookie("session", "abc")
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/response-without-cookie")
+                .Then()
+                .StatusCode(200)
+                .And()
+                .Cookie("session", NHamcrest.Is.EqualTo("abc"));
+            });
+
+            Assert.That(rve.Message, Is.EqualTo("Cookie with name 'session' could not be found in the response."));
+        }
+
+        /// <summary>
+        /// A test checking that a cookie that was sent with the request,
+        /// but not set by the server, is not found when extracting response cookies.
+        /// </summary>
+        [Test]
+        public void RequestCookieIsNotReportedAsResponseCookieWhenExtracting()
+        {
+            this.CreateStubForResponseWithoutCookie();
+
+            ExtractionException ee = Assert.Throws<ExtractionException>(() =>
+            {
+                Given()
+                .Cookie("session", "abc")
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/response-without-cookie")
+                .Then()
+                .StatusCode(200)
+                .And()
+                .Extract().Cookie("session");
+            });
+
+            Assert.That(ee.Message, Is.EqualTo("Cookie with name 'session' could not be found in the response."));
+        }
+
+        /// <summary>
+        /// A test checking that a cookie set by the server overwrites
+        /// a cookie with the same name that was sent with the request.
+        /// </summary>
+        [Test]
+        public void ResponseCookieOverwritingRequestCookieCanBeVerified()
+        {
+            this.CreateStubForGenericCookie();
+
+            Given()
+                .Cookie("my_cookie", "old_value")
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/response-with-generic-cookie")
+                .Then()
+                .StatusCode(200)
+                .And()
+                .Cookie("my_cookie", NHamcrest.Is.EqualTo("my_value"));
+        }
+
+        /// <summary>
+        /// A test checking that a cookie set by the server is found, even when
+        /// a cookie with the same name and value was sent with the request.
+        /// </summary>
+        [Test]
+        public void ResponseCookieWithSameNameAndValueAsRequestCookieCanBeVerified()
+        {
+            this.CreateStubForGenericCookie();
+
+            Given()
+                .Cookie("my_cookie", "my_value")
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/response-with-generic-cookie")
+                .Then()
+                .StatusCode(200)
+                .And()
+                .Cookie("my_cookie", NHamcrest.Is.EqualTo("my_value"));
+        }
+
+        /// <summary>
+        /// A test checking that a cookie set by the server on a redirect response
+        /// is found when verifying the cookies of the final response.
+        /// </summary>
+        [Test]
+        public void CookieSetDuringRedirectCanBeVerified()
+        {
+            this.CreateStubForResponseWithoutCookie();
+            this.CreateStubForRedirectWithCookie();
+
+            Given()
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/redirect-with-cookie")
+                .Then()
+                .StatusCode(200)
+                .And()
+                .Cookie("redirect_cookie", NHamcrest.Is.EqualTo("redirect_value"));
+        }
+
+        /// <summary>
+        /// A test checking that a cookie set by the server can be verified
+        /// when the request is sent using a custom <see cref="HttpClient"/>.
+        /// </summary>
+        [Test]
+        public void ResponseCookieCanBeVerifiedWithCustomHttpClient()
+        {
+            this.CreateStubForGenericCookie();
+
+            using HttpClient httpClient = new HttpClient();
+
+            Given(httpClient)
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/response-with-generic-cookie")
+                .Then()
+                .StatusCode(200)
+                .And()
+                .Cookie("my_cookie", NHamcrest.Is.EqualTo("my_value"));
+        }
+
+        /// <summary>
         /// Creates the stub returning a response with a generic response cookie.
         /// </summary>
         private void CreateStubForGenericCookie()
@@ -216,6 +342,28 @@ namespace RestAssured.Tests
                 .RespondWith(Response.Create()
                 .WithHeader("Set-Cookie", "Auth=123; httponly; secure")
                 .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub returning a response without any response cookies.
+        /// </summary>
+        private void CreateStubForResponseWithoutCookie()
+        {
+            this.Server?.Given(Request.Create().WithPath("/response-without-cookie").UsingGet())
+                .RespondWith(Response.Create()
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub returning a redirect response that sets a cookie.
+        /// </summary>
+        private void CreateStubForRedirectWithCookie()
+        {
+            this.Server?.Given(Request.Create().WithPath("/redirect-with-cookie").UsingGet())
+                .RespondWith(Response.Create()
+                .WithHeader("Set-Cookie", "redirect_cookie=redirect_value")
+                .WithHeader("Location", "/response-without-cookie")
+                .WithStatusCode(302));
         }
     }
 }

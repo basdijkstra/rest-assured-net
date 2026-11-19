@@ -133,7 +133,9 @@ namespace RestAssured.Request
                 HttpResponseMessage response = await this.httpClient.SendAsync(request, httpCompletionOption);
                 stopwatch.Stop();
 
-                return new VerifiableResponse(response, this.httpClientHandler.CookieContainer, stopwatch.Elapsed);
+                CookieContainer responseCookies = cookieUtils.GetResponseCookies(this.cookieContainer, cookieCollection, response);
+
+                return new VerifiableResponse(response, responseCookies, stopwatch.Elapsed);
             }
             catch (HttpRequestException hre)
             {

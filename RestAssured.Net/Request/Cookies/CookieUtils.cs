@@ -15,7 +15,10 @@
 // </copyright>
 namespace RestAssured.Request.Cookies
 {
+    using System;
+    using System.Collections.Generic;
     using System.Net;
+    using System.Net.Http;
 
     /// <summary>
     /// Utility class and methods to handle and process cookies.
@@ -38,6 +41,70 @@ namespace RestAssured.Request.Cookies
             }
 
             return cookie;
+        }
+
+        /// <summary>
+        /// Returns a new <see cref="CookieContainer"/> holding only the cookies that were set by the server.
+        /// Cookies that were sent with the request and not set again by the server are left out.
+        /// </summary>
+        /// <param name="handlerCookieContainer">The <see cref="CookieContainer"/> used by the HTTP client handler to send and receive cookies.</param>
+        /// <param name="requestCookies">The cookies that were sent with the request.</param>
+        /// <param name="response">The <see cref="HttpResponseMessage"/> returned by the server.</param>
+        /// <returns>A <see cref="CookieContainer"/> holding the cookies set by the server.</returns>
+        internal CookieContainer GetResponseCookies(CookieContainer handlerCookieContainer, CookieCollection requestCookies, HttpResponseMessage response)
+        {
+            CookieContainer responseCookies = new CookieContainer();
+
+            // Cookies collected by the handler, which includes cookies set on intermediate redirect responses.
+            // Cookies that are identical to a cookie sent with the request were not (necessarily) set by the server.
+            foreach (Cookie cookie in handlerCookieContainer.GetAllCookies())
+            {
+                if (!IsSentWithRequest(cookie, requestCookies))
+                {
+                    responseCookies.Add(cookie);
+                }
+            }
+
+            // Cookies set by the final response. This also covers cookies that the server sets with
+            // the same value as a cookie sent with the request, and responses received by a custom HttpClient.
+            Uri? responseUri = response.RequestMessage?.RequestUri;
+
+            if (responseUri != null && response.Headers.TryGetValues("Set-Cookie", out IEnumerable<string>? setCookieHeaders))
+            {
+                foreach (string setCookieHeader in setCookieHeaders)
+                {
+                    try
+                    {
+                        responseCookies.SetCookies(responseUri, setCookieHeader);
+                    }
+                    catch (CookieException)
+                    {
+                        // Ignore invalid cookies, in the same way the HTTP client handler does.
+                    }
+                }
+            }
+
+            return responseCookies;
+        }
+
+        private static bool IsSentWithRequest(Cookie cookie, CookieCollection requestCookies)
+        {
+            foreach (Cookie requestCookie in requestCookies)
+            {
+                if (requestCookie.Name.Equals(cookie.Name, StringComparison.Ordinal) &&
+                    requestCookie.Value.Equals(cookie.Value, StringComparison.Ordinal) &&
+                    NormalizeDomain(requestCookie.Domain).Equals(NormalizeDomain(cookie.Domain), StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static string NormalizeDomain(string domain)
+        {
+            return domain.TrimStart('.');
         }
     }
 }
