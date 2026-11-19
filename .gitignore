@@ -295,3 +295,6 @@ TestProject.OpenSDK.SpecFlowExamples/SpecFlow
 
 # Local preferences for Claude Code
 .claude/*.local.json
+
+# Exploratory testing reports
+test-reports/
