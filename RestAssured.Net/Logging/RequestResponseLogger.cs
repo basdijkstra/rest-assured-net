@@ -18,6 +18,7 @@ namespace RestAssured.Logging
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net;
     using System.Net.Http;
     using System.Net.Http.Headers;
@@ -165,16 +166,83 @@ namespace RestAssured.Logging
 
             foreach (KeyValuePair<string, IEnumerable<string>> header in headers)
             {
-                string value = sensitiveHeaders.Contains(header.Key) ? "*****" : string.Join(", ", header.Value);
+                string value = this.MaskHeaderValue(header.Key, header.Value, sensitiveHeaders);
                 entries.Add($"{header.Key}: {value}");
             }
 
             return entries;
         }
 
+        private string MaskHeaderValue(string headerName, IEnumerable<string> headerValues, List<string> sensitiveNames)
+        {
+            if (this.IsSensitive(headerName, sensitiveNames))
+            {
+                return "*****";
+            }
+
+            if (headerName.Equals("Set-Cookie", StringComparison.OrdinalIgnoreCase))
+            {
+                return string.Join(", ", headerValues.Select(value => this.MaskSetCookieHeaderValue(value, sensitiveNames)));
+            }
+
+            if (headerName.Equals("Cookie", StringComparison.OrdinalIgnoreCase))
+            {
+                return string.Join(", ", headerValues.Select(value => this.MaskCookieHeaderValue(value, sensitiveNames)));
+            }
+
+            return string.Join(", ", headerValues);
+        }
+
+        /// <summary>
+        /// Masks the value of a Set-Cookie header value (name=value; attributes) if the cookie is sensitive.
+        /// The attributes are left unchanged.
+        /// </summary>
+        private string MaskSetCookieHeaderValue(string setCookieHeaderValue, List<string> sensitiveNames)
+        {
+            int attributesStart = setCookieHeaderValue.IndexOf(';');
+
+            if (attributesStart < 0)
+            {
+                return this.MaskCookieNameValuePair(setCookieHeaderValue, sensitiveNames);
+            }
+
+            return this.MaskCookieNameValuePair(setCookieHeaderValue.Substring(0, attributesStart), sensitiveNames) + setCookieHeaderValue.Substring(attributesStart);
+        }
+
+        /// <summary>
+        /// Masks the value of every sensitive cookie in a Cookie header value (name1=value1; name2=value2).
+        /// </summary>
+        private string MaskCookieHeaderValue(string cookieHeaderValue, List<string> sensitiveNames)
+        {
+            return string.Join(";", cookieHeaderValue.Split(';').Select(pair => this.MaskCookieNameValuePair(pair, sensitiveNames)));
+        }
+
+        private string MaskCookieNameValuePair(string nameValuePair, List<string> sensitiveNames)
+        {
+            int separator = nameValuePair.IndexOf('=');
+
+            if (separator < 0)
+            {
+                return nameValuePair;
+            }
+
+            string name = nameValuePair.Substring(0, separator);
+
+            return this.IsSensitive(name.Trim(), sensitiveNames) ? $"{name}=*****" : nameValuePair;
+        }
+
+        /// <summary>
+        /// Header and cookie names are matched case-insensitively, so that a value is masked rather than leaked
+        /// when the casing of a configured name differs from the casing used in the request or response.
+        /// </summary>
+        private bool IsSensitive(string name, List<string> sensitiveNames)
+        {
+            return sensitiveNames.Contains(name, StringComparer.OrdinalIgnoreCase);
+        }
+
         private List<string> LogCookie(List<string> entries, Cookie cookie, List<string> sensitiveNames)
         {
-            string value = sensitiveNames.Contains(cookie.Name) ? "*****" : cookie.Value;
+            string value = this.IsSensitive(cookie.Name, sensitiveNames) ? "*****" : cookie.Value;
             entries.Add($"Cookie: {cookie.Name}={value}, Domain: {cookie.Domain}, HTTP-only: {cookie.HttpOnly}, Secure: {cookie.Secure}");
 
             return entries;

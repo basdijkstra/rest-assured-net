@@ -161,6 +161,152 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// Verifies that sensitive request headers are masked when the configured names differ in case from the header names.
+        /// </summary>
+        [Test]
+        public void SensitiveRequestHeaderIsMaskedRegardlessOfCase()
+        {
+            Given()
+                .Spec(this.requestSpecification)
+                .Log(new LogConfiguration
+                {
+                    RequestLogLevel = RequestLogLevel.All,
+                    SensitiveRequestHeadersAndCookies = new List<string> { "authorization", "x-api-key" },
+                })
+                .OAuth2("SUPER-SECRET-TOKEN")
+                .Header("X-Api-Key", "SECRET-API-KEY")
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/custom-logger-test")
+                .Then()
+                .StatusCode(200);
+
+            Assert.That(this.logger.Messages, Has.Some.Contains("Authorization: *****"));
+            Assert.That(this.logger.Messages, Has.Some.Contains("X-Api-Key: *****"));
+            Assert.That(this.logger.Messages, Has.None.Contains("SUPER-SECRET-TOKEN"));
+            Assert.That(this.logger.Messages, Has.None.Contains("SECRET-API-KEY"));
+        }
+
+        /// <summary>
+        /// Verifies that sensitive response headers are masked when the configured names differ in case from the header names.
+        /// </summary>
+        [Test]
+        public void SensitiveResponseHeaderIsMaskedRegardlessOfCase()
+        {
+            this.CreateStubForMaskingResponse();
+
+            Given()
+                .Spec(this.requestSpecification)
+                .Log(new LogConfiguration
+                {
+                    ResponseLogLevel = ResponseLogLevel.Headers,
+                    SensitiveResponseHeadersAndCookies = new List<string> { "x-secret-header" },
+                })
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/masking-response")
+                .Then()
+                .StatusCode(200);
+
+            Assert.That(this.logger.Messages, Has.Some.Contains("X-Secret-Header: *****"));
+            Assert.That(this.logger.Messages, Has.None.Contains("SECRET-HEADER-VALUE"));
+        }
+
+        /// <summary>
+        /// Verifies that the value of a sensitive cookie is masked in the Set-Cookie response header.
+        /// </summary>
+        [Test]
+        public void SensitiveResponseCookieIsMaskedInSetCookieHeader()
+        {
+            this.CreateStubForMaskingResponse();
+
+            Given()
+                .Spec(this.requestSpecification)
+                .Log(new LogConfiguration
+                {
+                    ResponseLogLevel = ResponseLogLevel.Headers,
+                    SensitiveResponseHeadersAndCookies = new List<string> { "session" },
+                })
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/masking-response")
+                .Then()
+                .StatusCode(200);
+
+            Assert.That(this.logger.Messages, Has.Some.Contains("session=*****; Path=/"));
+            Assert.That(this.logger.Messages, Has.None.Contains("TOPSECRET123"));
+        }
+
+        /// <summary>
+        /// Verifies that the value of a cookie that is not marked as sensitive is not masked in the Set-Cookie response header.
+        /// </summary>
+        [Test]
+        public void NonSensitiveResponseCookieIsNotMaskedInSetCookieHeader()
+        {
+            this.CreateStubForMaskingResponse();
+
+            Given()
+                .Spec(this.requestSpecification)
+                .Log(new LogConfiguration
+                {
+                    ResponseLogLevel = ResponseLogLevel.Headers,
+                    SensitiveResponseHeadersAndCookies = new List<string> { "session" },
+                })
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/masking-response")
+                .Then()
+                .StatusCode(200);
+
+            Assert.That(this.logger.Messages, Has.Some.Contains("other=visible"));
+        }
+
+        /// <summary>
+        /// Verifies that sensitive cookies are masked when the configured name differs in case from the cookie name.
+        /// </summary>
+        [Test]
+        public void SensitiveCookieIsMaskedRegardlessOfCase()
+        {
+            this.CreateStubForMaskingResponse();
+
+            Given()
+                .Spec(this.requestSpecification)
+                .Log(new LogConfiguration
+                {
+                    ResponseLogLevel = ResponseLogLevel.Headers,
+                    SensitiveResponseHeadersAndCookies = new List<string> { "Session" },
+                })
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/masking-response")
+                .Then()
+                .StatusCode(200);
+
+            Assert.That(this.logger.Messages, Has.Some.Contains("session=*****; Path=/"));
+            Assert.That(this.logger.Messages, Has.Some.Contains("Cookie: session=*****"));
+            Assert.That(this.logger.Messages, Has.None.Contains("TOPSECRET123"));
+        }
+
+        /// <summary>
+        /// Verifies that the value of a sensitive cookie is masked in a Cookie request header,
+        /// and that other cookies in the same header are not masked.
+        /// </summary>
+        [Test]
+        public void SensitiveRequestCookieIsMaskedInCookieHeader()
+        {
+            Given()
+                .Spec(this.requestSpecification)
+                .Log(new LogConfiguration
+                {
+                    RequestLogLevel = RequestLogLevel.Headers,
+                    SensitiveRequestHeadersAndCookies = new List<string> { "session" },
+                })
+                .Header("Cookie", "session=REQUEST-SECRET; other=1")
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/custom-logger-test")
+                .Then()
+                .StatusCode(200);
+
+            Assert.That(this.logger.Messages, Has.Some.Contains("Cookie: session=*****; other=1"));
+            Assert.That(this.logger.Messages, Has.None.Contains("REQUEST-SECRET"));
+        }
+
+        /// <summary>
         /// Verifies that the response status code is written to a custom logger.
         /// </summary>
         [Test]
@@ -258,6 +404,21 @@ namespace RestAssured.Tests
                     .StatusCode(500));
 
             Assert.That(this.logger.Messages, Has.Some.Contains("HTTP 200"));
+        }
+
+        /// <summary>
+        /// Creates the stub returning a response with a sensitive header and two cookies.
+        /// </summary>
+        private void CreateStubForMaskingResponse()
+        {
+            this.Server?.Given(Request.Create()
+                .WithPath("/masking-response")
+                .UsingGet())
+                .RespondWith(Response.Create()
+                .WithStatusCode(200)
+                .WithHeader("X-Secret-Header", "SECRET-HEADER-VALUE")
+                .WithHeader("Set-Cookie", "session=TOPSECRET123; Path=/")
+                .WithHeader("Set-Cookie", "other=visible"));
         }
     }
 }
