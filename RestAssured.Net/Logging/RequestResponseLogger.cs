@@ -265,17 +265,35 @@ namespace RestAssured.Logging
             return entries;
         }
 
+        /// <summary>
+        /// Adds the body to the log entries, pretty-printed when it is valid JSON or XML.
+        /// A body that cannot be parsed as the indicated format is logged as is, so that logging never makes a request or verification fail.
+        /// </summary>
         private List<string> LogFormattedBody(List<string> entries, string bodyAsString, string mediaType)
         {
             if (mediaType.Equals(string.Empty) || mediaType.Contains("json"))
             {
-                object jsonPayload = JsonConvert.DeserializeObject(bodyAsString, typeof(object)) ?? "Could not read payload";
-                entries.Add(JsonConvert.SerializeObject(jsonPayload, Formatting.Indented));
+                try
+                {
+                    object jsonPayload = JsonConvert.DeserializeObject(bodyAsString, typeof(object)) ?? "Could not read payload";
+                    entries.Add(JsonConvert.SerializeObject(jsonPayload, Formatting.Indented));
+                }
+                catch (JsonException)
+                {
+                    entries.Add(bodyAsString);
+                }
             }
             else if (mediaType.Contains("xml"))
             {
-                XDocument doc = XDocument.Parse(bodyAsString);
-                entries.Add(doc.ToString());
+                try
+                {
+                    XDocument doc = XDocument.Parse(bodyAsString);
+                    entries.Add(doc.ToString());
+                }
+                catch (System.Xml.XmlException)
+                {
+                    entries.Add(bodyAsString);
+                }
             }
             else
             {

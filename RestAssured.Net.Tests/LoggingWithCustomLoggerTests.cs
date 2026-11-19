@@ -307,6 +307,181 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// Verifies that a request body that claims to be JSON but cannot be parsed is logged as is,
+        /// and that the request is still sent.
+        /// </summary>
+        [Test]
+        public void MalformedJsonRequestBodyIsLoggedAsIs()
+        {
+            Given()
+                .Spec(this.requestSpecification)
+                .Log(new LogConfiguration { RequestLogLevel = RequestLogLevel.Body })
+                .ContentType("application/json")
+                .Body("{not json")
+                .When()
+                .Post($"{MOCK_SERVER_BASE_URL}/custom-logger-test")
+                .Then()
+                .StatusCode(200);
+
+            Assert.That(this.logger.Messages, Has.Some.Contains("{not json"));
+        }
+
+        /// <summary>
+        /// Verifies that a response body that claims to be JSON but cannot be parsed is logged as is.
+        /// </summary>
+        [Test]
+        public void ResponseBodyThatIsNotValidJsonIsLoggedAsIs()
+        {
+            this.CreateStubForResponseBody("/invalid-json-response", 200, "application/json", "<html>gateway error</html>");
+
+            Given()
+                .Spec(this.requestSpecification)
+                .Log(new LogConfiguration { ResponseLogLevel = ResponseLogLevel.All })
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/invalid-json-response")
+                .Then()
+                .StatusCode(200);
+
+            Assert.That(this.logger.Messages, Has.Some.Contains("<html>gateway error</html>"));
+        }
+
+        /// <summary>
+        /// Verifies that a response body that claims to be XML but cannot be parsed is logged as is.
+        /// </summary>
+        [Test]
+        public void ResponseBodyThatIsNotValidXmlIsLoggedAsIs()
+        {
+            this.CreateStubForResponseBody("/invalid-xml-response", 200, "application/xml", "<unclosed>xml");
+
+            Given()
+                .Spec(this.requestSpecification)
+                .Log(new LogConfiguration { ResponseLogLevel = ResponseLogLevel.All })
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/invalid-xml-response")
+                .Then()
+                .StatusCode(200);
+
+            Assert.That(this.logger.Messages, Has.Some.Contains("<unclosed>xml"));
+        }
+
+        /// <summary>
+        /// Verifies that a plain text response body without a Content-Type header is logged as is.
+        /// </summary>
+        [Test]
+        public void PlainTextResponseBodyWithoutContentTypeIsLoggedAsIs()
+        {
+            this.CreateStubForResponseBody("/no-content-type-response", 200, null, "hello world");
+
+            Given()
+                .Spec(this.requestSpecification)
+                .Log(new LogConfiguration { ResponseLogLevel = ResponseLogLevel.Body })
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/no-content-type-response")
+                .Then()
+                .StatusCode(200);
+
+            Assert.That(this.logger.Messages, Has.Some.Contains("hello world"));
+        }
+
+        /// <summary>
+        /// Verifies that an error response body that claims to be JSON but cannot be parsed
+        /// is logged as is when logging only error responses.
+        /// </summary>
+        [Test]
+        public void NonJsonErrorResponseBodyIsLoggedOnError()
+        {
+            this.CreateStubForResponseBody("/error-response", 500, "application/json", "Internal error");
+
+            Given()
+                .Spec(this.requestSpecification)
+                .Log(new LogConfiguration { ResponseLogLevel = ResponseLogLevel.OnError })
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/error-response")
+                .Then()
+                .StatusCode(500);
+
+            Assert.That(this.logger.Messages, Has.Some.Contains("Internal error"));
+        }
+
+        /// <summary>
+        /// Verifies that a failed verification is reported as a <see cref="ResponseVerificationException"/>
+        /// when the response body cannot be formatted for logging, and that the body is logged as is.
+        /// </summary>
+        [Test]
+        public void VerificationFailureIsReportedWhenResponseBodyCannotBeFormatted()
+        {
+            this.CreateStubForResponseBody("/invalid-json-response", 200, "application/json", "<html>gateway error</html>");
+
+            Assert.Throws<ResponseVerificationException>(() =>
+                Given()
+                    .Spec(this.requestSpecification)
+                    .Log(new LogConfiguration { ResponseLogLevel = ResponseLogLevel.OnVerificationFailure })
+                    .When()
+                    .Get($"{MOCK_SERVER_BASE_URL}/invalid-json-response")
+                    .Then()
+                    .StatusCode(404));
+
+            Assert.That(this.logger.Messages, Has.Some.Contains("<html>gateway error</html>"));
+        }
+
+        /// <summary>
+        /// Verifies that a valid JSON response body is pretty-printed.
+        /// </summary>
+        [Test]
+        public void JsonResponseBodyIsPrettyPrinted()
+        {
+            this.CreateStubForResponseBody("/json-response", 200, "application/json", "{\"id\":1,\"user\":\"John Doe\"}");
+
+            Given()
+                .Spec(this.requestSpecification)
+                .Log(new LogConfiguration { ResponseLogLevel = ResponseLogLevel.Body })
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/json-response")
+                .Then()
+                .StatusCode(200);
+
+            Assert.That(this.logger.Messages, Has.Some.Contains("\"user\": \"John Doe\""));
+        }
+
+        /// <summary>
+        /// Verifies that a valid XML response body is pretty-printed.
+        /// </summary>
+        [Test]
+        public void XmlResponseBodyIsPrettyPrinted()
+        {
+            this.CreateStubForResponseBody("/xml-response", 200, "application/xml", "<a><b>1</b></a>");
+
+            Given()
+                .Spec(this.requestSpecification)
+                .Log(new LogConfiguration { ResponseLogLevel = ResponseLogLevel.Body })
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/xml-response")
+                .Then()
+                .StatusCode(200);
+
+            Assert.That(this.logger.Messages, Has.Some.Contains("  <b>1</b>"));
+        }
+
+        /// <summary>
+        /// Verifies that a valid JSON response body without a Content-Type header is pretty-printed.
+        /// </summary>
+        [Test]
+        public void JsonResponseBodyWithoutContentTypeIsPrettyPrinted()
+        {
+            this.CreateStubForResponseBody("/json-response-no-content-type", 200, null, "{\"id\":1,\"user\":\"John Doe\"}");
+
+            Given()
+                .Spec(this.requestSpecification)
+                .Log(new LogConfiguration { ResponseLogLevel = ResponseLogLevel.Body })
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/json-response-no-content-type")
+                .Then()
+                .StatusCode(200);
+
+            Assert.That(this.logger.Messages, Has.Some.Contains("\"user\": \"John Doe\""));
+        }
+
+        /// <summary>
         /// Verifies that the response status code is written to a custom logger.
         /// </summary>
         [Test]
@@ -419,6 +594,30 @@ namespace RestAssured.Tests
                 .WithHeader("X-Secret-Header", "SECRET-HEADER-VALUE")
                 .WithHeader("Set-Cookie", "session=TOPSECRET123; Path=/")
                 .WithHeader("Set-Cookie", "other=visible"));
+        }
+
+        /// <summary>
+        /// Creates a stub returning a response with the given status code, Content-Type and body.
+        /// </summary>
+        /// <param name="path">The path to create the stub for.</param>
+        /// <param name="statusCode">The status code of the response.</param>
+        /// <param name="contentType">The Content-Type of the response, or null to omit the Content-Type header.</param>
+        /// <param name="body">The response body.</param>
+        private void CreateStubForResponseBody(string path, int statusCode, string contentType, string body)
+        {
+            var response = Response.Create()
+                .WithStatusCode(statusCode)
+                .WithBody(body);
+
+            if (contentType != null)
+            {
+                response = response.WithHeader("Content-Type", contentType);
+            }
+
+            this.Server?.Given(Request.Create()
+                .WithPath(path)
+                .UsingGet())
+                .RespondWith(response);
         }
     }
 }
