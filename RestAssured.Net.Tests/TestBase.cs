@@ -33,7 +33,7 @@ namespace RestAssured.Tests
         /// <summary>
         /// The port used by the WireMock mock server.
         /// </summary>
-        protected static readonly int MOCK_SERVER_PORT = 9876;
+        protected static readonly int MOCK_SERVER_PORT = MockServerSetup.HttpPort;
 
         /// <summary>
         /// The base URL used by the WireMock mock server.
@@ -41,21 +41,14 @@ namespace RestAssured.Tests
         protected static readonly string MOCK_SERVER_BASE_URL = $"http://localhost:{MOCK_SERVER_PORT}";
 
         /// <summary>
-        /// Starts the WireMock server before every test.
+        /// Removes all stubs and request logs from the shared WireMock server before every test.
+        /// The server itself is started once for the entire test run, see <see cref="MockServerSetup"/>.
         /// </summary>
         [SetUp]
-        protected void StartServer()
+        protected void ResetServer()
         {
-            this.Server = WireMockServer.Start(MOCK_SERVER_PORT);
-        }
-
-        /// <summary>
-        /// Stops the WireMock server after every test.
-        /// </summary>
-        [TearDown]
-        protected void StopServer()
-        {
-            this.Server?.Stop();
+            this.Server = MockServerSetup.HttpServer;
+            this.Server.Reset();
         }
 
         /// <summary>

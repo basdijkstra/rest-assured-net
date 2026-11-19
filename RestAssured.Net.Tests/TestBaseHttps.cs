@@ -29,21 +29,14 @@ namespace RestAssured.Tests
         protected WireMockServer Server { get; private set; }
 
         /// <summary>
-        /// Starts the WireMock server before every test.
+        /// Removes all stubs and request logs from the shared WireMock server before every test.
+        /// The server itself is started once for the entire test run, see <see cref="MockServerSetup"/>.
         /// </summary>
         [SetUp]
-        public void StartServer()
+        public void ResetServer()
         {
-            this.Server = WireMockServer.Start(port: 8443, useSSL: true);
-        }
-
-        /// <summary>
-        /// Stops the WireMock server after every test.
-        /// </summary>
-        [TearDown]
-        public void StopServer()
-        {
-            this.Server?.Stop();
+            this.Server = MockServerSetup.HttpsServer;
+            this.Server.Reset();
         }
     }
 }
