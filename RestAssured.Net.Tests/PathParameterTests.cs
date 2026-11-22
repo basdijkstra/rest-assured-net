@@ -17,6 +17,7 @@ namespace RestAssured.Tests
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Humanizer.DateTimeHumanizeStrategy;
     using NUnit.Framework;
     using WireMock.RequestBuilders;
@@ -89,6 +90,83 @@ namespace RestAssured.Tests
                 .Get($"{MOCK_SERVER_BASE_URL}/user/[userId]/account/[accountId]")
                 .Then()
                 .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test checking that a path parameter value is not HTML-encoded.
+        /// </summary>
+        [Test]
+        public void PathParameterValueIsNotHtmlEncoded()
+        {
+            Given()
+                .PathParam("id", "a&b")
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/items/[id]");
+
+            Assert.That(this.GetLastRequestedPath(), Is.EqualTo("/items/a&b"));
+        }
+
+        /// <summary>
+        /// A test checking that text between square brackets that is not a path parameter
+        /// is left unchanged, for example in a query string.
+        /// </summary>
+        [Test]
+        public void BracketsThatAreNotPathParametersAreLeftUnchanged()
+        {
+            Given()
+                .PathParam("id", "7")
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/items/[id]?filter[name]=x");
+
+            Assert.That(this.GetLastRequestedPath(), Is.EqualTo("/items/7"));
+            Assert.That(this.GetLastRequestedQuery(), Does.ContainKey("filter[name]"));
+        }
+
+        /// <summary>
+        /// A test checking that a placeholder for which no path parameter value was supplied
+        /// is left in the endpoint, instead of being removed.
+        /// </summary>
+        [Test]
+        public void PlaceholderWithoutPathParameterValueIsLeftUnchanged()
+        {
+            Given()
+                .PathParam("userid", "7")
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/users/[userId]");
+
+            Assert.That(this.GetLastRequestedPath(), Does.Contain("userId"));
+        }
+
+        /// <summary>
+        /// A test checking that a path parameter that is used more than once in an endpoint is replaced everywhere.
+        /// </summary>
+        [Test]
+        public void SamePathParameterCanBeUsedMoreThanOnce()
+        {
+            Given()
+                .PathParam("id", "5")
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/items/[id]/copy/[id]");
+
+            Assert.That(this.GetLastRequestedPath(), Is.EqualTo("/items/5/copy/5"));
+        }
+
+        /// <summary>
+        /// Returns the (decoded) path of the last request received by the mock server.
+        /// </summary>
+        /// <returns>The path of the last request received by the mock server.</returns>
+        private string GetLastRequestedPath()
+        {
+            return this.Server.LogEntries.Last().RequestMessage.Path;
+        }
+
+        /// <summary>
+        /// Returns the query parameters of the last request received by the mock server.
+        /// </summary>
+        /// <returns>The query parameters of the last request received by the mock server.</returns>
+        private IDictionary<string, WireMock.Types.WireMockList<string>> GetLastRequestedQuery()
+        {
+            return this.Server.LogEntries.Last().RequestMessage.Query;
         }
 
         /// <summary>

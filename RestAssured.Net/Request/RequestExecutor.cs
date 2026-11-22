@@ -21,21 +21,24 @@ namespace RestAssured.Request
     using System.Net;
     using System.Net.Http;
     using System.Text;
+    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.WebUtilities;
     using RestAssured.Logging;
     using RestAssured.Request.Builders;
     using RestAssured.Request.Exceptions;
     using RestAssured.Response;
-    using Stubble.Core;
-    using Stubble.Core.Builders;
-    using Stubble.Core.Classes;
 
     /// <summary>
     /// Orchestrates the execution of an HTTP request from a fully-configured <see cref="RequestContext"/>.
     /// </summary>
     internal static class RequestExecutor
     {
+        /// <summary>
+        /// Matches a path parameter placeholder such as [userId] and captures the name between the brackets.
+        /// </summary>
+        private static readonly Regex PathParamPlaceholder = new Regex(@"\[([^\[\]]+)\]", RegexOptions.Compiled);
+
         /// <summary>
         /// Sends the request described by the given <see cref="RequestContext"/>.
         /// </summary>
@@ -48,13 +51,14 @@ namespace RestAssured.Request
             // Set the HTTP method for the request
             context.Request.Method = httpMethod;
 
-            // Replace any path parameter placeholders that have been specified with their values
+            // Replace any path parameter placeholders that have been specified with their values.
+            // Only placeholders whose name was supplied as a path parameter are replaced, values are inserted
+            // as they are, and any other text between square brackets (e.g. filter[name]=x) is left unchanged.
             if (context.PathParams.Count > 0)
             {
-                StubbleVisitorRenderer renderer = new StubbleBuilder()
-                    .Configure(builder => builder.SetDefaultTags(new Tags("[", "]")))
-                    .Build();
-                endpoint = renderer.Render(endpoint, context.PathParams);
+                endpoint = PathParamPlaceholder.Replace(
+                    endpoint,
+                    match => context.PathParams.TryGetValue(match.Groups[1].Value.Trim(), out string? value) ? value : match.Value);
             }
 
             // Build the Uri for the request
