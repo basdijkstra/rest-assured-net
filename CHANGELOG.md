@@ -16,6 +16,7 @@ bug ([#155](https://github.com/basdijkstra/rest-assured-net/issues/155))
 - Fixed issue where relative endpoint with a query string is sent to the wrong path when a RequestSpecification is used ([#159](https://github.com/basdijkstra/rest-assured-net/issues/159))
 - Fixed issue where encoding basic auth credentials in ASCII could create problems with special characters ([#168](https://github.com/basdijkstra/rest-assured-net/issues/168))
 - Fixed issue where logger was always called, even when there's nothing to log ([#174](https://github.com/basdijkstra/rest-assured-net/issues/174))
+- Fixed issue where brackets that were not path parameters were mistaken for being so ([#154](https://github.com/basdijkstra/rest-assured-net/issues/154))
 
 ### [5.1.0] - 2026-11-11
 
