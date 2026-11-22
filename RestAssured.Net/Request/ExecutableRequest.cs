@@ -246,7 +246,7 @@ namespace RestAssured.Request
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
         public ExecutableRequest BasicAuth(string username, string password)
         {
-            string base64EncodedBasicAuthDetails = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+            string base64EncodedBasicAuthDetails = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
             this.request.Headers.Authorization = new AuthenticationHeaderValue("Basic", base64EncodedBasicAuthDetails);
             return this;
         }

@@ -14,6 +14,7 @@ bug ([#155](https://github.com/basdijkstra/rest-assured-net/issues/155))
 - Fixed issue where body logging crashes requests whose body isn't valid JSON or XML ([#157](https://github.com/basdijkstra/rest-assured-net/issues/157))
 - Fixed issue where masking of sensitive headers and cookies in logs could be bypassed ([#158](https://github.com/basdijkstra/rest-assured-net/issues/158))
 - Fixed issue where relative endpoint with a query string is sent to the wrong path when a RequestSpecification is used ([#159](https://github.com/basdijkstra/rest-assured-net/issues/159))
+- Fixed issue where encoding basic auth credentials in ASCII could create problems with special characters ([#168](https://github.com/basdijkstra/rest-assured-net/issues/168))
 
 ### [5.1.0] - 2026-11-11
 

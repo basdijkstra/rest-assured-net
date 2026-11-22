@@ -45,6 +45,23 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test checking that Basic authentication details containing
+        /// non-ASCII characters are encoded as UTF-8.
+        /// </summary>
+        [Test]
+        public void NonAsciiBasicAuthenticationDetailsAreEncodedAsUtf8()
+        {
+            this.CreateStubForNonAsciiBasicAuthenticationVerification();
+
+            Given()
+                .BasicAuth("jürgen", "pässwörd€")
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/basic-auth-non-ascii")
+                .Then()
+                .StatusCode(200);
+        }
+
+        /// <summary>
         /// A test demonstrating RestAssuredNet syntax for including
         /// an OAuth2 autentication token with the request.
         /// </summary>
@@ -68,6 +85,18 @@ namespace RestAssured.Tests
         {
             this.Server?.Given(Request.Create().WithPath("/basic-auth").UsingGet()
                 .WithHeader("Authorization", new ExactMatcher("Basic dXNlcm5hbWU6cGFzc3dvcmQ=")))
+                .RespondWith(Response.Create()
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the example using Basic authentication with non-ASCII characters.
+        /// The expected value is the Base64 encoding of the UTF-8 bytes of 'jürgen:pässwörd€'.
+        /// </summary>
+        private void CreateStubForNonAsciiBasicAuthenticationVerification()
+        {
+            this.Server?.Given(Request.Create().WithPath("/basic-auth-non-ascii").UsingGet()
+                .WithHeader("Authorization", new ExactMatcher("Basic asO8cmdlbjpww6Rzc3fDtnJk4oKs")))
                 .RespondWith(Response.Create()
                 .WithStatusCode(200));
         }

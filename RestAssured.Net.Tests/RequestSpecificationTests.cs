@@ -113,6 +113,32 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test checking that Basic authentication details containing non-ASCII characters
+        /// in a request specification are encoded as UTF-8.
+        /// </summary>
+        [Test]
+        public void NonAsciiBasicAuthenticationDetailsInRequestSpecificationAreEncodedAsUtf8()
+        {
+            // The expected value is the Base64 encoding of the UTF-8 bytes of 'jürgen:pässwörd€'.
+            this.Server?.Given(Request.Create().WithPath("/request-specification-with-non-ascii-basic-auth").UsingGet()
+                .WithHeader("Authorization", new ExactMatcher("Basic asO8cmdlbjpww6Rzc3fDtnJk4oKs")))
+                .RespondWith(Response.Create()
+                .WithStatusCode(200));
+
+            var basicAuthSpecification = new RequestSpecBuilder()
+                .WithBaseUri("http://localhost:9876")
+                .WithBasicAuth("jürgen", "pässwörd€")
+                .Build();
+
+            Given()
+                .Spec(basicAuthSpecification)
+                .When()
+                .Get("/request-specification-with-non-ascii-basic-auth")
+                .Then()
+                .StatusCode(200);
+        }
+
+        /// <summary>
         /// A test demonstrating RestAssuredNet syntax for including
         /// a request specification with OAuth2 details added.
         /// </summary>

@@ -184,7 +184,7 @@ namespace RestAssured.Request.Builders
         /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
         public RequestSpecBuilder WithBasicAuth(string username, string password)
         {
-            string base64EncodedBasicAuthDetails = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+            string base64EncodedBasicAuthDetails = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
             this.requestSpecification.AuthenticationHeader = new AuthenticationHeaderValue("Basic", base64EncodedBasicAuthDetails);
             return this;
         }
