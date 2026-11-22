@@ -77,7 +77,10 @@ namespace RestAssured.Logging
                 entries = this.LogRequestBody(entries, request);
             }
 
-            this.logger.Log(string.Join(Environment.NewLine, entries));
+            if (entries.Count > 0)
+            {
+                this.logger.Log(string.Join(Environment.NewLine, entries));
+            }
         }
 
         /// <summary>
@@ -316,7 +319,10 @@ namespace RestAssured.Logging
                 entries = this.LogResponseTime(entries, verifiableResponse.ElapsedTime);
             }
 
-            this.logger.Log(string.Join(Environment.NewLine, entries));
+            if (entries.Count > 0)
+            {
+                this.logger.Log(string.Join(Environment.NewLine, entries));
+            }
 
             return verifiableResponse;
         }
@@ -354,7 +360,10 @@ namespace RestAssured.Logging
                 entries = this.LogResponseTime(entries, verifiableResponse.ElapsedTime);
             }
 
-            this.logger.Log(string.Join(Environment.NewLine, entries));
+            if (entries.Count > 0)
+            {
+                this.logger.Log(string.Join(Environment.NewLine, entries));
+            }
         }
     }
 }

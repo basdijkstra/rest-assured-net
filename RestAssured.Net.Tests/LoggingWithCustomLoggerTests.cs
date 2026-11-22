@@ -482,6 +482,57 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// Verifies that the custom logger is not called when request and response logging are disabled.
+        /// </summary>
+        [Test]
+        public void LoggerIsNotCalledWhenLoggingIsDisabled()
+        {
+            Given()
+                .Spec(this.requestSpecification)
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/custom-logger-test")
+                .Then()
+                .StatusCode(200);
+
+            Assert.That(this.logger.Messages, Is.Empty);
+        }
+
+        /// <summary>
+        /// Verifies that the custom logger is not called for a successful response when only error responses are logged.
+        /// </summary>
+        [Test]
+        public void LoggerIsNotCalledOnSuccessfulResponseWhenLoggingOnErrorOnly()
+        {
+            Given()
+                .Spec(this.requestSpecification)
+                .Log(new LogConfiguration { ResponseLogLevel = ResponseLogLevel.OnError })
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/custom-logger-test")
+                .Then()
+                .StatusCode(200);
+
+            Assert.That(this.logger.Messages, Is.Empty);
+        }
+
+        /// <summary>
+        /// Verifies that only the request is written to the custom logger when response logging is disabled.
+        /// </summary>
+        [Test]
+        public void OnlyRequestIsLoggedWhenResponseLoggingIsDisabled()
+        {
+            Given()
+                .Spec(this.requestSpecification)
+                .Log(new LogConfiguration { RequestLogLevel = RequestLogLevel.All })
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/custom-logger-test")
+                .Then()
+                .StatusCode(200);
+
+            Assert.That(this.logger.Messages.Count, Is.EqualTo(1));
+            Assert.That(this.logger.Messages[0], Does.Contain("GET"));
+        }
+
+        /// <summary>
         /// Verifies that the response status code is written to a custom logger.
         /// </summary>
         [Test]
