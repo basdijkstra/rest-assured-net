@@ -18,6 +18,7 @@ namespace RestAssured.Tests
     using System.Net;
     using NUnit.Framework;
     using RestAssured.Request.Builders;
+    using RestAssured.Request.Exceptions;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
     using static RestAssured.Dsl;
@@ -56,6 +57,21 @@ namespace RestAssured.Tests
                 .StatusCode(HttpStatusCode.OK)
                 .And()
                 .Body("$.country", NHamcrest.Is.EqualTo("United States"));
+        }
+
+        /// <summary>
+        /// A test checking that SSL certificate validation is enabled by default,
+        /// so that calling an endpoint with an untrusted certificate fails.
+        /// </summary>
+        [Test]
+        public void SslCertificateValidationIsEnabledByDefault()
+        {
+            this.CreateStubForHttps();
+
+            Assert.Throws<HttpRequestProcessorException>(() =>
+                Given()
+                    .When()
+                    .Get($"{MOCK_SERVER_HTTPS_BASE_URL}/ssl-endpoint"));
         }
 
         /// <summary>

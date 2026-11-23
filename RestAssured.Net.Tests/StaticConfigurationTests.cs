@@ -43,6 +43,16 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// Reset the RestAssured.Net configuration after all tests, so that it does not affect other tests.
+        /// </summary>
+        [OneTimeTearDown]
+        public void ResetRestAssuredNetConfiguration()
+        {
+            RestAssuredConfig.LogConfiguration = null;
+            RestAssuredConfig.DisableSslCertificateValidation = false;
+        }
+
+        /// <summary>
         /// A test demonstrating RestAssuredNet syntax for disabling
         /// SSL verification when performing an HTTP call.
         /// </summary>

@@ -15,10 +15,14 @@
 // </copyright>
 namespace RestAssured.Tests
 {
+    using System;
     using System.Net;
     using System.Net.Sockets;
+    using System.Security.Cryptography;
+    using System.Security.Cryptography.X509Certificates;
     using NUnit.Framework;
     using WireMock.Server;
+    using WireMock.Settings;
 
     /// <summary>
     /// Starts the WireMock servers once for the entire test run and stops them afterwards.
@@ -69,7 +73,19 @@ namespace RestAssured.Tests
         public void StartServers()
         {
             HttpServer = WireMockServer.Start(HttpPort);
-            HttpsServer = WireMockServer.Start(port: HttpsPort, useSSL: true);
+
+            // The HTTPS server uses a certificate that is not trusted on any machine,
+            // so that tests can verify that SSL certificate validation is enabled by default,
+            // and that disabling it actually has an effect.
+            HttpsServer = WireMockServer.Start(new WireMockServerSettings
+            {
+                Port = HttpsPort,
+                UseSSL = true,
+                CertificateSettings = new WireMockCertificateSettings
+                {
+                    X509Certificate = CreateUntrustedCertificate(),
+                },
+            });
         }
 
         /// <summary>
@@ -80,6 +96,34 @@ namespace RestAssured.Tests
         {
             HttpServer?.Stop();
             HttpsServer?.Stop();
+        }
+
+        /// <summary>
+        /// Creates a self-signed certificate for a host name other than localhost.
+        /// The certificate is not in any trust store and its name does not match the host
+        /// that is called in the tests, so certificate validation always fails for it.
+        /// </summary>
+        /// <returns>The certificate, including its private key.</returns>
+        private static X509Certificate2 CreateUntrustedCertificate()
+        {
+            using RSA rsa = RSA.Create(2048);
+
+            CertificateRequest request = new CertificateRequest("CN=untrusted.example", rsa, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+
+            SubjectAlternativeNameBuilder subjectAlternativeNames = new SubjectAlternativeNameBuilder();
+            subjectAlternativeNames.AddDnsName("untrusted.example");
+            request.CertificateExtensions.Add(subjectAlternativeNames.Build());
+
+            using X509Certificate2 certificate = request.CreateSelfSigned(DateTimeOffset.UtcNow.AddDays(-1), DateTimeOffset.UtcNow.AddDays(1));
+
+            // Export and re-import the certificate, because on Windows a certificate with an
+            // ephemeral private key (as created by CreateSelfSigned) cannot be used by a server.
+            byte[] pfx = certificate.Export(X509ContentType.Pfx);
+#if NET9_0_OR_GREATER
+            return X509CertificateLoader.LoadPkcs12(pfx, null);
+#else
+            return new X509Certificate2(pfx, (string)null, X509KeyStorageFlags.Exportable);
+#endif
         }
 
         /// <summary>
