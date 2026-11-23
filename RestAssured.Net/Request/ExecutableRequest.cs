@@ -199,9 +199,10 @@ namespace RestAssured.Request
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
         public ExecutableRequest QueryParam(string key, params object[] values)
         {
+            // A collection value (for example a List or an int[]) is sent as one query parameter per element.
             foreach (object value in values)
             {
-                this.queryParams = this.queryParams.Append(new KeyValuePair<string, string>(key, value.ToString() ?? string.Empty));
+                this.queryParams = this.queryParams.Concat(QueryParameterValues.Expand(key, value));
             }
 
             return this;
@@ -209,12 +210,17 @@ namespace RestAssured.Request
 
         /// <summary>
         /// Adds the specified query parameters to the endpoint when the request is sent.
+        /// A collection value (for example a List or an array) is sent as one query parameter per element.
         /// </summary>
         /// <param name="queryParams">A <see cref="IEnumerable{T}"/> containing the query parameters to be added.</param>
         /// <returns>The current <see cref="ExecutableRequest"/> object.</returns>
         public ExecutableRequest QueryParams(IEnumerable<KeyValuePair<string, object>> queryParams)
         {
-            queryParams.ToList().ForEach(param => this.queryParams = this.queryParams.Append(new KeyValuePair<string, string>(param.Key, string.Join(",", param.Value))));
+            foreach (KeyValuePair<string, object> param in queryParams)
+            {
+                this.queryParams = this.queryParams.Concat(QueryParameterValues.Expand(param.Key, param.Value));
+            }
+
             return this;
         }
 

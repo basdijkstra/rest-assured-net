@@ -17,6 +17,7 @@ namespace RestAssured.Tests
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using NUnit.Framework;
     using RestAssured.Request.Builders;
     using WireMock.RequestBuilders;
@@ -179,6 +180,123 @@ namespace RestAssured.Tests
                 .Get("/single-query-param")
                 .Then()
                 .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test checking that a collection value passed to QueryParams() is sent as
+        /// one query parameter per value, in order, after the parameters that precede it.
+        /// </summary>
+        [Test]
+        public void CollectionValueInQueryParamsIsSentAsSeparateValues()
+        {
+            var queryParams = new Dictionary<string, object>
+            {
+                { "name", "x" },
+                { "ids", new List<int> { 1, 2, 3 } },
+            };
+
+            Given()
+                .QueryParams(queryParams)
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/query-param-values");
+
+            Assert.That(this.GetLastRequestQueryString(), Is.EqualTo("?name=x&ids=1&ids=2&ids=3"));
+        }
+
+        /// <summary>
+        /// A test checking that an array value passed to QueryParams() is sent as one query parameter per value.
+        /// </summary>
+        [Test]
+        public void ArrayValueInQueryParamsIsSentAsSeparateValues()
+        {
+            var queryParams = new Dictionary<string, object>
+            {
+                { "ids", new[] { 1, 2, 3 } },
+            };
+
+            Given()
+                .QueryParams(queryParams)
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/query-param-values");
+
+            Assert.That(this.GetLastRequestQueryString(), Is.EqualTo("?ids=1&ids=2&ids=3"));
+        }
+
+        /// <summary>
+        /// A test checking that a collection value passed to QueryParam() is sent as one query parameter per value.
+        /// </summary>
+        [Test]
+        public void CollectionValueInQueryParamIsSentAsSeparateValues()
+        {
+            Given()
+                .QueryParam("ids", new List<int> { 1, 2, 3 })
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/query-param-values");
+
+            Assert.That(this.GetLastRequestQueryString(), Is.EqualTo("?ids=1&ids=2&ids=3"));
+        }
+
+        /// <summary>
+        /// A test checking that an int array passed to QueryParam() is sent as one query parameter per value.
+        /// </summary>
+        [Test]
+        public void IntArrayValueInQueryParamIsSentAsSeparateValues()
+        {
+            Given()
+                .QueryParam("ids", new[] { 1, 2, 3 })
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/query-param-values");
+
+            Assert.That(this.GetLastRequestQueryString(), Is.EqualTo("?ids=1&ids=2&ids=3"));
+        }
+
+        /// <summary>
+        /// A test checking that a collection value passed to WithQueryParam() in a request specification
+        /// is sent as one query parameter per value.
+        /// </summary>
+        [Test]
+        public void CollectionValueInRequestSpecificationIsSentAsSeparateValues()
+        {
+            var spec = new RequestSpecBuilder()
+                .WithBaseUri(MOCK_SERVER_BASE_URL)
+                .WithQueryParam("ids", new List<int> { 1, 2, 3 })
+                .Build();
+
+            Given()
+                .Spec(spec)
+                .When()
+                .Get("/query-param-values");
+
+            Assert.That(this.GetLastRequestQueryString(), Is.EqualTo("?ids=1&ids=2&ids=3"));
+        }
+
+        /// <summary>
+        /// A test checking that a string value passed to QueryParams() is sent as a single value,
+        /// and not split into its characters (a string is also a collection of characters).
+        /// </summary>
+        [Test]
+        public void StringValueInQueryParamsIsNotSplitIntoCharacters()
+        {
+            var queryParams = new Dictionary<string, object>
+            {
+                { "name", "abc" },
+            };
+
+            Given()
+                .QueryParams(queryParams)
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/query-param-values");
+
+            Assert.That(this.GetLastRequestQueryString(), Is.EqualTo("?name=abc"));
+        }
+
+        /// <summary>
+        /// Returns the exact query string (including the leading '?') of the last request received by the mock server.
+        /// </summary>
+        /// <returns>The query string of the last request.</returns>
+        private string GetLastRequestQueryString()
+        {
+            return new Uri(this.Server.LogEntries.Last().RequestMessage.Url).Query;
         }
 
         /// <summary>

@@ -116,9 +116,10 @@ namespace RestAssured.Request.Builders
         /// <returns>The current <see cref="RequestSpecBuilder"/> object.</returns>
         public RequestSpecBuilder WithQueryParam(string key, params object[] values)
         {
+            // A collection value (for example a List or an int[]) is sent as one query parameter per element.
             foreach (object value in values)
             {
-                this.requestSpecification.QueryParams = this.requestSpecification.QueryParams.Append(new KeyValuePair<string, string>(key, value.ToString() ?? string.Empty));
+                this.requestSpecification.QueryParams = this.requestSpecification.QueryParams.Concat(QueryParameterValues.Expand(key, value));
             }
 
             return this;
