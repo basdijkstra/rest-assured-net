@@ -17,6 +17,7 @@ namespace RestAssured.Tests
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using RestAssured.Logging;
 
     /// <summary>
@@ -28,6 +29,14 @@ namespace RestAssured.Tests
         /// All messages received by this logger.
         /// </summary>
         public List<string> Messages { get; } = new List<string>();
+
+        /// <summary>
+        /// All lines of all messages received by this logger, so that individual log lines can be asserted on.
+        /// Both \r\n and \n are treated as line separators, because formatted XML always uses \r\n.
+        /// </summary>
+        public List<string> Lines => this.Messages
+            .SelectMany(message => message.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None))
+            .ToList();
 
         /// <inheritdoc/>
         public void Log(string message)

@@ -31,12 +31,17 @@ namespace RestAssured.Tests
     {
         private RequestSpecification requestSpecification;
 
+        private CollectingLogger logger;
+
         /// <summary>
-        /// Creates the <see cref="RequestSpecification"/> instance to be used in the tests in this class.
+        /// Creates the <see cref="RequestSpecification"/> instance to be used in the tests in this class,
+        /// and the logger that captures the log output of each test.
         /// </summary>
         [SetUp]
         public void CreateRequestSpecification()
         {
+            this.logger = new CollectingLogger();
+
             var logConfig = new LogConfiguration
             {
                 RequestLogLevel = RequestLogLevel.All,
@@ -66,7 +71,7 @@ namespace RestAssured.Tests
                 SensitiveRequestHeadersAndCookies = new List<string>() { "SensitiveRequestHeader" },
             };
 
-            Given()
+            Given(this.logger)
                 .Log(logConfig)
                 .And()
                 .Header("NonsensitiveRequestHeader", "This one is printed")
@@ -75,6 +80,10 @@ namespace RestAssured.Tests
                 .Get($"{MOCK_SERVER_BASE_URL}/masking-sensitive-data")
                 .Then()
                 .StatusCode(200);
+
+            Assert.That(this.logger.Lines, Has.Member("SensitiveRequestHeader: *****"));
+            Assert.That(this.logger.Lines, Has.Member("NonsensitiveRequestHeader: This one is printed"));
+            Assert.That(this.logger.Messages[0], Does.Not.Contain("This one is masked"), "The request log entry contains a sensitive value.");
         }
 
         /// <summary>
@@ -93,12 +102,19 @@ namespace RestAssured.Tests
                 SensitiveResponseHeadersAndCookies = new List<string>() { "SensitiveResponseHeader", "SensitiveResponseCookie" },
             };
 
-            Given()
+            Given(this.logger)
                 .Log(logConfig)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/masking-sensitive-data")
                 .Then()
                 .StatusCode(200);
+
+            Assert.That(this.logger.Lines, Has.Member("SensitiveResponseHeader: *****"));
+            Assert.That(this.logger.Lines, Has.Member("NonSensitiveResponseHeader: This one is printed"));
+            Assert.That(this.logger.Lines, Has.Some.StartsWith("Cookie: SensitiveResponseCookie=*****,"));
+            Assert.That(this.logger.Lines, Has.Some.StartsWith("Cookie: NonSensitiveResponseCookie=123,"));
+            Assert.That(this.logger.Messages[1], Does.Not.Contain("This one is masked"), "The response log entry contains a sensitive value.");
+            Assert.That(this.logger.Lines, Has.None.Contains("some_secret_value"));
         }
 
         /// <summary>
@@ -117,7 +133,7 @@ namespace RestAssured.Tests
                 SensitiveRequestHeadersAndCookies = new List<string>() { "SensitiveRequestCookie" },
             };
 
-            Given()
+            Given(this.logger)
                 .Log(logConfig)
                 .And()
                 .Cookie("NonsensitiveRequestCookie", "This one is printed")
@@ -126,6 +142,10 @@ namespace RestAssured.Tests
                 .Get($"{MOCK_SERVER_BASE_URL}/masking-sensitive-data")
                 .Then()
                 .StatusCode(200);
+
+            Assert.That(this.logger.Lines, Has.Some.StartsWith("Cookie: SensitiveRequestCookie=*****,"));
+            Assert.That(this.logger.Lines, Has.Some.StartsWith("Cookie: NonsensitiveRequestCookie=This one is printed,"));
+            Assert.That(this.logger.Messages[0], Does.Not.Contain("This one is masked"), "The request log entry contains a sensitive value.");
         }
 
         /// <summary>
@@ -144,7 +164,7 @@ namespace RestAssured.Tests
                 SensitiveRequestHeadersAndCookies = new List<string>() { "SensitiveRequestHeader", "AnotherSensitiveRequestHeader" },
             };
 
-            Given()
+            Given(this.logger)
                 .Log(logConfig)
                 .And()
                 .Header("NonsensitiveRequestHeader", "This one is printed")
@@ -154,6 +174,11 @@ namespace RestAssured.Tests
                 .Get($"{MOCK_SERVER_BASE_URL}/masking-sensitive-data")
                 .Then()
                 .StatusCode(200);
+
+            Assert.That(this.logger.Lines, Has.Member("SensitiveRequestHeader: *****"));
+            Assert.That(this.logger.Lines, Has.Member("AnotherSensitiveRequestHeader: *****"));
+            Assert.That(this.logger.Lines, Has.Member("NonsensitiveRequestHeader: This one is printed"));
+            Assert.That(this.logger.Messages[0], Does.Not.Contain("This one is masked"), "The request log entry contains a sensitive value.");
         }
 
         /// <summary>
@@ -165,7 +190,7 @@ namespace RestAssured.Tests
         {
             this.CreateStubForMaskingSensitiveData();
 
-            Given()
+            Given(this.logger)
                 .Spec(this.requestSpecification)
                 .Header("NonsensitiveRequestHeader", "This one is printed")
                 .Header("SensitiveRequestHeader", "This one is masked")
@@ -173,6 +198,11 @@ namespace RestAssured.Tests
                 .Get($"{MOCK_SERVER_BASE_URL}/masking-sensitive-data")
                 .Then()
                 .StatusCode(200);
+
+            // The sensitive header names are taken from the request specification.
+            Assert.That(this.logger.Lines, Has.Member("SensitiveRequestHeader: *****"));
+            Assert.That(this.logger.Lines, Has.Member("NonsensitiveRequestHeader: This one is printed"));
+            Assert.That(this.logger.Messages[0], Does.Not.Contain("This one is masked"), "The request log entry contains a sensitive value.");
         }
 
         /// <summary>

@@ -18,17 +18,33 @@ namespace RestAssured.Tests
     using NUnit.Framework;
     using RestAssured.Logging;
     using RestAssured.Request.Builders;
+    using RestAssured.Response.Exceptions;
     using WireMock.RequestBuilders;
     using WireMock.ResponseBuilders;
     using static RestAssured.Dsl;
 
     /// <summary>
-    /// Examples of RestAssuredNet usage.
+    /// Examples of RestAssuredNet usage, focusing on logging request and response details.
+    /// The log output is captured with a <see cref="CollectingLogger"/>, which also writes it to the standard output.
     /// </summary>
     [TestFixture]
     public class LoggingTests : TestBase
     {
+        // The response time is formatted using the current culture, so accept both '.' and ',' as decimal separator.
+        private const string ResponseTimePattern = @"^Response time: \d+([.,]\d+)? ms$";
+
         private readonly string jsonBody = "{\"id\": 1, \"user\": \"John Doe\"}";
+
+        private CollectingLogger logger;
+
+        /// <summary>
+        /// Creates the logger that captures the log output of each test.
+        /// </summary>
+        [SetUp]
+        public void CreateLogger()
+        {
+            this.logger = new CollectingLogger();
+        }
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for logging
@@ -44,7 +60,7 @@ namespace RestAssured.Tests
                 RequestLogLevel = RequestLogLevel.All,
             };
 
-            Given()
+            Given(this.logger)
                 .Log(logConfig)
                 .And()
                 .Accept("application/json")
@@ -55,6 +71,17 @@ namespace RestAssured.Tests
                 .Get($"{MOCK_SERVER_BASE_URL}/log-json-response")
                 .Then()
                 .StatusCode(200);
+
+            // Only the request is logged, with the endpoint, all headers and the pretty-printed body.
+            Assert.That(this.logger.Messages, Has.Count.EqualTo(1));
+            Assert.That(this.logger.Lines, Has.Member($"GET {MOCK_SERVER_BASE_URL}/log-json-response"));
+            Assert.That(this.logger.Lines, Has.Member("Content-Type: application/json; charset=utf-8"));
+            Assert.That(this.logger.Lines, Has.Member($"Content-Length: {this.jsonBody.Length}"));
+            Assert.That(this.logger.Lines, Has.Member("Accept: application/json"));
+            Assert.That(this.logger.Lines, Has.Member("CustomHeader: custom header value"));
+            Assert.That(this.logger.Lines, Has.Member("  \"id\": 1,"));
+            Assert.That(this.logger.Lines, Has.Member("  \"user\": \"John Doe\""));
+            Assert.That(this.logger.Lines, Has.None.StartsWith("HTTP "));
         }
 
         /// <summary>
@@ -71,7 +98,7 @@ namespace RestAssured.Tests
                 RequestLogLevel = RequestLogLevel.All,
             };
 
-            Given()
+            Given(this.logger)
                 .Log(logConfig)
                 .ContentType("application/xml")
                 .Body(this.GetLocationAsXmlString())
@@ -79,6 +106,11 @@ namespace RestAssured.Tests
                 .Get($"{MOCK_SERVER_BASE_URL}/log-xml-response")
                 .Then()
                 .StatusCode(200);
+
+            // The XML request body is pretty-printed.
+            Assert.That(this.logger.Lines, Has.Member("Content-Type: application/xml; charset=utf-8"));
+            Assert.That(this.logger.Lines, Has.Member("  <Country>United States</Country>"));
+            Assert.That(this.logger.Lines, Has.Member("      <Name>Sun City</Name>"));
         }
 
         /// <summary>
@@ -95,12 +127,21 @@ namespace RestAssured.Tests
                 ResponseLogLevel = ResponseLogLevel.All,
             };
 
-            Given()
+            Given(this.logger)
                 .Log(logConfig)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/log-json-response")
                 .Then()
                 .StatusCode(200);
+
+            // Only the response is logged, with the status, content headers, pretty-printed body and response time.
+            Assert.That(this.logger.Messages, Has.Count.EqualTo(1));
+            Assert.That(this.logger.Lines, Has.Member("HTTP 200 (OK)"));
+            Assert.That(this.logger.Lines, Has.Member("Content-Type: application/json"));
+            Assert.That(this.logger.Lines, Has.Some.Match(@"^Content-Length: \d+$"));
+            Assert.That(this.logger.Lines, Has.Member("  \"Country\": \"United States\","));
+            Assert.That(this.logger.Lines, Has.Some.Match(ResponseTimePattern));
+            Assert.That(this.logger.Lines, Has.None.StartsWith("GET "));
         }
 
         /// <summary>
@@ -117,12 +158,17 @@ namespace RestAssured.Tests
                 ResponseLogLevel = ResponseLogLevel.All,
             };
 
-            Given()
+            Given(this.logger)
                 .Log(logConfig)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/log-xml-response")
                 .Then()
                 .StatusCode(200);
+
+            // The XML response body is pretty-printed.
+            Assert.That(this.logger.Lines, Has.Member("HTTP 200 (OK)"));
+            Assert.That(this.logger.Lines, Has.Member("Content-Type: application/xml"));
+            Assert.That(this.logger.Lines, Has.Member("  <Country>United States</Country>"));
         }
 
         /// <summary>
@@ -140,12 +186,18 @@ namespace RestAssured.Tests
                 ResponseLogLevel = ResponseLogLevel.All,
             };
 
-            Given()
+            Given(this.logger)
                 .Log(logConfig)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/log-no-response-body")
                 .Then()
                 .StatusCode(200);
+
+            // An empty body is not logged at all.
+            Assert.That(this.logger.Lines, Has.Member("HTTP 200 (OK)"));
+            Assert.That(this.logger.Lines, Has.Member("Content-Length: 0"));
+            Assert.That(this.logger.Lines, Has.None.Contains("Could not read payload"));
+            Assert.That(this.logger.Lines, Has.None.Empty);
         }
 
         /// <summary>
@@ -163,12 +215,17 @@ namespace RestAssured.Tests
                 RequestLogLevel = RequestLogLevel.All,
             };
 
-            Given()
+            Given(this.logger)
                 .Log(logConfig)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/log-no-response-body")
                 .Then()
                 .StatusCode(200);
+
+            // An empty request body is not logged at all.
+            Assert.That(this.logger.Lines, Has.Member($"GET {MOCK_SERVER_BASE_URL}/log-no-response-body"));
+            Assert.That(this.logger.Lines, Has.None.Contains("Could not read payload"));
+            Assert.That(this.logger.Lines, Has.None.Empty);
         }
 
         /// <summary>
@@ -187,12 +244,16 @@ namespace RestAssured.Tests
                 ResponseLogLevel = ResponseLogLevel.OnError,
             };
 
-            Given()
+            Given(this.logger)
                 .Log(logConfig)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/error-response-body")
                 .Then()
                 .StatusCode(404);
+
+            Assert.That(this.logger.Messages, Has.Count.EqualTo(1));
+            Assert.That(this.logger.Lines, Has.Member("HTTP 404 (NotFound)"));
+            Assert.That(this.logger.Lines, Has.Member("The resource you requested was not found on this server."));
         }
 
         /// <summary>
@@ -211,19 +272,21 @@ namespace RestAssured.Tests
                 ResponseLogLevel = ResponseLogLevel.OnError,
             };
 
-            Given()
+            Given(this.logger)
                 .Log(logConfig)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/log-json-response")
                 .Then()
                 .StatusCode(200);
+
+            Assert.That(this.logger.Messages, Is.Empty);
         }
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for logging
-        /// response details to the standard output only if the status
-        /// code is 4xx or 5xx.
-        /// This test should not log details, because the status code is 200.
+        /// response details to the standard output only if a verification fails.
+        /// This test should log details, because the expected status code (201)
+        /// does not match the actual status code (200).
         /// </summary>
         [Test]
         public void ResponseBodyDetailsAreLoggedIfVerificationFails()
@@ -235,12 +298,40 @@ namespace RestAssured.Tests
                 ResponseLogLevel = ResponseLogLevel.OnVerificationFailure,
             };
 
-            Given()
+            Assert.Throws<ResponseVerificationException>(() =>
+                Given(this.logger)
+                    .Log(logConfig)
+                    .When()
+                    .Get($"{MOCK_SERVER_BASE_URL}/log-json-response")
+                    .Then()
+                    .StatusCode(201));
+
+            Assert.That(this.logger.Lines, Has.Member("HTTP 200 (OK)"));
+            Assert.That(this.logger.Lines, Has.Member("  \"Country\": \"United States\","));
+        }
+
+        /// <summary>
+        /// A test checking that response details are not logged
+        /// when logging on verification failure and all verifications pass.
+        /// </summary>
+        [Test]
+        public void ResponseBodyDetailsAreNotLoggedIfVerificationPasses()
+        {
+            this.CreateStubForLoggingJsonResponse();
+
+            var logConfig = new LogConfiguration
+            {
+                ResponseLogLevel = ResponseLogLevel.OnVerificationFailure,
+            };
+
+            Given(this.logger)
                 .Log(logConfig)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/log-json-response")
                 .Then()
                 .StatusCode(200);
+
+            Assert.That(this.logger.Messages, Is.Empty);
         }
 
         /// <summary>
@@ -262,12 +353,16 @@ namespace RestAssured.Tests
                 .WithLogConfiguration(logConfig)
                 .Build();
 
-            Given()
+            Given(this.logger)
                 .Spec(requestSpecification)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/log-json-response")
                 .Then()
                 .StatusCode(200);
+
+            // The log level from the request specification is applied.
+            Assert.That(this.logger.Lines, Has.Member("HTTP 200 (OK)"));
+            Assert.That(this.logger.Lines, Has.Member("  \"Country\": \"United States\","));
         }
 
         /// <summary>
@@ -294,13 +389,18 @@ namespace RestAssured.Tests
                 ResponseLogLevel = ResponseLogLevel.ResponseTime,
             };
 
-            Given()
+            Given(this.logger)
                 .Spec(requestSpecification)
                 .Log(logConfig)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/log-json-response")
                 .Then()
                 .StatusCode(200);
+
+            // The log level set in the request (response time only) overrides the one in the request specification (all).
+            Assert.That(this.logger.Lines, Has.Some.Match(ResponseTimePattern));
+            Assert.That(this.logger.Lines, Has.None.StartsWith("Content-Type:"));
+            Assert.That(this.logger.Lines, Has.None.Contains("United States"));
         }
 
         /// <summary>
@@ -317,12 +417,16 @@ namespace RestAssured.Tests
                 ResponseLogLevel = ResponseLogLevel.All,
             };
 
-            Given()
+            Given(this.logger)
                 .Log(logConfig)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/log-response-cookie")
                 .Then()
                 .StatusCode(200);
+
+            Assert.That(this.logger.Lines, Has.Member("Set-Cookie: Auth=123; httponly; secure"));
+            Assert.That(this.logger.Lines, Has.Member("Cookie: Auth=123, Domain: localhost, HTTP-only: True, Secure: True"));
+            Assert.That(this.logger.Lines, Has.Member("Cookies are nice!"));
         }
 
         /// <summary>
