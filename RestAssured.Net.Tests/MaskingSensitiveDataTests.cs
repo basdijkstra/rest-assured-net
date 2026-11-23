@@ -45,7 +45,7 @@ namespace RestAssured.Tests
             };
 
             this.requestSpecification = new RequestSpecBuilder()
-                .WithPort(9876)
+                .WithPort(MOCK_SERVER_PORT)
                 .WithLogConfiguration(logConfig)
                 .Build();
         }

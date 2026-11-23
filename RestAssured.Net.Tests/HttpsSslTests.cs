@@ -70,7 +70,7 @@ namespace RestAssured.Tests
             Given()
                 .DisableSslCertificateValidation()
                 .When()
-                .Get("https://localhost:8443/ssl-endpoint")
+                .Get($"{MOCK_SERVER_HTTPS_BASE_URL}/ssl-endpoint")
                 .Then()
                 .StatusCode(200);
         }
@@ -87,7 +87,7 @@ namespace RestAssured.Tests
             Given()
                 .DisableSslCertificateValidation()
                 .When()
-                .Get("https://localhost:8443/ssl-endpoint")
+                .Get($"{MOCK_SERVER_HTTPS_BASE_URL}/ssl-endpoint")
                 .Then()
                 .StatusCode(200);
         }
@@ -105,7 +105,7 @@ namespace RestAssured.Tests
             Given()
                 .Spec(this.requestSpecification!)
                 .When()
-                .Get("https://localhost:8443/ssl-endpoint")
+                .Get($"{MOCK_SERVER_HTTPS_BASE_URL}/ssl-endpoint")
                 .Then()
                 .StatusCode(200);
         }

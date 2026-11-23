@@ -54,7 +54,7 @@ namespace RestAssured.Tests
 
             Given()
                 .When()
-                .Get("https://localhost:8443/ssl-endpoint")
+                .Get($"{MOCK_SERVER_HTTPS_BASE_URL}/ssl-endpoint")
                 .Then()
                 .StatusCode(200);
         }

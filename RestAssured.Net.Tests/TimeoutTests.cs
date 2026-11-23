@@ -39,7 +39,7 @@ namespace RestAssured.Tests
         {
             this.requestSpecification = new RequestSpecBuilder()
                 .WithBaseUri("http://localhost")
-                .WithPort(9876)
+                .WithPort(MOCK_SERVER_PORT)
                 .WithTimeout(TimeSpan.FromSeconds(2))
                 .Build();
         }

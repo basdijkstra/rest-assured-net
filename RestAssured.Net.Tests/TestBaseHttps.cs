@@ -24,6 +24,11 @@ namespace RestAssured.Tests
     public class TestBaseHttps
     {
         /// <summary>
+        /// The base URL used by the HTTPS WireMock mock server.
+        /// </summary>
+        protected static readonly string MOCK_SERVER_HTTPS_BASE_URL = $"https://localhost:{MockServerSetup.HttpsPort}";
+
+        /// <summary>
         /// The WireMock server instance to which response definitions will be added.
         /// </summary>
         protected WireMockServer Server { get; private set; }

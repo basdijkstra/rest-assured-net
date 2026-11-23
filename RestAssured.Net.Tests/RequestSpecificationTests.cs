@@ -46,7 +46,7 @@ namespace RestAssured.Tests
             };
 
             var fullRequestSpecification = new RequestSpecBuilder()
-                .WithBaseUri("http://localhost:9876")
+                .WithBaseUri(MOCK_SERVER_BASE_URL)
                 .WithBasePath("api")
                 .WithQueryParam("param_name", "param_value")
                 .WithQueryParam("another_param_name", "another_param_value")
@@ -73,7 +73,7 @@ namespace RestAssured.Tests
         public void DefaultValuesAppliedRequestSpecificationCanBeUsed(string endpoint)
         {
             var applyDefaultsRequestSpecification = new RequestSpecBuilder()
-                .WithPort(9876) // We need to set this because the default is 80 / 443
+                .WithPort(MOCK_SERVER_PORT) // We need to set this because the default is 80 / 443
                 .Build();
 
             this.CreateStubForRequestSpecificationWithoutQueryParams();
@@ -94,7 +94,7 @@ namespace RestAssured.Tests
         public void RequestSpecificationWithHeadersCanBeUsed()
         {
             var headersSpecification = new RequestSpecBuilder()
-                .WithBaseUri("http://localhost:9876")
+                .WithBaseUri(MOCK_SERVER_BASE_URL)
                 .WithBasicAuth("username", "password")
                 .WithContentType("application/xml")
                 .WithContentEncoding(Encoding.ASCII)
@@ -126,7 +126,7 @@ namespace RestAssured.Tests
                 .WithStatusCode(200));
 
             var basicAuthSpecification = new RequestSpecBuilder()
-                .WithBaseUri("http://localhost:9876")
+                .WithBaseUri(MOCK_SERVER_BASE_URL)
                 .WithBasicAuth("jürgen", "pässwörd€")
                 .Build();
 
@@ -146,7 +146,7 @@ namespace RestAssured.Tests
         public void RequestSpecificationWithOAuth2CanBeUsed()
         {
             var oauthSpecification = new RequestSpecBuilder()
-                .WithBaseUri("http://localhost:9876")
+                .WithBaseUri(MOCK_SERVER_BASE_URL)
                 .WithOAuth2("this_is_my_token")
                 .Build();
 
@@ -187,7 +187,7 @@ namespace RestAssured.Tests
             this.CreateStubForQueryStringEndpoint("/api/query-string-endpoint");
 
             var requestSpecification = new RequestSpecBuilder()
-                .WithBaseUri("http://localhost:9876")
+                .WithBaseUri(MOCK_SERVER_BASE_URL)
                 .WithBasePath("api")
                 .Build();
 
@@ -215,7 +215,7 @@ namespace RestAssured.Tests
                 .WithStatusCode(200));
 
             var requestSpecification = new RequestSpecBuilder()
-                .WithBaseUri("http://localhost:9876")
+                .WithBaseUri(MOCK_SERVER_BASE_URL)
                 .WithQueryParam("a", "1")
                 .Build();
 
@@ -242,7 +242,7 @@ namespace RestAssured.Tests
                 .WithStatusCode(200));
 
             var requestSpecification = new RequestSpecBuilder()
-                .WithBaseUri("http://localhost:9876")
+                .WithBaseUri(MOCK_SERVER_BASE_URL)
                 .Build();
 
             Given()
