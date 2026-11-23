@@ -17,6 +17,8 @@ bug ([#155](https://github.com/basdijkstra/rest-assured-net/issues/155))
 - Fixed issue where encoding basic auth credentials in ASCII could create problems with special characters ([#168](https://github.com/basdijkstra/rest-assured-net/issues/168))
 - Fixed issue where logger was always called, even when there's nothing to log ([#174](https://github.com/basdijkstra/rest-assured-net/issues/174))
 - Fixed issue where brackets that were not path parameters were mistaken for being so ([#154](https://github.com/basdijkstra/rest-assured-net/issues/154))
+- Fixed issue where square brackets in custom error messages are treated as template tags
+ ([#170](https://github.com/basdijkstra/rest-assured-net/issues/170))
 
 ### [5.1.0] - 2026-11-11
 

@@ -97,6 +97,18 @@ namespace RestAssured.Tests
             Assert.That(result, Is.EqualTo("default message"));
         }
 
+        /// <summary>
+        /// Verifies that values are inserted into the error message independent of the current culture.
+        /// </summary>
+        [Test]
+        [SetCulture("nl-NL")]
+        public void BuildMessageUsesInvariantCulture()
+        {
+            string result = VerificationMessageBuilder.BuildMessage("Expected [expected] but was [actual]", 1.5, 2.5);
+
+            Assert.That(result, Is.EqualTo("Expected 1.5 but was 2.5"));
+        }
+
         private static IEnumerable<TestCaseData> BuildMessageTestCases()
         {
             yield return new TestCaseData("Error message", null, null, "Error message")
@@ -113,6 +125,21 @@ namespace RestAssured.Tests
 
             yield return new TestCaseData("Expected [expected] but was [actual]", NHamcrest.Is.LessThan(300), 401, "Expected less than 300 but was 401")
                 .SetName("NHamcrest matcher can be inserted into error message");
+
+            yield return new TestCaseData("[TICKET-123] status was [actual]", 404, 200, "[TICKET-123] status was 200")
+                .SetName("Bracketed text that is not a template value remains unchanged");
+
+            yield return new TestCaseData("see [docs", 404, 200, "see [docs")
+                .SetName("Unclosed bracket remains unchanged");
+
+            yield return new TestCaseData("Expected [expected], really [expected], but was [actual]", 200, 404, "Expected 200, really 200, but was 404")
+                .SetName("Template value can be used more than once");
+
+            yield return new TestCaseData("Expected [ expected ] but was [ actual ]", 200, 404, "Expected 200 but was 404")
+                .SetName("Template value surrounded by whitespace is inserted into error message");
+
+            yield return new TestCaseData("Expected [expected] but was [actual]", null, 404, "Expected  but was 404")
+                .SetName("Null value is inserted as empty string");
         }
     }
 }

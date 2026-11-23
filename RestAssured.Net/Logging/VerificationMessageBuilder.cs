@@ -15,28 +15,16 @@
 // </copyright>
 namespace RestAssured.Logging
 {
-    using System.Collections.Generic;
+    using System;
+    using System.Globalization;
+    using System.Text.RegularExpressions;
     using RestAssured.Response;
-    using Stubble.Core;
-    using Stubble.Core.Builders;
-    using Stubble.Core.Classes;
-    using Stubble.Core.Settings;
 
     /// <summary>
     /// Contains helper methods for building and resolving verification failure messages.
     /// </summary>
     internal class VerificationMessageBuilder
     {
-        /// <summary>
-        /// The start tag used to identify a template.
-        /// </summary>
-        internal const string START_TAG = "[";
-
-        /// <summary>
-        /// The end tag used to identify a template.
-        /// </summary>
-        internal const string END_TAG = "]";
-
         /// <summary>
         /// The template value to insert in a templated error message for the expected value.
         /// </summary>
@@ -46,6 +34,13 @@ namespace RestAssured.Logging
         /// The template value to insert in a templated error message for the actual value.
         /// </summary>
         internal const string TEMPLATE_ACTUAL_VALUE = "actual";
+
+        /// <summary>
+        /// Matches the template values [expected] and [actual], optionally surrounded by whitespace within the brackets.
+        /// </summary>
+        private static readonly Regex TemplateValue = new Regex(
+            $@"\[\s*({TEMPLATE_EXPECTED_VALUE}|{TEMPLATE_ACTUAL_VALUE})\s*\]",
+            RegexOptions.Compiled);
 
         /// <summary>
         /// Returns the custom error message if one was supplied, otherwise returns the default message.
@@ -89,17 +84,21 @@ namespace RestAssured.Logging
         /// <returns>The rendered error message.</returns>
         internal static string BuildMessage(string originalMessage, object expectedValue, object actualValue)
         {
-            var values = new Dictionary<string, object>()
-                {
-                    { TEMPLATE_EXPECTED_VALUE, expectedValue },
-                    { TEMPLATE_ACTUAL_VALUE, actualValue },
-                };
+            // Only the template values [expected] and [actual] are replaced,
+            // all other text (including any other text between square brackets) is left unchanged.
+            return TemplateValue.Replace(
+                originalMessage,
+                match => FormatValue(match.Groups[1].Value == TEMPLATE_EXPECTED_VALUE ? expectedValue : actualValue));
+        }
 
-            StubbleVisitorRenderer renderer = new StubbleBuilder()
-                .Configure(builder => builder.SetDefaultTags(new Tags(START_TAG, END_TAG)))
-                .Build();
-
-            return renderer.Render(originalMessage, values, new RenderSettings { SkipHtmlEncoding = true });
+        /// <summary>
+        /// Formats a value for insertion into an error message, independent of the current culture.
+        /// </summary>
+        /// <param name="value">The value to format.</param>
+        /// <returns>The formatted value, or an empty string if the value is <c>null</c>.</returns>
+        private static string FormatValue(object? value)
+        {
+            return Convert.ToString(value, CultureInfo.InvariantCulture) ?? string.Empty;
         }
     }
 }

@@ -17,7 +17,7 @@ namespace RestAssured.Response
 {
     /// <summary>
     /// Represents an optional custom error message used in assertion failure exceptions
-    /// instead of the default one. Supports Stubble template tokens <c>[expected]</c>
+    /// instead of the default one. Supports the template tokens <c>[expected]</c>
     /// and <c>[actual]</c> for inserting the matcher and actual value respectively.
     /// </summary>
     public readonly struct ErrorMessage
