@@ -52,6 +52,7 @@ namespace RestAssured.Request
         private HttpCompletionOption httpCompletionOption = HttpCompletionOption.ResponseContentRead;
         private NetworkCredential? networkCredential = null;
         private bool disableSslCertificateValidation = false;
+        private bool globalDisableSslCertificateValidation = false;
         private bool stripCharset = false;
         private bool disposed = false;
         private IRestAssuredNetLogger? logger;
@@ -69,7 +70,9 @@ namespace RestAssured.Request
         /// <param name="logger">The <see cref="IRestAssuredNetLogger"/> to use when writing log output.</param>
         internal ExecutableRequest(RestAssuredConfiguration config, HttpClient? httpClient, IRestAssuredNetLogger? logger = null)
         {
-            this.disableSslCertificateValidation = config.DisableSslCertificateValidation;
+            // The global setting is kept separately from the setting for this request,
+            // so that it can be reported differently when a user-supplied HttpClient is used.
+            this.globalDisableSslCertificateValidation = config.DisableSslCertificateValidation;
 
             this.LogConfiguration = config.LogConfiguration;
             this.httpCompletionOption = config.HttpCompletionOption;
@@ -654,6 +657,7 @@ namespace RestAssured.Request
                 FormData = this.formData,
                 MultipartFormDataContent = this.multipartFormDataContent,
                 DisableSslCertificateValidation = this.disableSslCertificateValidation,
+                GlobalDisableSslCertificateValidation = this.globalDisableSslCertificateValidation,
                 Proxy = this.proxy,
                 NetworkCredential = this.networkCredential,
                 Timeout = this.timeout,

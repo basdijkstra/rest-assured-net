@@ -101,25 +101,22 @@ namespace RestAssured.Request
                 context.RequestBody,
                 bodySettings);
 
-            // SSL validation can be disabled either in a request or through a RequestSpecification
-            bool disableSslChecks = context.DisableSslCertificateValidation || (context.RequestSpecification?.DisableSslCertificateValidation ?? false);
+            // Proxy, SSL and NTLM settings cannot be applied to an HttpClient supplied by the user.
+            if (context.HttpClient != null)
+            {
+                CheckSettingsForSuppliedHttpClient(context);
+            }
+
+            // SSL validation can be disabled in a request, through a RequestSpecification or in the global configuration
+            bool disableSslChecks = context.DisableSslCertificateValidation || context.GlobalDisableSslCertificateValidation || (context.RequestSpecification?.DisableSslCertificateValidation ?? false);
 
             // Create the HTTP request processor that sends the request and set its properties
             HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor(context.HttpClient, context.Proxy ?? context.RequestSpecification?.Proxy, disableSslChecks, context.NetworkCredential);
 
-            // Timeout set in test has precedence over timeout set in request specification
-            // If both are null, use default timeout for HttpClient (= 100.000 milliseconds).
-            if (context.Timeout != null)
-            {
-                httpRequestProcessor.SetTimeout((TimeSpan)context.Timeout);
-            }
-            else if (context.RequestSpecification != null)
-            {
-                if (context.RequestSpecification.Timeout != null)
-                {
-                    httpRequestProcessor.SetTimeout((TimeSpan)context.RequestSpecification.Timeout);
-                }
-            }
+            // Timeout set in test has precedence over timeout set in request specification.
+            // If both are null, the HttpRequestProcessor uses its default timeout (100 seconds),
+            // or the timeout of the HttpClient when the user supplied their own HttpClient.
+            TimeSpan? timeout = context.Timeout ?? context.RequestSpecification?.Timeout;
 
             // HttpCompletionOption set in the test takes precedence over the value in the RequestSpecification
             // Only if it's still the default (so not set in the test), overwrite it with the value in the RequestSpecification.
@@ -141,18 +138,76 @@ namespace RestAssured.Request
 
             try
             {
-                VerifiableResponse verifiableResponse = httpRequestProcessor.Send(context.Request, context.CookieCollection, context.HttpCompletionOption).GetAwaiter().GetResult();
+                VerifiableResponse verifiableResponse = httpRequestProcessor.Send(context.Request, context.CookieCollection, context.HttpCompletionOption, timeout).GetAwaiter().GetResult();
                 verifiableResponse.Logger = context.Logger;
                 verifiableResponse = logger.LogResponse(verifiableResponse);
                 return verifiableResponse;
             }
-            catch (TaskCanceledException)
+            catch (TimeoutException te)
             {
-                throw new HttpRequestProcessorException($"Request timeout of {context.Timeout ?? context.RequestSpecification?.Timeout ?? TimeSpan.FromSeconds(100)} exceeded.");
+                // The message contains the timeout that was actually exceeded.
+                throw new HttpRequestProcessorException(te.Message);
             }
             catch (Exception ex)
             {
                 throw new HttpRequestProcessorException($"Unhandled exception {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Checks for proxy, SSL and NTLM settings, which cannot be applied to an <see cref="HttpClient"/> supplied by the user,
+        /// because they are properties of the handler that the <see cref="HttpClient"/> was created with.
+        /// Settings made in the request itself cause a <see cref="RequestCreationException"/>, because the test explicitly asks for something that cannot be done.
+        /// Settings made in a <see cref="RequestSpecification"/> or in the global configuration are shared defaults, so they cause a warning in the log instead.
+        /// </summary>
+        /// <param name="context">The <see cref="RequestContext"/> containing all request state.</param>
+        /// <exception cref="RequestCreationException">Thrown when the request itself contains settings that cannot be applied.</exception>
+        private static void CheckSettingsForSuppliedHttpClient(RequestContext context)
+        {
+            var requestSettings = new List<string>();
+
+            if (context.Proxy != null)
+            {
+                requestSettings.Add("Proxy");
+            }
+
+            if (context.DisableSslCertificateValidation)
+            {
+                requestSettings.Add("DisableSslCertificateValidation");
+            }
+
+            if (context.NetworkCredential != null)
+            {
+                requestSettings.Add("NtlmAuth");
+            }
+
+            if (requestSettings.Count > 0)
+            {
+                throw new RequestCreationException(
+                    $"{string.Join(", ", requestSettings)} cannot be applied to a user-supplied HttpClient. Configure them on the handler of the HttpClient instead.");
+            }
+
+            var ignoredSettings = new List<string>();
+
+            if (context.RequestSpecification?.Proxy != null)
+            {
+                ignoredSettings.Add("Proxy (from RequestSpecification)");
+            }
+
+            if (context.RequestSpecification?.DisableSslCertificateValidation ?? false)
+            {
+                ignoredSettings.Add("DisableSslCertificateValidation (from RequestSpecification)");
+            }
+
+            if (context.GlobalDisableSslCertificateValidation)
+            {
+                ignoredSettings.Add("DisableSslCertificateValidation (from global configuration)");
+            }
+
+            if (ignoredSettings.Count > 0)
+            {
+                IRestAssuredNetLogger logger = context.Logger ?? new RestAssuredNetConsoleLogger();
+                logger.Log($"Warning: {string.Join(", ", ignoredSettings)} ignored, because a user-supplied HttpClient is used.");
             }
         }
 

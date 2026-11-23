@@ -16,6 +16,7 @@
 namespace RestAssured.Tests
 {
     using System;
+    using System.Net.Http;
     using NUnit.Framework;
     using RestAssured.Request.Builders;
     using RestAssured.Request.Exceptions;
@@ -123,6 +124,129 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test checking that a timeout set in the request or in a request specification
+        /// does not change the timeout of an <see cref="HttpClient"/> supplied by the user.
+        /// </summary>
+        /// <param name="timeoutInSpec">True to set the timeout in a request specification, false to set it in the request.</param>
+        [TestCase(false, TestName = "Timeout set in request does not change supplied HttpClient")]
+        [TestCase(true, TestName = "Timeout set in request specification does not change supplied HttpClient")]
+        public void TimeoutDoesNotChangeSuppliedHttpClient(bool timeoutInSpec)
+        {
+            this.CreateStubForTimeoutOk();
+
+            using HttpClient httpClient = new HttpClient();
+            TimeSpan originalTimeout = httpClient.Timeout;
+
+            if (timeoutInSpec)
+            {
+                var spec = new RequestSpecBuilder()
+                    .WithTimeout(TimeSpan.FromSeconds(1))
+                    .Build();
+
+                Given(httpClient)
+                    .Spec(spec)
+                    .When()
+                    .Get($"{MOCK_SERVER_BASE_URL}/timeout-ok")
+                    .Then()
+                    .StatusCode(200);
+            }
+            else
+            {
+                Given(httpClient)
+                    .Timeout(TimeSpan.FromSeconds(1))
+                    .When()
+                    .Get($"{MOCK_SERVER_BASE_URL}/timeout-ok")
+                    .Then()
+                    .StatusCode(200);
+            }
+
+            Assert.That(httpClient.Timeout, Is.EqualTo(originalTimeout));
+        }
+
+        /// <summary>
+        /// A test checking that a timeout can be set when using an <see cref="HttpClient"/>
+        /// supplied by the user that has already sent a request.
+        /// </summary>
+        [Test]
+        public void TimeoutCanBeSetForHttpClientThatAlreadySentARequest()
+        {
+            this.CreateStubForTimeoutOk();
+
+            using HttpClient httpClient = new HttpClient();
+
+            Given(httpClient)
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/timeout-ok")
+                .Then()
+                .StatusCode(200);
+
+            Given(httpClient)
+                .Timeout(TimeSpan.FromSeconds(1))
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/timeout-ok")
+                .Then()
+                .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test checking that a timeout set in the request is applied when using an <see cref="HttpClient"/> supplied by the user.
+        /// </summary>
+        [Test]
+        public void TimeoutIsAppliedWithSuppliedHttpClient()
+        {
+            this.CreateStubForShortTimeoutNok();
+
+            using HttpClient httpClient = new HttpClient();
+
+            var hrpe = Assert.Throws<HttpRequestProcessorException>(() =>
+                Given(httpClient)
+                    .Timeout(TimeSpan.FromMilliseconds(200))
+                    .When()
+                    .Get($"{MOCK_SERVER_BASE_URL}/short-timeout-nok"));
+
+            Assert.That(hrpe?.Message, Is.EqualTo("Request timeout of 00:00:00.2000000 exceeded."));
+        }
+
+        /// <summary>
+        /// A test checking that the timeout of an <see cref="HttpClient"/> supplied by the user
+        /// is reported when it is exceeded and no timeout was set in the request or request specification.
+        /// </summary>
+        [Test]
+        public void TimeoutOfSuppliedHttpClientIsReportedWhenExceeded()
+        {
+            this.CreateStubForShortTimeoutNok();
+
+            using HttpClient httpClient = new HttpClient { Timeout = TimeSpan.FromMilliseconds(200) };
+
+            var hrpe = Assert.Throws<HttpRequestProcessorException>(() =>
+                Given(httpClient)
+                    .When()
+                    .Get($"{MOCK_SERVER_BASE_URL}/short-timeout-nok"));
+
+            Assert.That(hrpe?.Message, Is.EqualTo("Request timeout of 00:00:00.2000000 exceeded."));
+        }
+
+        /// <summary>
+        /// A test checking that a shorter timeout of an <see cref="HttpClient"/> supplied by the user
+        /// takes precedence over a longer timeout set in the request.
+        /// </summary>
+        [Test]
+        public void ShorterTimeoutOfSuppliedHttpClientTakesPrecedence()
+        {
+            this.CreateStubForShortTimeoutNok();
+
+            using HttpClient httpClient = new HttpClient { Timeout = TimeSpan.FromMilliseconds(200) };
+
+            var hrpe = Assert.Throws<HttpRequestProcessorException>(() =>
+                Given(httpClient)
+                    .Timeout(TimeSpan.FromSeconds(10))
+                    .When()
+                    .Get($"{MOCK_SERVER_BASE_URL}/short-timeout-nok"));
+
+            Assert.That(hrpe?.Message, Is.EqualTo("Request timeout of 00:00:00.2000000 exceeded."));
+        }
+
+        /// <summary>
         /// Creates the stub response for the form data example.
         /// </summary>
         private void CreateStubForTimeoutOk()
@@ -140,6 +264,17 @@ namespace RestAssured.Tests
             this.Server?.Given(Request.Create().WithPath("/timeout-nok").UsingGet())
                 .RespondWith(Response.Create()
                 .WithDelay(TimeSpan.FromSeconds(3))
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
+        /// Creates the stub response with a delay of 1 second, for tests with a short timeout.
+        /// </summary>
+        private void CreateStubForShortTimeoutNok()
+        {
+            this.Server?.Given(Request.Create().WithPath("/short-timeout-nok").UsingGet())
+                .RespondWith(Response.Create()
+                .WithDelay(TimeSpan.FromSeconds(1))
                 .WithStatusCode(200));
         }
     }

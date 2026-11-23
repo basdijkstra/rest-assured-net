@@ -15,7 +15,11 @@
 // </copyright>
 namespace RestAssured.Tests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Net;
+    using System.Net.Http;
     using NUnit.Framework;
     using RestAssured.Request.Cookies;
     using WireMock.RequestBuilders;
@@ -112,6 +116,138 @@ namespace RestAssured.Tests
                 .Get($"{MOCK_SERVER_BASE_URL}/single-cookie-value")
                 .Then()
                 .StatusCode(200);
+        }
+
+        /// <summary>
+        /// Verify that a request cookie is sent when the user supplies their own <see cref="HttpClient"/>.
+        /// </summary>
+        [Test]
+        public void RequestCookieIsSentWithSuppliedHttpClient()
+        {
+            using HttpClient httpClient = new HttpClient();
+
+            Given(httpClient)
+                .Cookie("a", "1")
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/cookies");
+
+            Assert.That(this.GetLastRequestCookieHeaderValues(), Is.EqualTo(new[] { "a=1" }));
+        }
+
+        /// <summary>
+        /// Verify that multiple request cookies are sent when the user supplies their own <see cref="HttpClient"/>.
+        /// </summary>
+        [Test]
+        public void MultipleRequestCookiesAreSentWithSuppliedHttpClient()
+        {
+            using HttpClient httpClient = new HttpClient();
+
+            CookieCollection cookies = new CookieCollection()
+            {
+                new Cookie("a", "1"),
+                new Cookie("b", "2"),
+            };
+
+            Given(httpClient)
+                .Cookie(cookies)
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/cookies");
+
+            Assert.That(this.GetLastRequestCookies(), Is.EquivalentTo(new[] { "a=1", "b=2" }));
+        }
+
+        /// <summary>
+        /// Verify that request cookies are combined with the cookies that a user-supplied <see cref="HttpClient"/> sends itself.
+        /// </summary>
+        [Test]
+        public void RequestCookiesAreCombinedWithCookiesOfSuppliedHttpClient()
+        {
+            CookieContainer cookieContainer = new CookieContainer();
+            cookieContainer.Add(new Uri(MOCK_SERVER_BASE_URL), new Cookie("own", "1"));
+
+            using HttpClient httpClient = new HttpClient(new HttpClientHandler { CookieContainer = cookieContainer });
+
+            Given(httpClient)
+                .Cookie("ra", "2")
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/cookies");
+
+            Assert.That(this.GetLastRequestCookies(), Is.EquivalentTo(new[] { "own=1", "ra=2" }));
+        }
+
+        /// <summary>
+        /// Verify that request cookies are combined with a Cookie header set in the request
+        /// when the user supplies their own <see cref="HttpClient"/>.
+        /// </summary>
+        [Test]
+        public void RequestCookiesAreCombinedWithCookieHeaderSetInRequest()
+        {
+            using HttpClient httpClient = new HttpClient();
+
+            Given(httpClient)
+                .Header("Cookie", "x=1")
+                .Cookie("y", "2")
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/cookies");
+
+            Assert.That(this.GetLastRequestCookieHeaderValues(), Has.Count.EqualTo(1));
+            Assert.That(this.GetLastRequestCookies(), Is.EquivalentTo(new[] { "x=1", "y=2" }));
+        }
+
+        /// <summary>
+        /// Verify that a secure request cookie is not sent over HTTP when the user supplies their own <see cref="HttpClient"/>,
+        /// in the same way as when RestAssured.Net creates the <see cref="HttpClient"/>.
+        /// </summary>
+        [Test]
+        public void SecureRequestCookieIsNotSentOverHttpWithSuppliedHttpClient()
+        {
+            using HttpClient httpClient = new HttpClient();
+
+            Given(httpClient)
+                .Cookie(new Cookie("s", "1") { Secure = true })
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/cookies");
+
+            Assert.That(this.GetLastRequestCookies(), Is.Empty);
+        }
+
+        /// <summary>
+        /// Verify that a request cookie is sent exactly once when RestAssured.Net creates the <see cref="HttpClient"/>.
+        /// </summary>
+        [Test]
+        public void RequestCookieIsSentOnceWithLibraryHttpClient()
+        {
+            Given()
+                .Cookie("a", "1")
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/cookies");
+
+            Assert.That(this.GetLastRequestCookieHeaderValues(), Is.EqualTo(new[] { "a=1" }));
+        }
+
+        /// <summary>
+        /// Returns the values of the Cookie header(s) of the last request received by the mock server.
+        /// </summary>
+        /// <returns>The Cookie header values.</returns>
+        private List<string> GetLastRequestCookieHeaderValues()
+        {
+            return this.Server.LogEntries.Last().RequestMessage.Headers
+                .Where(header => header.Key.Equals("Cookie", StringComparison.OrdinalIgnoreCase))
+                .SelectMany(header => header.Value)
+                .ToList();
+        }
+
+        /// <summary>
+        /// Returns the individual name=value pairs of all cookies in the last request received by the mock server.
+        /// </summary>
+        /// <returns>The cookies as name=value pairs.</returns>
+        private List<string> GetLastRequestCookies()
+        {
+            return this.GetLastRequestCookieHeaderValues()
+                .SelectMany(value => value.Split(';'))
+                .Select(pair => pair.Trim())
+                .Where(pair => pair.Length > 0)
+                .ToList();
         }
 
         /// <summary>

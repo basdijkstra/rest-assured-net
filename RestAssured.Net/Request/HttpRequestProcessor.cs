@@ -17,10 +17,12 @@ namespace RestAssured.Request
 {
     using System;
     using System.Diagnostics;
+    using System.Linq;
     using System.Net;
     using System.Net.Http;
     using System.Net.Security;
     using System.Security.Cryptography.X509Certificates;
+    using System.Threading;
     using System.Threading.Tasks;
     using RestAssured.Request.Cookies;
     using RestAssured.Request.Exceptions;
@@ -31,8 +33,15 @@ namespace RestAssured.Request
     /// </summary>
     internal class HttpRequestProcessor : IDisposable
     {
+        /// <summary>
+        /// The timeout used when no timeout was set and the <see cref="HttpClient"/> was created by this class.
+        /// This is equal to the default timeout of an <see cref="HttpClient"/>.
+        /// </summary>
+        private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(100);
+
         private readonly HttpClientHandler httpClientHandler;
         private readonly HttpClient httpClient;
+        private readonly bool isSuppliedHttpClient;
         private CookieContainer cookieContainer = new CookieContainer();
         private bool disposed = false;
 
@@ -94,16 +103,20 @@ namespace RestAssured.Request
                 };
             }
 
-            this.httpClient = httpClient ?? new HttpClient(this.httpClientHandler);
-        }
-
-        /// <summary>
-        /// Sets the timeout on the HTTP client to the specified value.
-        /// </summary>
-        /// <param name="timeout">The timeout to set on the HTTP client.</param>
-        internal void SetTimeout(TimeSpan timeout)
-        {
-            this.httpClient.Timeout = timeout;
+            if (httpClient != null)
+            {
+                this.httpClient = httpClient;
+                this.isSuppliedHttpClient = true;
+            }
+            else
+            {
+                // Timeouts are applied per request using a cancellation token (see Send()),
+                // so the timeout of the HttpClient itself must not cut off longer timeouts.
+                this.httpClient = new HttpClient(this.httpClientHandler)
+                {
+                    Timeout = System.Threading.Timeout.InfiniteTimeSpan,
+                };
+            }
         }
 
         /// <summary>
@@ -112,10 +125,17 @@ namespace RestAssured.Request
         /// <param name="request">The HTTP request message object to be sent.</param>
         /// <param name="cookieCollection">The <see cref="CookieCollection"/> to add to the request before it is sent.</param>
         /// <param name="httpCompletionOption">The <see cref="HttpCompletionOption"/> setting to use when sending the request.</param>
+        /// <param name="timeout">The timeout for this request, or <c>null</c> if no timeout was set in the request or request specification.</param>
         /// <returns>The HTTP response.</returns>
         /// <exception cref="HttpRequestProcessorException">Thrown whenever the HTTP request fails.</exception>
-        internal async Task<VerifiableResponse> Send(HttpRequestMessage request, CookieCollection cookieCollection, HttpCompletionOption httpCompletionOption)
+        /// <exception cref="TimeoutException">Thrown whenever the request times out, with the timeout that was exceeded in the message.</exception>
+        internal async Task<VerifiableResponse> Send(HttpRequestMessage request, CookieCollection cookieCollection, HttpCompletionOption httpCompletionOption, TimeSpan? timeout)
         {
+            // The timeout is applied using a cancellation token, so that the HttpClient itself is never changed.
+            // An HttpClient supplied by the user keeps its own timeout as well: the shorter of the two applies.
+            TimeSpan? requestTimeout = timeout ?? (this.isSuppliedHttpClient ? null : DefaultTimeout);
+            using CancellationTokenSource? timeoutTokenSource = requestTimeout != null ? new CancellationTokenSource((TimeSpan)requestTimeout) : null;
+
             CookieUtils cookieUtils = new CookieUtils();
 
             foreach (Cookie cookie in cookieCollection)
@@ -125,12 +145,19 @@ namespace RestAssured.Request
 
             this.cookieContainer.Add(cookieCollection);
 
+            // A user-supplied HttpClient does not use the handler (and the cookie container) created by this class,
+            // so the request cookies are added to the request as a Cookie header instead.
+            if (this.isSuppliedHttpClient)
+            {
+                this.AddCookieHeader(request);
+            }
+
             try
             {
                 Stopwatch stopwatch = new Stopwatch();
 
                 stopwatch.Start();
-                HttpResponseMessage response = await this.httpClient.SendAsync(request, httpCompletionOption);
+                HttpResponseMessage response = await this.httpClient.SendAsync(request, httpCompletionOption, timeoutTokenSource?.Token ?? CancellationToken.None);
                 stopwatch.Stop();
 
                 CookieContainer responseCookies = cookieUtils.GetResponseCookies(this.cookieContainer, cookieCollection, response);
@@ -141,11 +168,42 @@ namespace RestAssured.Request
             {
                 throw new HttpRequestProcessorException(hre.Message, hre);
             }
+            catch (TaskCanceledException tce)
+            {
+                // Report the timeout that was actually exceeded: either the one set for this request,
+                // or the timeout of the HttpClient (when the user supplied their own HttpClient).
+                TimeSpan exceededTimeout = timeoutTokenSource?.IsCancellationRequested == true ? (TimeSpan)requestTimeout! : this.httpClient.Timeout;
+                throw new TimeoutException($"Request timeout of {exceededTimeout} exceeded.", tce);
+            }
         }
 
         private static bool ServerCertificateCustomValidation(HttpRequestMessage requestMessage, X509Certificate2? certificate, X509Chain? chain, SslPolicyErrors sslErrors)
         {
             return sslErrors == SslPolicyErrors.None;
+        }
+
+        /// <summary>
+        /// Adds the request cookies that apply to the request URI to the Cookie header of the request.
+        /// The cookie container applies the same rules (domain, path, secure, expiry) as when the cookies are sent by the handler.
+        /// A Cookie header that was already set in the request is kept, and combined with the request cookies into a single header.
+        /// </summary>
+        /// <param name="request">The request to add the Cookie header to.</param>
+        private void AddCookieHeader(HttpRequestMessage request)
+        {
+            string requestCookies = this.cookieContainer.GetCookieHeader(request.RequestUri!);
+
+            if (requestCookies.Length == 0)
+            {
+                return;
+            }
+
+            if (request.Headers.TryGetValues("Cookie", out var existingValues))
+            {
+                requestCookies = string.Join("; ", existingValues.Append(requestCookies));
+                request.Headers.Remove("Cookie");
+            }
+
+            request.Headers.TryAddWithoutValidation("Cookie", requestCookies);
         }
     }
 }

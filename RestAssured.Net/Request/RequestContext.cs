@@ -95,9 +95,14 @@ namespace RestAssured.Request
         internal MultipartFormDataContent? MultipartFormDataContent { get; set; }
 
         /// <summary>
-        /// Whether to disable SSL certificate validation for this request.
+        /// Whether SSL certificate validation was disabled for this request (not through the global configuration).
         /// </summary>
         internal bool DisableSslCertificateValidation { get; set; }
+
+        /// <summary>
+        /// Whether SSL certificate validation was disabled in the global configuration.
+        /// </summary>
+        internal bool GlobalDisableSslCertificateValidation { get; set; }
 
         /// <summary>
         /// The proxy to use for the request, if any.
