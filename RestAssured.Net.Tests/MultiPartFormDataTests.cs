@@ -34,20 +34,29 @@ namespace RestAssured.Tests
     [TestFixture]
     public class MultiPartFormDataTests : TestBase
     {
-        private readonly string plaintextFileName = @"ToDoItems.txt";
-        private readonly string csvFileName = @"Addresses.csv";
-
         private readonly string todoItem = "Watch Office Space";
+
+        private string tempDirectory;
+        private string plaintextFileName;
+        private string csvFileName;
 
         private string[] addressItems;
 
         /// <summary>
         /// Creates the files to be uploaded in these tests.
+        /// Every test gets its own temporary directory, so that test runs that run in parallel
+        /// (for example, parallel Stryker test runners) do not use the same files.
         /// </summary>
         /// <returns>The asynchronous test result.</returns>
         [SetUp]
         public async Task CreateFilesToUpload()
         {
+            this.tempDirectory = Path.Combine(Path.GetTempPath(), "RestAssured.Net.Tests", Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(this.tempDirectory);
+
+            this.plaintextFileName = Path.Combine(this.tempDirectory, "ToDoItems.txt");
+            this.csvFileName = Path.Combine(this.tempDirectory, "Addresses.csv");
+
             this.addressItems = this.GetAddressCsv(Faker.RandomNumber.Next(2, 8));
             await File.WriteAllLinesAsync(this.plaintextFileName, new string[] { this.todoItem });
             await File.WriteAllLinesAsync(this.csvFileName, this.addressItems);
@@ -176,7 +185,7 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
-        /// Deletes the file created for test execution.
+        /// Deletes the temporary directory and the files created for test execution.
         /// </summary>
         [TearDown]
         public void DeleteFile()
@@ -184,8 +193,7 @@ namespace RestAssured.Tests
             GC.Collect();
             GC.WaitForPendingFinalizers();
 
-            File.Delete(this.plaintextFileName);
-            File.Delete(this.csvFileName);
+            Directory.Delete(this.tempDirectory, recursive: true);
         }
 
         private string GetAddressCsvLine()
