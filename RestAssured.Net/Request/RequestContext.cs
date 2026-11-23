@@ -65,14 +65,14 @@ namespace RestAssured.Request
         internal object RequestBody { get; set; } = string.Empty;
 
         /// <summary>
-        /// The Content-Type header value.
+        /// The Content-Type header value set in the request, or <c>null</c> if it was not set.
         /// </summary>
-        internal string ContentTypeHeader { get; set; } = "application/json";
+        internal string? ContentTypeHeader { get; set; }
 
         /// <summary>
-        /// The content character encoding.
+        /// The content character encoding set in the request, or <c>null</c> if it was not set.
         /// </summary>
-        internal Encoding ContentEncoding { get; set; } = Encoding.UTF8;
+        internal Encoding? ContentEncoding { get; set; }
 
         /// <summary>
         /// Whether to strip the charset from the Content-Type header.
@@ -80,9 +80,9 @@ namespace RestAssured.Request
         internal bool StripCharset { get; set; }
 
         /// <summary>
-        /// The JSON serializer settings to use when serializing request bodies.
+        /// The JSON serializer settings set in the request, or <c>null</c> if they were not set.
         /// </summary>
-        internal JsonSerializerSettings JsonSerializerSettings { get; set; } = new JsonSerializerSettings();
+        internal JsonSerializerSettings? JsonSerializerSettings { get; set; }
 
         /// <summary>
         /// Optional form data to send as x-www-form-urlencoded content.

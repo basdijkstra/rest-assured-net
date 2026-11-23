@@ -48,7 +48,7 @@ namespace RestAssured.Request.Builders
         private readonly Encoding? contentEncoding = null;
         private readonly bool disableSslCertificateValidation = false;
         private readonly LogConfiguration logConfiguration = new LogConfiguration();
-        private readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
+        private readonly JsonSerializerSettings? jsonSerializerSettings = null;
         private readonly HttpCompletionOption httpCompletionOption = HttpCompletionOption.ResponseContentRead;
 
         /// <summary>

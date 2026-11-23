@@ -15,7 +15,11 @@
 // </copyright>
 namespace RestAssured.Tests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Text;
+    using Newtonsoft.Json;
     using NUnit.Framework;
     using RestAssured.Logging;
     using RestAssured.Request.Builders;
@@ -251,6 +255,151 @@ namespace RestAssured.Tests
                 .Get("/query-string-endpoint?id=1&name=John%20Doe")
                 .Then()
                 .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test checking that a Content-Type set in the request takes precedence
+        /// over a Content-Type set in the request specification.
+        /// </summary>
+        [Test]
+        public void RequestContentTypeOverridesSpecContentType()
+        {
+            var requestSpecification = new RequestSpecBuilder()
+                .WithBaseUri(MOCK_SERVER_BASE_URL)
+                .WithContentType("application/json")
+                .Build();
+
+            Given()
+                .Spec(requestSpecification)
+                .ContentType("application/xml")
+                .Body("<a/>")
+                .When()
+                .Post("/precedence");
+
+            Assert.That(this.GetLastRequestHeaderValues("Content-Type"), Is.EqualTo(new[] { "application/xml; charset=utf-8" }));
+        }
+
+        /// <summary>
+        /// A test checking that a content encoding set in the request takes precedence
+        /// over a content encoding set in the request specification.
+        /// </summary>
+        [Test]
+        public void RequestContentEncodingOverridesSpecContentEncoding()
+        {
+            var requestSpecification = new RequestSpecBuilder()
+                .WithBaseUri(MOCK_SERVER_BASE_URL)
+                .WithContentEncoding(Encoding.ASCII)
+                .Build();
+
+            Given()
+                .Spec(requestSpecification)
+                .ContentEncoding(Encoding.UTF8)
+                .Body("ü")
+                .When()
+                .Post("/precedence");
+
+            Assert.That(this.GetLastRequestHeaderValues("Content-Type"), Is.EqualTo(new[] { "application/json; charset=utf-8" }));
+            Assert.That(this.Server.LogEntries.Last().RequestMessage.Body, Is.EqualTo("ü"));
+        }
+
+        /// <summary>
+        /// A test checking that JSON serializer settings set in the request take precedence
+        /// over JSON serializer settings set in the request specification.
+        /// </summary>
+        [Test]
+        public void RequestJsonSerializerSettingsOverrideSpecJsonSerializerSettings()
+        {
+            var requestSpecification = new RequestSpecBuilder()
+                .WithBaseUri(MOCK_SERVER_BASE_URL)
+                .WithJsonSerializerSettings(new JsonSerializerSettings { NullValueHandling = NullValueHandling.Include })
+                .Build();
+
+            Given()
+                .Spec(requestSpecification)
+                .JsonSerializerSettings(new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore })
+                .Body(new { a = 1, b = (string)null })
+                .When()
+                .Post("/precedence");
+
+            Assert.That(this.Server.LogEntries.Last().RequestMessage.Body, Is.EqualTo("{\"a\":1}"));
+        }
+
+        /// <summary>
+        /// A test checking that JSON serializer settings set in the request are used
+        /// when the request specification does not set any JSON serializer settings.
+        /// </summary>
+        [Test]
+        public void RequestJsonSerializerSettingsAreUsedWhenSpecHasNone()
+        {
+            var requestSpecification = new RequestSpecBuilder()
+                .WithBaseUri(MOCK_SERVER_BASE_URL)
+                .Build();
+
+            Given()
+                .Spec(requestSpecification)
+                .JsonSerializerSettings(new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore })
+                .Body(new { a = 1, b = (string)null })
+                .When()
+                .Post("/precedence");
+
+            Assert.That(this.Server.LogEntries.Last().RequestMessage.Body, Is.EqualTo("{\"a\":1}"));
+        }
+
+        /// <summary>
+        /// A test checking that a header set in the request replaces a header with the same name
+        /// (compared case-insensitively) set in the request specification.
+        /// </summary>
+        [Test]
+        public void RequestHeaderOverridesSpecHeaderWithSameName()
+        {
+            var requestSpecification = new RequestSpecBuilder()
+                .WithBaseUri(MOCK_SERVER_BASE_URL)
+                .WithHeader("x-tenant", "a")
+                .Build();
+
+            Given()
+                .Spec(requestSpecification)
+                .Header("X-Tenant", "b")
+                .When()
+                .Get("/precedence");
+
+            Assert.That(this.GetLastRequestHeaderValues("X-Tenant"), Is.EqualTo(new[] { "b" }));
+        }
+
+        /// <summary>
+        /// A test checking that a user agent set in the request replaces
+        /// the user agent set in the request specification.
+        /// </summary>
+        [Test]
+        public void RequestUserAgentOverridesSpecUserAgent()
+        {
+            var requestSpecification = new RequestSpecBuilder()
+                .WithBaseUri(MOCK_SERVER_BASE_URL)
+                .WithUserAgent("SpecAgent", "1.0")
+                .Build();
+
+            Given()
+                .Spec(requestSpecification)
+                .UserAgent("RequestAgent", "2.0")
+                .When()
+                .Get("/precedence");
+
+            Assert.That(this.GetLastRequestHeaderValues("User-Agent"), Is.EqualTo(new[] { "RequestAgent/2.0" }));
+        }
+
+        /// <summary>
+        /// Returns the values of a header in the last request received by the mock server.
+        /// </summary>
+        /// <param name="name">The name of the header (case-insensitive).</param>
+        /// <returns>The values of the header, or an empty list if the header was not sent.</returns>
+        private IEnumerable<string> GetLastRequestHeaderValues(string name)
+        {
+            var headers = this.Server.LogEntries.Last().RequestMessage.Headers;
+
+            return headers
+                .Where(header => string.Equals(header.Key, name, StringComparison.OrdinalIgnoreCase))
+                .SelectMany(header => header.Value)
+                .ToList();
         }
 
         /// <summary>

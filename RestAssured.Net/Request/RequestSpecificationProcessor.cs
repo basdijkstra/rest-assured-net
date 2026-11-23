@@ -82,12 +82,17 @@ namespace RestAssured.Request
                 return request;
             }
 
+            // Headers set in the request take precedence over (replace) headers with the same name
+            // in the request specification, header names are compared case-insensitively.
             foreach (KeyValuePair<string, object> entry in requestSpec.Headers)
             {
-                request.Headers.Add(entry.Key, entry.Value.ToString());
+                if (!request.Headers.Contains(entry.Key))
+                {
+                    request.Headers.Add(entry.Key, entry.Value.ToString());
+                }
             }
 
-            if (requestSpec.UserAgent != null)
+            if (requestSpec.UserAgent != null && !request.Headers.Contains("User-Agent"))
             {
                 request.Headers.UserAgent.Add(requestSpec.UserAgent);
             }

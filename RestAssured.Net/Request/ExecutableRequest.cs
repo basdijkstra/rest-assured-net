@@ -40,15 +40,15 @@ namespace RestAssured.Request
         private CookieCollection cookieCollection = new CookieCollection();
         private RequestSpecification? requestSpecification;
         private object requestBody = string.Empty;
-        private string contentTypeHeader = "application/json";
-        private Encoding contentEncoding = Encoding.UTF8;
+        private string? contentTypeHeader = null;
+        private Encoding? contentEncoding = null;
         private IEnumerable<KeyValuePair<string, string>> queryParams = new List<KeyValuePair<string, string>>();
         private Dictionary<string, string> pathParams = new Dictionary<string, string>();
         private IEnumerable<KeyValuePair<string, string>>? formData = null;
         private MultipartFormDataContent? multipartFormDataContent = null;
         private TimeSpan? timeout = null;
         private IWebProxy? proxy = null;
-        private JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
+        private JsonSerializerSettings? jsonSerializerSettings = null;
         private HttpCompletionOption httpCompletionOption = HttpCompletionOption.ResponseContentRead;
         private NetworkCredential? networkCredential = null;
         private bool disableSslCertificateValidation = false;

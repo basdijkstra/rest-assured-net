@@ -24,6 +24,7 @@ namespace RestAssured.Request
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.WebUtilities;
+    using Newtonsoft.Json;
     using RestAssured.Logging;
     using RestAssured.Request.Builders;
     using RestAssured.Request.Exceptions;
@@ -34,6 +35,11 @@ namespace RestAssured.Request
     /// </summary>
     internal static class RequestExecutor
     {
+        /// <summary>
+        /// The Content-Type used when neither the request nor the request specification sets one.
+        /// </summary>
+        private const string DefaultContentType = "application/json";
+
         /// <summary>
         /// Matches a path parameter placeholder such as [userId] and captures the name between the brackets.
         /// </summary>
@@ -81,11 +87,13 @@ namespace RestAssured.Request
             // Apply other settings provided in the request specification to the request
             context.Request = RequestSpecificationProcessor.Apply(context.RequestSpecification!, context.Request);
 
+            // Values set in the request take precedence over values set in the request specification,
+            // and the defaults are only used when neither of them sets a value.
             var bodySettings = new RequestBodySettings(
-                context.RequestSpecification?.ContentType ?? context.ContentTypeHeader,
-                context.RequestSpecification?.ContentEncoding ?? context.ContentEncoding,
+                context.ContentTypeHeader ?? context.RequestSpecification?.ContentType ?? DefaultContentType,
+                context.ContentEncoding ?? context.RequestSpecification?.ContentEncoding ?? Encoding.UTF8,
                 context.StripCharset,
-                context.RequestSpecification?.JsonSerializerSettings ?? context.JsonSerializerSettings);
+                context.JsonSerializerSettings ?? context.RequestSpecification?.JsonSerializerSettings ?? new JsonSerializerSettings());
 
             context.Request.Content = RequestBodyFactory.Create(
                 context.MultipartFormDataContent,
