@@ -37,16 +37,13 @@ namespace RestAssured.Tests
     {
         private CollectingLogger logger;
 
-        private HttpClient httpClient;
-
         /// <summary>
-        /// Creates the logger, the user-supplied HttpClient and the stub used in the tests.
+        /// Creates the logger and the stub used in the tests.
         /// </summary>
         [SetUp]
         public void SetUp()
         {
             this.logger = new CollectingLogger();
-            this.httpClient = new HttpClient();
 
             this.Server?.Given(Request.Create().WithPath("/supplied-client").UsingGet())
                 .RespondWith(Response.Create()
@@ -54,12 +51,11 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
-        /// Disposes the user-supplied HttpClient and resets the global configuration.
+        /// Resets the global configuration.
         /// </summary>
         [TearDown]
         public void TearDown()
         {
-            this.httpClient.Dispose();
             RestAssuredConfig.DisableSslCertificateValidation = false;
         }
 
@@ -69,8 +65,10 @@ namespace RestAssured.Tests
         [Test]
         public void ProxySetInRequestThrowsWithSuppliedHttpClient()
         {
+            using HttpClient httpClient = new HttpClient();
+
             var rce = Assert.Throws<RequestCreationException>(() =>
-                Given(this.logger, this.httpClient)
+                Given(this.logger, httpClient)
                     .Proxy(new WebProxy("http://localhost:1"))
                     .When()
                     .Get($"{MOCK_SERVER_BASE_URL}/supplied-client"));
@@ -85,8 +83,10 @@ namespace RestAssured.Tests
         [Test]
         public void DisabledSslValidationSetInRequestThrowsWithSuppliedHttpClient()
         {
+            using HttpClient httpClient = new HttpClient();
+
             var rce = Assert.Throws<RequestCreationException>(() =>
-                Given(this.logger, this.httpClient)
+                Given(this.logger, httpClient)
                     .DisableSslCertificateValidation()
                     .When()
                     .Get($"{MOCK_SERVER_BASE_URL}/supplied-client"));
@@ -101,8 +101,10 @@ namespace RestAssured.Tests
         [Test]
         public void NtlmAuthSetInRequestThrowsWithSuppliedHttpClient()
         {
+            using HttpClient httpClient = new HttpClient();
+
             var rce = Assert.Throws<RequestCreationException>(() =>
-                Given(this.logger, this.httpClient)
+                Given(this.logger, httpClient)
                     .NtlmAuth("user", "password", "domain")
                     .When()
                     .Get($"{MOCK_SERVER_BASE_URL}/supplied-client"));
@@ -117,8 +119,10 @@ namespace RestAssured.Tests
         [Test]
         public void AllUnsupportedRequestSettingsAreNamed()
         {
+            using HttpClient httpClient = new HttpClient();
+
             var rce = Assert.Throws<RequestCreationException>(() =>
-                Given(this.logger, this.httpClient)
+                Given(this.logger, httpClient)
                     .Proxy(new WebProxy("http://localhost:1"))
                     .NtlmAuth("user", "password", "domain")
                     .When()
@@ -134,11 +138,13 @@ namespace RestAssured.Tests
         [Test]
         public void ProxyInRequestSpecificationIsReportedAsWarning()
         {
+            using HttpClient httpClient = new HttpClient();
+
             var spec = new RequestSpecBuilder()
                 .WithProxy(new WebProxy("http://localhost:1"))
                 .Build();
 
-            Given(this.logger, this.httpClient)
+            Given(this.logger, httpClient)
                 .Spec(spec)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/supplied-client")
@@ -156,11 +162,13 @@ namespace RestAssured.Tests
         [Test]
         public void DisabledSslValidationInRequestSpecificationIsReportedAsWarning()
         {
+            using HttpClient httpClient = new HttpClient();
+
             var spec = new RequestSpecBuilder()
                 .WithDisabledSslCertificateValidation()
                 .Build();
 
-            Given(this.logger, this.httpClient)
+            Given(this.logger, httpClient)
                 .Spec(spec)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/supplied-client")
@@ -178,9 +186,11 @@ namespace RestAssured.Tests
         [Test]
         public void GlobalDisabledSslValidationIsReportedAsWarning()
         {
+            using HttpClient httpClient = new HttpClient();
+
             RestAssuredConfig.DisableSslCertificateValidation = true;
 
-            Given(this.logger, this.httpClient)
+            Given(this.logger, httpClient)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/supplied-client")
                 .Then()
@@ -196,7 +206,9 @@ namespace RestAssured.Tests
         [Test]
         public void NoWarningIsLoggedWithoutUnsupportedSettings()
         {
-            Given(this.logger, this.httpClient)
+            using HttpClient httpClient = new HttpClient();
+
+            Given(this.logger, httpClient)
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/supplied-client")
                 .Then()
