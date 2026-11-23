@@ -20,6 +20,7 @@ bug ([#155](https://github.com/basdijkstra/rest-assured-net/issues/155))
 - Fixed issue where square brackets in custom error messages are treated as template tags
  ([#170](https://github.com/basdijkstra/rest-assured-net/issues/170))
 - Fixed issues with specific request values being overridden by values in spec ([#153](https://github.com/basdijkstra/rest-assured-net/issues/153), [#179](https://github.com/basdijkstra/rest-assured-net/issues/179))
+- Fixed issue where WithBaseUri drops the path part of the base URI, and RequestSpecification.BaseUri is never set ([#160](https://github.com/basdijkstra/rest-assured-net/issues/160))
 
 ### [5.1.0] - 2026-11-11
 
