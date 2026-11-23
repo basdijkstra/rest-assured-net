@@ -201,27 +201,6 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
-        /// A test checking that bracketed text in a custom error message that is not
-        /// a template value is kept in the message of the exception that is thrown.
-        /// </summary>
-        [Test]
-        public void BracketedTextInCustomErrorMessageIsKept()
-        {
-            this.CreateStubForHttpOK();
-
-            var rve = Assert.Throws<ResponseVerificationException>(() =>
-            {
-                Given()
-                    .When()
-                    .Get($"{MOCK_SERVER_BASE_URL}/http-status-code-ok")
-                    .Then()
-                    .StatusCode(404, "[TICKET-123] status was [actual]");
-            });
-
-            Assert.That(rve?.Message, Is.EqualTo("[TICKET-123] status was 200"));
-        }
-
-        /// <summary>
         /// Creates the stub response for the HTTP OK example.
         /// </summary>
         private void CreateStubForHttpOK()

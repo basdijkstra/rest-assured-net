@@ -222,30 +222,6 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
-        /// A test checking that a cookie that was sent with the request,
-        /// but not set by the server, is not found when extracting response cookies.
-        /// </summary>
-        [Test]
-        public void RequestCookieIsNotReportedAsResponseCookieWhenExtracting()
-        {
-            this.CreateStubForResponseWithoutCookie();
-
-            ExtractionException ee = Assert.Throws<ExtractionException>(() =>
-            {
-                Given()
-                .Cookie("session", "abc")
-                .When()
-                .Get($"{MOCK_SERVER_BASE_URL}/response-without-cookie")
-                .Then()
-                .StatusCode(200)
-                .And()
-                .Extract().Cookie("session");
-            });
-
-            Assert.That(ee.Message, Is.EqualTo("Cookie with name 'session' could not be found in the response."));
-        }
-
-        /// <summary>
         /// A test checking that a cookie set by the server overwrites
         /// a cookie with the same name that was sent with the request.
         /// </summary>

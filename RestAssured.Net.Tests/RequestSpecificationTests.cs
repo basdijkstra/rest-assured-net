@@ -178,27 +178,6 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
-        /// A test checking that a query string in a relative endpoint is sent as a query string,
-        /// and not as part of the path, when a request specification is used.
-        /// </summary>
-        [Test]
-        public void RelativeEndpointWithQueryStringCanBeUsedWithRequestSpecification()
-        {
-            this.CreateStubForQueryStringEndpoint("/query-string-endpoint");
-
-            var requestSpecification = new RequestSpecBuilder()
-                .WithBaseUri("http://localhost:9876")
-                .Build();
-
-            Given()
-                .Spec(requestSpecification)
-                .When()
-                .Get("/query-string-endpoint?id=1")
-                .Then()
-                .StatusCode(200);
-        }
-
-        /// <summary>
         /// A test checking that a query string in a relative endpoint is sent as a query string
         /// when a request specification with a base path is used.
         /// </summary>

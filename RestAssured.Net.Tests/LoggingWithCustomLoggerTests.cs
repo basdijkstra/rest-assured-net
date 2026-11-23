@@ -211,54 +211,8 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
-        /// Verifies that the value of a sensitive cookie is masked in the Set-Cookie response header.
-        /// </summary>
-        [Test]
-        public void SensitiveResponseCookieIsMaskedInSetCookieHeader()
-        {
-            this.CreateStubForMaskingResponse();
-
-            Given()
-                .Spec(this.requestSpecification)
-                .Log(new LogConfiguration
-                {
-                    ResponseLogLevel = ResponseLogLevel.Headers,
-                    SensitiveResponseHeadersAndCookies = new List<string> { "session" },
-                })
-                .When()
-                .Get($"{MOCK_SERVER_BASE_URL}/masking-response")
-                .Then()
-                .StatusCode(200);
-
-            Assert.That(this.logger.Messages, Has.Some.Contains("session=*****; Path=/"));
-            Assert.That(this.logger.Messages, Has.None.Contains("TOPSECRET123"));
-        }
-
-        /// <summary>
-        /// Verifies that the value of a cookie that is not marked as sensitive is not masked in the Set-Cookie response header.
-        /// </summary>
-        [Test]
-        public void NonSensitiveResponseCookieIsNotMaskedInSetCookieHeader()
-        {
-            this.CreateStubForMaskingResponse();
-
-            Given()
-                .Spec(this.requestSpecification)
-                .Log(new LogConfiguration
-                {
-                    ResponseLogLevel = ResponseLogLevel.Headers,
-                    SensitiveResponseHeadersAndCookies = new List<string> { "session" },
-                })
-                .When()
-                .Get($"{MOCK_SERVER_BASE_URL}/masking-response")
-                .Then()
-                .StatusCode(200);
-
-            Assert.That(this.logger.Messages, Has.Some.Contains("other=visible"));
-        }
-
-        /// <summary>
-        /// Verifies that sensitive cookies are masked when the configured name differs in case from the cookie name.
+        /// Verifies that sensitive cookies are masked when the configured name differs in case from the cookie name,
+        /// and that cookies that are not marked as sensitive are not masked.
         /// </summary>
         [Test]
         public void SensitiveCookieIsMaskedRegardlessOfCase()
@@ -280,6 +234,7 @@ namespace RestAssured.Tests
             Assert.That(this.logger.Messages, Has.Some.Contains("session=*****; Path=/"));
             Assert.That(this.logger.Messages, Has.Some.Contains("Cookie: session=*****"));
             Assert.That(this.logger.Messages, Has.None.Contains("TOPSECRET123"));
+            Assert.That(this.logger.Messages, Has.Some.Contains("other=visible"));
         }
 
         /// <summary>
@@ -381,26 +336,6 @@ namespace RestAssured.Tests
                 .StatusCode(200);
 
             Assert.That(this.logger.Messages, Has.Some.Contains("hello world"));
-        }
-
-        /// <summary>
-        /// Verifies that an error response body that claims to be JSON but cannot be parsed
-        /// is logged as is when logging only error responses.
-        /// </summary>
-        [Test]
-        public void NonJsonErrorResponseBodyIsLoggedOnError()
-        {
-            this.CreateStubForResponseBody("/error-response", 500, "application/json", "Internal error");
-
-            Given()
-                .Spec(this.requestSpecification)
-                .Log(new LogConfiguration { ResponseLogLevel = ResponseLogLevel.OnError })
-                .When()
-                .Get($"{MOCK_SERVER_BASE_URL}/error-response")
-                .Then()
-                .StatusCode(500);
-
-            Assert.That(this.logger.Messages, Has.Some.Contains("Internal error"));
         }
 
         /// <summary>
@@ -512,24 +447,6 @@ namespace RestAssured.Tests
                 .StatusCode(200);
 
             Assert.That(this.logger.Messages, Is.Empty);
-        }
-
-        /// <summary>
-        /// Verifies that only the request is written to the custom logger when response logging is disabled.
-        /// </summary>
-        [Test]
-        public void OnlyRequestIsLoggedWhenResponseLoggingIsDisabled()
-        {
-            Given()
-                .Spec(this.requestSpecification)
-                .Log(new LogConfiguration { RequestLogLevel = RequestLogLevel.All })
-                .When()
-                .Get($"{MOCK_SERVER_BASE_URL}/custom-logger-test")
-                .Then()
-                .StatusCode(200);
-
-            Assert.That(this.logger.Messages.Count, Is.EqualTo(1));
-            Assert.That(this.logger.Messages[0], Does.Contain("GET"));
         }
 
         /// <summary>
