@@ -19,6 +19,7 @@ bug ([#155](https://github.com/basdijkstra/rest-assured-net/issues/155))
 - Fixed issue where brackets that were not path parameters were mistaken for being so ([#154](https://github.com/basdijkstra/rest-assured-net/issues/154))
 - Fixed issue where square brackets in custom error messages are treated as template tags
  ([#170](https://github.com/basdijkstra/rest-assured-net/issues/170))
+- Fixed issues with specific request values being overridden by values in spec ([#153](https://github.com/basdijkstra/rest-assured-net/issues/153), [#179](https://github.com/basdijkstra/rest-assured-net/issues/179))
 
 ### [5.1.0] - 2026-11-11
 
