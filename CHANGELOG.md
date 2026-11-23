@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Fixed
 
+- Fixed issue where certain request properties were not properly applied when injecting custom HTTP client ([#156](https://github.com/basdijkstra/rest-assured-net/issues/156))
 - Fixed issue where cookie verification and extraction pass for cookies the server never set
 bug ([#155](https://github.com/basdijkstra/rest-assured-net/issues/155))
 - Fixed issue where body logging crashes requests whose body isn't valid JSON or XML ([#157](https://github.com/basdijkstra/rest-assured-net/issues/157))
