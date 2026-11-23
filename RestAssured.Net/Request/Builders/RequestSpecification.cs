@@ -120,6 +120,11 @@ namespace RestAssured.Request.Builders
         public IRestAssuredNetLogger? Logger { get; set; }
 
         /// <summary>
+        /// The (unescaped) path part of the base URI, to be placed before the base path and the endpoint.
+        /// </summary>
+        internal string BaseUriPath { get; set; } = string.Empty;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="RequestSpecification"/> class.
         /// </summary>
         /// <param name="scheme">The scheme (http, https, ....) to use in this request.</param>

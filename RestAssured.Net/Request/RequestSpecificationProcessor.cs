@@ -17,6 +17,7 @@ namespace RestAssured.Request
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net.Http;
     using RestAssured.Request.Builders;
     using RestAssured.Request.Exceptions;
@@ -58,7 +59,7 @@ namespace RestAssured.Request
                 uri.Scheme = requestSpec.Scheme;
                 uri.Host = requestSpec.HostName;
                 uri.Port = requestSpec.Port;
-                uri.Path = BuildPath(requestSpec.BasePath, path);
+                uri.Path = BuildPath(requestSpec.BaseUriPath, requestSpec.BasePath, path);
                 uri.Query = query;
 
                 return uri.Uri;
@@ -104,15 +105,20 @@ namespace RestAssured.Request
         /// <summary>
         /// Builds the path to the resource to target in the request. Should have no leading / and all double // removed.
         /// </summary>
+        /// <param name="baseUriPath">The path part of the base URI as supplied in the request specification (can be an empty string).</param>
         /// <param name="basePath">The base path as supplied in the request specification (can be an empty string).</param>
         /// <param name="originalEndpoint">The original endpoint as supplied in the request.</param>
         /// <returns>A correctly formatted path to the resource to target in the request.</returns>
-        private static string BuildPath(string basePath, string originalEndpoint)
+        private static string BuildPath(string baseUriPath, string basePath, string originalEndpoint)
         {
+            string trimmedBaseUriPath = baseUriPath.TrimStart('/').TrimEnd('/');
             string trimmedBasePath = basePath.TrimStart('/').TrimEnd('/');
             string trimmedOriginalEndpoint = originalEndpoint.TrimStart('/').TrimEnd('/');
 
-            return $"{trimmedBasePath}/{trimmedOriginalEndpoint}";
+            // The path part of the base URI comes first, followed by the base path (if any).
+            string prefix = string.Join("/", new[] { trimmedBaseUriPath, trimmedBasePath }.Where(part => part.Length > 0));
+
+            return $"{prefix}/{trimmedOriginalEndpoint}";
         }
     }
 }

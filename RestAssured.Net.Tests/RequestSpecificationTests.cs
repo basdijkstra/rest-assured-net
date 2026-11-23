@@ -388,6 +388,101 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test checking that the path part of the base URI is included in the request.
+        /// </summary>
+        /// <param name="baseUriPath">The path part of the base URI.</param>
+        /// <param name="endpoint">The endpoint to use in the request.</param>
+        [TestCase("/api", "/echo", TestName = "Path in base URI is included in request")]
+        [TestCase("/api/", "/echo", TestName = "Path with trailing slash in base URI is included in request")]
+        [TestCase("/api", "echo", TestName = "Path in base URI is included in request for endpoint without leading slash")]
+        public void PathInBaseUriIsIncludedInRequest(string baseUriPath, string endpoint)
+        {
+            var requestSpecification = new RequestSpecBuilder()
+                .WithBaseUri($"{MOCK_SERVER_BASE_URL}{baseUriPath}")
+                .Build();
+
+            Given()
+                .Spec(requestSpecification)
+                .When()
+                .Get(endpoint);
+
+            Assert.That(this.Server.LogEntries.Last().RequestMessage.Path, Is.EqualTo("/api/echo"));
+        }
+
+        /// <summary>
+        /// A test checking that the path part of the base URI is combined with the base path,
+        /// regardless of the order in which they are set.
+        /// </summary>
+        /// <param name="baseUriFirst">True to set the base URI before the base path, false to set it after.</param>
+        [TestCase(true, TestName = "Path in base URI is combined with base path set after it")]
+        [TestCase(false, TestName = "Path in base URI is combined with base path set before it")]
+        public void PathInBaseUriIsCombinedWithBasePath(bool baseUriFirst)
+        {
+            var builder = new RequestSpecBuilder();
+
+            if (baseUriFirst)
+            {
+                builder = builder.WithBaseUri($"{MOCK_SERVER_BASE_URL}/v1").WithBasePath("api");
+            }
+            else
+            {
+                builder = builder.WithBasePath("api").WithBaseUri($"{MOCK_SERVER_BASE_URL}/v1");
+            }
+
+            Given()
+                .Spec(builder.Build())
+                .When()
+                .Get("/echo");
+
+            Assert.That(this.Server.LogEntries.Last().RequestMessage.Path, Is.EqualTo("/v1/api/echo"));
+        }
+
+        /// <summary>
+        /// A test checking that encoded characters in the path part of the base URI are not encoded a second time.
+        /// </summary>
+        [Test]
+        public void EncodedCharactersInBaseUriPathAreNotEncodedTwice()
+        {
+            var requestSpecification = new RequestSpecBuilder()
+                .WithBaseUri($"{MOCK_SERVER_BASE_URL}/my%20api")
+                .Build();
+
+            Given()
+                .Spec(requestSpecification)
+                .When()
+                .Get("/echo");
+
+            Assert.That(this.Server.LogEntries.Last().RequestMessage.Path, Is.EqualTo("/my api/echo"));
+        }
+
+        /// <summary>
+        /// A test checking that the BaseUri property of the request specification reflects the configured base URI.
+        /// </summary>
+        [Test]
+        public void BaseUriPropertyReflectsConfiguredBaseUri()
+        {
+            var requestSpecification = new RequestSpecBuilder()
+                .WithBaseUri($"{MOCK_SERVER_BASE_URL}/api")
+                .Build();
+
+            Assert.That(requestSpecification.BaseUri, Is.EqualTo($"http://localhost:{MOCK_SERVER_PORT}/api"));
+        }
+
+        /// <summary>
+        /// A test checking that the BaseUri property of the request specification reflects a port set after the base URI.
+        /// </summary>
+        [Test]
+        public void BaseUriPropertyReflectsPortSetAfterBaseUri()
+        {
+            var requestSpecification = new RequestSpecBuilder()
+                .WithBaseUri("http://localhost")
+                .WithPort(1234)
+                .Build();
+
+            Assert.That(requestSpecification.BaseUri, Is.EqualTo("http://localhost:1234"));
+        }
+
+        /// <summary>
         /// Returns the values of a header in the last request received by the mock server.
         /// </summary>
         /// <param name="name">The name of the header (case-insensitive).</param>

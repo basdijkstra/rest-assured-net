@@ -67,6 +67,7 @@ namespace RestAssured.Request.Builders
         public RequestSpecBuilder WithPort(int port)
         {
             this.requestSpecification.Port = port;
+            this.UpdateBaseUri();
             return this;
         }
 
@@ -83,12 +84,16 @@ namespace RestAssured.Request.Builders
                 this.requestSpecification.Scheme = uri.Scheme;
                 this.requestSpecification.HostName = uri.Host;
                 this.requestSpecification.Port = uri.Port;
+
+                // Store the path unescaped, because it is escaped again when the request URI is built.
+                this.requestSpecification.BaseUriPath = Uri.UnescapeDataString(uri.AbsolutePath);
             }
             catch (UriFormatException)
             {
                 throw new RequestCreationException($"Supplied value '{baseUri}' is not a valid URI");
             }
 
+            this.UpdateBaseUri();
             return this;
         }
 
@@ -283,6 +288,17 @@ namespace RestAssured.Request.Builders
         public RequestSpecification Build()
         {
             return this.requestSpecification;
+        }
+
+        /// <summary>
+        /// Updates the BaseUri property of the <see cref="RequestSpecification"/> to reflect
+        /// the scheme, host name, port and base URI path that are currently configured.
+        /// </summary>
+        private void UpdateBaseUri()
+        {
+            string escapedPath = string.Join("/", this.requestSpecification.BaseUriPath.Split('/').Select(Uri.EscapeDataString)).TrimEnd('/');
+
+            this.requestSpecification.BaseUri = $"{this.requestSpecification.Scheme}://{this.requestSpecification.HostName}:{this.requestSpecification.Port}{escapedPath}";
         }
     }
 }
