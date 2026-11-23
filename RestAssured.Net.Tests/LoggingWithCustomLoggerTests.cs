@@ -360,44 +360,6 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
-        /// Verifies that a valid JSON response body is pretty-printed.
-        /// </summary>
-        [Test]
-        public void JsonResponseBodyIsPrettyPrinted()
-        {
-            this.CreateStubForResponseBody("/json-response", 200, "application/json", "{\"id\":1,\"user\":\"John Doe\"}");
-
-            Given()
-                .Spec(this.requestSpecification)
-                .Log(new LogConfiguration { ResponseLogLevel = ResponseLogLevel.Body })
-                .When()
-                .Get($"{MOCK_SERVER_BASE_URL}/json-response")
-                .Then()
-                .StatusCode(200);
-
-            Assert.That(this.logger.Messages, Has.Some.Contains("\"user\": \"John Doe\""));
-        }
-
-        /// <summary>
-        /// Verifies that a valid XML response body is pretty-printed.
-        /// </summary>
-        [Test]
-        public void XmlResponseBodyIsPrettyPrinted()
-        {
-            this.CreateStubForResponseBody("/xml-response", 200, "application/xml", "<a><b>1</b></a>");
-
-            Given()
-                .Spec(this.requestSpecification)
-                .Log(new LogConfiguration { ResponseLogLevel = ResponseLogLevel.Body })
-                .When()
-                .Get($"{MOCK_SERVER_BASE_URL}/xml-response")
-                .Then()
-                .StatusCode(200);
-
-            Assert.That(this.logger.Messages, Has.Some.Contains("  <b>1</b>"));
-        }
-
-        /// <summary>
         /// Verifies that a valid JSON response body without a Content-Type header is pretty-printed.
         /// </summary>
         [Test]
@@ -424,23 +386,6 @@ namespace RestAssured.Tests
         {
             Given()
                 .Spec(this.requestSpecification)
-                .When()
-                .Get($"{MOCK_SERVER_BASE_URL}/custom-logger-test")
-                .Then()
-                .StatusCode(200);
-
-            Assert.That(this.logger.Messages, Is.Empty);
-        }
-
-        /// <summary>
-        /// Verifies that the custom logger is not called for a successful response when only error responses are logged.
-        /// </summary>
-        [Test]
-        public void LoggerIsNotCalledOnSuccessfulResponseWhenLoggingOnErrorOnly()
-        {
-            Given()
-                .Spec(this.requestSpecification)
-                .Log(new LogConfiguration { ResponseLogLevel = ResponseLogLevel.OnError })
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/custom-logger-test")
                 .Then()

@@ -60,111 +60,39 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
-        /// Verifies that setting a proxy in the request throws an exception when a user-supplied HttpClient is used.
+        /// Verifies that proxy, disabled SSL certificate validation and NTLM authentication set in the request
+        /// throw an exception that names all of them when a user-supplied HttpClient is used, and that the request is not sent.
         /// </summary>
         [Test]
-        public void ProxySetInRequestThrowsWithSuppliedHttpClient()
+        public void UnsupportedRequestSettingsThrowWithSuppliedHttpClient()
         {
             using HttpClient httpClient = new HttpClient();
 
             var rce = Assert.Throws<RequestCreationException>(() =>
                 Given(this.logger, httpClient)
                     .Proxy(new WebProxy("http://localhost:1"))
-                    .When()
-                    .Get($"{MOCK_SERVER_BASE_URL}/supplied-client"));
-
-            Assert.That(rce?.Message, Does.Contain("Proxy"));
-            Assert.That(this.Server.LogEntries, Is.Empty, "The request should not have been sent.");
-        }
-
-        /// <summary>
-        /// Verifies that disabling SSL certificate validation in the request throws an exception when a user-supplied HttpClient is used.
-        /// </summary>
-        [Test]
-        public void DisabledSslValidationSetInRequestThrowsWithSuppliedHttpClient()
-        {
-            using HttpClient httpClient = new HttpClient();
-
-            var rce = Assert.Throws<RequestCreationException>(() =>
-                Given(this.logger, httpClient)
                     .DisableSslCertificateValidation()
-                    .When()
-                    .Get($"{MOCK_SERVER_BASE_URL}/supplied-client"));
-
-            Assert.That(rce?.Message, Does.Contain("DisableSslCertificateValidation"));
-            Assert.That(this.Server.LogEntries, Is.Empty, "The request should not have been sent.");
-        }
-
-        /// <summary>
-        /// Verifies that setting NTLM authentication in the request throws an exception when a user-supplied HttpClient is used.
-        /// </summary>
-        [Test]
-        public void NtlmAuthSetInRequestThrowsWithSuppliedHttpClient()
-        {
-            using HttpClient httpClient = new HttpClient();
-
-            var rce = Assert.Throws<RequestCreationException>(() =>
-                Given(this.logger, httpClient)
-                    .NtlmAuth("user", "password", "domain")
-                    .When()
-                    .Get($"{MOCK_SERVER_BASE_URL}/supplied-client"));
-
-            Assert.That(rce?.Message, Does.Contain("NtlmAuth"));
-            Assert.That(this.Server.LogEntries, Is.Empty, "The request should not have been sent.");
-        }
-
-        /// <summary>
-        /// Verifies that all settings in the request that cannot be applied are named in the exception message.
-        /// </summary>
-        [Test]
-        public void AllUnsupportedRequestSettingsAreNamed()
-        {
-            using HttpClient httpClient = new HttpClient();
-
-            var rce = Assert.Throws<RequestCreationException>(() =>
-                Given(this.logger, httpClient)
-                    .Proxy(new WebProxy("http://localhost:1"))
                     .NtlmAuth("user", "password", "domain")
                     .When()
                     .Get($"{MOCK_SERVER_BASE_URL}/supplied-client"));
 
             Assert.That(rce?.Message, Does.Contain("Proxy"));
+            Assert.That(rce?.Message, Does.Contain("DisableSslCertificateValidation"));
             Assert.That(rce?.Message, Does.Contain("NtlmAuth"));
+            Assert.That(this.Server.LogEntries, Is.Empty, "The request should not have been sent.");
         }
 
         /// <summary>
-        /// Verifies that a proxy set in a request specification is reported as a warning when a user-supplied HttpClient is used.
+        /// Verifies that a proxy and disabled SSL certificate validation set in a request specification
+        /// are reported in a single warning when a user-supplied HttpClient is used, and that the request is still sent.
         /// </summary>
         [Test]
-        public void ProxyInRequestSpecificationIsReportedAsWarning()
+        public void UnsupportedRequestSpecificationSettingsAreReportedAsWarning()
         {
             using HttpClient httpClient = new HttpClient();
 
             var spec = new RequestSpecBuilder()
                 .WithProxy(new WebProxy("http://localhost:1"))
-                .Build();
-
-            Given(this.logger, httpClient)
-                .Spec(spec)
-                .When()
-                .Get($"{MOCK_SERVER_BASE_URL}/supplied-client")
-                .Then()
-                .StatusCode(200);
-
-            Assert.That(this.GetWarnings(), Has.Count.EqualTo(1));
-            Assert.That(this.GetWarnings(), Has.Some.Contains("Proxy"));
-        }
-
-        /// <summary>
-        /// Verifies that disabling SSL certificate validation in a request specification is reported as a warning
-        /// when a user-supplied HttpClient is used.
-        /// </summary>
-        [Test]
-        public void DisabledSslValidationInRequestSpecificationIsReportedAsWarning()
-        {
-            using HttpClient httpClient = new HttpClient();
-
-            var spec = new RequestSpecBuilder()
                 .WithDisabledSslCertificateValidation()
                 .Build();
 
@@ -176,7 +104,8 @@ namespace RestAssured.Tests
                 .StatusCode(200);
 
             Assert.That(this.GetWarnings(), Has.Count.EqualTo(1));
-            Assert.That(this.GetWarnings(), Has.Some.Contains("DisableSslCertificateValidation"));
+            Assert.That(this.GetWarnings()[0], Does.Contain("Proxy (from RequestSpecification)"));
+            Assert.That(this.GetWarnings()[0], Does.Contain("DisableSslCertificateValidation (from RequestSpecification)"));
         }
 
         /// <summary>

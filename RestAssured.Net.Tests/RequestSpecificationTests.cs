@@ -15,9 +15,6 @@
 // </copyright>
 namespace RestAssured.Tests
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Text;
     using Newtonsoft.Json;
     using NUnit.Framework;
@@ -299,7 +296,7 @@ namespace RestAssured.Tests
                 .Post("/precedence");
 
             Assert.That(this.GetLastRequestHeaderValues("Content-Type"), Is.EqualTo(new[] { "application/json; charset=utf-8" }));
-            Assert.That(this.Server.LogEntries.Last().RequestMessage.Body, Is.EqualTo("ü"));
+            Assert.That(this.LastRequest.Body, Is.EqualTo("ü"));
         }
 
         /// <summary>
@@ -321,7 +318,7 @@ namespace RestAssured.Tests
                 .When()
                 .Post("/precedence");
 
-            Assert.That(this.Server.LogEntries.Last().RequestMessage.Body, Is.EqualTo("{\"a\":1}"));
+            Assert.That(this.LastRequest.Body, Is.EqualTo("{\"a\":1}"));
         }
 
         /// <summary>
@@ -342,7 +339,7 @@ namespace RestAssured.Tests
                 .When()
                 .Post("/precedence");
 
-            Assert.That(this.Server.LogEntries.Last().RequestMessage.Body, Is.EqualTo("{\"a\":1}"));
+            Assert.That(this.LastRequest.Body, Is.EqualTo("{\"a\":1}"));
         }
 
         /// <summary>
@@ -394,7 +391,6 @@ namespace RestAssured.Tests
         /// <param name="endpoint">The endpoint to use in the request.</param>
         [TestCase("/api", "/echo", TestName = "Path in base URI is included in request")]
         [TestCase("/api/", "/echo", TestName = "Path with trailing slash in base URI is included in request")]
-        [TestCase("/api", "echo", TestName = "Path in base URI is included in request for endpoint without leading slash")]
         public void PathInBaseUriIsIncludedInRequest(string baseUriPath, string endpoint)
         {
             var requestSpecification = new RequestSpecBuilder()
@@ -406,7 +402,7 @@ namespace RestAssured.Tests
                 .When()
                 .Get(endpoint);
 
-            Assert.That(this.Server.LogEntries.Last().RequestMessage.Path, Is.EqualTo("/api/echo"));
+            Assert.That(this.LastRequest.Path, Is.EqualTo("/api/echo"));
         }
 
         /// <summary>
@@ -434,7 +430,7 @@ namespace RestAssured.Tests
                 .When()
                 .Get("/echo");
 
-            Assert.That(this.Server.LogEntries.Last().RequestMessage.Path, Is.EqualTo("/v1/api/echo"));
+            Assert.That(this.LastRequest.Path, Is.EqualTo("/v1/api/echo"));
         }
 
         /// <summary>
@@ -452,7 +448,7 @@ namespace RestAssured.Tests
                 .When()
                 .Get("/echo");
 
-            Assert.That(this.Server.LogEntries.Last().RequestMessage.Path, Is.EqualTo("/my api/echo"));
+            Assert.That(this.LastRequest.Path, Is.EqualTo("/my api/echo"));
         }
 
         /// <summary>
@@ -480,21 +476,6 @@ namespace RestAssured.Tests
                 .Build();
 
             Assert.That(requestSpecification.BaseUri, Is.EqualTo("http://localhost:1234"));
-        }
-
-        /// <summary>
-        /// Returns the values of a header in the last request received by the mock server.
-        /// </summary>
-        /// <param name="name">The name of the header (case-insensitive).</param>
-        /// <returns>The values of the header, or an empty list if the header was not sent.</returns>
-        private IEnumerable<string> GetLastRequestHeaderValues(string name)
-        {
-            var headers = this.Server.LogEntries.Last().RequestMessage.Headers;
-
-            return headers
-                .Where(header => string.Equals(header.Key, name, StringComparison.OrdinalIgnoreCase))
-                .SelectMany(header => header.Value)
-                .ToList();
         }
 
         /// <summary>

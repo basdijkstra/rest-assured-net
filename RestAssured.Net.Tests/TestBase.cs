@@ -15,9 +15,12 @@
 // </copyright>
 namespace RestAssured.Tests
 {
+    using System;
     using System.Collections.Generic;
+    using System.Linq;
     using NUnit.Framework;
     using RestAssured.Tests.Models;
+    using WireMock;
     using WireMock.Server;
 
     /// <summary>
@@ -29,6 +32,11 @@ namespace RestAssured.Tests
         /// The WireMock server instance to which response definitions will be added.
         /// </summary>
         protected WireMockServer Server { get; private set; }
+
+        /// <summary>
+        /// Gets the last request received by the mock server, to verify what was actually sent.
+        /// </summary>
+        protected IRequestMessage LastRequest => this.Server.LogEntries.Last().RequestMessage;
 
         /// <summary>
         /// The port used by the WireMock mock server.
@@ -49,6 +57,41 @@ namespace RestAssured.Tests
         {
             this.Server = MockServerSetup.HttpServer;
             this.Server.Reset();
+        }
+
+        /// <summary>
+        /// Returns the values of a header in the last request received by the mock server.
+        /// </summary>
+        /// <param name="name">The name of the header (case-insensitive).</param>
+        /// <returns>The values of the header, or an empty list if the header was not sent.</returns>
+        protected List<string> GetLastRequestHeaderValues(string name)
+        {
+            return this.LastRequest.Headers
+                .Where(header => string.Equals(header.Key, name, StringComparison.OrdinalIgnoreCase))
+                .SelectMany(header => header.Value)
+                .ToList();
+        }
+
+        /// <summary>
+        /// Returns the individual name=value pairs of all cookies in the Cookie header(s) of the last request received by the mock server.
+        /// </summary>
+        /// <returns>The cookies as name=value pairs.</returns>
+        protected List<string> GetLastRequestCookies()
+        {
+            return this.GetLastRequestHeaderValues("Cookie")
+                .SelectMany(value => value.Split(';'))
+                .Select(pair => pair.Trim())
+                .Where(pair => pair.Length > 0)
+                .ToList();
+        }
+
+        /// <summary>
+        /// Returns the exact query string (including the leading '?') of the last request received by the mock server.
+        /// </summary>
+        /// <returns>The query string of the last request.</returns>
+        protected string GetLastRequestQueryString()
+        {
+            return new Uri(this.LastRequest.Url).Query;
         }
 
         /// <summary>

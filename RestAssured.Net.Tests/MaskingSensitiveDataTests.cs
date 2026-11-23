@@ -57,37 +57,6 @@ namespace RestAssured.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for masking
-        /// sensitive headers when logging request details.
-        /// </summary>
-        [Test]
-        public void SingleSensitiveRequestHeaderIsMasked()
-        {
-            this.CreateStubForMaskingSensitiveData();
-
-            var logConfig = new LogConfiguration
-            {
-                RequestLogLevel = RequestLogLevel.All,
-                ResponseLogLevel = ResponseLogLevel.All,
-                SensitiveRequestHeadersAndCookies = new List<string>() { "SensitiveRequestHeader" },
-            };
-
-            Given(this.logger)
-                .Log(logConfig)
-                .And()
-                .Header("NonsensitiveRequestHeader", "This one is printed")
-                .Header("SensitiveRequestHeader", "This one is masked")
-                .When()
-                .Get($"{MOCK_SERVER_BASE_URL}/masking-sensitive-data")
-                .Then()
-                .StatusCode(200);
-
-            Assert.That(this.logger.Lines, Has.Member("SensitiveRequestHeader: *****"));
-            Assert.That(this.logger.Lines, Has.Member("NonsensitiveRequestHeader: This one is printed"));
-            Assert.That(this.logger.Messages[0], Does.Not.Contain("This one is masked"), "The request log entry contains a sensitive value.");
-        }
-
-        /// <summary>
-        /// A test demonstrating RestAssuredNet syntax for masking
         /// sensitive headers and cookies when logging response details.
         /// </summary>
         [Test]

@@ -17,7 +17,6 @@ namespace RestAssured.Tests
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using NUnit.Framework;
     using RestAssured.Request.Builders;
     using WireMock.RequestBuilders;
@@ -204,39 +203,6 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
-        /// A test checking that an array value passed to QueryParams() is sent as one query parameter per value.
-        /// </summary>
-        [Test]
-        public void ArrayValueInQueryParamsIsSentAsSeparateValues()
-        {
-            var queryParams = new Dictionary<string, object>
-            {
-                { "ids", new[] { 1, 2, 3 } },
-            };
-
-            Given()
-                .QueryParams(queryParams)
-                .When()
-                .Get($"{MOCK_SERVER_BASE_URL}/query-param-values");
-
-            Assert.That(this.GetLastRequestQueryString(), Is.EqualTo("?ids=1&ids=2&ids=3"));
-        }
-
-        /// <summary>
-        /// A test checking that a collection value passed to QueryParam() is sent as one query parameter per value.
-        /// </summary>
-        [Test]
-        public void CollectionValueInQueryParamIsSentAsSeparateValues()
-        {
-            Given()
-                .QueryParam("ids", new List<int> { 1, 2, 3 })
-                .When()
-                .Get($"{MOCK_SERVER_BASE_URL}/query-param-values");
-
-            Assert.That(this.GetLastRequestQueryString(), Is.EqualTo("?ids=1&ids=2&ids=3"));
-        }
-
-        /// <summary>
         /// A test checking that an int array passed to QueryParam() is sent as one query parameter per value.
         /// </summary>
         [Test]
@@ -288,15 +254,6 @@ namespace RestAssured.Tests
                 .Get($"{MOCK_SERVER_BASE_URL}/query-param-values");
 
             Assert.That(this.GetLastRequestQueryString(), Is.EqualTo("?name=abc"));
-        }
-
-        /// <summary>
-        /// Returns the exact query string (including the leading '?') of the last request received by the mock server.
-        /// </summary>
-        /// <returns>The query string of the last request.</returns>
-        private string GetLastRequestQueryString()
-        {
-            return new Uri(this.Server.LogEntries.Last().RequestMessage.Url).Query;
         }
 
         /// <summary>

@@ -125,7 +125,9 @@ namespace RestAssured.Tests
 
         /// <summary>
         /// A test checking that a timeout set in the request or in a request specification
-        /// does not change the timeout of an <see cref="HttpClient"/> supplied by the user.
+        /// does not change the timeout of an <see cref="HttpClient"/> supplied by the user,
+        /// and can be used with a client that has already sent a request
+        /// (changing the timeout of such a client would throw an <see cref="InvalidOperationException"/>).
         /// </summary>
         /// <param name="timeoutInSpec">True to set the timeout in a request specification, false to set it in the request.</param>
         [TestCase(false, TestName = "Timeout set in request does not change supplied HttpClient")]
@@ -136,6 +138,13 @@ namespace RestAssured.Tests
 
             using HttpClient httpClient = new HttpClient();
             TimeSpan originalTimeout = httpClient.Timeout;
+
+            // Use the client once, so that changing its timeout would no longer be allowed.
+            Given(httpClient)
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/timeout-ok")
+                .Then()
+                .StatusCode(200);
 
             if (timeoutInSpec)
             {
@@ -164,31 +173,6 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
-        /// A test checking that a timeout can be set when using an <see cref="HttpClient"/>
-        /// supplied by the user that has already sent a request.
-        /// </summary>
-        [Test]
-        public void TimeoutCanBeSetForHttpClientThatAlreadySentARequest()
-        {
-            this.CreateStubForTimeoutOk();
-
-            using HttpClient httpClient = new HttpClient();
-
-            Given(httpClient)
-                .When()
-                .Get($"{MOCK_SERVER_BASE_URL}/timeout-ok")
-                .Then()
-                .StatusCode(200);
-
-            Given(httpClient)
-                .Timeout(TimeSpan.FromSeconds(1))
-                .When()
-                .Get($"{MOCK_SERVER_BASE_URL}/timeout-ok")
-                .Then()
-                .StatusCode(200);
-        }
-
-        /// <summary>
         /// A test checking that a timeout set in the request is applied when using an <see cref="HttpClient"/> supplied by the user.
         /// </summary>
         [Test]
@@ -208,38 +192,28 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
-        /// A test checking that the timeout of an <see cref="HttpClient"/> supplied by the user
-        /// is reported when it is exceeded and no timeout was set in the request or request specification.
+        /// A test checking that the (shorter) timeout of an <see cref="HttpClient"/> supplied by the user
+        /// applies and is reported when it is exceeded, both when no timeout was set in the request
+        /// and when a longer timeout was set in the request.
         /// </summary>
-        [Test]
-        public void TimeoutOfSuppliedHttpClientIsReportedWhenExceeded()
+        /// <param name="requestTimeoutInSeconds">The timeout to set in the request, or null to not set one.</param>
+        [TestCase(null, TestName = "Timeout of supplied HttpClient is reported when no timeout is set in request")]
+        [TestCase(10, TestName = "Shorter timeout of supplied HttpClient takes precedence over timeout set in request")]
+        public void TimeoutOfSuppliedHttpClientIsReportedWhenExceeded(int? requestTimeoutInSeconds)
         {
             this.CreateStubForShortTimeoutNok();
 
             using HttpClient httpClient = new HttpClient { Timeout = TimeSpan.FromMilliseconds(200) };
 
-            var hrpe = Assert.Throws<HttpRequestProcessorException>(() =>
-                Given(httpClient)
-                    .When()
-                    .Get($"{MOCK_SERVER_BASE_URL}/short-timeout-nok"));
+            var request = Given(httpClient);
 
-            Assert.That(hrpe?.Message, Is.EqualTo("Request timeout of 00:00:00.2000000 exceeded."));
-        }
-
-        /// <summary>
-        /// A test checking that a shorter timeout of an <see cref="HttpClient"/> supplied by the user
-        /// takes precedence over a longer timeout set in the request.
-        /// </summary>
-        [Test]
-        public void ShorterTimeoutOfSuppliedHttpClientTakesPrecedence()
-        {
-            this.CreateStubForShortTimeoutNok();
-
-            using HttpClient httpClient = new HttpClient { Timeout = TimeSpan.FromMilliseconds(200) };
+            if (requestTimeoutInSeconds != null)
+            {
+                request = request.Timeout(TimeSpan.FromSeconds((int)requestTimeoutInSeconds));
+            }
 
             var hrpe = Assert.Throws<HttpRequestProcessorException>(() =>
-                Given(httpClient)
-                    .Timeout(TimeSpan.FromSeconds(10))
+                request
                     .When()
                     .Get($"{MOCK_SERVER_BASE_URL}/short-timeout-nok"));
 

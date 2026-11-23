@@ -17,7 +17,6 @@ namespace RestAssured.Tests
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using Humanizer.DateTimeHumanizeStrategy;
     using NUnit.Framework;
     using WireMock.RequestBuilders;
@@ -103,7 +102,7 @@ namespace RestAssured.Tests
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/items/[id]");
 
-            Assert.That(this.GetLastRequestedPath(), Is.EqualTo("/items/a&b"));
+            Assert.That(this.LastRequest.Path, Is.EqualTo("/items/a&b"));
         }
 
         /// <summary>
@@ -118,8 +117,8 @@ namespace RestAssured.Tests
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/items/[id]?filter[name]=x");
 
-            Assert.That(this.GetLastRequestedPath(), Is.EqualTo("/items/7"));
-            Assert.That(this.GetLastRequestedQuery(), Does.ContainKey("filter[name]"));
+            Assert.That(this.LastRequest.Path, Is.EqualTo("/items/7"));
+            Assert.That(this.LastRequest.Query, Does.ContainKey("filter[name]"));
         }
 
         /// <summary>
@@ -134,7 +133,7 @@ namespace RestAssured.Tests
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/users/[userId]");
 
-            Assert.That(this.GetLastRequestedPath(), Does.Contain("userId"));
+            Assert.That(this.LastRequest.Path, Does.Contain("userId"));
         }
 
         /// <summary>
@@ -148,25 +147,7 @@ namespace RestAssured.Tests
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/items/[id]/copy/[id]");
 
-            Assert.That(this.GetLastRequestedPath(), Is.EqualTo("/items/5/copy/5"));
-        }
-
-        /// <summary>
-        /// Returns the (decoded) path of the last request received by the mock server.
-        /// </summary>
-        /// <returns>The path of the last request received by the mock server.</returns>
-        private string GetLastRequestedPath()
-        {
-            return this.Server.LogEntries.Last().RequestMessage.Path;
-        }
-
-        /// <summary>
-        /// Returns the query parameters of the last request received by the mock server.
-        /// </summary>
-        /// <returns>The query parameters of the last request received by the mock server.</returns>
-        private IDictionary<string, WireMock.Types.WireMockList<string>> GetLastRequestedQuery()
-        {
-            return this.Server.LogEntries.Last().RequestMessage.Query;
+            Assert.That(this.LastRequest.Path, Is.EqualTo("/items/5/copy/5"));
         }
 
         /// <summary>
