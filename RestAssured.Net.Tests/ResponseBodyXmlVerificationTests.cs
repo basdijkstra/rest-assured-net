@@ -165,6 +165,29 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying that
+        /// an XML response body element not matching the specified
+        /// NHamcrest matcher throws the right exception.
+        /// </summary>
+        [Test]
+        public void XmlResponseBodyElementNHamcrestMatcherMismatchThrowsTheExpectedException()
+        {
+            this.CreateStubForXmlResponseBody();
+
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                    .When()
+                    .Get($"{MOCK_SERVER_BASE_URL}/xml-response-body")
+                    .Then()
+                    .StatusCode(200)
+                    .Body("//Place[1]/Name", NHamcrest.Is.EqualTo("Some other place"));
+            });
+
+            Assert.That(rve?.Message, Is.EqualTo($"Expected element selected by '//Place[1]/Name' to match '\"Some other place\"' but was '{this.placeName}'"));
+        }
+
+        /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
         /// that the expected exception is thrown when the element value returned
         /// by the XPath does not match the matcher type.

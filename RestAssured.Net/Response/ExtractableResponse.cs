@@ -130,6 +130,7 @@ namespace RestAssured.Response
 
                 if (htmlElements.Count == 1 && returnAs.Equals(ReturnAs.Singular))
                 {
+                    // Stryker disable once Linq: Equivalent mutant - the collection contains exactly one element here
                     return htmlElements.First().InnerText;
                 }
 
@@ -155,6 +156,7 @@ namespace RestAssured.Response
 
             if (jsonElementValues.Count == 1 && returnAs.Equals(ReturnAs.Singular))
             {
+                // Stryker disable once Linq: Equivalent mutant - the collection contains exactly one element here
                 return jsonElementValues.First() !;
             }
 

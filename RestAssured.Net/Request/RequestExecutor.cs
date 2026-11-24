@@ -226,6 +226,7 @@ namespace RestAssured.Request
                 // '/path' does not throw an UriFormatException on Linux and MacOS,
                 // but creates a Uri 'file://path', which we do not want to use here.
                 // See also https://github.com/dotnet/runtime/issues/27813
+                // Stryker disable once String: Only observable on Linux and macOS, where '/path' is parsed as a file URI
                 if (uri.Scheme != "file")
                 {
                     // All OSes, absolute path

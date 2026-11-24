@@ -205,6 +205,7 @@ namespace RestAssured.Logging
         {
             int attributesStart = setCookieHeaderValue.IndexOf(';');
 
+            // Stryker disable once Equality: Equivalent mutant - a value starting with ';' has an empty name, which is never masked
             if (attributesStart < 0)
             {
                 return this.MaskCookieNameValuePair(setCookieHeaderValue, sensitiveNames);
@@ -225,6 +226,7 @@ namespace RestAssured.Logging
         {
             int separator = nameValuePair.IndexOf('=');
 
+            // Stryker disable once Equality: Equivalent mutant - a pair starting with '=' has an empty name, which is never masked
             if (separator < 0)
             {
                 return nameValuePair;

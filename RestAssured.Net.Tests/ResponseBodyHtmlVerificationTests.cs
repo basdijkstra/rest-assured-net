@@ -64,6 +64,23 @@ namespace RestAssured.Tests
 
         /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
+        /// an HTML response body element collection using an NHamcrest matcher.
+        /// </summary>
+        [Test]
+        public void HtmlResponseBodyElementCollectionCanBeVerifiedUsingNHamcrestMatcher()
+        {
+            this.CreateStubForHtmlResponseBody();
+
+            Given()
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/html-response-body")
+                .Then()
+                .StatusCode(404)
+                .Body("//h1 | //h2", NHamcrest.Has.Items(NHamcrest.Is.EqualTo("Server Error"), NHamcrest.Is.EqualTo("403 - Forbidden: Access is denied.")));
+        }
+
+        /// <summary>
+        /// A test demonstrating RestAssuredNet syntax for verifying
         /// an HTML response body element using an NHamcrest matcher,
         /// overriding the response Content-Type header value.
         /// </summary>

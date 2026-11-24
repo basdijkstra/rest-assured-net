@@ -51,10 +51,10 @@ namespace RestAssured.Request
         private JsonSerializerSettings? jsonSerializerSettings = null;
         private HttpCompletionOption httpCompletionOption = HttpCompletionOption.ResponseContentRead;
         private NetworkCredential? networkCredential = null;
-        private bool disableSslCertificateValidation = false;
-        private bool globalDisableSslCertificateValidation = false;
-        private bool stripCharset = false;
-        private bool disposed = false;
+        private bool disableSslCertificateValidation;
+        private bool globalDisableSslCertificateValidation;
+        private bool stripCharset;
+        private bool disposed;
         private IRestAssuredNetLogger? logger;
 
         /// <summary>

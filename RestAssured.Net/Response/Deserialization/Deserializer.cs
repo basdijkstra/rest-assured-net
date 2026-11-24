@@ -46,6 +46,7 @@ namespace RestAssured.Response.Deserialization
                 throw new DeserializationException("Response content is null or empty.");
             }
 
+            // Stryker disable once String: Equivalent mutant - the switch below assigns a value for every DeserializeAs value
             string? responseMediaType = string.Empty;
 
             switch (deserializeAs)

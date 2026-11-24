@@ -58,7 +58,7 @@ namespace RestAssured.Response
         /// <summary>
         /// A boolean flag indicating whether response details should be logged to the console on verification failure.
         /// </summary>
-        public bool LogOnVerificationFailure { get; internal set; } = false;
+        public bool LogOnVerificationFailure { get; internal set; }
 
         /// <summary>
         /// The <see cref="IRestAssuredNetLogger"/> to use when logging on verification failure.
@@ -389,6 +389,7 @@ namespace RestAssured.Response
 
             if (schemaValidationErrors.Count > 0)
             {
+                // Stryker disable once Linq: Equivalent mutant - the collection contains at least one element here
                 this.FailVerification($"Response body did not match JSON schema supplied. Error: '{schemaValidationErrors.First()}'");
             }
 

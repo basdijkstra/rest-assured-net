@@ -98,6 +98,7 @@ namespace RestAssured.Logging
         /// <returns>The formatted value, or an empty string if the value is <c>null</c>.</returns>
         private static string FormatValue(object? value)
         {
+            // Stryker disable once String: Equivalent mutant - Convert.ToString only returns null when the ToString() of the value returns null
             return Convert.ToString(value, CultureInfo.InvariantCulture) ?? string.Empty;
         }
     }

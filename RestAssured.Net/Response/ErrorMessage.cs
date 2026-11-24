@@ -45,6 +45,7 @@ namespace RestAssured.Response
         /// Implicitly converts a string to an <see cref="ErrorMessage"/>.
         /// </summary>
         /// <param name="value">The string value to convert.</param>
+        // Stryker disable once Conditional: Equivalent mutant - new ErrorMessage(null) is equal to default
         public static implicit operator ErrorMessage(string? value) =>
             value != null ? new ErrorMessage(value) : default;
     }

@@ -43,7 +43,7 @@ namespace RestAssured.Request
         private readonly HttpClient httpClient;
         private readonly bool isSuppliedHttpClient;
         private CookieContainer cookieContainer = new CookieContainer();
-        private bool disposed = false;
+        private bool disposed;
 
         /// <summary>
         /// Implements Dispose() method of IDisposable interface.
@@ -112,6 +112,7 @@ namespace RestAssured.Request
             {
                 // Timeouts are applied per request using a cancellation token (see Send()),
                 // so the timeout of the HttpClient itself must not cut off longer timeouts.
+                // Stryker disable once Initializer: Only observable with a request that takes longer than the default HttpClient timeout of 100 seconds
                 this.httpClient = new HttpClient(this.httpClientHandler)
                 {
                     Timeout = System.Threading.Timeout.InfiniteTimeSpan,
@@ -133,6 +134,7 @@ namespace RestAssured.Request
         {
             // The timeout is applied using a cancellation token, so that the HttpClient itself is never changed.
             // An HttpClient supplied by the user keeps its own timeout as well: the shorter of the two applies.
+            // Stryker disable once NullCoalescing,Conditional: Only observable with a request that takes longer than the default timeout of 100 seconds
             TimeSpan? requestTimeout = timeout ?? (this.isSuppliedHttpClient ? null : DefaultTimeout);
             using CancellationTokenSource? timeoutTokenSource = requestTimeout != null ? new CancellationTokenSource((TimeSpan)requestTimeout) : null;
 
@@ -158,6 +160,7 @@ namespace RestAssured.Request
 
                 stopwatch.Start();
                 HttpResponseMessage response = await this.httpClient.SendAsync(request, httpCompletionOption, timeoutTokenSource?.Token ?? CancellationToken.None);
+                // Stryker disable once Statement: Equivalent mutant - the elapsed time is read immediately after stopping
                 stopwatch.Stop();
 
                 CookieContainer responseCookies = cookieUtils.GetResponseCookies(this.cookieContainer, cookieCollection, response);
