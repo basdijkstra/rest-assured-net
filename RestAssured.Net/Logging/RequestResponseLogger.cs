@@ -18,6 +18,7 @@ namespace RestAssured.Logging
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Net;
     using System.Net.Http;
@@ -155,7 +156,7 @@ namespace RestAssured.Logging
 
         private List<string> LogResponseTime(List<string> entries, TimeSpan elapsedTime)
         {
-            entries.Add($"Response time: {elapsedTime.TotalMilliseconds} ms");
+            entries.Add($"Response time: {elapsedTime.TotalMilliseconds.ToString(CultureInfo.InvariantCulture)} ms");
             return entries;
         }
 

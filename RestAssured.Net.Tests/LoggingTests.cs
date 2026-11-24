@@ -30,8 +30,7 @@ namespace RestAssured.Tests
     [TestFixture]
     public class LoggingTests : TestBase
     {
-        // The response time is formatted using the current culture, so accept both '.' and ',' as decimal separator.
-        private const string ResponseTimePattern = @"^Response time: \d+([.,]\d+)? ms$";
+        private const string ResponseTimePattern = @"^Response time: \d+(\.\d+)? ms$";
 
         private readonly string jsonBody = "{\"id\": 1, \"user\": \"John Doe\"}";
 
@@ -142,6 +141,26 @@ namespace RestAssured.Tests
             Assert.That(this.logger.Lines, Has.Member("  \"Country\": \"United States\","));
             Assert.That(this.logger.Lines, Has.Some.Match(ResponseTimePattern));
             Assert.That(this.logger.Lines, Has.None.StartsWith("GET "));
+        }
+
+        /// <summary>
+        /// A test verifying that the response time is logged using the invariant culture,
+        /// also when the current culture uses a different decimal separator.
+        /// </summary>
+        [Test]
+        [SetCulture("nl-NL")]
+        public void ResponseTimeIsLoggedUsingInvariantCulture()
+        {
+            this.CreateStubForLoggingJsonResponse();
+
+            Given(this.logger)
+                .Log(new LogConfiguration { ResponseLogLevel = ResponseLogLevel.ResponseTime })
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/log-json-response")
+                .Then()
+                .StatusCode(200);
+
+            Assert.That(this.logger.Lines, Has.Some.Match(ResponseTimePattern));
         }
 
         /// <summary>

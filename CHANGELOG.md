@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - WithBaseUri dropped the path part of the base URI, and RequestSpecification.BaseUri was never set ([#160](https://github.com/basdijkstra/rest-assured-net/issues/160))
 - QueryParams with a collection value sent the collection's type name instead of its values ([#167](https://github.com/basdijkstra/rest-assured-net/issues/167))
 - Content headers such as Content-Disposition and Content-Type couldn't be verified or extracted with Header() ([#162](https://github.com/basdijkstra/rest-assured-net/issues/162))
+- Response time in the log output depended on the current culture ([#182](https://github.com/basdijkstra/rest-assured-net/issues/182))
 
 ### [5.1.0] - 2026-11-11
 
