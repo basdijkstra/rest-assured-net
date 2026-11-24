@@ -276,6 +276,27 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test checking that response details are logged for status code 400,
+        /// the lowest status code that is considered an error.
+        /// </summary>
+        [Test]
+        public void ResponseDetailsAreLoggedOnErrorForStatusCode400()
+        {
+            this.Server?.Given(Request.Create().WithPath("/bad-request").UsingGet())
+                .RespondWith(Response.Create()
+                .WithStatusCode(400));
+
+            Given(this.logger)
+                .Log(new LogConfiguration { ResponseLogLevel = ResponseLogLevel.OnError })
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/bad-request")
+                .Then()
+                .StatusCode(400);
+
+            Assert.That(this.logger.Lines, Has.Member("HTTP 400 (BadRequest)"));
+        }
+
+        /// <summary>
         /// A test demonstrating RestAssuredNet syntax for logging
         /// response details to the standard output only if the status
         /// code is 4xx or 5xx.

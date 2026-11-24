@@ -132,6 +132,27 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test checking that verifying the status code using an NHamcrest matcher for <see cref="HttpStatusCode"/>
+        /// throws the expected exception with the right message when the status code does not match.
+        /// </summary>
+        [Test]
+        public void StatusCodeVerificationWithMismatchingHttpStatusCodeMatcherThrowsTheExpectedException()
+        {
+            this.CreateStubForHttpOK();
+
+            var rve = Assert.Throws<ResponseVerificationException>(() =>
+            {
+                Given()
+                    .When()
+                    .Get($"{MOCK_SERVER_BASE_URL}/http-status-code-ok")
+                    .Then()
+                    .StatusCode(NHamcrest.Is.EqualTo(HttpStatusCode.Created));
+            });
+
+            Assert.That(rve?.Message, Is.EqualTo("Expected response status code to match 'Created', but was OK"));
+        }
+
+        /// <summary>
         /// A test demonstrating RestAssuredNet syntax for verifying
         /// a response status code using a custom error message with template values,
         /// for the expected and actual values, test that

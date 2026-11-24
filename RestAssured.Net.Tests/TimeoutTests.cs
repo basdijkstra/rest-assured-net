@@ -80,6 +80,28 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test checking that a timeout set in the request takes precedence
+        /// over a (shorter) timeout set in the request specification.
+        /// </summary>
+        [Test]
+        public void TimeoutInTestTakesPrecedenceOverTimeoutInRequestSpecification()
+        {
+            this.CreateStubForShortTimeoutNok();
+
+            var shortTimeoutSpecification = new RequestSpecBuilder()
+                .WithTimeout(TimeSpan.FromMilliseconds(200))
+                .Build();
+
+            Given()
+                .Spec(shortTimeoutSpecification)
+                .Timeout(TimeSpan.FromSeconds(5))
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/short-timeout-nok")
+                .Then()
+                .StatusCode(200);
+        }
+
+        /// <summary>
         /// Test that exceeding a timeout specified in a test
         /// throws the expected exception.
         /// </summary>

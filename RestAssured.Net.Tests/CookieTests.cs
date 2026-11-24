@@ -190,7 +190,7 @@ namespace RestAssured.Tests
                 .When()
                 .Get($"{MOCK_SERVER_BASE_URL}/cookies");
 
-            Assert.That(this.GetLastRequestCookies(), Is.Empty);
+            Assert.That(this.GetLastRequestHeaderValues("Cookie"), Is.Empty);
         }
 
         /// <summary>

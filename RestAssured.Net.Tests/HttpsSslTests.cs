@@ -75,6 +75,22 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test checking that SSL certificate validation stays enabled when a request specification
+        /// is used that does not disable it.
+        /// </summary>
+        [Test]
+        public void SslCertificateValidationIsEnabledByDefaultInRequestSpecification()
+        {
+            this.CreateStubForHttps();
+
+            Assert.Throws<HttpRequestProcessorException>(() =>
+                Given()
+                    .Spec(new RequestSpecBuilder().Build())
+                    .When()
+                    .Get($"{MOCK_SERVER_HTTPS_BASE_URL}/ssl-endpoint"));
+        }
+
+        /// <summary>
         /// A test demonstrating RestAssuredNet syntax for disabling
         /// SSL verification when performing an HTTP call.
         /// </summary>

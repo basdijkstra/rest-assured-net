@@ -160,6 +160,7 @@ namespace RestAssured.Request
 
                 stopwatch.Start();
                 HttpResponseMessage response = await this.httpClient.SendAsync(request, httpCompletionOption, timeoutTokenSource?.Token ?? CancellationToken.None);
+
                 // Stryker disable once Statement: Equivalent mutant - the elapsed time is read immediately after stopping
                 stopwatch.Stop();
 

@@ -82,6 +82,9 @@ namespace RestAssured.Tests
             Assert.That(this.logger.Lines, Has.Member("NonSensitiveResponseHeader: This one is printed"));
             Assert.That(this.logger.Lines, Has.Some.StartsWith("Cookie: SensitiveResponseCookie=*****,"));
             Assert.That(this.logger.Lines, Has.Some.StartsWith("Cookie: NonSensitiveResponseCookie=123,"));
+
+            // Both Set-Cookie header values are logged as separate values, in the order in which the server sent them.
+            Assert.That(this.logger.Lines, Has.Some.Match(@"^Set-Cookie: (NonSensitiveResponseCookie=123, SensitiveResponseCookie=\*{5}|SensitiveResponseCookie=\*{5}, NonSensitiveResponseCookie=123)$"));
             Assert.That(this.logger.Messages[1], Does.Not.Contain("This one is masked"), "The response log entry contains a sensitive value.");
             Assert.That(this.logger.Lines, Has.None.Contains("some_secret_value"));
         }

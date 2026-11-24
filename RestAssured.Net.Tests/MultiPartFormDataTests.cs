@@ -81,6 +81,23 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test checking that a content type supplied for a multipart file
+        /// is used instead of the content type determined from the file extension.
+        /// </summary>
+        [Test]
+        public void SuppliedMultiPartContentTypeIsUsedInsteadOfContentTypeForFileExtension()
+        {
+            this.CreateStubForPlainTextFileAsJsonMultiPartFormData();
+
+            Given()
+                .MultiPart(new FileInfo(this.plaintextFileName), contentType: MediaTypeHeaderValue.Parse("application/json"))
+                .When()
+                .Post($"{MOCK_SERVER_BASE_URL}/plaintext-file-as-json-multipart-form-data")
+                .Then()
+                .StatusCode(201);
+        }
+
+        /// <summary>
         /// A test demonstrating RestAssuredNet syntax for including
         /// multipart form data with a custom control name and a custom
         /// content type in the request.
@@ -216,6 +233,19 @@ namespace RestAssured.Tests
             }
 
             return csvLines;
+        }
+
+        /// <summary>
+        /// Creates the stub response for the form data example with a content type
+        /// that differs from the one determined from the file extension.
+        /// </summary>
+        private void CreateStubForPlainTextFileAsJsonMultiPartFormData()
+        {
+            this.Server?.Given(Request.Create().WithPath("/plaintext-file-as-json-multipart-form-data").UsingPost()
+                .WithBody(new RegexMatcher($".*Content-Type: application/json.*"))
+                .WithBody(new RegexMatcher($".*name=file.*")))
+                .RespondWith(Response.Create()
+                .WithStatusCode(201));
         }
 
         /// <summary>
