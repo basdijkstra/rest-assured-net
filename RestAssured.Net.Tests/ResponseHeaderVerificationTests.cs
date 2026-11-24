@@ -297,6 +297,68 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test checking that a content header (a header describing the response body,
+        /// such as Content-Disposition) can be verified using Header().
+        /// </summary>
+        [Test]
+        public void ContentHeaderCanBeVerified()
+        {
+            this.CreateStubForContentHeaders();
+
+            Given()
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/content-headers")
+                .Then()
+                .StatusCode(200)
+                .Header("Content-Disposition", "attachment; filename=a.txt");
+        }
+
+        /// <summary>
+        /// A test checking that the Content-Type header can be verified using Header().
+        /// </summary>
+        [Test]
+        public void ContentTypeHeaderCanBeVerifiedUsingHeader()
+        {
+            this.CreateStubForContentHeaders();
+
+            Given()
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/content-headers")
+                .Then()
+                .Header("Content-Type", "text/plain");
+        }
+
+        /// <summary>
+        /// A test checking that a content header can be extracted using Extract().Header().
+        /// </summary>
+        [Test]
+        public void ContentHeaderCanBeExtracted()
+        {
+            this.CreateStubForContentHeaders();
+
+            string contentType = Given()
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/content-headers")
+                .Then()
+                .Extract().Header("Content-Type");
+
+            Assert.That(contentType, Is.EqualTo("text/plain"));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the content header examples.
+        /// </summary>
+        private void CreateStubForContentHeaders()
+        {
+            this.Server?.Given(Request.Create().WithPath("/content-headers").UsingGet())
+                .RespondWith(Response.Create()
+                .WithStatusCode(200)
+                .WithHeader("Content-Type", "text/plain")
+                .WithHeader("Content-Disposition", "attachment; filename=a.txt")
+                .WithBody("file contents"));
+        }
+
+        /// <summary>
         /// Creates the stub response for the single response header example.
         /// </summary>
         private void CreateStubForCustomSingleResponseHeader()

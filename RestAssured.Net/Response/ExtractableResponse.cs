@@ -169,9 +169,9 @@ namespace RestAssured.Response
         /// <exception cref="ExtractionException">Thrown when the specified header name could not be located in the response.</exception>
         public string Header(string name)
         {
-            if (this.response.Headers.TryGetValues(name, out IEnumerable<string>? values))
+            if (ResponseHeaders.TryGetFirstValue(this.response, name, out string? value))
             {
-                return values.First();
+                return value;
             }
             else
             {

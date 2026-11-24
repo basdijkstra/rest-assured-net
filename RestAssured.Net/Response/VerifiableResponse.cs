@@ -180,11 +180,8 @@ namespace RestAssured.Response
         /// <exception cref="ResponseVerificationException">Thrown when the header does not exist, or when the header value does not equal the supplied expected value.</exception>
         public VerifiableResponse Header(string name, IMatcher<string> matcher, ErrorMessage errorMessage = default)
         {
-            if (this.Response.Headers.TryGetValues(name, out IEnumerable<string>? values))
+            if (ResponseHeaders.TryGetFirstValue(this.Response, name, out string? firstValue))
             {
-                // Stryker disable once Linq: Equivalent mutant - TryGetValues guarantees non-empty collection
-                string firstValue = values.First();
-
                 if (!matcher.Matches(firstValue))
                 {
                     this.FailVerification(VerificationMessageBuilder.Resolve(
