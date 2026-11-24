@@ -121,6 +121,7 @@ namespace RestAssured.Tests
             });
 
             Assert.That(hrpe?.Message, Is.EqualTo("Request timeout of 00:00:02 exceeded."));
+            Assert.That(hrpe?.InnerException, Is.TypeOf<TimeoutException>());
         }
 
         /// <summary>

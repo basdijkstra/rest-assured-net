@@ -136,22 +136,31 @@ namespace RestAssured.Request
 
             logger.LogRequest(context.Request, context.CookieCollection);
 
+            VerifiableResponse verifiableResponse;
+
             try
             {
-                VerifiableResponse verifiableResponse = httpRequestProcessor.Send(context.Request, context.CookieCollection, context.HttpCompletionOption, timeout).GetAwaiter().GetResult();
-                verifiableResponse.Logger = context.Logger;
-                verifiableResponse = logger.LogResponse(verifiableResponse);
-                return verifiableResponse;
+                verifiableResponse = httpRequestProcessor.Send(context.Request, context.CookieCollection, context.HttpCompletionOption, timeout).GetAwaiter().GetResult();
+            }
+            catch (HttpRequestProcessorException)
+            {
+                // Already contains the original message and exception (e.g. a refused connection or an invalid certificate).
+                throw;
             }
             catch (TimeoutException te)
             {
                 // The message contains the timeout that was actually exceeded.
-                throw new HttpRequestProcessorException(te.Message);
+                throw new HttpRequestProcessorException(te.Message, te);
             }
             catch (Exception ex)
             {
-                throw new HttpRequestProcessorException($"Unhandled exception {ex.Message}");
+                throw new HttpRequestProcessorException($"Unhandled exception {ex.Message}", ex);
             }
+
+            // Logging is done outside the try block, so that an exception thrown by the logger
+            // is passed on unchanged instead of being reported as an error while sending the request.
+            verifiableResponse.Logger = context.Logger;
+            return logger.LogResponse(verifiableResponse);
         }
 
         /// <summary>
