@@ -9,20 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Fixed
 
-- Fixed issue where certain request properties were not properly applied when injecting custom HTTP client ([#156](https://github.com/basdijkstra/rest-assured-net/issues/156))
-- Fixed issue where cookie verification and extraction pass for cookies the server never set
-bug ([#155](https://github.com/basdijkstra/rest-assured-net/issues/155))
-- Fixed issue where body logging crashes requests whose body isn't valid JSON or XML ([#157](https://github.com/basdijkstra/rest-assured-net/issues/157))
-- Fixed issue where masking of sensitive headers and cookies in logs could be bypassed ([#158](https://github.com/basdijkstra/rest-assured-net/issues/158))
-- Fixed issue where relative endpoint with a query string is sent to the wrong path when a RequestSpecification is used ([#159](https://github.com/basdijkstra/rest-assured-net/issues/159))
-- Fixed issue where encoding basic auth credentials in ASCII could create problems with special characters ([#168](https://github.com/basdijkstra/rest-assured-net/issues/168))
-- Fixed issue where logger was always called, even when there's nothing to log ([#174](https://github.com/basdijkstra/rest-assured-net/issues/174))
-- Fixed issue where brackets that were not path parameters were mistaken for being so ([#154](https://github.com/basdijkstra/rest-assured-net/issues/154))
-- Fixed issue where square brackets in custom error messages are treated as template tags
+- Certain request properties were not properly applied when injecting custom HTTP client ([#156](https://github.com/basdijkstra/rest-assured-net/issues/156))
+- Cookie verification and extraction passed for cookies the server never set ([#155](https://github.com/basdijkstra/rest-assured-net/issues/155))
+- Body logging crashed requests whose body isn't valid JSON or XML ([#157](https://github.com/basdijkstra/rest-assured-net/issues/157))
+- Masking of sensitive headers and cookies in logs could be bypassed ([#158](https://github.com/basdijkstra/rest-assured-net/issues/158))
+- Relative endpoint with a query string was sent to the wrong path when a RequestSpecification is used ([#159](https://github.com/basdijkstra/rest-assured-net/issues/159))
+- Encoding basic auth credentials in ASCII could create problems with special characters ([#168](https://github.com/basdijkstra/rest-assured-net/issues/168))
+- Logger was always called, even when there's nothing to log ([#174](https://github.com/basdijkstra/rest-assured-net/issues/174))
+- Brackets that were not path parameters were mistaken for being so ([#154](https://github.com/basdijkstra/rest-assured-net/issues/154))
+- Square brackets in custom error messages were treated as template tags
  ([#170](https://github.com/basdijkstra/rest-assured-net/issues/170))
-- Fixed issues with specific request values being overridden by values in spec ([#153](https://github.com/basdijkstra/rest-assured-net/issues/153), [#179](https://github.com/basdijkstra/rest-assured-net/issues/179))
-- Fixed issue where WithBaseUri drops the path part of the base URI, and RequestSpecification.BaseUri is never set ([#160](https://github.com/basdijkstra/rest-assured-net/issues/160))
-- Fixed issue where QueryParams with a collection value sends the collection's type name instead of its values ([#167](https://github.com/basdijkstra/rest-assured-net/issues/167))
+- Specific request values were overridden by values in spec ([#153](https://github.com/basdijkstra/rest-assured-net/issues/153), [#179](https://github.com/basdijkstra/rest-assured-net/issues/179))
+- WithBaseUri dropped the path part of the base URI, and RequestSpecification.BaseUri was never set ([#160](https://github.com/basdijkstra/rest-assured-net/issues/160))
+- QueryParams with a collection value sent the collection's type name instead of its values ([#167](https://github.com/basdijkstra/rest-assured-net/issues/167))
+- Content headers such as Content-Disposition and Content-Type couldn't be verified or extracted with Header() ([#162](https://github.com/basdijkstra/rest-assured-net/issues/162))
 
 ### [5.1.0] - 2026-11-11
 
