@@ -17,6 +17,7 @@ namespace RestAssured.Response
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Net;
@@ -586,7 +587,7 @@ namespace RestAssured.Response
             // Try and cast the element value to an object of the type used in the matcher
             try
             {
-                if (!matcher.Matches((T)Convert.ChangeType(innerText, typeof(T))))
+                if (!matcher.Matches((T)Convert.ChangeType(innerText, typeof(T), CultureInfo.InvariantCulture)))
                 {
                     this.FailVerification(VerificationMessageBuilder.Resolve(
                         errorMessage,
@@ -612,7 +613,7 @@ namespace RestAssured.Response
             {
                 try
                 {
-                    elementValues.Add((T)Convert.ChangeType(innerText, typeof(T)));
+                    elementValues.Add((T)Convert.ChangeType(innerText, typeof(T), CultureInfo.InvariantCulture));
                 }
                 catch (FormatException)
                 {

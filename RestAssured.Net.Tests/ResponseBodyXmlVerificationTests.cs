@@ -315,6 +315,54 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// Verifies that a decimal XML element value is converted using the invariant culture,
+        /// regardless of the current culture.
+        /// </summary>
+        [Test]
+        [SetCulture("nl-NL")]
+        public void XmlElementDecimalValueIsVerifiedUsingInvariantCulture()
+        {
+            this.CreateStubForXmlDecimalValues();
+
+            Given()
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/xml-decimal-values")
+                .Then()
+                .StatusCode(200)
+                .Body("//price[1]", NHamcrest.Is.EqualTo(1.5));
+        }
+
+        /// <summary>
+        /// Verifies that decimal XML element collection values are converted using the invariant culture,
+        /// regardless of the current culture.
+        /// </summary>
+        [Test]
+        [SetCulture("nl-NL")]
+        public void XmlElementCollectionDecimalValuesAreVerifiedUsingInvariantCulture()
+        {
+            this.CreateStubForXmlDecimalValues();
+
+            Given()
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/xml-decimal-values")
+                .Then()
+                .StatusCode(200)
+                .Body("//price", NHamcrest.Has.Item(NHamcrest.Is.EqualTo(1.5)));
+        }
+
+        /// <summary>
+        /// Creates the stub response for the XML decimal values examples.
+        /// </summary>
+        private void CreateStubForXmlDecimalValues()
+        {
+            this.Server?.Given(Request.Create().WithPath("/xml-decimal-values").UsingGet())
+                .RespondWith(Response.Create()
+                .WithHeader("Content-Type", "application/xml")
+                .WithBody("<prices><price>1.5</price><price>2.5</price></prices>")
+                .WithStatusCode(200));
+        }
+
+        /// <summary>
         /// Creates the stub response for the XML response body example.
         /// </summary>
         private void CreateStubForXmlResponseBody()
