@@ -470,6 +470,26 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test checking that a request cookie without a domain is logged
+        /// with the domain it is sent for: the host of the request.
+        /// </summary>
+        [Test]
+        public void RequestCookieIsLoggedWithDomainOfRequest()
+        {
+            this.CreateStubForLoggingJsonResponse();
+
+            Given(this.logger)
+                .Log(new LogConfiguration { RequestLogLevel = RequestLogLevel.All })
+                .Cookie("session", "abc")
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/log-json-response")
+                .Then()
+                .StatusCode(200);
+
+            Assert.That(this.logger.Lines, Has.Member("Cookie: session=abc, Domain: localhost, HTTP-only: False, Secure: False"));
+        }
+
+        /// <summary>
         /// Creates the stub response for the JSON response body example.
         /// </summary>
         private void CreateStubForLoggingJsonResponse()

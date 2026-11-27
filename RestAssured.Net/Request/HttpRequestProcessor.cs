@@ -124,7 +124,7 @@ namespace RestAssured.Request
         /// Sends an HTTP request message object and returns the response.
         /// </summary>
         /// <param name="request">The HTTP request message object to be sent.</param>
-        /// <param name="cookieCollection">The <see cref="CookieCollection"/> to add to the request before it is sent.</param>
+        /// <param name="cookieCollection">The <see cref="CookieCollection"/> to add to the request before it is sent. Every cookie must have a domain.</param>
         /// <param name="httpCompletionOption">The <see cref="HttpCompletionOption"/> setting to use when sending the request.</param>
         /// <param name="timeout">The timeout for this request, or <c>null</c> if no timeout was set in the request or request specification.</param>
         /// <returns>The HTTP response.</returns>
@@ -139,11 +139,6 @@ namespace RestAssured.Request
             using CancellationTokenSource? timeoutTokenSource = requestTimeout != null ? new CancellationTokenSource((TimeSpan)requestTimeout) : null;
 
             CookieUtils cookieUtils = new CookieUtils();
-
-            foreach (Cookie cookie in cookieCollection)
-            {
-                cookieUtils.SetDomainFor(cookie, request.RequestUri!.Host);
-            }
 
             this.cookieContainer.Add(cookieCollection);
 

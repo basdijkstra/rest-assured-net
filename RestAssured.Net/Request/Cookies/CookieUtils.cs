@@ -26,21 +26,51 @@ namespace RestAssured.Request.Cookies
     internal class CookieUtils
     {
         /// <summary>
-        /// Sets the domain of the <see cref="Cookie"/> to the specified host value if it isn't set already.
+        /// Returns a copy of the <see cref="Cookie"/>, with the domain set to the specified host value if it isn't set already.
+        /// A copy is returned, so that the <see cref="Cookie"/> supplied by the user is never modified.
         /// </summary>
-        /// <param name="cookie">The <see cref="Cookie"/> to be processed.</param>
-        /// <param name="hostname">The domain value to be set on the cookie if it isn't set already.</param>
-        /// <returns>The <see cref="Cookie"/> with the domain value set.</returns>
-        internal Cookie SetDomainFor(Cookie cookie, string hostname)
+        /// <param name="cookie">The <see cref="Cookie"/> to be copied.</param>
+        /// <param name="hostname">The domain value to be set on the copy if the cookie has no domain.</param>
+        /// <returns>A copy of the <see cref="Cookie"/> with the domain value set.</returns>
+        internal Cookie CopyWithDomain(Cookie cookie, string hostname)
         {
-            // The domain for a cookie cannot be empty, so set it to the specified hostname
-            // if it has not been set already
-            if (string.IsNullOrEmpty(cookie.Domain))
+            // System.Net.Cookie has no public Clone() method, so all properties that affect sending the cookie are copied.
+            // The domain for a cookie cannot be empty, so it is set to the specified hostname if it has not been set already.
+            Cookie copy = new Cookie(cookie.Name, cookie.Value, cookie.Path, string.IsNullOrEmpty(cookie.Domain) ? hostname : cookie.Domain)
             {
-                cookie.Domain = hostname;
+                Secure = cookie.Secure,
+                HttpOnly = cookie.HttpOnly,
+                Expires = cookie.Expires,
+                Version = cookie.Version,
+                Comment = cookie.Comment,
+                CommentUri = cookie.CommentUri,
+                Discard = cookie.Discard,
+            };
+
+            if (!string.IsNullOrEmpty(cookie.Port))
+            {
+                copy.Port = cookie.Port;
             }
 
-            return cookie;
+            return copy;
+        }
+
+        /// <summary>
+        /// Returns copies of the cookies in the <see cref="CookieCollection"/>, each with the domain set to the specified host value if it isn't set already.
+        /// </summary>
+        /// <param name="cookies">The <see cref="CookieCollection"/> to be copied.</param>
+        /// <param name="hostname">The domain value to be set on the copies of cookies that have no domain.</param>
+        /// <returns>A new <see cref="CookieCollection"/> holding the copies.</returns>
+        internal CookieCollection CopyWithDomain(CookieCollection cookies, string hostname)
+        {
+            CookieCollection copies = new CookieCollection();
+
+            foreach (Cookie cookie in cookies)
+            {
+                copies.Add(this.CopyWithDomain(cookie, hostname));
+            }
+
+            return copies;
         }
 
         /// <summary>

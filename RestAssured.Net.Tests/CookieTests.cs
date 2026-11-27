@@ -40,7 +40,7 @@ namespace RestAssured.Tests
 
             CookieUtils cookieUtils = new CookieUtils();
 
-            cookie = cookieUtils.SetDomainFor(cookie, "localhost");
+            cookie = cookieUtils.CopyWithDomain(cookie, "localhost");
 
             Assert.That(cookie.Domain, Is.EqualTo("localhost"));
         }
@@ -55,9 +55,44 @@ namespace RestAssured.Tests
 
             CookieUtils cookieUtils = new CookieUtils();
 
-            cookie = cookieUtils.SetDomainFor(cookie, "localhost");
+            cookie = cookieUtils.CopyWithDomain(cookie, "localhost");
 
             Assert.That(cookie.Domain, Is.EqualTo("strawberry.com"));
+        }
+
+        /// <summary>
+        /// Verify that a copied cookie keeps all properties that affect sending it, and is a different object.
+        /// </summary>
+        [Test]
+        public void CopiedCookieKeepsAllProperties()
+        {
+            Cookie cookie = new Cookie("cookie_name", "cookie_value", "/my_path", "strawberry.com")
+            {
+                Secure = true,
+                HttpOnly = true,
+                Expires = new DateTime(2030, 1, 2, 3, 4, 5, DateTimeKind.Utc),
+                Version = 1,
+                Comment = "A comment",
+                CommentUri = new Uri("http://strawberry.com/comment"),
+                Discard = true,
+                Port = "\"8080\"",
+            };
+
+            Cookie copy = new CookieUtils().CopyWithDomain(cookie, "localhost");
+
+            Assert.That(copy, Is.Not.SameAs(cookie));
+            Assert.That(copy.Name, Is.EqualTo(cookie.Name));
+            Assert.That(copy.Value, Is.EqualTo(cookie.Value));
+            Assert.That(copy.Path, Is.EqualTo(cookie.Path));
+            Assert.That(copy.Domain, Is.EqualTo(cookie.Domain));
+            Assert.That(copy.Secure, Is.EqualTo(cookie.Secure));
+            Assert.That(copy.HttpOnly, Is.EqualTo(cookie.HttpOnly));
+            Assert.That(copy.Expires, Is.EqualTo(cookie.Expires));
+            Assert.That(copy.Version, Is.EqualTo(cookie.Version));
+            Assert.That(copy.Comment, Is.EqualTo(cookie.Comment));
+            Assert.That(copy.CommentUri, Is.EqualTo(cookie.CommentUri));
+            Assert.That(copy.Discard, Is.EqualTo(cookie.Discard));
+            Assert.That(copy.Port, Is.EqualTo(cookie.Port));
         }
 
         /// <summary>
@@ -205,6 +240,24 @@ namespace RestAssured.Tests
                 .Get($"{MOCK_SERVER_BASE_URL}/cookies");
 
             Assert.That(this.GetLastRequestHeaderValues("Cookie"), Is.EqualTo(new[] { "a=1" }));
+        }
+
+        /// <summary>
+        /// Verify that a <see cref="Cookie"/> object supplied by the user is not modified when the request is sent,
+        /// so that it can be reused in requests to other hosts.
+        /// </summary>
+        [Test]
+        public void SuppliedCookieIsNotModifiedBySendingRequest()
+        {
+            Cookie cookie = new Cookie("a", "1");
+
+            Given()
+                .Cookie(cookie)
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/cookies");
+
+            Assert.That(this.GetLastRequestHeaderValues("Cookie"), Is.EqualTo(new[] { "a=1" }));
+            Assert.That(cookie.Domain, Is.Empty);
         }
 
         /// <summary>

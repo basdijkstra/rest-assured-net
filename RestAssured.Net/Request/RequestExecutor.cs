@@ -27,6 +27,7 @@ namespace RestAssured.Request
     using Newtonsoft.Json;
     using RestAssured.Logging;
     using RestAssured.Request.Builders;
+    using RestAssured.Request.Cookies;
     using RestAssured.Request.Exceptions;
     using RestAssured.Response;
 
@@ -84,6 +85,10 @@ namespace RestAssured.Request
                 context.Request.RequestUri = new Uri(QueryHelpers.AddQueryString(context.Request.RequestUri.ToString(), param.Key, param.Value));
             }
 
+            // The request cookies get the host of the request as their default domain. This is done on copies,
+            // so that the cookies supplied by the user are not modified, and before logging, so that the domain is logged.
+            CookieCollection requestCookies = new CookieUtils().CopyWithDomain(context.CookieCollection, context.Request.RequestUri.Host);
+
             // Apply other settings provided in the request specification to the request
             context.Request = RequestSpecificationProcessor.Apply(context.RequestSpecification!, context.Request);
 
@@ -135,13 +140,13 @@ namespace RestAssured.Request
 
             var logger = new RequestResponseLogger(context.LogConfiguration ?? new LogConfiguration(), context.Logger);
 
-            logger.LogRequest(context.Request, context.CookieCollection);
+            logger.LogRequest(context.Request, requestCookies);
 
             VerifiableResponse verifiableResponse;
 
             try
             {
-                verifiableResponse = httpRequestProcessor.Send(context.Request, context.CookieCollection, context.HttpCompletionOption, timeout).GetAwaiter().GetResult();
+                verifiableResponse = httpRequestProcessor.Send(context.Request, requestCookies, context.HttpCompletionOption, timeout).GetAwaiter().GetResult();
             }
             catch (HttpRequestProcessorException)
             {
