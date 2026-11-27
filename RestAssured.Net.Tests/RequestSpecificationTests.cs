@@ -427,6 +427,25 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test checking that a trailing slash in the endpoint is kept when a request specification is used.
+        /// </summary>
+        [Test]
+        public void TrailingSlashInEndpointIsKept()
+        {
+            var requestSpecification = new RequestSpecBuilder()
+                .WithBaseUri(MOCK_SERVER_BASE_URL)
+                .WithBasePath("api")
+                .Build();
+
+            Given()
+                .Spec(requestSpecification)
+                .When()
+                .Get("/echo/");
+
+            Assert.That(this.LastRequest.Path, Is.EqualTo("/api/echo/"));
+        }
+
+        /// <summary>
         /// A test checking that the path part of the base URI is combined with the base path,
         /// regardless of the order in which they are set.
         /// </summary>

@@ -104,6 +104,7 @@ namespace RestAssured.Request
 
         /// <summary>
         /// Builds the path to the resource to target in the request. Should have no leading / and all double // removed.
+        /// A trailing / in the endpoint is kept, because /resource and /resource/ can be different resources.
         /// </summary>
         /// <param name="baseUriPath">The path part of the base URI as supplied in the request specification (can be an empty string).</param>
         /// <param name="basePath">The base path as supplied in the request specification (can be an empty string).</param>
@@ -113,7 +114,7 @@ namespace RestAssured.Request
         {
             string trimmedBaseUriPath = baseUriPath.TrimStart('/').TrimEnd('/');
             string trimmedBasePath = basePath.TrimStart('/').TrimEnd('/');
-            string trimmedOriginalEndpoint = originalEndpoint.TrimStart('/').TrimEnd('/');
+            string trimmedOriginalEndpoint = originalEndpoint.TrimStart('/');
 
             // The path part of the base URI comes first, followed by the base path (if any).
             string prefix = string.Join("/", new[] { trimmedBaseUriPath, trimmedBasePath }.Where(part => part.Length > 0));
