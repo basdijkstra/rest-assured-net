@@ -32,11 +32,13 @@ namespace RestAssured.Request
     /// <param name="contentEncoding">The resolved content encoding for the request.</param>
     /// <param name="stripCharset">Flag indicating whether the charset should be stripped from the content type.</param>
     /// <param name="jsonSerializerSettings">The resolved JSON serializer settings for the request.</param>
+    /// <param name="contentTypeSetInRequest">Flag indicating whether the content type was set in the request itself (and not only in a request specification).</param>
     internal record RequestBodySettings(
         string contentType,
         Encoding contentEncoding,
         bool stripCharset,
-        JsonSerializerSettings jsonSerializerSettings);
+        JsonSerializerSettings jsonSerializerSettings,
+        bool contentTypeSetInRequest);
 
     /// <summary>
     /// Provides methods for creating and serializing HTTP request bodies.
@@ -48,13 +50,16 @@ namespace RestAssured.Request
         /// </summary>
         /// <param name="multipartFormDataContent">The multipart form data content, if any.</param>
         /// <param name="formData">The form data, if any.</param>
-        /// <param name="requestBody">The request body object.</param>
+        /// <param name="requestBody">The request body object, or <c>null</c> if no body was supplied.</param>
         /// <param name="settings">The serialization settings for the request body.</param>
-        /// <returns>The request body as an object of type <see cref="HttpContent"/>.</returns>
-        internal static HttpContent Create(
+        /// <returns>
+        /// The request body as an object of type <see cref="HttpContent"/>, or <c>null</c> if the request has no body.
+        /// A request without a body that has a content type set in the request itself is sent with an empty body with that content type.
+        /// </returns>
+        internal static HttpContent? Create(
             MultipartFormDataContent? multipartFormDataContent,
             IEnumerable<KeyValuePair<string, string>>? formData,
-            object requestBody,
+            object? requestBody,
             RequestBodySettings settings)
         {
             if (multipartFormDataContent != null)
@@ -65,6 +70,16 @@ namespace RestAssured.Request
             if (formData != null)
             {
                 return new FormUrlEncodedContent(formData);
+            }
+
+            if (requestBody == null)
+            {
+                if (!settings.contentTypeSetInRequest)
+                {
+                    return null;
+                }
+
+                requestBody = string.Empty;
             }
 
             string requestBodyAsString = Serialize(requestBody, settings.contentType, settings.jsonSerializerSettings);

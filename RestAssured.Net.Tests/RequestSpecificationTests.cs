@@ -107,8 +107,9 @@ namespace RestAssured.Tests
             Given()
                 .Spec(headersSpecification)
                 .Header("another_header", "another_header_value")
+                .Body("<a/>")
                 .When()
-                .Get("/request-specification-with-headers")
+                .Post("/request-specification-with-headers")
                 .Then()
                 .StatusCode(200);
         }
@@ -252,6 +253,26 @@ namespace RestAssured.Tests
                 .Get("/query-string-endpoint?id=1&name=John%20Doe")
                 .Then()
                 .StatusCode(200);
+        }
+
+        /// <summary>
+        /// A test checking that a Content-Type set in the request specification
+        /// is not sent for a request without a body.
+        /// </summary>
+        [Test]
+        public void SpecContentTypeIsNotSentForRequestWithoutBody()
+        {
+            var requestSpecification = new RequestSpecBuilder()
+                .WithBaseUri(MOCK_SERVER_BASE_URL)
+                .WithContentType("application/xml")
+                .Build();
+
+            Given()
+                .Spec(requestSpecification)
+                .When()
+                .Get("/precedence");
+
+            Assert.That(this.GetLastRequestHeaderValues("Content-Type"), Is.Empty);
         }
 
         /// <summary>
@@ -520,7 +541,7 @@ namespace RestAssured.Tests
         /// </summary>
         private void CreateStubForRequestSpecificationWithHeaders()
         {
-            this.Server?.Given(Request.Create().WithPath("/request-specification-with-headers").UsingGet()
+            this.Server?.Given(Request.Create().WithPath("/request-specification-with-headers").UsingPost()
                 .WithHeader("Content-Type", new ExactMatcher("application/xml; charset=us-ascii"))
                 .WithHeader("Authorization", new ExactMatcher("Basic dXNlcm5hbWU6cGFzc3dvcmQ="))
                 .WithHeader("custom_header", "custom_header_value")

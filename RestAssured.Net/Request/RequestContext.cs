@@ -60,9 +60,9 @@ namespace RestAssured.Request
         internal IEnumerable<KeyValuePair<string, string>> QueryParams { get; set; } = new List<KeyValuePair<string, string>>();
 
         /// <summary>
-        /// The request body object.
+        /// The request body object, or <c>null</c> if no body was supplied.
         /// </summary>
-        internal object RequestBody { get; set; } = string.Empty;
+        internal object? RequestBody { get; set; }
 
         /// <summary>
         /// The Content-Type header value set in the request, or <c>null</c> if it was not set.

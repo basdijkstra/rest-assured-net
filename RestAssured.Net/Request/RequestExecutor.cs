@@ -93,7 +93,8 @@ namespace RestAssured.Request
                 context.ContentTypeHeader ?? context.RequestSpecification?.ContentType ?? DefaultContentType,
                 context.ContentEncoding ?? context.RequestSpecification?.ContentEncoding ?? Encoding.UTF8,
                 context.StripCharset,
-                context.JsonSerializerSettings ?? context.RequestSpecification?.JsonSerializerSettings ?? new JsonSerializerSettings());
+                context.JsonSerializerSettings ?? context.RequestSpecification?.JsonSerializerSettings ?? new JsonSerializerSettings(),
+                context.ContentTypeHeader != null);
 
             context.Request.Content = RequestBodyFactory.Create(
                 context.MultipartFormDataContent,

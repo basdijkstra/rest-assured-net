@@ -39,7 +39,7 @@ namespace RestAssured.Request
         private HttpRequestMessage request = new HttpRequestMessage();
         private CookieCollection cookieCollection = new CookieCollection();
         private RequestSpecification? requestSpecification;
-        private object requestBody = string.Empty;
+        private object? requestBody;
         private string? contentTypeHeader = null;
         private Encoding? contentEncoding = null;
         private IEnumerable<KeyValuePair<string, string>> queryParams = new List<KeyValuePair<string, string>>();
