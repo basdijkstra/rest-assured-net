@@ -461,14 +461,16 @@ namespace RestAssured.Response
 
         /// <summary>
         /// Verifies that the response body length (in bytes) matches the specified NHamcrest matcher.
+        /// This is the same value as the Content-Length header, when the server sends one.
+        /// When a user-supplied <see cref="HttpClient"/> decompresses responses automatically, the length of the decompressed body is used.
         /// </summary>
         /// <param name="matcher">The NHamcrest matcher to match against the response body length (in bytes).</param>
         /// <param name="errorMessage">A custom error message to be used when the verification fails.</param>
         /// <returns>The current <see cref="VerifiableResponse"/> object.</returns>
         public VerifiableResponse ResponseBodyLength(IMatcher<int> matcher, ErrorMessage errorMessage = default)
         {
-            string responseContentAsString = this.ReadBodyAsString();
-            this.VerifyWithMatcher(matcher, responseContentAsString.Length, $"Expected response body length to match '{matcher}' but was '{responseContentAsString.Length}'", errorMessage);
+            int responseBodyLength = this.Response.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult().Length;
+            this.VerifyWithMatcher(matcher, responseBodyLength, $"Expected response body length to match '{matcher}' but was '{responseBodyLength}'", errorMessage);
             return this;
         }
 

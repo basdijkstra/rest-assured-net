@@ -162,6 +162,28 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test checking that the response body length is counted in bytes (the same value as the Content-Length header),
+        /// and not in characters, for a body that contains non-ASCII characters.
+        /// </summary>
+        [Test]
+        public void ResponseBodyLengthIsCountedInBytes()
+        {
+            // "ü€" is 2 characters, but 5 bytes in UTF-8 (2 for 'ü', 3 for '€').
+            this.Server?.Given(Request.Create().WithPath("/non-ascii-response-body").UsingGet())
+                .RespondWith(Response.Create()
+                .WithHeader("Content-Type", "text/plain; charset=utf-8")
+                .WithBody("ü€")
+                .WithStatusCode(200));
+
+            Given()
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/non-ascii-response-body")
+                .Then()
+                .StatusCode(200)
+                .ResponseBodyLength(NHamcrest.Is.EqualTo(5));
+        }
+
+        /// <summary>
         /// Creates the stub response for the JSON response body extraction examples.
         /// </summary>
         private void CreateStubForJsonResponseBody()
