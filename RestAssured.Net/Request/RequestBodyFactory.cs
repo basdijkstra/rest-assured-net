@@ -25,20 +25,7 @@ namespace RestAssured.Request
     using Newtonsoft.Json;
     using RestAssured.Request.Exceptions;
 
-    /// <summary>
-    /// Holds the serialization-related settings for creating a request body.
-    /// </summary>
-    /// <param name="contentType">The resolved content type for the request.</param>
-    /// <param name="contentEncoding">The resolved content encoding for the request.</param>
-    /// <param name="stripCharset">Flag indicating whether the charset should be stripped from the content type.</param>
-    /// <param name="jsonSerializerSettings">The resolved JSON serializer settings for the request.</param>
-    /// <param name="contentTypeSetInRequest">Flag indicating whether the content type was set in the request itself (and not only in a request specification).</param>
-    internal record RequestBodySettings(
-        string contentType,
-        Encoding contentEncoding,
-        bool stripCharset,
-        JsonSerializerSettings jsonSerializerSettings,
-        bool contentTypeSetInRequest);
+ 
 
     /// <summary>
     /// Provides methods for creating and serializing HTTP request bodies.
@@ -74,7 +61,7 @@ namespace RestAssured.Request
 
             if (requestBody == null)
             {
-                if (!settings.contentTypeSetInRequest)
+                if (!settings.ContentTypeSetInRequest)
                 {
                     return null;
                 }
@@ -82,11 +69,11 @@ namespace RestAssured.Request
                 requestBody = string.Empty;
             }
 
-            string requestBodyAsString = Serialize(requestBody, settings.contentType, settings.jsonSerializerSettings);
+            string requestBodyAsString = Serialize(requestBody, settings.ContentType, settings.JsonSerializerSettings);
 
-            var stringContent = new StringContent(requestBodyAsString, settings.contentEncoding, settings.contentType);
+            var stringContent = new StringContent(requestBodyAsString, settings.ContentEncoding, settings.ContentType);
 
-            if (settings.stripCharset)
+            if (settings.StripCharset)
             {
                 stringContent.Headers.ContentType!.CharSet = null;
             }
