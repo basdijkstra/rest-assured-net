@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Unreleased
 
+Nothing yet.
+
+### [5.2.0] - 2026-11-28
+
 #### Fixed
 
 - Certain request properties were not properly applied when injecting custom HTTP client ([#156](https://github.com/basdijkstra/rest-assured-net/issues/156))
@@ -31,6 +35,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Trailing slash was stripped from the endpoint when a RequestSpecification is used ([#172](https://github.com/basdijkstra/rest-assured-net/issues/172))
 - Header logging only included the Content-Type and Content-Length content headers ([#185](https://github.com/basdijkstra/rest-assured-net/issues/185))
 - ResponseBodyLength counted characters instead of bytes, as documented, so it now matches the Content-Length header value ([#169](https://github.com/basdijkstra/rest-assured-net/issues/169))
+
+#### Updated
+
+- Version bumps for HtmlAgilityPack, NJsonSchema, StyleCop.Analyzers
 
 ### [5.1.0] - 2026-11-11
 
