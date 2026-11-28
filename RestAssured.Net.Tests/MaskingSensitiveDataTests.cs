@@ -90,6 +90,37 @@ namespace RestAssured.Tests
         }
 
         /// <summary>
+        /// A test checking that a content header (a header that describes the body) is masked
+        /// when it is configured as sensitive, in the same way as other headers.
+        /// </summary>
+        [Test]
+        public void SensitiveContentHeaderIsMasked()
+        {
+            this.Server?.Given(Request.Create().WithPath("/masking-content-header").UsingGet())
+                .RespondWith(Response.Create()
+                .WithStatusCode(200)
+                .WithHeader("Content-Type", "text/plain")
+                .WithHeader("Content-Disposition", "attachment; filename=salary-john-doe.pdf")
+                .WithBody("Response data"));
+
+            var logConfig = new LogConfiguration
+            {
+                ResponseLogLevel = ResponseLogLevel.Headers,
+                SensitiveResponseHeadersAndCookies = new List<string>() { "Content-Disposition" },
+            };
+
+            Given(this.logger)
+                .Log(logConfig)
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/masking-content-header")
+                .Then()
+                .StatusCode(200);
+
+            Assert.That(this.logger.Lines, Has.Member("Content-Disposition: *****"));
+            Assert.That(this.logger.Lines, Has.None.Contains("salary-john-doe"));
+        }
+
+        /// <summary>
         /// A test demonstrating RestAssuredNet syntax for masking
         /// sensitive cookies when logging request details.
         /// </summary>

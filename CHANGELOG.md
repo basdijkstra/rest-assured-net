@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GET, DELETE and HEAD requests always sent Content-Type: application/json and Content-Length: 0 ([#161](https://github.com/basdijkstra/rest-assured-net/issues/161))
 - Request cookies supplied by the user were modified when sending the request, and were logged with an empty domain ([#175](https://github.com/basdijkstra/rest-assured-net/issues/175), [#183](https://github.com/basdijkstra/rest-assured-net/issues/183))
 - Trailing slash was stripped from the endpoint when a RequestSpecification is used ([#172](https://github.com/basdijkstra/rest-assured-net/issues/172))
+- Header logging only included the Content-Type and Content-Length content headers ([#185](https://github.com/basdijkstra/rest-assured-net/issues/185))
 
 ### [5.1.0] - 2026-11-11
 

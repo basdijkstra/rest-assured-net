@@ -164,10 +164,20 @@ namespace RestAssured.Logging
         {
             if (content != null)
             {
-                entries.Add($"Content-Type: {content.Headers.ContentType}");
-                entries.Add($"Content-Length: {content.Headers.ContentLength}");
+                // The Content-Length header is only added to the content headers once the length has been computed,
+                // which happens when it is read for the first time.
+                _ = content.Headers.ContentLength;
+
+                // Content headers (headers that describe the body, such as Content-Type and Content-Disposition)
+                // are kept separately from the other headers, and are logged first.
+                entries = this.LogHeaders(entries, content.Headers, sensitiveHeaders);
             }
 
+            return this.LogHeaders(entries, headers, sensitiveHeaders);
+        }
+
+        private List<string> LogHeaders(List<string> entries, HttpHeaders headers, List<string> sensitiveHeaders)
+        {
             foreach (KeyValuePair<string, IEnumerable<string>> header in headers)
             {
                 string value = this.MaskHeaderValue(header.Key, header.Value, sensitiveHeaders);

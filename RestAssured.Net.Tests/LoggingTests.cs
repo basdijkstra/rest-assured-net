@@ -215,6 +215,7 @@ namespace RestAssured.Tests
             // An empty body is not logged at all.
             Assert.That(this.logger.Lines, Has.Member("HTTP 200 (OK)"));
             Assert.That(this.logger.Lines, Has.Member("Content-Length: 0"));
+            Assert.That(this.logger.Lines, Has.None.StartsWith("Content-Type:"), "A response without a Content-Type header is logged without a Content-Type line.");
             Assert.That(this.logger.Lines, Has.None.Contains("Could not read payload"));
             Assert.That(this.logger.Lines, Has.None.Empty);
         }
@@ -467,6 +468,30 @@ namespace RestAssured.Tests
             Assert.That(this.logger.Lines, Has.Member("Set-Cookie: Auth=123; httponly; secure"));
             Assert.That(this.logger.Lines, Has.Member("Cookie: Auth=123, Domain: localhost, HTTP-only: True, Secure: True"));
             Assert.That(this.logger.Lines, Has.Member("Cookies are nice!"));
+        }
+
+        /// <summary>
+        /// A test checking that content headers other than Content-Type and Content-Length
+        /// are included when response headers are logged.
+        /// </summary>
+        [Test]
+        public void ResponseContentHeadersAreLogged()
+        {
+            this.Server?.Given(Request.Create().WithPath("/log-content-headers").UsingGet())
+                .RespondWith(Response.Create()
+                .WithStatusCode(200)
+                .WithHeader("Content-Type", "text/plain")
+                .WithHeader("Content-Disposition", "attachment; filename=a.txt")
+                .WithBody("Hello, world!"));
+
+            Given(this.logger)
+                .Log(new LogConfiguration { ResponseLogLevel = ResponseLogLevel.Headers })
+                .When()
+                .Get($"{MOCK_SERVER_BASE_URL}/log-content-headers")
+                .Then()
+                .StatusCode(200);
+
+            Assert.That(this.logger.Lines, Has.Member("Content-Disposition: attachment; filename=a.txt"));
         }
 
         /// <summary>
